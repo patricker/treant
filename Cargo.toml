@@ -13,3 +13,10 @@ edition = "2021"
 [dependencies]
 rand = "0.8"
 vec_storage_reuse = "0.1"
+
+[dev-dependencies]
+criterion = "0.5"
+
+[[bench]]
+name = "bench"
+harness = false
