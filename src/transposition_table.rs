@@ -146,9 +146,9 @@ unsafe impl<Spec> TranspositionTable<Spec> for ApproxTable<Spec>
                 return get_or_write(&entry.v, value);
             }
             if key_here == 0 {
-                let key_here = entry.k.compare_and_swap(0, my_hash as FakeU64, Ordering::Relaxed);
+                let key_here = entry.k.compare_and_swap(0, my_hash, Ordering::Relaxed);
                 self.size.fetch_add(1, Ordering::Relaxed);
-                if key_here == 0 || key_here == my_hash as FakeU64 {
+                if key_here == 0 || key_here == my_hash {
                     return get_or_write(&entry.v, value);
                 }
             }

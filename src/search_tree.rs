@@ -1,7 +1,3 @@
-#![cfg_attr(feature = "nightly", feature(integer_atomics))]
-
-use std;
-
 use {
 	super::*,
 	atomics::*,
@@ -516,12 +512,12 @@ impl NodeStats {
 	}
 	fn down<Spec: MCTS>(&self, manager: &Spec) {
 		self.sum_evaluations
-			.fetch_sub(manager.virtual_loss() as FakeI64, Ordering::Relaxed);
+			.fetch_sub(manager.virtual_loss(), Ordering::Relaxed);
 		self.visits.fetch_add(1, Ordering::Relaxed);
 	}
 	fn up<Spec: MCTS>(&self, manager: &Spec, evaln: i64) {
 		let delta = evaln + manager.virtual_loss();
-		self.sum_evaluations.fetch_add(delta as FakeI64, Ordering::Relaxed);
+		self.sum_evaluations.fetch_add(delta, Ordering::Relaxed);
 	}
 	fn replace(&self, other: &NodeStats) {
 		self.visits

@@ -1,9 +1,7 @@
-extern crate rand;
-use self::rand::{rngs::ThreadRng, Rng};
+use rand::{rngs::ThreadRng, Rng};
 
 use super::*;
 use search_tree::*;
-use std;
 
 pub trait TreePolicy<Spec: MCTS<TreePolicy = Self>>: Sync + Sized {
 	type MoveEvaluation: Sync + Send;
@@ -65,7 +63,7 @@ impl AlphaGoPolicy {
 
 	fn reciprocal(&self, x: usize) -> f64 {
 		if x < RECIPROCAL_TABLE_LEN {
-			unsafe { *self.reciprocals.get_unchecked(x) }
+			self.reciprocals[x]
 		} else {
 			1.0 / x as f64
 		}
