@@ -155,6 +155,12 @@ pub trait MCTS: Sized + Send + Sync + 'static {
 	fn max_playout_length(&self) -> usize {
 		1_000_000
 	}
+	/// Maximum depth per playout before forcing leaf evaluation.
+	/// Unlike `max_playout_length` (a safety cap), this is a quality knob:
+	/// when exceeded, the current node is evaluated as a leaf.
+	fn max_playout_depth(&self) -> usize {
+		usize::MAX
+	}
 	fn on_backpropagation(&self, _evaln: &StateEvaluation<Self>, _handle: SearchHandle<Self>) {}
 	fn cycle_behaviour(&self) -> CycleBehaviour<Self> {
 		if std::mem::size_of::<Self::TranspositionTable>() == 0 {
@@ -222,6 +228,14 @@ pub trait GameState: Clone {
 	fn current_player(&self) -> Self::Player;
 	fn available_moves(&self) -> Self::MoveList;
 	fn make_move(&mut self, mov: &Self::Move);
+
+	/// Maximum children to expand at this node given the current visit count.
+	/// Override for progressive widening, e.g. `(visits as f64).sqrt() as usize`.
+	/// Moves are expanded in the order returned by `available_moves()`, so return
+	/// them in priority order when using progressive widening.
+	fn max_children(&self, _visits: u64) -> usize {
+		usize::MAX
+	}
 }
 
 pub trait Evaluator<Spec: MCTS>: Sync {
@@ -381,7 +395,7 @@ where
 			}
 		});
 	}
-	pub fn principal_variation_info(&self, num_moves: usize) -> Vec<MoveInfoHandle<Spec>> {
+	pub fn principal_variation_info(&self, num_moves: usize) -> Vec<MoveInfoHandle<'_, Spec>> {
 		self.search_tree.principal_variation(num_moves)
 	}
 	pub fn principal_variation(&self, num_moves: usize) -> Vec<Move<Spec>> {
@@ -432,6 +446,33 @@ where
 			print_on_playout_error: self.print_on_playout_error,
 			single_threaded_tld: None,
 		}
+	}
+}
+
+impl<Spec: MCTS> MCTSManager<Spec>
+where
+	Move<Spec>: PartialEq,
+	ThreadData<Spec>: Default,
+{
+	/// Commit to a move: advance the root and preserve the subtree below it.
+	/// Returns `Err` if the move is not found, not expanded, or not owned.
+	/// Panics if an async search is still running.
+	pub fn advance(&mut self, mov: &Move<Spec>) -> Result<(), AdvanceError> {
+		let tree = Arc::get_mut(&mut self.search_tree)
+			.expect("Cannot advance while async search is running");
+		tree.advance_root(mov)?;
+		self.single_threaded_tld = None;
+		Ok(())
+	}
+}
+
+impl<Spec: MCTS> MCTSManager<Spec>
+where
+	MoveEvaluation<Spec>: Clone,
+{
+	/// Visit counts and average rewards for all root children.
+	pub fn root_child_stats(&self) -> Vec<ChildStats<Spec>> {
+		self.search_tree.root_child_stats()
 	}
 }
 

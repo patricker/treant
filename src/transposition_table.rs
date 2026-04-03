@@ -31,6 +31,10 @@ pub unsafe trait TranspositionTable<Spec: MCTS>: Sync + Sized {
     /// to the associated value.
     fn lookup<'a>(&'a self, key: &Spec::State, handle: SearchHandle<Spec>)
             -> Option<&'a SearchNode<Spec>>;
+
+    /// Clear all entries from the table.
+    /// Called during tree re-rooting to prevent dangling pointers.
+    fn clear(&mut self) {}
 }
 
 unsafe impl<Spec: MCTS<TranspositionTable=Self>> TranspositionTable<Spec> for () {
@@ -105,11 +109,12 @@ pub type ApproxTable<Spec> =
          ApproxQuadraticProbingHashTable<<Spec as MCTS>::State, SearchNode<Spec>>;
 
 fn get_or_write<'a, V>(ptr: &AtomicPtr<V>, v: &'a V) -> Option<&'a V> {
-    let result = ptr.compare_and_swap(
+    let result = ptr.compare_exchange(
         std::ptr::null_mut(),
         v as *const _ as *mut _,
+        Ordering::Relaxed,
         Ordering::Relaxed);
-    convert(result)
+    convert(result.unwrap_or_else(|x| x))
 }
 
 fn convert<'a, V>(ptr: *const V) -> Option<&'a V> {
@@ -146,7 +151,8 @@ unsafe impl<Spec> TranspositionTable<Spec> for ApproxTable<Spec>
                 return get_or_write(&entry.v, value);
             }
             if key_here == 0 {
-                let key_here = entry.k.compare_and_swap(0, my_hash, Ordering::Relaxed);
+                let key_here = entry.k.compare_exchange(0, my_hash, Ordering::Relaxed, Ordering::Relaxed)
+                    .unwrap_or_else(|x| x);
                 self.size.fetch_add(1, Ordering::Relaxed);
                 if key_here == 0 || key_here == my_hash {
                     return get_or_write(&entry.v, value);
@@ -156,6 +162,13 @@ unsafe impl<Spec> TranspositionTable<Spec> for ApproxTable<Spec>
             posn &= self.mask;
         }
         None
+    }
+    fn clear(&mut self) {
+        for entry in self.arr.iter_mut() {
+            *entry.k.get_mut() = 0;
+            *entry.v.get_mut() = std::ptr::null_mut();
+        }
+        *self.size.get_mut() = 0;
     }
     fn lookup<'a>(&'a self, key: &Spec::State, _: SearchHandle<Spec>)
             -> Option<&'a SearchNode<Spec>> {

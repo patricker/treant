@@ -11,6 +11,17 @@ pub trait TreePolicy<Spec: MCTS<TreePolicy = Self>>: Sync + Sized {
 	where
 		MoveIter: Iterator<Item = &'a MoveInfo<Spec>> + Clone;
 	fn validate_evaluations(&self, _evalns: &[Self::MoveEvaluation]) {}
+
+	/// Compare two move evaluations for ordering during progressive widening.
+	/// Higher-priority moves should sort first (return `Greater` for higher priority `a`).
+	/// Default: `Equal` (no reordering).
+	fn compare_move_evaluations(
+		&self,
+		_a: &Self::MoveEvaluation,
+		_b: &Self::MoveEvaluation,
+	) -> std::cmp::Ordering {
+		std::cmp::Ordering::Equal
+	}
 }
 
 #[derive(Clone, Debug)]
@@ -135,6 +146,10 @@ impl<Spec: MCTS<TreePolicy = Self>> TreePolicy<Spec> for AlphaGoPolicy {
 				evaln_sum
 			);
 		}
+	}
+
+	fn compare_move_evaluations(&self, a: &f64, b: &f64) -> std::cmp::Ordering {
+		b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal)
 	}
 }
 

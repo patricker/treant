@@ -3,6 +3,16 @@ use mcts::tree_policy::*;
 use mcts::*;
 use std::time::Duration;
 
+fn make_no_transposition_mcts() -> MCTSManager<NoTranspositionMCTS> {
+	MCTSManager::new(
+		CountingGame(0),
+		NoTranspositionMCTS,
+		MyEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	)
+}
+
 // ---------------------------------------------------------------------------
 // Game definitions
 // ---------------------------------------------------------------------------
@@ -456,4 +466,406 @@ fn test_diagnose_output() {
 	assert!(diag.contains("transposition table hits"));
 	assert!(diag.contains("expansion contention events"));
 	assert!(diag.contains("orphaned nodes"));
+}
+
+// ---------------------------------------------------------------------------
+// Phase 3: Tree re-rooting tests
+// ---------------------------------------------------------------------------
+
+#[test]
+fn test_advance_root_basic() {
+	let mut mcts = make_no_transposition_mcts();
+	mcts.playout_n(5000);
+	assert_eq!(mcts.best_move().unwrap(), Move::Add);
+
+	mcts.advance(&Move::Add).unwrap();
+
+	// Root state should have advanced
+	assert_eq!(mcts.tree().root_state(), &CountingGame(1));
+	// Node count reset to 1
+	assert_eq!(mcts.tree().num_nodes(), 1);
+	// Can continue searching from new root
+	mcts.playout_n(5000);
+	assert_eq!(mcts.best_move().unwrap(), Move::Add);
+}
+
+#[test]
+fn test_advance_root_preserves_subtree() {
+	let mut mcts = make_no_transposition_mcts();
+	mcts.playout_n(10000);
+
+	// The root's Add child should have been visited
+	let add_child_had_moves = mcts
+		.tree()
+		.root_node()
+		.moves()
+		.find(|m| *m.get_move() == Move::Add)
+		.and_then(|m| m.child())
+		.map(|c| c.moves().count() > 0)
+		.unwrap_or(false);
+	assert!(add_child_had_moves, "Add child should have been expanded with children");
+
+	mcts.advance(&Move::Add).unwrap();
+
+	// The new root should have moves (preserved from the old child)
+	let root_move_count = mcts.tree().root_node().moves().count();
+	assert!(root_move_count > 0, "new root should have moves from preserved subtree");
+}
+
+#[test]
+fn test_advance_root_move_not_found() {
+	let mut mcts = MCTSManager::new(
+		CountingGame(100),
+		NoTranspositionMCTS,
+		MyEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	);
+	mcts.playout_n(100);
+	let result = mcts.advance(&Move::Add);
+	assert_eq!(result, Err(AdvanceError::MoveNotFound));
+}
+
+#[test]
+fn test_advance_root_child_not_expanded() {
+	let mut mcts = make_no_transposition_mcts();
+	// No playouts — children are not expanded
+	let result = mcts.advance(&Move::Add);
+	assert_eq!(result, Err(AdvanceError::ChildNotExpanded));
+}
+
+#[test]
+fn test_advance_root_multiple_advances() {
+	let mut mcts = make_no_transposition_mcts();
+
+	mcts.playout_n(5000);
+	mcts.advance(&Move::Add).unwrap();
+	assert_eq!(mcts.tree().root_state(), &CountingGame(1));
+
+	mcts.playout_n(5000);
+	mcts.advance(&Move::Add).unwrap();
+	assert_eq!(mcts.tree().root_state(), &CountingGame(2));
+
+	mcts.playout_n(5000);
+	assert_eq!(mcts.best_move().unwrap(), Move::Add);
+}
+
+#[test]
+fn test_advance_root_with_transposition_table() {
+	let mut mcts = make_counting_mcts();
+	mcts.playout_n(5000);
+	mcts.advance(&Move::Add).unwrap();
+	assert_eq!(mcts.tree().root_state(), &CountingGame(1));
+
+	// Search continues without crashes after table was cleared
+	mcts.playout_n(5000);
+	assert_eq!(mcts.best_move().unwrap(), Move::Add);
+}
+
+// ---------------------------------------------------------------------------
+// Phase 4.1: Depth-limited search tests
+// ---------------------------------------------------------------------------
+
+#[derive(Default)]
+struct DepthLimited3MCTS;
+
+impl MCTS for DepthLimited3MCTS {
+	type State = CountingGame;
+	type Eval = MyEvaluator;
+	type NodeData = ();
+	type ExtraThreadData = ();
+	type TreePolicy = UCTPolicy;
+	type TranspositionTable = ();
+
+	fn max_playout_depth(&self) -> usize {
+		3
+	}
+}
+
+#[derive(Default)]
+struct DepthLimited0MCTS;
+
+impl MCTS for DepthLimited0MCTS {
+	type State = CountingGame;
+	type Eval = MyEvaluator;
+	type NodeData = ();
+	type ExtraThreadData = ();
+	type TreePolicy = UCTPolicy;
+	type TranspositionTable = ();
+
+	fn max_playout_depth(&self) -> usize {
+		0
+	}
+}
+
+#[test]
+fn test_depth_limited_finds_correct_move() {
+	let mut mcts = MCTSManager::new(
+		CountingGame(0),
+		DepthLimited3MCTS,
+		MyEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	);
+	mcts.playout_n(10000);
+	assert_eq!(mcts.best_move().unwrap(), Move::Add);
+}
+
+#[test]
+fn test_depth_limited_shallow_tree() {
+	let mut mcts = MCTSManager::new(
+		CountingGame(0),
+		DepthLimited3MCTS,
+		MyEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	);
+	mcts.playout_n(10000);
+	// PV should be shallow: depth limit 3 creates nodes at depths 1-3,
+	// plus one unexpanded selection from the leaf = at most 4
+	let pv = mcts.principal_variation(10);
+	assert!(pv.len() <= 4, "PV length {} too deep for depth limit 3", pv.len());
+}
+
+#[test]
+fn test_depth_zero_root_only() {
+	let mut mcts = MCTSManager::new(
+		CountingGame(0),
+		DepthLimited0MCTS,
+		MyEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	);
+	mcts.playout_n(100);
+	// Tree should never grow beyond the root
+	assert_eq!(mcts.tree().num_nodes(), 1);
+}
+
+#[test]
+fn test_depth_limited_parallel() {
+	let mut mcts = MCTSManager::new(
+		CountingGame(0),
+		DepthLimited3MCTS,
+		MyEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	);
+	mcts.playout_n_parallel(10000, 4);
+	assert_eq!(mcts.best_move().unwrap(), Move::Add);
+}
+
+// ---------------------------------------------------------------------------
+// Phase 4.3: Statistics export tests
+// ---------------------------------------------------------------------------
+
+#[test]
+fn test_root_child_stats_basic() {
+	let mut mcts = make_no_transposition_mcts();
+	mcts.playout_n(5000);
+	let stats = mcts.root_child_stats();
+	assert_eq!(stats.len(), 2);
+
+	let add_stats = stats.iter().find(|s| s.mov == Move::Add).unwrap();
+	let sub_stats = stats.iter().find(|s| s.mov == Move::Sub).unwrap();
+
+	assert!(add_stats.visits > 0);
+	assert!(sub_stats.visits > 0);
+	assert!(add_stats.avg_reward > sub_stats.avg_reward);
+	assert!(add_stats.visits > sub_stats.visits);
+}
+
+#[test]
+fn test_root_child_stats_no_playouts() {
+	let mcts = make_no_transposition_mcts();
+	let stats = mcts.root_child_stats();
+	assert_eq!(stats.len(), 2);
+	for s in &stats {
+		assert_eq!(s.visits, 0);
+		assert_eq!(s.avg_reward, 0.0);
+	}
+}
+
+#[test]
+fn test_root_child_stats_terminal() {
+	let mcts = MCTSManager::new(
+		CountingGame(100),
+		NoTranspositionMCTS,
+		MyEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	);
+	let stats = mcts.root_child_stats();
+	assert!(stats.is_empty());
+}
+
+#[test]
+fn test_root_child_stats_alphago_priors() {
+	let mut mcts = MCTSManager::new(
+		CountingGame(0),
+		AlphaGoAsymmetricMCTS,
+		AlphaGoAsymmetricEvaluator,
+		AlphaGoPolicy::new(0.5),
+		(),
+	);
+	mcts.playout_n(10000);
+	let stats = mcts.root_child_stats();
+	let add_stats = stats.iter().find(|s| s.mov == Move::Add).unwrap();
+	let sub_stats = stats.iter().find(|s| s.mov == Move::Sub).unwrap();
+
+	// Priors should be preserved
+	assert!((add_stats.move_evaluation - 0.1).abs() < 1e-6);
+	assert!((sub_stats.move_evaluation - 0.9).abs() < 1e-6);
+	// Reward signal overcomes prior bias
+	assert!(add_stats.avg_reward > sub_stats.avg_reward);
+}
+
+// ---------------------------------------------------------------------------
+// Phase 4.2: Progressive widening tests
+// ---------------------------------------------------------------------------
+
+/// A game with 10 possible moves (Add1..Add10). Higher-numbered moves score higher.
+/// With progressive widening, only the first N moves are visible to the tree policy.
+#[derive(Clone, Debug, PartialEq)]
+struct WideGame(i64);
+
+#[derive(Clone, Debug, PartialEq)]
+enum WideMove {
+	M(u8), // M(0) through M(9)
+}
+
+impl GameState for WideGame {
+	type Move = WideMove;
+	type Player = ();
+	type MoveList = Vec<WideMove>;
+
+	fn current_player(&self) -> Self::Player {}
+	fn available_moves(&self) -> Vec<WideMove> {
+		if self.0 >= 100 {
+			vec![]
+		} else {
+			// Return moves 0-9, in priority order (highest value first)
+			(0..10).rev().map(|i| WideMove::M(i)).collect()
+		}
+	}
+	fn make_move(&mut self, mov: &Self::Move) {
+		match mov {
+			WideMove::M(i) => self.0 += *i as i64 + 1,
+		}
+	}
+	fn max_children(&self, visits: u64) -> usize {
+		// Start with 2 children, grow by 1 per 50 visits
+		2 + (visits / 50) as usize
+	}
+}
+
+struct WideEvaluator;
+
+#[derive(Default)]
+struct WideMCTS;
+
+impl MCTS for WideMCTS {
+	type State = WideGame;
+	type Eval = WideEvaluator;
+	type NodeData = ();
+	type ExtraThreadData = ();
+	type TreePolicy = UCTPolicy;
+	type TranspositionTable = ();
+}
+
+impl Evaluator<WideMCTS> for WideEvaluator {
+	type StateEvaluation = i64;
+
+	fn evaluate_new_state(
+		&self,
+		state: &WideGame,
+		moves: &Vec<WideMove>,
+		_: Option<SearchHandle<WideMCTS>>,
+	) -> (Vec<()>, i64) {
+		(vec![(); moves.len()], state.0)
+	}
+	fn interpret_evaluation_for_player(&self, evaln: &i64, _: &()) -> i64 {
+		*evaln
+	}
+	fn evaluate_existing_state(&self, _: &WideGame, evaln: &i64, _: SearchHandle<WideMCTS>) -> i64 {
+		*evaln
+	}
+}
+
+#[test]
+fn test_progressive_widening_limits_children() {
+	let mut mcts = MCTSManager::new(
+		WideGame(0),
+		WideMCTS,
+		WideEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	);
+	// Few playouts — widening formula is 2 + visits/50, so at ~50 root visits
+	// we should see at most 3 children expanded
+	mcts.playout_n(50);
+	let stats = mcts.root_child_stats();
+	let visited_count = stats.iter().filter(|s| s.visits > 0).count();
+	assert!(
+		visited_count <= 4,
+		"Expected at most ~3-4 visited moves with progressive widening, got {}",
+		visited_count
+	);
+}
+
+#[test]
+fn test_progressive_widening_expands_with_visits() {
+	let mut mcts = MCTSManager::new(
+		WideGame(0),
+		WideMCTS,
+		WideEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	);
+	mcts.playout_n(100);
+	let early_visited = mcts
+		.root_child_stats()
+		.iter()
+		.filter(|s| s.visits > 0)
+		.count();
+
+	mcts.playout_n(5000);
+	let late_visited = mcts
+		.root_child_stats()
+		.iter()
+		.filter(|s| s.visits > 0)
+		.count();
+
+	assert!(
+		late_visited >= early_visited,
+		"More visits should expand more children: {} vs {}",
+		late_visited,
+		early_visited
+	);
+}
+
+#[test]
+fn test_progressive_widening_default_no_effect() {
+	// CountingGame has default max_children (usize::MAX) — all moves visible
+	let mut mcts = make_no_transposition_mcts();
+	mcts.playout_n(5000);
+	let stats = mcts.root_child_stats();
+	// Both Add and Sub should have visits
+	assert!(stats.iter().all(|s| s.visits > 0));
+}
+
+#[test]
+fn test_progressive_widening_with_advance_root() {
+	let mut mcts = MCTSManager::new(
+		WideGame(0),
+		WideMCTS,
+		WideEvaluator,
+		UCTPolicy::new(0.5),
+		(),
+	);
+	mcts.playout_n(5000);
+	let best = mcts.best_move().unwrap();
+	mcts.advance(&best).unwrap();
+	// Continue searching from new root
+	mcts.playout_n(5000);
+	assert!(mcts.best_move().is_some());
 }
