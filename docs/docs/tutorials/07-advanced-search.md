@@ -36,7 +36,7 @@ And pass the table when constructing the search:
 MCTSManager::new(state, config, eval, policy, ApproxTable::new(1024));
 ```
 
-`ApproxTable::new(capacity)` creates a lock-free hash table. The capacity must be a power of 2. Larger tables reduce collisions at the cost of memory. For the counting game, different move sequences that reach the same counter value (e.g., +1+1-1 and +1) share a single node.
+`ApproxTable::new(capacity)` creates a lock-free hash table (threads access it concurrently without waiting for each other). The capacity must be a power of 2. Larger tables reduce collisions at the cost of memory. For the counting game, different move sequences that reach the same counter value (e.g., +1+1-1 and +1) share a single node.
 
 When transpositions create cycles, `cycle_behaviour()` controls what happens. The default panics on cycles when a transposition table is present. Set it to `CycleBehaviour::UseCurrentEvalWhenCycleDetected` to gracefully stop expansion and use the node's current evaluation.
 
@@ -49,7 +49,7 @@ In turn-based games, the search tree from the previous turn contains useful work
 
 After `playout_n_parallel()` finishes, `advance(&best)` detaches the subtree rooted at the chosen move and promotes it to the new root. All nodes below that child -- positions already explored -- carry over to the next turn. The rest of the tree is discarded.
 
-This is critical for real-time play. Search during the opponent's turn (pondering), then call `advance()` with their move when it arrives. The work done while pondering is preserved.
+This is critical for real-time play. Search during the opponent's turn (pondering: searching during the opponent's thinking time), then call `advance()` with their move when it arrives. The work done while pondering is preserved.
 
 `advance()` returns `Result<(), AdvanceError>` with three error cases:
 - **`MoveNotFound`** -- the move does not exist among root children
@@ -57,6 +57,8 @@ This is critical for real-time play. Search during the opponent's turn (ponderin
 - **`ChildNotOwned`** -- the child is a transposition table alias and cannot be detached as a standalone subtree
 
 ## Progressive widening
+
+Progressive widening means starting with few children and gradually expanding more as the node accumulates visits.
 
 In games with many legal moves (Go has ~250 per position, continuous action spaces can have infinitely many), expanding all children is wasteful. Most visits go to a handful of moves. Progressive widening limits how many children are expanded based on the node's visit count.
 

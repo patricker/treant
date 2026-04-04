@@ -7,7 +7,7 @@ import ChanceNodesDemo from '@site/src/components/demos/ChanceNodesDemo';
 
 # Games with Chance
 
-Not all games are deterministic. Dice rolls, card draws, random events -- these are stochastic transitions where nature, not a player, determines the next state. MCTS handles them through chance nodes.
+Not all games are deterministic. Dice rolls, card draws, random events -- these are stochastic (random) transitions where nature, not a player, determines the next state. MCTS handles them through chance nodes.
 
 **You will learn to:**
 - Implement `chance_outcomes()` to define stochastic transitions with probabilities
@@ -25,11 +25,11 @@ A player repeatedly chooses Roll or Stop. Rolling adds a d6 to the score. The ga
 
 The critical method is `chance_outcomes()`. When a roll is pending, it returns `Some(Vec<(Move, f64)>)` -- a list of possible outcomes with their probabilities. Each die face has probability 1/6. When no random event is pending, it returns `None`, and MCTS treats the node normally.
 
-MCTS samples from these probabilities during playouts. Over many playouts, the statistics converge to the true expected value.
+MCTS samples from these probabilities during playouts. Over many playouts, the statistics converge to the true expected value (the probability-weighted average across all possible outcomes).
 
 ## Open-loop MCTS
 
-By default, chance outcomes use open-loop mode. This means:
+By default, chance outcomes use open-loop mode. In open-loop mode, the tree doesn't distinguish between different random outcomes at the same decision point:
 
 - Chance outcomes are sampled during each playout but **not** stored as separate tree nodes.
 - Multiple playouts through the same "Roll" edge experience different dice values.

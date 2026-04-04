@@ -28,6 +28,16 @@ interface TreeNode {
   }>;
 }
 
+interface MoveEntry {
+  turn: number;
+  player: string;
+  move: string;
+  stonesAfter: number;
+  proven: string;
+  bestMove?: string;
+  avgReward?: number;
+}
+
 type Phase = 'human' | 'mcts' | 'gameover';
 
 function NimSolverDemoInner() {
@@ -47,6 +57,7 @@ function NimSolverDemoInner() {
   const [tree, setTree] = useState<TreeNode | null>(null);
   const [provenValue, setProvenValue] = useState<string>('Unknown');
   const [winner, setWinner] = useState<string | null>(null);
+  const [moveHistory, setMoveHistory] = useState<MoveEntry[]>([]);
 
   const initGame = useCallback(
     (numStones: number) => {
@@ -62,6 +73,7 @@ function NimSolverDemoInner() {
       setTree(null);
       setProvenValue('Unknown');
       setWinner(null);
+      setMoveHistory([]);
 
       // Run initial analysis for human's position
       gameRef.current.playout_n(500);
@@ -93,21 +105,50 @@ function NimSolverDemoInner() {
     setProvenValue(gameRef.current.root_proven_value());
   }, []);
 
+  const recordMove = useCallback(
+    (player: string, move: string, statsBeforeMove: SearchStats | null) => {
+      if (!gameRef.current) return;
+      const chosenChild = statsBeforeMove?.children.find(
+        (c) => c.mov === move,
+      );
+      const entry: MoveEntry = {
+        turn: 0, // filled below
+        player,
+        move: move === 'Take1' ? 'Take 1' : 'Take 2',
+        stonesAfter: gameRef.current.current_stones(),
+        proven: statsBeforeMove
+          ? (chosenChild?.proven ?? 'Unknown')
+          : 'Unknown',
+        bestMove: statsBeforeMove?.best_move
+          ? statsBeforeMove.best_move === 'Take1'
+            ? 'Take 1'
+            : 'Take 2'
+          : undefined,
+        avgReward: chosenChild?.avg_reward,
+      };
+      setMoveHistory((prev) => {
+        entry.turn = prev.length + 1;
+        return [...prev, entry];
+      });
+    },
+    [],
+  );
+
   const handleHumanMove = useCallback(
     (move: 'Take1' | 'Take2') => {
       if (!gameRef.current || phase !== 'human') return;
 
+      const statsBefore = stats;
       gameRef.current.apply_move(move);
+      recordMove('P1', move, statsBefore);
       syncState();
 
       if (gameRef.current.is_terminal()) {
-        // Human took the last stone(s) -- human loses in misere Nim
         const s = gameRef.current.get_stats();
         setStats(s);
         setTree(null);
         setPhase('gameover');
-        // The player who just moved loses (they took the last stone)
-        setWinner(gameRef.current.current_player());
+        setWinner(gameRef.current.current_player() === 'P1' ? 'P2' : 'P1');
         return;
       }
 
@@ -124,10 +165,11 @@ function NimSolverDemoInner() {
       setProvenValue(gameRef.current.root_proven_value());
 
       if (bestMove) {
-        // Use setTimeout so the user can briefly see the MCTS analysis
         setTimeout(() => {
           if (!gameRef.current) return;
+          const mctsStatsBefore: SearchStats = gameRef.current.get_stats();
           gameRef.current.apply_move(bestMove);
+          recordMove('P2 (MCTS)', bestMove, mctsStatsBefore);
           syncState();
 
           if (gameRef.current.is_terminal()) {
@@ -135,7 +177,7 @@ function NimSolverDemoInner() {
             setStats(finalStats);
             setTree(null);
             setPhase('gameover');
-            setWinner(gameRef.current.current_player());
+            setWinner(gameRef.current.current_player() === 'P1' ? 'P2' : 'P1');
             return;
           }
 
@@ -150,7 +192,7 @@ function NimSolverDemoInner() {
         }, 400);
       }
     },
-    [phase, syncState],
+    [phase, syncState, stats, recordMove],
   );
 
   const handleParamChange = useCallback(
@@ -170,7 +212,11 @@ function NimSolverDemoInner() {
     return <div className={styles.loading}>Loading...</div>;
   }
 
-  const provenStatus = provenValue.toLowerCase() as 'win' | 'loss' | 'draw' | 'unknown';
+  const provenStatus = provenValue.toLowerCase() as
+    | 'win'
+    | 'loss'
+    | 'draw'
+    | 'unknown';
 
   return (
     <div className={styles.demo}>
@@ -187,6 +233,13 @@ function NimSolverDemoInner() {
           }}
           onChange={handleParamChange}
         />
+        <button
+          className="button button--sm button--outline button--danger"
+          onClick={() => initGame(startingStones)}
+          style={{ marginTop: '0.5rem' }}
+        >
+          Reset
+        </button>
       </div>
 
       <div className={styles.section}>
@@ -222,13 +275,70 @@ function NimSolverDemoInner() {
         </span>
       </div>
 
+      {moveHistory.length > 0 && (
+        <div className={styles.section}>
+          <div className={styles.sectionLabel}>Move history</div>
+          <table className={styles.moveHistory}>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Player</th>
+                <th>Move</th>
+                <th>Stones left</th>
+                <th>MCTS eval</th>
+                <th>MCTS best</th>
+              </tr>
+            </thead>
+            <tbody>
+              {moveHistory.map((m) => (
+                <tr key={m.turn}>
+                  <td>{m.turn}</td>
+                  <td>{m.player}</td>
+                  <td>{m.move}</td>
+                  <td>{m.stonesAfter}</td>
+                  <td
+                    style={{
+                      color:
+                        m.avgReward != null && m.avgReward > 0
+                          ? '#22c55e'
+                          : m.avgReward != null && m.avgReward < 0
+                            ? '#ef4444'
+                            : undefined,
+                    }}
+                  >
+                    {m.avgReward != null ? m.avgReward.toFixed(1) : '—'}
+                  </td>
+                  <td
+                    style={{
+                      color:
+                        m.bestMove && m.bestMove !== m.move
+                          ? '#eab308'
+                          : undefined,
+                    }}
+                  >
+                    {m.bestMove ?? '—'}
+                    {m.bestMove && m.bestMove !== m.move ? ' !' : ''}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {stats && (
         <div className={styles.section}>
+          <div className={styles.sectionLabel}>
+            MCTS analysis (from {currentPlayer}'s perspective)
+          </div>
           <StatsPanel
             totalPlayouts={stats.total_playouts}
             totalNodes={stats.total_nodes}
             bestMove={stats.best_move}
-            children={stats.children}
+            children={stats.children.map((c) => ({
+              ...c,
+              proven: c.proven === 'Win' ? 'Loss' : c.proven === 'Loss' ? 'Win' : c.proven,
+            }))}
           />
         </div>
       )}

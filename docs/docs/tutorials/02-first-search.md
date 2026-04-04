@@ -45,7 +45,7 @@ Three methods:
 
 - **`evaluate_new_state()`** returns a pair: per-move evaluations (here `()` for each move, meaning no prior bias) and a state evaluation (the counter value itself). Higher counter = closer to 100 = better.
 - **`interpret_evaluation_for_player()`** converts the state evaluation into a reward for the given player. With a single player, this just returns the evaluation directly.
-- **`evaluate_existing_state()`** handles re-evaluation when the search revisits a node through transpositions. Here, it returns the same value.
+- **`evaluate_existing_state()`** handles re-evaluation when the search revisits a node (through different move paths that reach the same game state — called transpositions). Here, it returns the same value.
 
 ## Configure the search
 
@@ -56,10 +56,10 @@ The `MCTS` trait wires the game, evaluator, tree policy, and transposition table
 
 `MyMCTS` is a zero-sized type that exists solely to connect the associated types.
 
-- **`TreePolicy = UCTPolicy`** -- use the UCT formula from the previous tutorial.
+- **`TreePolicy = UCTPolicy`** -- the tree policy (the algorithm that decides which child to explore next — here, UCT from Tutorial 1).
 - **`TranspositionTable = ApproxTable`** -- detect when different move sequences reach the same counter value.
-- **`virtual_loss()`** returns 500. During parallel search, a thread temporarily penalizes a node it's exploring so other threads avoid duplicating work. The value should be larger than any realistic evaluation.
-- **`cycle_behaviour()`** tells the search what to do when it detects a cycle through the transposition table. `UseCurrentEvalWhenCycleDetected` stops expanding and uses the node's current evaluation.
+- **`virtual_loss()`** returns 500. During parallel search (covered in the [how-to guide](/docs/how-to/parallel-search)), a thread temporarily penalizes a node it's exploring so other threads avoid duplicating work. The value should be larger than any realistic evaluation.
+- **`cycle_behaviour()`** tells the search what to do when different move paths loop back to the same position. `UseCurrentEvalWhenCycleDetected` stops expanding and uses the node's current evaluation.
 
 ## Run it
 

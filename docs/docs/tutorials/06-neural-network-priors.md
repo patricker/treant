@@ -7,7 +7,7 @@ import UCTvsPUCTDemo from '@site/src/components/demos/UCTvsPUCTDemo';
 
 # Neural Network Priors
 
-AlphaGo and AlphaZero replaced UCT with PUCT -- a variant that uses neural network priors to guide exploration. Instead of treating all moves equally, PUCT explores moves the network thinks are good first, then corrects course as search accumulates evidence. This tutorial shows how to wire prior probabilities into your evaluator and configure all the AlphaZero knobs.
+AlphaGo and AlphaZero replaced UCT with PUCT (Predictor + UCT) -- a variant that uses neural network priors to guide exploration. Instead of treating all moves equally, PUCT explores moves the network thinks are good first, then corrects course as search accumulates evidence. This tutorial shows how to wire prior probabilities into your evaluator and configure all the AlphaZero knobs.
 
 **You will learn to:**
 - Understand how PUCT differs from UCT
@@ -57,11 +57,11 @@ The MCTS config selects `AlphaGoPolicy` as the tree policy and enables the Alpha
 Each method controls a different aspect of the search:
 
 - **`TreePolicy = AlphaGoPolicy`** -- use the PUCT formula instead of UCT. The exploration constant passed to `AlphaGoPolicy::new(1.5)` controls how much weight the prior gets relative to the value.
-- **`dirichlet_noise() -> Some((0.25, 0.3))`** -- blend 25% Dirichlet noise into the root priors. The noisy prior becomes `0.75 * prior + 0.25 * Dir(0.3)`. This prevents the search from fixating on the network's top choice during self-play, ensuring diverse training data. Alpha of 0.3 is typical for chess-scale games; use 0.03 for Go.
-- **`selection_temperature() -> 1.0`** -- `best_move()` samples proportional to visit counts instead of always picking the most-visited child. At temperature 0.0 (the default), it returns the argmax. At 1.0, a child with twice the visits is twice as likely to be selected. Use 1.0 early in self-play games for diversity, 0.0 for competitive play.
+- **`dirichlet_noise() -> Some((0.25, 0.3))`** -- blend 25% Dirichlet noise into the root priors. Dirichlet noise is a random perturbation drawn from the Dirichlet distribution -- it adds randomness to the root priors so the search doesn't always follow the network's top pick. The noisy prior becomes `0.75 * prior + 0.25 * Dir(0.3)`. This prevents the search from fixating on the network's top choice during self-play (self-play: the system plays games against itself to generate training data), ensuring diverse training data. Alpha of 0.3 is typical for chess-scale games; use 0.03 for Go.
+- **`selection_temperature() -> 1.0`** -- temperature is borrowed from statistical mechanics: at temperature 0 (frozen), only the best move is chosen; at temperature 1 (hot), moves are sampled proportionally to their visit counts, adding diversity. Concretely, `best_move()` samples proportional to visit counts instead of always picking the most-visited child. At temperature 0.0 (the default), it returns the argmax. At 1.0, a child with twice the visits is twice as likely to be selected. Use 1.0 early in self-play games for diversity, 0.0 for competitive play.
 - **`rng_seed() -> Some(42)`** -- seed the internal RNG for reproducible search. Each thread gets `seed + thread_id`, so parallel search is also deterministic.
 
-## First Play Urgency
+## First Play Urgency (FPU)
 
 When `fpu_value()` returns infinity (the default), MCTS tries every child at least once before comparing them. This makes sense for UCT, where you have no information about untried moves.
 

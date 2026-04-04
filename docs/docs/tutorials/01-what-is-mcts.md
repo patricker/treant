@@ -18,7 +18,7 @@ Monte Carlo Tree Search finds good decisions in games and planning problems wher
 
 ## The key insight
 
-Play a random game from the current position. Record who won. Repeat thousands of times. Moves that lead to more wins get higher scores. The more games you sample, the better your estimates become. This is the Monte Carlo method applied to game trees.
+Play a random game from the current position. Record who won. Repeat thousands of times. Moves that lead to more wins get higher scores. The more games you sample, the better your estimates become. This is the Monte Carlo method applied to game trees. (The name comes from the Monte Carlo casino — using randomness to estimate something, like throwing darts to estimate pi.)
 
 The challenge is efficiency. Pure random sampling wastes time on clearly bad moves. MCTS solves this with a tree that grows asymmetrically -- spending most samples on promising branches while still occasionally exploring alternatives.
 
@@ -68,7 +68,7 @@ At the selected node, one or more moves have never been tried. Create a new chil
 
 ### Simulation
 
-From the new node, play out the game to completion. The simplest approach uses random moves. More sophisticated implementations use heuristics or neural networks to guide the rollout. The result is a terminal outcome: win, loss, or draw.
+From the new node, play out the game to completion. The simplest approach uses random moves. More sophisticated implementations use heuristics or neural networks to guide the rollout. The game ends at a **terminal state** — a position where no more moves are possible (someone won, or the game is drawn). The result is a terminal outcome: win, loss, or draw.
 
 ```
   [NEW node]

@@ -63,7 +63,9 @@ Nim theory says a position is losing if and only if `stones % 3 == 0`. The solve
 
 ## Score-Bounded MCTS
 
-Sometimes win/loss/draw is not enough. You want the exact score: by how much does the winner win? Score-Bounded MCTS tracks `[lower, upper]` intervals on the minimax value at each node. These bounds tighten during search as the tree explores more of the game. When `lower == upper`, the exact minimax value is known.
+The solver proves win, loss, or draw -- but some games have scores, not just outcomes. How much did you win by? Score-Bounded MCTS answers that.
+
+Sometimes win/loss/draw is not enough. You want the exact score: by how much does the winner win? Score-Bounded MCTS tracks `[lower, upper]` intervals on the minimax value (the optimal score achievable by both players playing perfectly) at each node. These bounds tighten during search as the tree explores more of the game. When `lower == upper`, the exact minimax value is known.
 
 ## Terminal scores
 

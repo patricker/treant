@@ -130,6 +130,34 @@
   font-style: italic;
 }
 
+.moveHistory {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.moveHistory th {
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-emphasis-600);
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.moveHistory td {
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-100);
+}
+
+.moveHistory tbody tr:last-child td {
+  border-bottom: none;
+}
+
 [data-theme='dark'] .demo {
   border-color: var(--ifm-color-emphasis-300);
 }

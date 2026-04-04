@@ -37,7 +37,7 @@ The key differences from the single-player counting game:
 
 The evaluator identifies the winner (if any) and scores from each player's perspective.
 
-**`evaluate_new_state()`** checks whether the game has ended. If `stones == 0`, the player who just moved won. The returned `Option<Player>` records the winner, or `None` if the game is still in progress. Move priors are uniform (`()` for each move).
+**`evaluate_new_state()`** checks whether the game has ended. If `stones == 0`, the player who just moved won. The state evaluation (of type `Option<Player>`, the evaluator's `StateEvaluation` type) records the winner, or `None` if the game is still in progress. Move priors are uniform (`()` for each move).
 
 **`interpret_evaluation_for_player()`** is the critical method for adversarial games. It takes the state evaluation and a player, and returns a signed reward:
 
@@ -51,6 +51,8 @@ MCTS calls this method with the perspective of the player who made the move lead
 
 ## The negamax perspective
 
+Negamax is a simplification of minimax: instead of alternating between maximizing and minimizing, every node maximizes from its own perspective, and the sign of the evaluation flips between players. MCTS uses this naturally.
+
 In a minimax tree, you alternate between maximizing and minimizing. MCTS avoids this asymmetry entirely. Every node maximizes from the perspective of the player who moved there. The adversarial structure comes from `interpret_evaluation_for_player` returning opposite signs for opposite players.
 
 This means:
@@ -63,7 +65,7 @@ One tree, one selection rule, two players.
 
 ## Interactive demo
 
-Play Nim against MCTS below. The solver proves whether each position is winning or losing.
+Try Nim below. You play as P1 — pick Take 1 or Take 2 on your turn, then MCTS responds as P2. The solver proves whether each position is winning or losing before you move.
 
 <NimSolverDemo />
 
