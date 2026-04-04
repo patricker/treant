@@ -1,0 +1,16 @@
+=== AlphaZero-Style Search ===
+
+Game: pick A(+10), B(+5), or C(+1) at each step, depth 3.
+Prior: C=0.7, B=0.2, A=0.1 (intentionally wrong).
+Features: PUCT policy, Dirichlet noise, temperature=1.0
+
+Root children after 10K playouts:
+  C(+1) — visits:   357, avg_reward:    8.8, prior: 0.688
+  B(+5) — visits:     2, avg_reward:    5.5, prior: 0.156
+  A(+10) — visits:  9641, avg_reward:   21.7, prior: 0.156
+
+20 temperature-sampled moves (temp=1.0):
+  A: 20, B: 0, C: 0
+  (A should dominate despite low prior)
+
+Principal variation: ["A(+10)", "A(+10)", "B(+5)"]

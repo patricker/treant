@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  gap: 1rem;
+}
+
+.panel {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ifm-color-emphasis-500);
+  margin-bottom: 0.375rem;
+  font-variant: small-caps;
+}
+
+.content {
+  /* Let children define their own spacing */
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .panel {
+    width: 100%;
+  }
+}

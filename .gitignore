@@ -1,3 +1,16 @@
 /target/
 **/*.rs.bk
 Cargo.lock
+
+# Docs site
+docs/build/
+docs/node_modules/
+docs/.docusaurus/
+
+# WASM
+mcts-wasm/pkg/
+mcts-wasm/target/
+
+# Playwright / screenshots
+.playwright-mcp/
+*.png

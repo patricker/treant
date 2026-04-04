@@ -1,0 +1,70 @@
+/**
+ * Theme 10: Graphite
+ *
+ * Notion-like. Warm neutral palette, nearly monochromatic, supremely calm.
+ * Inter Tight for a distinctive yet restrained feel. System monospace for code.
+ * The only pop of color: a warm yellow text selection highlight.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  --ifm-color-primary: #555555;
+  --ifm-color-primary-dark: #4a4a4a;
+  --ifm-color-primary-darker: #444444;
+  --ifm-color-primary-darkest: #383838;
+  --ifm-color-primary-light: #666666;
+  --ifm-color-primary-lighter: #777777;
+  --ifm-color-primary-lightest: #888888;
+
+  --ifm-font-family-base: 'Inter Tight', system-ui, sans-serif;
+  --ifm-font-family-monospace: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  --ifm-code-font-size: 94%;
+  --ifm-line-height-base: 1.65;
+  --ifm-heading-font-weight: 600;
+  --ifm-background-color: #fafaf8;
+  --ifm-background-surface-color: #f3f3f0;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #a0a0a0;
+  --ifm-color-primary-dark: #909090;
+  --ifm-color-primary-darker: #858585;
+  --ifm-color-primary-darkest: #757575;
+  --ifm-color-primary-light: #b0b0b0;
+  --ifm-color-primary-lighter: #c0c0c0;
+  --ifm-color-primary-lightest: #d0d0d0;
+
+  --ifm-background-color: #1a1a1a;
+  --ifm-background-surface-color: #242424;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Selection highlight — the one pop of color ── */
+
+::selection {
+  background: #fde68a;
+  color: #1a1a1a;
+}
+
+[data-theme='dark'] ::selection {
+  background: #fbbf24;
+  color: #1a1a1a;
+}
+
+/* ── Home page syntax highlighting ── */
+
+/* Light mode */
+.keyword  { color: #555; }
+.type     { color: #444; }
+.comment  { color: #999; }
+.string   { color: #666; }
+.lifetime { color: #888; }
+
+/* Dark mode */
+[data-theme='dark'] .keyword  { color: #bbb; }
+[data-theme='dark'] .type     { color: #ccc; }
+[data-theme='dark'] .comment  { color: #777; }
+[data-theme='dark'] .string   { color: #aaa; }
+[data-theme='dark'] .lifetime { color: #999; }

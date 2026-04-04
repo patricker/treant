@@ -1,7 +1,9 @@
+// Regenerate output: cargo run --example counting_game > examples/output/counting_game.txt
 use mcts::transposition_table::*;
 use mcts::tree_policy::*;
 use mcts::*;
 
+// region: game_definition
 #[derive(Clone)]
 struct CountingGame(i64);
 
@@ -33,13 +35,17 @@ impl GameState for CountingGame {
 		}
 	}
 }
+// endregion: game_definition
 
+// region: transposition_hash
 impl TranspositionHash for CountingGame {
 	fn hash(&self) -> u64 {
 		self.0 as u64
 	}
 }
+// endregion: transposition_hash
 
+// region: evaluator
 struct MyEvaluator;
 
 impl Evaluator<MyMCTS> for MyEvaluator {
@@ -62,7 +68,9 @@ impl Evaluator<MyMCTS> for MyEvaluator {
 		*evaln
 	}
 }
+// endregion: evaluator
 
+// region: mcts_config
 #[derive(Default)]
 struct MyMCTS;
 
@@ -82,7 +90,9 @@ impl MCTS for MyMCTS {
 		CycleBehaviour::UseCurrentEvalWhenCycleDetected
 	}
 }
+// endregion: mcts_config
 
+// region: run_search
 fn main() {
 	let game = CountingGame(0);
 	let mut mcts = MCTSManager::new(game, MyMCTS, MyEvaluator, UCTPolicy::new(5.0), ApproxTable::new(1024));
@@ -92,3 +102,4 @@ fn main() {
 	println!("Evaluation of moves:");
 	mcts.tree().debug_moves();
 }
+// endregion: run_search

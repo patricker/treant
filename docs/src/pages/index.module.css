@@ -1,0 +1,243 @@
+/* Home page — workshop aesthetic, muted blue accents */
+
+.hero {
+  padding: 4rem 0 3rem;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-heading-color);
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: var(--ifm-color-emphasis-700);
+  max-width: 540px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+}
+
+.heroCtas {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaPrimary {
+  display: inline-block;
+  padding: 0.65rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  transition: background 0.15s;
+}
+
+.ctaPrimary:hover {
+  background: var(--ifm-color-primary-dark);
+  color: #fff;
+  text-decoration: none;
+}
+
+.ctaSecondary {
+  display: inline-block;
+  padding: 0.65rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border: 1px solid var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  background: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ctaSecondary:hover {
+  background: var(--ifm-color-primary);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Features section */
+
+.features {
+  padding: 2rem 0 3rem;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.featureCards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.featureCard {
+  padding: 1.5rem;
+  border-radius: 6px;
+  background: var(--ifm-background-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  transition: border-color 0.15s;
+}
+
+.featureCard:hover {
+  border-color: var(--ifm-color-primary-lighter);
+}
+
+.featureCard h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.featureCard p {
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.featureLink {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.featureLink:hover {
+  text-decoration: underline;
+}
+
+/* Capabilities grid */
+
+.capabilities {
+  padding: 3rem 0;
+}
+
+.capabilities h2 {
+  margin-bottom: 1.5rem;
+}
+
+.capGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 2rem;
+}
+
+.capItem {
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-800);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--ifm-color-emphasis-100);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.capBullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  flex-shrink: 0;
+}
+
+/* Code preview */
+
+.codePreview {
+  padding: 0 0 4rem;
+}
+
+.codePreview h2 {
+  margin-bottom: 0.5rem;
+}
+
+.codePreview > p {
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+}
+
+.codeBlock {
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ifm-font-color-base);
+}
+
+[data-theme='dark'] .codeBlock {
+  background: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-emphasis-200);
+}
+
+.keyword {
+  color: #8250df;
+}
+
+.type {
+  color: #0550ae;
+}
+
+.comment {
+  color: #6e7781;
+  font-style: italic;
+}
+
+.string {
+  color: #0a3069;
+}
+
+.lifetime {
+  color: #cf222e;
+}
+
+[data-theme='dark'] .keyword {
+  color: #d2a8ff;
+}
+
+[data-theme='dark'] .type {
+  color: #79c0ff;
+}
+
+[data-theme='dark'] .comment {
+  color: #8b949e;
+}
+
+[data-theme='dark'] .string {
+  color: #a5d6ff;
+}
+
+[data-theme='dark'] .lifetime {
+  color: #ffa657;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1.1rem;
+  }
+
+  .featureCards {
+    grid-template-columns: 1fr;
+  }
+
+  .capGrid {
+    grid-template-columns: 1fr;
+  }
+}

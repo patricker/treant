@@ -1,0 +1,139 @@
+.demo {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  background: var(--ifm-background-surface-color);
+}
+
+.section {
+  margin-bottom: 1rem;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionLabel {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-600);
+  font-weight: 600;
+  margin-bottom: 0.375rem;
+}
+
+.loading {
+  color: var(--ifm-color-emphasis-500);
+  font-size: 0.875rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.error {
+  color: var(--ifm-color-danger);
+  font-size: 0.875rem;
+  padding: 1rem 0;
+}
+
+.provenValue {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.375rem 0.75rem;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.provenValue[data-status='win'] {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.provenValue[data-status='loss'] {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.provenValue[data-status='draw'] {
+  color: #eab308;
+  background: rgba(234, 179, 8, 0.1);
+}
+
+.provenValue[data-status='unknown'] {
+  color: var(--ifm-color-emphasis-600);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.gameOver {
+  text-align: center;
+  padding: 1rem;
+}
+
+.gameOver p {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.speedControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.speedLabel {
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-700);
+  min-width: 4.5rem;
+}
+
+.speedSlider {
+  flex: 1 1 auto;
+  height: 4px;
+  appearance: none;
+  background: var(--ifm-color-emphasis-200);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.speedSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  cursor: pointer;
+}
+
+.speedSlider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  cursor: pointer;
+}
+
+.speedValue {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8125rem;
+  min-width: 3rem;
+  text-align: right;
+}
+
+.thinking {
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-500);
+  font-style: italic;
+}
+
+[data-theme='dark'] .demo {
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] .speedSlider {
+  background: var(--ifm-color-emphasis-300);
+}

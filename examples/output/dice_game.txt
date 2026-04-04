@@ -1,0 +1,10 @@
+=== Chance Nodes: Dice Game ===
+
+Rules: Roll a d6 to add to score, or Stop. Terminal at score >= 20.
+Optimal strategy: always Roll (E[d6] = 3.5 > 0).
+
+Score= 0  Best=Roll      Roll: 21.0 avg (49999 visits)  Stop: 0.0 avg (1 visits)
+Score= 5  Best=Roll      Roll: 15.5 avg (49999 visits)  Stop: 5.0 avg (1 visits)
+Score=10  Best=Roll      Roll: 20.5 avg (49999 visits)  Stop: 10.0 avg (1 visits)
+Score=15  Best=Roll      Roll: 22.0 avg (49999 visits)  Stop: 15.0 avg (1 visits)
+Score=18  Best=Roll      Roll: 21.5 avg (49999 visits)  Stop: 18.0 avg (1 visits)

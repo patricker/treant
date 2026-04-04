@@ -1,0 +1,61 @@
+/**
+ * Theme 03: Ink & Paper
+ *
+ * Academic typesetting aesthetic. Serif body text with Literata,
+ * monospace code with JetBrains Mono. Small caps headings,
+ * generous line height, scholarly authority.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;0,7..72,700;0,7..72,800;1,7..72,400;1,7..72,500&display=swap');
+
+:root {
+  --ifm-color-primary: #1a1a2e;
+  --ifm-color-primary-dark: #16162a;
+  --ifm-color-primary-darker: #131326;
+  --ifm-color-primary-darkest: #0d0d1e;
+  --ifm-color-primary-light: #2a2a42;
+  --ifm-color-primary-lighter: #3a3a56;
+  --ifm-color-primary-lightest: #4a4a6a;
+
+  --ifm-font-family-base: 'Literata', Georgia, 'Times New Roman', serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Cascadia Code', monospace;
+  --ifm-code-font-size: 92%;
+  --ifm-heading-font-weight: 700;
+  --ifm-font-weight-bold: 800;
+  --ifm-line-height-base: 1.7;
+  --docusaurus-highlighted-code-line-bg: rgba(26, 26, 46, 0.06);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #a8a8c0;
+  --ifm-color-primary-dark: #9898b0;
+  --ifm-color-primary-darker: #8888a0;
+  --ifm-color-primary-darkest: #787890;
+  --ifm-color-primary-light: #b8b8d0;
+  --ifm-color-primary-lighter: #c8c8e0;
+  --ifm-color-primary-lightest: #d8d8f0;
+
+  --docusaurus-highlighted-code-line-bg: rgba(168, 168, 192, 0.1);
+}
+
+/* Small-caps headings with subtle letter spacing */
+h1, h2, h3, h4 {
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+}
+
+/* ── Home page syntax highlighting ── */
+
+/* Light mode */
+.keyword  { color: #9f1239; }
+.type     { color: #1e40af; }
+.comment  { color: #6b7280; }
+.string   { color: #065f46; }
+.lifetime { color: #b91c1c; }
+
+/* Dark mode */
+[data-theme='dark'] .keyword  { color: #fda4af; }
+[data-theme='dark'] .type     { color: #93c5fd; }
+[data-theme='dark'] .comment  { color: #9ca3af; }
+[data-theme='dark'] .string   { color: #6ee7b7; }
+[data-theme='dark'] .lifetime { color: #fca5a5; }

@@ -1,0 +1,45 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.player {
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.stones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 24px;
+  align-items: center;
+}
+
+.stone {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #94a3b8;
+  flex-shrink: 0;
+}
+
+.empty {
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-400);
+  font-style: italic;
+}
+
+.actions {
+  display: flex;
+  gap: 0.375rem;
+}
+
+[data-theme='dark'] .player {
+  color: var(--ifm-color-emphasis-600);
+}
+
+[data-theme='dark'] .stone {
+  background: #64748b;
+}

@@ -1,0 +1,27 @@
+=== Tree Re-Rooting ===
+
+Turn 1: state=0, best=Add, nodes=389
+  Add: 9999 visits, 98.2 avg reward
+  Sub: 1 visits, -1.0 avg reward
+  -> Advanced to state=1, preserved 1 nodes
+
+Turn 2: state=1, best=Add, nodes=1
+  Add: 19997 visits, 99.1 avg reward
+  Sub: 1 visits, 0.0 avg reward
+  -> Advanced to state=2, preserved 1 nodes
+
+Turn 3: state=2, best=Add, nodes=1
+  Add: 29995 visits, 99.4 avg reward
+  Sub: 1 visits, 1.0 avg reward
+  -> Advanced to state=3, preserved 1 nodes
+
+Turn 4: state=3, best=Add, nodes=1
+  Add: 39993 visits, 99.6 avg reward
+  Sub: 1 visits, 2.0 avg reward
+  -> Advanced to state=4, preserved 1 nodes
+
+Turn 5: state=4, best=Add, nodes=1
+  Add: 49991 visits, 99.6 avg reward
+  Sub: 1 visits, 3.0 avg reward
+  -> Advanced to state=5, preserved 1 nodes
+

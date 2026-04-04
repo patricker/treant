@@ -6,6 +6,7 @@
 //! during the opponent's turn).
 //!
 //! Run: cargo run --example tree_reuse
+//! Output: cargo run --example tree_reuse > examples/output/tree_reuse.txt
 
 use mcts::tree_policy::*;
 use mcts::*;
@@ -83,6 +84,7 @@ impl MCTS for MyMCTS {
     type TranspositionTable = ();
 }
 
+// region: reuse_loop
 fn main() {
     println!("=== Tree Re-Rooting ===\n");
 
@@ -119,3 +121,4 @@ fn main() {
                  mcts.tree().root_state().0);
     }
 }
+// endregion: reuse_loop

@@ -1,17 +1,11 @@
-//! MCTS-Solver: proving game-theoretic wins and losses.
-//!
-//! Plays Nim (take 1 or 2 from a pile, last stone wins) and uses the solver
-//! to prove positions as won or lost — no heuristic needed, just search.
-//!
-//! Run: cargo run --example nim_solver
-//! Output: cargo run --example nim_solver > examples/output/nim_solver.txt
-
 use mcts::tree_policy::*;
 use mcts::*;
+use wasm_bindgen::prelude::*;
 
-// --- Game ---
+use crate::types;
 
-// region: nim_game
+// --- Game (mirrors examples/nim_solver.rs) ---
+
 #[derive(Clone, Debug)]
 struct Nim {
     stones: u8,
@@ -33,8 +27,8 @@ enum NimMove {
 impl std::fmt::Display for NimMove {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            NimMove::Take1 => write!(f, "Take 1"),
-            NimMove::Take2 => write!(f, "Take 2"),
+            NimMove::Take1 => write!(f, "Take1"),
+            NimMove::Take2 => write!(f, "Take2"),
         }
     }
 }
@@ -69,29 +63,23 @@ impl GameState for Nim {
 
     fn terminal_value(&self) -> Option<ProvenValue> {
         if self.stones == 0 {
-            // Previous player took the last stone and won.
-            // Current player (who can't move) lost.
             Some(ProvenValue::Loss)
         } else {
             None
         }
     }
 }
-// endregion: nim_game
 
-// --- Evaluator ---
-
-// region: nim_evaluator
 struct NimEval;
 
-impl Evaluator<NimMCTS> for NimEval {
+impl Evaluator<NimConfig> for NimEval {
     type StateEvaluation = Option<Player>;
 
     fn evaluate_new_state(
         &self,
         state: &Nim,
         moves: &Vec<NimMove>,
-        _: Option<SearchHandle<NimMCTS>>,
+        _: Option<SearchHandle<NimConfig>>,
     ) -> (Vec<()>, Option<Player>) {
         let winner = if state.stones == 0 {
             Some(match state.current {
@@ -116,20 +104,16 @@ impl Evaluator<NimMCTS> for NimEval {
         &self,
         _: &Nim,
         evaln: &Option<Player>,
-        _: SearchHandle<NimMCTS>,
+        _: SearchHandle<NimConfig>,
     ) -> Option<Player> {
         *evaln
     }
 }
-// endregion: nim_evaluator
 
-// --- MCTS config ---
-
-// region: solver_config
 #[derive(Default)]
-struct NimMCTS;
+struct NimConfig;
 
-impl MCTS for NimMCTS {
+impl MCTS for NimConfig {
     type State = Nim;
     type Eval = NimEval;
     type NodeData = ();
@@ -141,38 +125,83 @@ impl MCTS for NimMCTS {
         true
     }
 }
-// endregion: solver_config
 
-// region: run_solver
-fn main() {
-    println!("=== MCTS-Solver: Nim ===\n");
-    println!("Rules: take 1 or 2 stones. Last stone wins.");
-    println!("Theory: position is losing iff stones % 3 == 0.\n");
+// --- WASM API ---
 
-    for stones in 1u8..=9 {
-        let mut mcts = MCTSManager::new(
-            Nim {
-                stones,
-                current: Player::P1,
-            },
-            NimMCTS,
+#[wasm_bindgen]
+pub struct NimWasm {
+    manager: MCTSManager<NimConfig>,
+    initial_stones: u8,
+}
+
+#[wasm_bindgen]
+impl NimWasm {
+    #[wasm_bindgen(constructor)]
+    pub fn new(stones: u8) -> Self {
+        let s = if stones > 0 { stones } else { 5 };
+        Self {
+            manager: MCTSManager::new(
+                Nim { stones: s, current: Player::P1 },
+                NimConfig,
+                NimEval,
+                UCTPolicy::new(1.0),
+                (),
+            ),
+            initial_stones: s,
+        }
+    }
+
+    pub fn playout_n(&mut self, n: u32) {
+        self.manager.playout_n(n as u64);
+    }
+
+    pub fn get_stats(&self) -> JsValue {
+        let stats = types::build_stats(&self.manager, |_| None);
+        serde_wasm_bindgen::to_value(&stats).unwrap()
+    }
+
+    pub fn get_tree(&self, max_depth: u32) -> JsValue {
+        let tree = types::export_tree::<NimConfig>(self.manager.tree().root_node(), max_depth);
+        serde_wasm_bindgen::to_value(&tree).unwrap()
+    }
+
+    pub fn root_proven_value(&self) -> String {
+        format!("{:?}", self.manager.root_proven_value())
+    }
+
+    pub fn current_stones(&self) -> u8 {
+        self.manager.tree().root_state().stones
+    }
+
+    pub fn current_player(&self) -> String {
+        format!("{:?}", self.manager.tree().root_state().current)
+    }
+
+    pub fn is_terminal(&self) -> bool {
+        self.manager.tree().root_state().stones == 0
+    }
+
+    pub fn best_move(&self) -> Option<String> {
+        self.manager.best_move().map(|m| format!("{m}"))
+    }
+
+    /// Apply a move and advance the tree (preserving search).
+    pub fn apply_move(&mut self, mov: &str) -> bool {
+        let m = match mov {
+            "Take1" => NimMove::Take1,
+            "Take2" => NimMove::Take2,
+            _ => return false,
+        };
+        self.manager.advance(&m).is_ok()
+    }
+
+    pub fn reset(&mut self) {
+        self.manager = MCTSManager::new(
+            Nim { stones: self.initial_stones, current: Player::P1 },
+            NimConfig,
             NimEval,
             UCTPolicy::new(1.0),
             (),
         );
-        mcts.playout_n(500);
-
-        let proven = mcts.root_proven_value();
-        let theory = if stones % 3 == 0 { "Loss" } else { "Win " };
-        let best = mcts
-            .best_move()
-            .map(|m| format!("{m}"))
-            .unwrap_or_else(|| "-".into());
-        let nodes = mcts.tree().num_nodes();
-
-        println!(
-            "Stones={stones}  Proven={proven:?}  Theory={theory}  Best={best:6}  Nodes={nodes}"
-        );
     }
 }
-// endregion: run_solver

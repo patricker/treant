@@ -1,0 +1,14 @@
+=== MCTS-Solver: Nim ===
+
+Rules: take 1 or 2 stones. Last stone wins.
+Theory: position is losing iff stones % 3 == 0.
+
+Stones=1  Proven=Win  Theory=Win   Best=Take 1  Nodes=2
+Stones=2  Proven=Win  Theory=Win   Best=Take 2  Nodes=3
+Stones=3  Proven=Loss  Theory=Loss  Best=Take 1  Nodes=6
+Stones=4  Proven=Win  Theory=Win   Best=Take 1  Nodes=10
+Stones=5  Proven=Win  Theory=Win   Best=Take 2  Nodes=10
+Stones=6  Proven=Loss  Theory=Loss  Best=Take 1  Nodes=25
+Stones=7  Proven=Win  Theory=Win   Best=Take 1  Nodes=31
+Stones=8  Proven=Win  Theory=Win   Best=Take 2  Nodes=54
+Stones=9  Proven=Loss  Theory=Loss  Best=Take 1  Nodes=86

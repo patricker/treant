@@ -1,0 +1,55 @@
+.tree {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.node {
+  stroke: var(--ifm-color-emphasis-400);
+  stroke-width: 1.5;
+  transition: cx 300ms ease, cy 300ms ease, r 300ms ease;
+}
+
+.node[data-highlighted] {
+  stroke: var(--ifm-color-emphasis-700);
+  stroke-width: 2;
+}
+
+.nodeLabel {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 10px;
+  fill: #fff;
+  pointer-events: none;
+  user-select: none;
+}
+
+.edge {
+  stroke: var(--ifm-color-emphasis-300);
+  stroke-width: 1.5;
+  transition: x1 300ms ease, y1 300ms ease, x2 300ms ease, y2 300ms ease;
+}
+
+.edge[data-highlighted] {
+  stroke: var(--ifm-color-emphasis-600);
+  stroke-width: 2.5;
+}
+
+.edgeLabel {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 11px;
+  fill: var(--ifm-color-emphasis-600);
+  pointer-events: none;
+  user-select: none;
+}
+
+[data-theme='dark'] .edge {
+  stroke: var(--ifm-color-emphasis-400);
+}
+
+[data-theme='dark'] .edge[data-highlighted] {
+  stroke: var(--ifm-color-emphasis-500);
+}
+
+[data-theme='dark'] .edgeLabel {
+  fill: var(--ifm-color-emphasis-500);
+}

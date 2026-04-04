@@ -5,12 +5,14 @@
 //! for exploration, and temperature-based move selection.
 //!
 //! Run: cargo run --example alphazero_basics
+//! Output: cargo run --example alphazero_basics > examples/output/alphazero_basics.txt
 
 use mcts::tree_policy::*;
 use mcts::*;
 
 // --- Game: simple 3-move game with known optimal play ---
 
+// region: prior_game
 /// A game where the player picks A, B, or C. Each has a different value.
 /// The "neural network prior" is intentionally wrong (favors C),
 /// but MCTS should overcome it and find A (the best move).
@@ -61,9 +63,11 @@ impl GameState for PriorGame {
         }
     }
 }
+// endregion: prior_game
 
 // --- Evaluator with intentionally misleading priors ---
 
+// region: prior_evaluator
 struct PriorEval;
 
 impl Evaluator<PriorMCTS> for PriorEval {
@@ -98,9 +102,11 @@ impl Evaluator<PriorMCTS> for PriorEval {
         *evaln
     }
 }
+// endregion: prior_evaluator
 
 // --- MCTS config with AlphaZero features ---
 
+// region: alphazero_config
 #[derive(Default)]
 struct PriorMCTS;
 
@@ -128,7 +134,9 @@ impl MCTS for PriorMCTS {
         Some(42)
     }
 }
+// endregion: alphazero_config
 
+// region: run_alphazero
 fn main() {
     println!("=== AlphaZero-Style Search ===\n");
     println!("Game: pick A(+10), B(+5), or C(+1) at each step, depth 3.");
@@ -170,3 +178,4 @@ fn main() {
         pv.iter().map(|m| format!("{m}")).collect::<Vec<_>>()
     );
 }
+// endregion: run_alphazero

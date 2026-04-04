@@ -1,0 +1,61 @@
+/**
+ * Theme 09: Solarized
+ *
+ * Ethan Schoonover's classic palette with scientifically designed contrast.
+ * Uses the exact Solarized hex values throughout. Cyan primary accent,
+ * warm base3 background in light mode, deep base03 in dark mode.
+ * Source Sans 3 for body text, Source Code Pro for code.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  --ifm-color-primary: #2aa198;
+  --ifm-color-primary-dark: #259088;
+  --ifm-color-primary-darker: #228580;
+  --ifm-color-primary-darkest: #1b6b68;
+  --ifm-color-primary-light: #35b0a8;
+  --ifm-color-primary-lighter: #40bab2;
+  --ifm-color-primary-lightest: #5ccac3;
+
+  --ifm-font-family-base: 'Source Sans 3', 'Source Sans Pro', sans-serif;
+  --ifm-font-family-monospace: 'Source Code Pro', 'Consolas', monospace;
+  --ifm-code-font-size: 95%;
+  --ifm-background-color: #fdf6e3;
+  --ifm-background-surface-color: #eee8d5;
+  --ifm-font-color-base: #657b83;
+  --ifm-heading-color: #586e75;
+  --docusaurus-highlighted-code-line-bg: rgba(42, 161, 152, 0.08);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #2aa198;
+  --ifm-color-primary-dark: #259088;
+  --ifm-color-primary-darker: #228580;
+  --ifm-color-primary-darkest: #1b6b68;
+  --ifm-color-primary-light: #35b0a8;
+  --ifm-color-primary-lighter: #40bab2;
+  --ifm-color-primary-lightest: #5ccac3;
+
+  --ifm-background-color: #002b36;
+  --ifm-background-surface-color: #073642;
+  --ifm-font-color-base: #839496;
+  --ifm-heading-color: #93a1a1;
+  --docusaurus-highlighted-code-line-bg: rgba(42, 161, 152, 0.15);
+}
+
+/* ── Home page syntax highlighting ── */
+
+/* Light mode */
+.keyword  { color: #859900; }
+.type     { color: #268bd2; }
+.comment  { color: #93a1a1; }
+.string   { color: #2aa198; }
+.lifetime { color: #dc322f; }
+
+/* Dark mode */
+[data-theme='dark'] .keyword  { color: #859900; }
+[data-theme='dark'] .type     { color: #268bd2; }
+[data-theme='dark'] .comment  { color: #586e75; }
+[data-theme='dark'] .string   { color: #2aa198; }
+[data-theme='dark'] .lifetime { color: #dc322f; }

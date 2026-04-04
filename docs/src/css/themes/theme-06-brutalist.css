@@ -1,0 +1,82 @@
+/**
+ * Theme 06: Brutalist
+ *
+ * Raw concrete. Anti-design. Thick borders. All caps nav. Maximum contrast.
+ * Space Mono for everything — body and code alike. Zero border radius,
+ * heavy weight headings with underlines. Pure black on white, pure white
+ * on near-black. No softness, no decoration, no apology.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+  --ifm-color-primary: #000000;
+  --ifm-color-primary-dark: #1a1a1a;
+  --ifm-color-primary-darker: #0d0d0d;
+  --ifm-color-primary-darkest: #000000;
+  --ifm-color-primary-light: #333333;
+  --ifm-color-primary-lighter: #4d4d4d;
+  --ifm-color-primary-lightest: #666666;
+
+  --ifm-font-family-base: 'Space Mono', 'Courier New', monospace;
+  --ifm-font-family-monospace: 'Space Mono', 'Courier New', monospace;
+  --ifm-code-font-size: 90%;
+  --ifm-heading-font-weight: 900;
+  --ifm-border-radius: 0px !important;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #ffffff;
+  --ifm-color-primary-dark: #e6e6e6;
+  --ifm-color-primary-darker: #cccccc;
+  --ifm-color-primary-darkest: #b3b3b3;
+  --ifm-color-primary-light: #ffffff;
+  --ifm-color-primary-lighter: #ffffff;
+  --ifm-color-primary-lightest: #ffffff;
+
+  --ifm-background-color: #0a0a0a;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.08);
+}
+
+/* Nuclear option: no rounded corners anywhere */
+* {
+  border-radius: 0 !important;
+}
+
+/* Thick structural borders */
+.navbar,
+.footer {
+  border-bottom: 3px solid var(--ifm-color-primary);
+}
+
+/* All caps navigation */
+.navbar__title {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+/* Brutalist headings: uppercase, underlined, heavy */
+h1, h2, h3 {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid var(--ifm-color-primary);
+  padding-bottom: 0.25em;
+}
+
+/* ── Home page syntax highlighting ── */
+
+/* Light mode */
+.keyword  { color: #ff0000; }
+.type     { color: #0000ff; }
+.comment  { color: #666666; }
+.string   { color: #008000; }
+.lifetime { color: #ff0000; }
+
+/* Dark mode */
+[data-theme='dark'] .keyword  { color: #ff6666; }
+[data-theme='dark'] .type     { color: #6666ff; }
+[data-theme='dark'] .comment  { color: #999999; }
+[data-theme='dark'] .string   { color: #66cc66; }
+[data-theme='dark'] .lifetime { color: #ff6666; }

@@ -1,0 +1,66 @@
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 28px;
+}
+
+.label {
+  flex: 0 0 auto;
+  min-width: 3.5rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8125rem;
+  text-align: right;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.barTrack {
+  flex: 1 1 auto;
+  height: 16px;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: var(--ifm-color-primary);
+  border-radius: 2px;
+  transition: width 300ms ease;
+  min-width: 0;
+}
+
+.values {
+  flex: 0 0 auto;
+  min-width: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.primary {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8125rem;
+  line-height: 1.2;
+}
+
+.secondary {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.6875rem;
+  color: var(--ifm-color-emphasis-500);
+  line-height: 1.2;
+}
+
+[data-theme='dark'] .barTrack {
+  background: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .label {
+  color: var(--ifm-color-emphasis-600);
+}

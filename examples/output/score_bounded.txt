@@ -1,0 +1,28 @@
+=== Score-Bounded MCTS ===
+
+A depth-2 two-player game with known terminal scores.
+P1 picks branch A/B/C, then P2 responds.
+
+Tree (scores from P1's perspective):
+            Root (P1)
+         /      |      \
+       A        B        C
+     (P2)     (P2)     (P2)
+     / \      / \      / \
+    2   5    1   3    8   6
+
+Minimax: A=min(2,5)=2, B=min(1,3)=1, C=min(8,6)=6
+Root = max(2,1,6) = 6 via branch C
+
+Root score bounds: [6, 6]
+Bounds converged:  true
+Root proven value: Win
+Best move: C
+Nodes: 8
+
+Child stats (bounds from P1's perspective):
+  A — visits:    1, avg_reward:    5.0, value: [-inf,    5], proven: Unknown
+  B — visits:    1, avg_reward:    1.0, value: [-inf,    1], proven: Unknown
+  C — visits:    2, avg_reward:    7.0, value: [   6,    6], proven: Loss
+
+Verified: minimax value = 6 (exact)

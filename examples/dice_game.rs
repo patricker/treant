@@ -5,12 +5,14 @@
 //! MCTS correctly learns that rolling is always better than stopping.
 //!
 //! Run: cargo run --example dice_game
+//! Output: cargo run --example dice_game > examples/output/dice_game.txt
 
 use mcts::tree_policy::*;
 use mcts::*;
 
 // --- Game ---
 
+// region: dice_game
 #[derive(Clone, Debug)]
 struct DiceGame {
     score: i64,
@@ -73,9 +75,11 @@ impl GameState for DiceGame {
         }
     }
 }
+// endregion: dice_game
 
 // --- Evaluator ---
 
+// region: dice_evaluator
 struct DiceEval;
 
 impl Evaluator<DiceMCTS> for DiceEval {
@@ -105,9 +109,11 @@ impl Evaluator<DiceMCTS> for DiceEval {
         state.score
     }
 }
+// endregion: dice_evaluator
 
 // --- MCTS config ---
 
+// region: dice_config
 #[derive(Default)]
 struct DiceMCTS;
 
@@ -119,6 +125,7 @@ impl MCTS for DiceMCTS {
     type TreePolicy = UCTPolicy;
     type TranspositionTable = ();
 }
+// endregion: dice_config
 
 fn main() {
     println!("=== Chance Nodes: Dice Game ===\n");

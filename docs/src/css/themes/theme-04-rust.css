@@ -1,0 +1,57 @@
+/**
+ * Theme 04: Rust Orange
+ *
+ * Rust language ecosystem palette. Warm, earthy tones with
+ * Fira Sans body text and Fira Code for code blocks.
+ * Warm paper backgrounds, Ferris-adjacent orange accents.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  --ifm-color-primary: #c45a2c;
+  --ifm-color-primary-dark: #b04f27;
+  --ifm-color-primary-darker: #a64a24;
+  --ifm-color-primary-darkest: #893d1e;
+  --ifm-color-primary-light: #d06a3e;
+  --ifm-color-primary-lighter: #d87a52;
+  --ifm-color-primary-lightest: #e49a78;
+
+  --ifm-font-family-base: 'Fira Sans', -apple-system, sans-serif;
+  --ifm-font-family-monospace: 'Fira Code', 'Cascadia Code', monospace;
+  --ifm-code-font-size: 95%;
+  --ifm-border-radius: 3px;
+  --ifm-background-color: #faf5f0;
+  --ifm-background-surface-color: #f5ede5;
+  --docusaurus-highlighted-code-line-bg: rgba(196, 90, 44, 0.08);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #e87b4f;
+  --ifm-color-primary-dark: #e06a3a;
+  --ifm-color-primary-darker: #d85f2e;
+  --ifm-color-primary-darkest: #c84d1e;
+  --ifm-color-primary-light: #ec8c64;
+  --ifm-color-primary-lighter: #f09d79;
+  --ifm-color-primary-lightest: #f4be9e;
+
+  --ifm-background-color: #1c1917;
+  --ifm-background-surface-color: #292524;
+  --docusaurus-highlighted-code-line-bg: rgba(232, 123, 79, 0.12);
+}
+
+/* ── Home page syntax highlighting ── */
+
+/* Light mode */
+.keyword  { color: #c2410c; }
+.type     { color: #1d4ed8; }
+.comment  { color: #78716c; }
+.string   { color: #047857; }
+.lifetime { color: #9f1239; }
+
+/* Dark mode */
+[data-theme='dark'] .keyword  { color: #fdba74; }
+[data-theme='dark'] .type     { color: #93c5fd; }
+[data-theme='dark'] .comment  { color: #a8a29e; }
+[data-theme='dark'] .string   { color: #6ee7b7; }
+[data-theme='dark'] .lifetime { color: #fda4af; }

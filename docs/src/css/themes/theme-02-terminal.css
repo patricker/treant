@@ -1,0 +1,65 @@
+/**
+ * Theme 02: Terminal
+ *
+ * Hacker terminal aesthetic. Phosphor green on dark backgrounds.
+ * Monospace everything — IBM Plex Mono for body and code alike.
+ * Zero border radius, glowing headings, dense code blocks.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  --ifm-color-primary: #16a34a;
+  --ifm-color-primary-dark: #15803d;
+  --ifm-color-primary-darker: #14532d;
+  --ifm-color-primary-darkest: #052e16;
+  --ifm-color-primary-light: #22c55e;
+  --ifm-color-primary-lighter: #4ade80;
+  --ifm-color-primary-lightest: #86efac;
+
+  --ifm-font-family-base: 'IBM Plex Mono', monospace;
+  --ifm-font-family-monospace: 'IBM Plex Mono', monospace;
+  --ifm-code-font-size: 90%;
+  --ifm-border-radius: 0px;
+  --docusaurus-highlighted-code-line-bg: rgba(34, 197, 94, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #4ade80;
+  --ifm-color-primary-dark: #22c55e;
+  --ifm-color-primary-darker: #16a34a;
+  --ifm-color-primary-darkest: #15803d;
+  --ifm-color-primary-light: #86efac;
+  --ifm-color-primary-lighter: #bbf7d0;
+  --ifm-color-primary-lightest: #dcfce7;
+
+  --docusaurus-highlighted-code-line-bg: rgba(34, 197, 94, 0.15);
+}
+
+/* Selection highlight */
+::selection {
+  background: rgba(34, 197, 94, 0.3);
+}
+
+/* Dark mode heading glow */
+[data-theme='dark'] h1,
+[data-theme='dark'] h2,
+[data-theme='dark'] h3 {
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
+}
+
+/* ── Home page syntax highlighting ── */
+
+/* Light mode */
+.keyword  { color: #166534; }
+.type     { color: #15803d; }
+.comment  { color: #6b7280; }
+.string   { color: #064e3b; }
+.lifetime { color: #dc2626; }
+
+/* Dark mode */
+[data-theme='dark'] .keyword  { color: #86efac; }
+[data-theme='dark'] .type     { color: #4ade80; }
+[data-theme='dark'] .comment  { color: #6b7280; }
+[data-theme='dark'] .string   { color: #bbf7d0; }
+[data-theme='dark'] .lifetime { color: #fca5a5; }

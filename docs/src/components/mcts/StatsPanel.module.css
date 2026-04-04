@@ -1,0 +1,75 @@
+.panel {
+  font-size: 0.875rem;
+}
+
+.summary {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.value {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ifm-color-emphasis-600);
+  font-weight: 600;
+}
+
+.table td {
+  padding: 0.2rem 0.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-100);
+}
+
+.mono {
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.statusCell[data-status='win'] {
+  color: #22c55e;
+}
+
+.statusCell[data-status='loss'] {
+  color: #ef4444;
+}
+
+.statusCell[data-status='draw'] {
+  color: #eab308;
+}
+
+[data-theme='dark'] .table th {
+  border-bottom-color: var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] .table td {
+  border-bottom-color: var(--ifm-color-emphasis-200);
+}

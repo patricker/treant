@@ -1,0 +1,59 @@
+/**
+ * Theme 05: Arctic
+ *
+ * Nord-inspired. Cold, precise, Scandinavian. Ice on steel.
+ * DM Sans for body text, DM Mono for code — clean geometric forms
+ * that match the Nordic minimalism. Snow storm backgrounds in light
+ * mode, polar night in dark. Generous line height for breathing room.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+
+:root {
+  --ifm-color-primary: #5e81ac;
+  --ifm-color-primary-dark: #4c6e96;
+  --ifm-color-primary-darker: #466889;
+  --ifm-color-primary-darkest: #3a566f;
+  --ifm-color-primary-light: #6e8fb7;
+  --ifm-color-primary-lighter: #7e9dc2;
+  --ifm-color-primary-lightest: #9eb7d4;
+
+  --ifm-font-family-base: 'DM Sans', system-ui, sans-serif;
+  --ifm-font-family-monospace: 'DM Mono', 'Cascadia Code', monospace;
+  --ifm-code-font-size: 93%;
+  --ifm-line-height-base: 1.75;
+  --ifm-border-radius: 6px;
+  --ifm-background-color: #eceff4;
+  --ifm-background-surface-color: #e5e9f0;
+  --docusaurus-highlighted-code-line-bg: rgba(94, 129, 172, 0.08);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #88c0d0;
+  --ifm-color-primary-dark: #74b3c5;
+  --ifm-color-primary-darker: #6aacbf;
+  --ifm-color-primary-darkest: #5299ad;
+  --ifm-color-primary-light: #9cccdb;
+  --ifm-color-primary-lighter: #b0d8e6;
+  --ifm-color-primary-lightest: #c4e4f0;
+
+  --ifm-background-color: #2e3440;
+  --ifm-background-surface-color: #3b4252;
+  --docusaurus-highlighted-code-line-bg: rgba(136, 192, 208, 0.1);
+}
+
+/* ── Home page syntax highlighting ── */
+
+/* Light mode */
+.keyword  { color: #5e81ac; }
+.type     { color: #81a1c1; }
+.comment  { color: #4c566a; }
+.string   { color: #a3be8c; }
+.lifetime { color: #bf616a; }
+
+/* Dark mode */
+[data-theme='dark'] .keyword  { color: #81a1c1; }
+[data-theme='dark'] .type     { color: #88c0d0; }
+[data-theme='dark'] .comment  { color: #616e88; }
+[data-theme='dark'] .string   { color: #a3be8c; }
+[data-theme='dark'] .lifetime { color: #bf616a; }
