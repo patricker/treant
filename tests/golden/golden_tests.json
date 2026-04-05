@@ -1,0 +1,113 @@
+[
+  {
+    "name": "counting_basic",
+    "description": "CountingGame(0→10) with 2000 playouts should strongly prefer Add",
+    "game": "counting",
+    "state": { "target": 10 },
+    "config": {
+      "exploration_constant": 1.41,
+      "seed": 42,
+      "playouts": 2000
+    },
+    "expect": {
+      "best_move": "Add",
+      "child_stats": [
+        { "mov": "Add", "visits_gte": 1500 },
+        { "mov": "Sub", "visits_lte": 500 }
+      ]
+    }
+  },
+  {
+    "name": "counting_high_playouts",
+    "description": "CountingGame(0→10) with 5000 playouts should almost exclusively prefer Add",
+    "game": "counting",
+    "state": { "target": 10 },
+    "config": {
+      "exploration_constant": 1.41,
+      "seed": 42,
+      "playouts": 5000
+    },
+    "expect": {
+      "best_move": "Add",
+      "child_stats": [
+        { "mov": "Add", "visits_gte": 4000 }
+      ]
+    }
+  },
+  {
+    "name": "nim_solver_5_stones",
+    "description": "Nim(5) is a winning position (5 % 3 != 0). Solver should prove Win, best move Take2",
+    "game": "nim",
+    "state": { "stones": 5 },
+    "config": {
+      "exploration_constant": 0.5,
+      "solver": true,
+      "seed": 42,
+      "playouts": 10000
+    },
+    "expect": {
+      "best_move": "Take2",
+      "proven_value": "Win"
+    }
+  },
+  {
+    "name": "nim_solver_4_stones",
+    "description": "Nim(4) is a winning position (4 % 3 != 0). Best move Take1.",
+    "game": "nim",
+    "state": { "stones": 4 },
+    "config": {
+      "exploration_constant": 0.5,
+      "solver": true,
+      "seed": 42,
+      "playouts": 10000
+    },
+    "expect": {
+      "best_move": "Take1",
+      "proven_value": "Win"
+    }
+  },
+  {
+    "name": "nim_solver_3_stones",
+    "description": "Nim(3) is a losing position (3 % 3 == 0). Solver should prove Loss.",
+    "game": "nim",
+    "state": { "stones": 3 },
+    "config": {
+      "exploration_constant": 0.5,
+      "solver": true,
+      "seed": 42,
+      "playouts": 10000
+    },
+    "expect": {
+      "proven_value": "Loss"
+    }
+  },
+  {
+    "name": "nim_solver_6_stones",
+    "description": "Nim(6) is a losing position (6 % 3 == 0). Solver should prove Loss.",
+    "game": "nim",
+    "state": { "stones": 6 },
+    "config": {
+      "exploration_constant": 0.5,
+      "solver": true,
+      "seed": 42,
+      "playouts": 20000
+    },
+    "expect": {
+      "proven_value": "Loss"
+    }
+  },
+  {
+    "name": "nim_no_solver_5_stones",
+    "description": "Nim(5) without solver. Should still find best move by reward.",
+    "game": "nim",
+    "state": { "stones": 5 },
+    "config": {
+      "exploration_constant": 1.41,
+      "seed": 42,
+      "playouts": 5000
+    },
+    "expect": {
+      "best_move": "Take2"
+    }
+  }
+]

@@ -119,7 +119,11 @@ impl DiceGameWasm {
     pub fn new(start_score: i64) -> Self {
         Self {
             manager: MCTSManager::new(
-                DiceGame { score: start_score, pending_roll: false, stopped: false },
+                DiceGame {
+                    score: start_score,
+                    pending_roll: false,
+                    stopped: false,
+                },
                 DiceConfig,
                 DiceEval,
                 UCTPolicy::new(0.5),
@@ -149,7 +153,11 @@ impl DiceGameWasm {
 
     pub fn reset(&mut self) {
         self.manager = MCTSManager::new(
-            DiceGame { score: self.start_score, pending_roll: false, stopped: false },
+            DiceGame {
+                score: self.start_score,
+                pending_roll: false,
+                stopped: false,
+            },
             DiceConfig,
             DiceEval,
             UCTPolicy::new(0.5),

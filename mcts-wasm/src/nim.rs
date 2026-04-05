@@ -141,7 +141,10 @@ impl NimWasm {
         let s = if stones > 0 { stones } else { 5 };
         Self {
             manager: MCTSManager::new(
-                Nim { stones: s, current: Player::P1 },
+                Nim {
+                    stones: s,
+                    current: Player::P1,
+                },
                 NimConfig,
                 NimEval,
                 UCTPolicy::new(1.0),
@@ -197,7 +200,10 @@ impl NimWasm {
 
     pub fn reset(&mut self) {
         self.manager = MCTSManager::new(
-            Nim { stones: self.initial_stones, current: Player::P1 },
+            Nim {
+                stones: self.initial_stones,
+                current: Player::P1,
+            },
             NimConfig,
             NimEval,
             UCTPolicy::new(1.0),

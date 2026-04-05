@@ -67,7 +67,12 @@ impl Evaluator<MyMCTS> for MyEval {
     fn interpret_evaluation_for_player(&self, evaln: &i64, _: &()) -> i64 {
         *evaln
     }
-    fn evaluate_existing_state(&self, _: &CountingGame, evaln: &i64, _: SearchHandle<MyMCTS>) -> i64 {
+    fn evaluate_existing_state(
+        &self,
+        _: &CountingGame,
+        evaln: &i64,
+        _: SearchHandle<MyMCTS>,
+    ) -> i64 {
         *evaln
     }
 }
@@ -88,13 +93,7 @@ impl MCTS for MyMCTS {
 fn main() {
     println!("=== Tree Re-Rooting ===\n");
 
-    let mut mcts = MCTSManager::new(
-        CountingGame(0),
-        MyMCTS,
-        MyEval,
-        UCTPolicy::new(0.5),
-        (),
-    );
+    let mut mcts = MCTSManager::new(CountingGame(0), MyMCTS, MyEval, UCTPolicy::new(0.5), ());
 
     // Simulate 5 turns of play, reusing the search tree each turn
     for turn in 1..=5 {
@@ -110,15 +109,20 @@ fn main() {
         // Show child stats
         let stats = mcts.root_child_stats();
         for s in &stats {
-            println!("  {}: {} visits, {:.1} avg reward", s.mov, s.visits, s.avg_reward);
+            println!(
+                "  {}: {} visits, {:.1} avg reward",
+                s.mov, s.visits, s.avg_reward
+            );
         }
 
         // Commit to the best move and re-root
         mcts.advance(&best).unwrap();
 
         let new_nodes = mcts.tree().num_nodes();
-        println!("  -> Advanced to state={}, preserved {new_nodes} nodes\n",
-                 mcts.tree().root_state().0);
+        println!(
+            "  -> Advanced to state={}, preserved {new_nodes} nodes\n",
+            mcts.tree().root_state().0
+        );
     }
 }
 // endregion: reuse_loop

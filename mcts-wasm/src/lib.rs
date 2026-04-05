@@ -1,15 +1,15 @@
 use wasm_bindgen::prelude::*;
 
-mod types;
 mod counting;
-mod nim;
 mod dice;
+mod nim;
 mod prior;
+mod types;
 
 pub use counting::CountingGameWasm;
-pub use nim::NimWasm;
 pub use dice::DiceGameWasm;
-pub use prior::{PriorGameUctWasm, PriorGamePuctWasm};
+pub use nim::NimWasm;
+pub use prior::{PriorGamePuctWasm, PriorGameUctWasm};
 
 #[wasm_bindgen]
 pub fn ping() -> String {

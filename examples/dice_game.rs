@@ -65,11 +65,7 @@ impl GameState for DiceGame {
 
     fn chance_outcomes(&self) -> Option<Vec<(DiceMove, f64)>> {
         if self.pending_roll {
-            Some(
-                (1..=6)
-                    .map(|i| (DiceMove::Die(i), 1.0 / 6.0))
-                    .collect(),
-            )
+            Some((1..=6).map(|i| (DiceMove::Die(i), 1.0 / 6.0)).collect())
         } else {
             None
         }

@@ -74,7 +74,12 @@ impl Evaluator<UctConfig> for UctEval {
         *evaln
     }
 
-    fn evaluate_existing_state(&self, _: &PriorGame, evaln: &i64, _: SearchHandle<UctConfig>) -> i64 {
+    fn evaluate_existing_state(
+        &self,
+        _: &PriorGame,
+        evaln: &i64,
+        _: SearchHandle<UctConfig>,
+    ) -> i64 {
         *evaln
     }
 }
@@ -116,7 +121,12 @@ impl Evaluator<PuctConfig> for PuctEval {
         *evaln
     }
 
-    fn evaluate_existing_state(&self, _: &PriorGame, evaln: &i64, _: SearchHandle<PuctConfig>) -> i64 {
+    fn evaluate_existing_state(
+        &self,
+        _: &PriorGame,
+        evaln: &i64,
+        _: SearchHandle<PuctConfig>,
+    ) -> i64 {
         *evaln
     }
 }
@@ -148,7 +158,11 @@ pub struct PriorGameUctWasm {
 impl PriorGameUctWasm {
     #[wasm_bindgen(constructor)]
     pub fn new(exploration_constant: f64) -> Self {
-        let c = if exploration_constant > 0.0 { exploration_constant } else { 1.5 };
+        let c = if exploration_constant > 0.0 {
+            exploration_constant
+        } else {
+            1.5
+        };
         Self {
             manager: MCTSManager::new(
                 PriorGame { depth: 0, score: 0 },
@@ -175,7 +189,11 @@ impl PriorGameUctWasm {
     }
 
     pub fn reset(&mut self, exploration_constant: f64) {
-        let c = if exploration_constant > 0.0 { exploration_constant } else { 1.5 };
+        let c = if exploration_constant > 0.0 {
+            exploration_constant
+        } else {
+            1.5
+        };
         self.manager = MCTSManager::new(
             PriorGame { depth: 0, score: 0 },
             UctConfig,
@@ -195,7 +213,11 @@ pub struct PriorGamePuctWasm {
 impl PriorGamePuctWasm {
     #[wasm_bindgen(constructor)]
     pub fn new(exploration_constant: f64) -> Self {
-        let c = if exploration_constant > 0.0 { exploration_constant } else { 1.5 };
+        let c = if exploration_constant > 0.0 {
+            exploration_constant
+        } else {
+            1.5
+        };
         Self {
             manager: MCTSManager::new(
                 PriorGame { depth: 0, score: 0 },
@@ -222,7 +244,11 @@ impl PriorGamePuctWasm {
     }
 
     pub fn reset(&mut self, exploration_constant: f64) {
-        let c = if exploration_constant > 0.0 { exploration_constant } else { 1.5 };
+        let c = if exploration_constant > 0.0 {
+            exploration_constant
+        } else {
+            1.5
+        };
         self.manager = MCTSManager::new(
             PriorGame { depth: 0, score: 0 },
             PuctConfig,

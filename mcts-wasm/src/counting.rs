@@ -72,7 +72,12 @@ impl Evaluator<Config> for Eval {
         *evaln
     }
 
-    fn evaluate_existing_state(&self, _: &CountingGame, evaln: &i64, _: SearchHandle<Config>) -> i64 {
+    fn evaluate_existing_state(
+        &self,
+        _: &CountingGame,
+        evaln: &i64,
+        _: SearchHandle<Config>,
+    ) -> i64 {
         *evaln
     }
 }
@@ -108,7 +113,11 @@ pub struct CountingGameWasm {
 impl CountingGameWasm {
     #[wasm_bindgen(constructor)]
     pub fn new(exploration_constant: f64) -> Self {
-        let c = if exploration_constant > 0.0 { exploration_constant } else { 1.0 };
+        let c = if exploration_constant > 0.0 {
+            exploration_constant
+        } else {
+            1.0
+        };
         Self {
             manager: MCTSManager::new(
                 CountingGame(0),
@@ -139,7 +148,11 @@ impl CountingGameWasm {
     }
 
     pub fn reset(&mut self, exploration_constant: f64) {
-        let c = if exploration_constant > 0.0 { exploration_constant } else { 1.0 };
+        let c = if exploration_constant > 0.0 {
+            exploration_constant
+        } else {
+            1.0
+        };
         self.manager = MCTSManager::new(
             CountingGame(0),
             Config,
