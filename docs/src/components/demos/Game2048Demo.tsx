@@ -49,6 +49,8 @@ function Game2048DemoInner() {
   const [terminal, setTerminal] = useState(false);
   const [stats, setStats] = useState<SearchStats | null>(null);
   const [suggestion, setSuggestion] = useState<string | undefined>(undefined);
+  const [autoPlay, setAutoPlay] = useState(false);
+  const autoPlayRef = useRef(false);
 
   const syncState = useCallback(() => {
     if (!gameRef.current) return;
@@ -111,6 +113,32 @@ function Game2048DemoInner() {
     runAnalysis();
   }, [terminal, suggestion, syncState, runAnalysis]);
 
+  // Auto-play: step every 300ms using MCTS moves
+  useEffect(() => {
+    autoPlayRef.current = autoPlay;
+    if (!autoPlay) return;
+
+    const interval = setInterval(() => {
+      if (!autoPlayRef.current || !gameRef.current) return;
+      if (gameRef.current.is_terminal()) {
+        setAutoPlay(false);
+        setTerminal(true);
+        return;
+      }
+      gameRef.current.playout_n(500);
+      const s: SearchStats = gameRef.current.get_stats();
+      setStats(s);
+      const best = s.best_move;
+      setSuggestion(best ?? undefined);
+      if (best) {
+        gameRef.current.apply_move(best);
+        syncState();
+      }
+    }, 300);
+
+    return () => clearInterval(interval);
+  }, [autoPlay, syncState]);
+
   // Keyboard support
   useEffect(() => {
     const keyMap: Record<string, Direction> = {
@@ -166,7 +194,7 @@ function Game2048DemoInner() {
             <span>{score}</span>
           </div>
           <div className={styles.scoreBadge}>
-            <span>Best tile</span>
+            <span>Max Tile</span>
             <span>{maxTile}</span>
           </div>
         </div>
@@ -241,13 +269,20 @@ function Game2048DemoInner() {
           <button
             className="button button--sm button--outline button--primary"
             onClick={handleMCTSMove}
-            disabled={terminal || !suggestion}
+            disabled={terminal || !suggestion || autoPlay}
           >
             MCTS Move
           </button>
           <button
+            className={`button button--sm button--outline ${autoPlay ? 'button--warning' : 'button--success'}`}
+            onClick={() => setAutoPlay(!autoPlay)}
+            disabled={terminal}
+          >
+            {autoPlay ? 'Stop Auto' : 'Auto Play'}
+          </button>
+          <button
             className="button button--sm button--outline button--danger"
-            onClick={initGame}
+            onClick={() => { setAutoPlay(false); initGame(); }}
           >
             New Game
           </button>

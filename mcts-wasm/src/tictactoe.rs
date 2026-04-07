@@ -264,12 +264,19 @@ impl TicTacToeWasm {
     }
 
     /// Apply a move by cell index (0-8) and advance the tree.
+    /// Apply a move and advance the tree.
+    /// Runs a few playouts first if needed to ensure the child is expanded.
     pub fn apply_move(&mut self, mov: &str) -> bool {
         let idx: u8 = match mov.parse() {
             Ok(v) if v < 9 => v,
             _ => return false,
         };
-        self.manager.advance(&TttMove(idx)).is_ok()
+        let m = TttMove(idx);
+        if self.manager.advance(&m).is_ok() {
+            return true;
+        }
+        self.manager.playout_n(100);
+        self.manager.advance(&m).is_ok()
     }
 
     pub fn reset(&mut self) {

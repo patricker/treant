@@ -190,12 +190,18 @@ impl NimWasm {
     }
 
     /// Apply a move and advance the tree (preserving search).
+    /// Apply a move and advance the tree.
+    /// Runs a few playouts first if needed to ensure the child is expanded.
     pub fn apply_move(&mut self, mov: &str) -> bool {
         let m = match mov {
             "Take1" => NimMove::Take1,
             "Take2" => NimMove::Take2,
             _ => return false,
         };
+        if self.manager.advance(&m).is_ok() {
+            return true;
+        }
+        self.manager.playout_n(100);
         self.manager.advance(&m).is_ok()
     }
 

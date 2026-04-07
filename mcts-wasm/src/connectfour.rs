@@ -319,12 +319,18 @@ impl ConnectFourWasm {
     }
 
     /// Apply a move and advance the tree (preserving search).
+    /// Runs a few playouts first if needed to ensure the child is expanded.
     pub fn apply_move(&mut self, col: &str) -> bool {
         let col_num: u8 = match col.parse() {
             Ok(n) if n < COLS as u8 => n,
             _ => return false,
         };
         let m = CfMove(col_num);
+        if self.manager.advance(&m).is_ok() {
+            return true;
+        }
+        // Child not expanded yet — run playouts to expand, then retry
+        self.manager.playout_n(100);
         self.manager.advance(&m).is_ok()
     }
 

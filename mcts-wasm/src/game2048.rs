@@ -325,6 +325,8 @@ impl Game2048Wasm {
     }
 
     /// Apply a move and advance the tree (preserving search).
+    /// Apply a move and advance the tree.
+    /// Runs a few playouts first if needed to ensure the child is expanded.
     pub fn apply_move(&mut self, dir: &str) -> bool {
         let d = match dir {
             "Up" => Dir::Up,
@@ -333,6 +335,10 @@ impl Game2048Wasm {
             "Right" => Dir::Right,
             _ => return false,
         };
+        if self.manager.advance(&d).is_ok() {
+            return true;
+        }
+        self.manager.playout_n(100);
         self.manager.advance(&d).is_ok()
     }
 
