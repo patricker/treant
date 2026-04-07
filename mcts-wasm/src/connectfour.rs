@@ -4,23 +4,30 @@ use wasm_bindgen::prelude::*;
 
 use crate::types;
 
-// --- Game ---
+// --- Generalized gravity game: configurable cols, rows, k-in-a-row, N players ---
+
+const MAX_COLS: usize = 10;
+const MAX_ROWS: usize = 10;
+const MAX_PLAYERS: usize = 4;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Cell {
     Empty,
-    Red,
-    Yellow,
+    Player(u8), // 0-indexed player number
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum Player {
-    Red,
-    Yellow,
+#[derive(Clone, Debug)]
+struct ConnectFour {
+    board: [[Cell; MAX_COLS]; MAX_ROWS],
+    cols: usize,
+    rows: usize,
+    k: usize,
+    num_players: usize,
+    current: u8, // 0-indexed
 }
 
 #[derive(Clone, Debug, PartialEq)]
-struct CfMove(u8);
+struct CfMove(u8); // column index
 
 impl std::fmt::Display for CfMove {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -28,85 +35,57 @@ impl std::fmt::Display for CfMove {
     }
 }
 
-const COLS: usize = 7;
-const ROWS: usize = 6;
-
-#[derive(Clone, Debug)]
-struct ConnectFour {
-    board: [[Cell; COLS]; ROWS],
-    current: Player,
-}
-
 impl ConnectFour {
-    fn new() -> Self {
+    fn new(cols: usize, rows: usize, k: usize, num_players: usize) -> Self {
         Self {
-            board: [[Cell::Empty; COLS]; ROWS],
-            current: Player::Red,
+            board: [[Cell::Empty; MAX_COLS]; MAX_ROWS],
+            cols,
+            rows,
+            k,
+            num_players,
+            current: 0,
         }
     }
 
-    fn cell_for_player(player: Player) -> Cell {
-        match player {
-            Player::Red => Cell::Red,
-            Player::Yellow => Cell::Yellow,
-        }
-    }
-
-    /// Find the lowest empty row in a column, or None if full.
     fn drop_row(&self, col: usize) -> Option<usize> {
-        (0..ROWS).find(|&row| self.board[row][col] == Cell::Empty)
+        (0..self.rows).find(|&row| self.board[row][col] == Cell::Empty)
     }
 
-    /// Check if the given cell color has 4 in a row through (row, col).
     fn check_win_at(&self, row: usize, col: usize, cell: Cell) -> bool {
         if self.board[row][col] != cell {
             return false;
         }
-        // Directions: horizontal, vertical, diagonal /, diagonal \.
-        let directions: [(i32, i32); 4] = [(1, 0), (0, 1), (1, 1), (1, -1)];
-        for (dr, dc) in directions {
-            let mut count = 1;
-            // Positive direction
-            for i in 1..4 {
-                let r = row as i32 + dr * i;
-                let c = col as i32 + dc * i;
-                if r < 0 || r >= ROWS as i32 || c < 0 || c >= COLS as i32 {
-                    break;
+        let dirs: [(i32, i32); 4] = [(1, 0), (0, 1), (1, 1), (1, -1)];
+        for (dr, dc) in dirs {
+            let mut count = 1usize;
+            for sign in [1i32, -1i32] {
+                for step in 1..self.k {
+                    let r = row as i32 + dr * sign * step as i32;
+                    let c = col as i32 + dc * sign * step as i32;
+                    if r < 0 || r >= self.rows as i32 || c < 0 || c >= self.cols as i32 {
+                        break;
+                    }
+                    if self.board[r as usize][c as usize] == cell {
+                        count += 1;
+                    } else {
+                        break;
+                    }
                 }
-                if self.board[r as usize][c as usize] != cell {
-                    break;
-                }
-                count += 1;
             }
-            // Negative direction
-            for i in 1..4 {
-                let r = row as i32 - dr * i;
-                let c = col as i32 - dc * i;
-                if r < 0 || r >= ROWS as i32 || c < 0 || c >= COLS as i32 {
-                    break;
-                }
-                if self.board[r as usize][c as usize] != cell {
-                    break;
-                }
-                count += 1;
-            }
-            if count >= 4 {
+            if count >= self.k {
                 return true;
             }
         }
         false
     }
 
-    /// Check if the player who just moved won.
-    fn has_winner(&self) -> Option<Player> {
-        for row in 0..ROWS {
-            for col in 0..COLS {
-                match self.board[row][col] {
-                    Cell::Red if self.check_win_at(row, col, Cell::Red) => return Some(Player::Red),
-                    Cell::Yellow if self.check_win_at(row, col, Cell::Yellow) => {
-                        return Some(Player::Yellow)
+    fn winner(&self) -> Option<u8> {
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+                if let Cell::Player(p) = self.board[row][col] {
+                    if self.check_win_at(row, col, Cell::Player(p)) {
+                        return Some(p);
                     }
-                    _ => {}
                 }
             }
         }
@@ -114,40 +93,126 @@ impl ConnectFour {
     }
 
     fn is_full(&self) -> bool {
-        (0..COLS).all(|col| self.board[ROWS - 1][col] != Cell::Empty)
+        (0..self.cols).all(|col| self.board[self.rows - 1][col] != Cell::Empty)
     }
 
     fn board_string(&self) -> String {
-        let mut s = String::with_capacity(ROWS * COLS);
-        // Top row first (row 5 down to row 0)
-        for row in (0..ROWS).rev() {
-            for col in 0..COLS {
+        let mut s = String::with_capacity(self.rows * self.cols);
+        // Top row first
+        for row in (0..self.rows).rev() {
+            for col in 0..self.cols {
                 s.push(match self.board[row][col] {
                     Cell::Empty => ' ',
-                    Cell::Red => 'R',
-                    Cell::Yellow => 'Y',
+                    Cell::Player(p) => (b'1' + p) as char, // '1', '2', '3', '4'
                 });
             }
         }
         s
     }
+
+    /// Evaluate from player 0's perspective using window scoring.
+    fn evaluate(&self) -> i64 {
+        let mut score: i64 = 0;
+
+        // Center column bonus
+        let center = self.cols / 2;
+        for row in 0..self.rows {
+            if let Cell::Player(0) = self.board[row][center] {
+                score += 3;
+            }
+        }
+
+        // Score windows in all directions
+        let p0 = Cell::Player(0);
+
+        // Horizontal windows
+        if self.cols >= self.k {
+            for row in 0..self.rows {
+                for col in 0..=self.cols - self.k {
+                    score += self.score_window_at(row, col, 0, 1, p0);
+                }
+            }
+        }
+
+        // Vertical windows
+        if self.rows >= self.k {
+            for col in 0..self.cols {
+                for row in 0..=self.rows - self.k {
+                    score += self.score_window_at(row, col, 1, 0, p0);
+                }
+            }
+        }
+
+        // Diagonal (up-right) windows
+        if self.rows >= self.k && self.cols >= self.k {
+            for row in 0..=self.rows - self.k {
+                for col in 0..=self.cols - self.k {
+                    score += self.score_window_at(row, col, 1, 1, p0);
+                }
+            }
+        }
+
+        // Diagonal (down-right) windows
+        if self.rows >= self.k && self.cols >= self.k {
+            for row in (self.k - 1)..self.rows {
+                for col in 0..=self.cols - self.k {
+                    score += self.score_window_at(row, col, -1, 1, p0);
+                }
+            }
+        }
+
+        score
+    }
+
+    fn score_window_at(&self, row: usize, col: usize, dr: i32, dc: i32, my_cell: Cell) -> i64 {
+        let mut mine = 0;
+        let mut empty = 0;
+        let mut theirs = 0;
+        for step in 0..self.k {
+            let r = (row as i32 + dr * step as i32) as usize;
+            let c = (col as i32 + dc * step as i32) as usize;
+            let cell = self.board[r][c];
+            if cell == my_cell {
+                mine += 1;
+            } else if cell == Cell::Empty {
+                empty += 1;
+            } else {
+                theirs += 1;
+            }
+        }
+        if mine == self.k {
+            return 1000;
+        }
+        if theirs == self.k {
+            return -1000;
+        }
+        if mine == self.k - 1 && empty == 1 {
+            return 50;
+        }
+        if theirs == self.k - 1 && empty == 1 {
+            return -80;
+        }
+        if mine >= 2 && empty == self.k - mine {
+            return 5;
+        }
+        0
+    }
 }
 
 impl GameState for ConnectFour {
     type Move = CfMove;
-    type Player = Player;
+    type Player = u8;
     type MoveList = Vec<CfMove>;
 
-    fn current_player(&self) -> Player {
+    fn current_player(&self) -> u8 {
         self.current
     }
 
     fn available_moves(&self) -> Vec<CfMove> {
-        // No moves if someone won
-        if self.has_winner().is_some() {
+        if self.winner().is_some() {
             return vec![];
         }
-        (0..COLS as u8)
+        (0..self.cols as u8)
             .filter(|&col| self.drop_row(col as usize).is_some())
             .map(CfMove)
             .collect()
@@ -156,130 +221,26 @@ impl GameState for ConnectFour {
     fn make_move(&mut self, mov: &CfMove) {
         let col = mov.0 as usize;
         if let Some(row) = self.drop_row(col) {
-            self.board[row][col] = Self::cell_for_player(self.current);
+            self.board[row][col] = Cell::Player(self.current);
         }
-        self.current = match self.current {
-            Player::Red => Player::Yellow,
-            Player::Yellow => Player::Red,
-        };
+        self.current = (self.current + 1) % self.num_players as u8;
     }
 
     fn terminal_value(&self) -> Option<ProvenValue> {
-        // If someone won, the winner just moved, so current player lost.
-        if self.has_winner().is_some() {
-            return Some(ProvenValue::Loss);
+        if self.winner().is_some() {
+            // Winner just moved, current player lost
+            Some(ProvenValue::Loss)
+        } else if self.is_full() {
+            Some(ProvenValue::Draw)
+        } else {
+            None
         }
-        if self.is_full() {
-            return Some(ProvenValue::Draw);
-        }
-        None
     }
 }
 
 // --- Evaluator ---
 
 struct CfEval;
-
-impl CfEval {
-    /// Score a window of 4 cells from one player's perspective.
-    fn score_window(window: &[Cell; 4], player_cell: Cell, opp_cell: Cell) -> i64 {
-        let mine = window.iter().filter(|&&c| c == player_cell).count();
-        let theirs = window.iter().filter(|&&c| c == opp_cell).count();
-        let empty = window.iter().filter(|&&c| c == Cell::Empty).count();
-
-        if mine == 4 {
-            return 1000;
-        }
-        if theirs == 4 {
-            return -1000;
-        }
-        // Threat: 3 of mine + 1 empty
-        if mine == 3 && empty == 1 {
-            return 50;
-        }
-        // Opponent threat: 3 of theirs + 1 empty
-        if theirs == 3 && empty == 1 {
-            return -80; // Penalize more — blocking is urgent
-        }
-        if mine == 2 && empty == 2 {
-            return 5;
-        }
-        if theirs == 2 && empty == 2 {
-            return -5;
-        }
-        0
-    }
-
-    /// Evaluate the board from Red's perspective.
-    fn evaluate_board(state: &ConnectFour) -> i64 {
-        let mut score: i64 = 0;
-        let red = Cell::Red;
-        let yellow = Cell::Yellow;
-
-        // Center column bonus
-        for row in 0..ROWS {
-            if state.board[row][3] == red {
-                score += 3;
-            } else if state.board[row][3] == yellow {
-                score -= 3;
-            }
-        }
-
-        // Score all horizontal windows of 4
-        for row in 0..ROWS {
-            for col in 0..COLS - 3 {
-                let w = [
-                    state.board[row][col],
-                    state.board[row][col + 1],
-                    state.board[row][col + 2],
-                    state.board[row][col + 3],
-                ];
-                score += Self::score_window(&w, red, yellow);
-            }
-        }
-
-        // Score all vertical windows of 4
-        for col in 0..COLS {
-            for row in 0..ROWS - 3 {
-                let w = [
-                    state.board[row][col],
-                    state.board[row + 1][col],
-                    state.board[row + 2][col],
-                    state.board[row + 3][col],
-                ];
-                score += Self::score_window(&w, red, yellow);
-            }
-        }
-
-        // Score all diagonal (up-right) windows
-        for row in 0..ROWS - 3 {
-            for col in 0..COLS - 3 {
-                let w = [
-                    state.board[row][col],
-                    state.board[row + 1][col + 1],
-                    state.board[row + 2][col + 2],
-                    state.board[row + 3][col + 3],
-                ];
-                score += Self::score_window(&w, red, yellow);
-            }
-        }
-
-        // Score all diagonal (down-right) windows
-        for row in 3..ROWS {
-            for col in 0..COLS - 3 {
-                let w = [
-                    state.board[row][col],
-                    state.board[row - 1][col + 1],
-                    state.board[row - 2][col + 2],
-                    state.board[row - 3][col + 3],
-                ];
-                score += Self::score_window(&w, red, yellow);
-            }
-        }
-
-        score
-    }
-}
 
 impl Evaluator<CfConfig> for CfEval {
     type StateEvaluation = i64;
@@ -290,13 +251,15 @@ impl Evaluator<CfConfig> for CfEval {
         moves: &Vec<CfMove>,
         _: Option<SearchHandle<CfConfig>>,
     ) -> (Vec<()>, i64) {
-        (vec![(); moves.len()], Self::evaluate_board(state))
+        (vec![(); moves.len()], state.evaluate())
     }
 
-    fn interpret_evaluation_for_player(&self, evaln: &i64, player: &Player) -> i64 {
-        match player {
-            Player::Red => *evaln,
-            Player::Yellow => -*evaln,
+    fn interpret_evaluation_for_player(&self, evaln: &i64, player: &u8) -> i64 {
+        // Evaluate is from player 0's perspective
+        if *player == 0 {
+            *evaln
+        } else {
+            -*evaln
         }
     }
 
@@ -306,7 +269,7 @@ impl Evaluator<CfConfig> for CfEval {
         _evaln: &i64,
         _: SearchHandle<CfConfig>,
     ) -> i64 {
-        Self::evaluate_board(state)
+        state.evaluate()
     }
 }
 
@@ -322,10 +285,6 @@ impl MCTS for CfConfig {
     type ExtraThreadData = ();
     type TreePolicy = UCTPolicy;
     type TranspositionTable = ();
-
-    fn solver_enabled(&self) -> bool {
-        false
-    }
 }
 
 // --- WASM API ---
@@ -333,27 +292,56 @@ impl MCTS for CfConfig {
 #[wasm_bindgen]
 pub struct ConnectFourWasm {
     manager: MCTSManager<CfConfig>,
+    cols: usize,
+    rows: usize,
+    k: usize,
+    num_players: usize,
 }
 
 impl Default for ConnectFourWasm {
     fn default() -> Self {
-        Self::new()
+        Self::create(7, 6, 4, 2)
     }
 }
 
 #[wasm_bindgen]
 impl ConnectFourWasm {
-    #[wasm_bindgen(constructor)]
-    pub fn new() -> Self {
+    fn create(cols: usize, rows: usize, k: usize, num_players: usize) -> Self {
+        let cols = cols.clamp(3, MAX_COLS);
+        let rows = rows.clamp(3, MAX_ROWS);
+        let k = k.clamp(3, cols.max(rows));
+        let num_players = num_players.clamp(2, MAX_PLAYERS);
         Self {
             manager: MCTSManager::new(
-                ConnectFour::new(),
+                ConnectFour::new(cols, rows, k, num_players),
                 CfConfig,
                 CfEval,
                 UCTPolicy::new(1.4),
                 (),
             ),
+            cols,
+            rows,
+            k,
+            num_players,
         }
+    }
+
+    #[wasm_bindgen(constructor)]
+    pub fn new(cols: u32, rows: u32, k: u32, num_players: u32) -> Self {
+        Self::create(cols as usize, rows as usize, k as usize, num_players as usize)
+    }
+
+    pub fn cols(&self) -> u32 {
+        self.cols as u32
+    }
+    pub fn rows(&self) -> u32 {
+        self.rows as u32
+    }
+    pub fn win_length(&self) -> u32 {
+        self.k as u32
+    }
+    pub fn num_players(&self) -> u32 {
+        self.num_players as u32
     }
 
     pub fn playout_n(&mut self, n: u32) {
@@ -371,32 +359,27 @@ impl ConnectFourWasm {
         serde_wasm_bindgen::to_value(&tree).unwrap()
     }
 
+    /// Board as string, top row first, left to right.
+    /// ' '=empty, '1'=player 0, '2'=player 1, '3'=player 2, '4'=player 3.
     pub fn get_board(&self) -> String {
         self.manager.tree().root_state().board_string()
     }
 
-    pub fn current_player(&self) -> String {
-        match self.manager.tree().root_state().current {
-            Player::Red => "Red".into(),
-            Player::Yellow => "Yellow".into(),
-        }
+    /// Current player as 0-indexed number string ("0", "1", etc.)
+    pub fn current_player(&self) -> u32 {
+        self.manager.tree().root_state().current as u32
     }
 
     pub fn is_terminal(&self) -> bool {
-        self.manager
-            .tree()
-            .root_state()
-            .terminal_value()
-            .is_some()
+        let s = self.manager.tree().root_state();
+        s.winner().is_some() || s.is_full()
     }
 
+    /// Returns winner player number (0-indexed) as string, "Draw", or "" (not over).
     pub fn result(&self) -> String {
         let state = self.manager.tree().root_state();
-        if let Some(winner) = state.has_winner() {
-            match winner {
-                Player::Red => "Red".into(),
-                Player::Yellow => "Yellow".into(),
-            }
+        if let Some(winner) = state.winner() {
+            format!("{}", winner + 1) // 1-indexed for display
         } else if state.is_full() {
             "Draw".into()
         } else {
@@ -408,25 +391,22 @@ impl ConnectFourWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
-    /// Apply a move and advance the tree (preserving search).
-    /// Runs a few playouts first if needed to ensure the child is expanded.
     pub fn apply_move(&mut self, col: &str) -> bool {
         let col_num: u8 = match col.parse() {
-            Ok(n) if n < COLS as u8 => n,
+            Ok(n) if (n as usize) < self.cols => n,
             _ => return false,
         };
         let m = CfMove(col_num);
         if self.manager.advance(&m).is_ok() {
             return true;
         }
-        // Child not expanded yet — run playouts to expand, then retry
         self.manager.playout_n(100);
         self.manager.advance(&m).is_ok()
     }
 
     pub fn reset(&mut self) {
         self.manager = MCTSManager::new(
-            ConnectFour::new(),
+            ConnectFour::new(self.cols, self.rows, self.k, self.num_players),
             CfConfig,
             CfEval,
             UCTPolicy::new(1.4),

@@ -231,6 +231,13 @@ function TicTacToeDemoInner() {
             ))}
           </select>
         </label>
+        <button
+          className="button button--sm button--outline button--primary"
+          onClick={initGame}
+          style={{ alignSelf: 'flex-end', marginBottom: '0.2rem' }}
+        >
+          New Game
+        </button>
       </div>
 
       <div className={styles.boardInfo}>
@@ -291,16 +298,6 @@ function TicTacToeDemoInner() {
           </button>
         </div>
       )}
-
-      {/* Controls */}
-      <div className={styles.controls}>
-        <button
-          className="button button--sm button--outline button--danger"
-          onClick={initGame}
-        >
-          New Game
-        </button>
-      </div>
 
       {/* Proven value badge */}
       {phase !== 'gameover' && provenValue !== 'Unknown' && (
