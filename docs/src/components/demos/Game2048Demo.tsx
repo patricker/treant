@@ -67,7 +67,7 @@ function Game2048DemoInner() {
       setSuggestion(undefined);
       return;
     }
-    gameRef.current.playout_n(500);
+    gameRef.current.playout_n(2000);
     const s: SearchStats = gameRef.current.get_stats();
     setStats(s);
     setSuggestion(s.best_move ?? undefined);
@@ -125,7 +125,7 @@ function Game2048DemoInner() {
         setTerminal(true);
         return;
       }
-      gameRef.current.playout_n(500);
+      gameRef.current.playout_n(2000);
       const s: SearchStats = gameRef.current.get_stats();
       setStats(s);
       const best = s.best_move;
@@ -134,7 +134,7 @@ function Game2048DemoInner() {
         gameRef.current.apply_move(best);
         syncState();
       }
-    }, 300);
+    }, 500);
 
     return () => clearInterval(interval);
   }, [autoPlay, syncState]);

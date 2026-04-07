@@ -215,6 +215,97 @@ impl GameState for Game2048 {
 
 struct Game2048Eval;
 
+impl Game2048Eval {
+    fn log2(v: u32) -> f64 {
+        if v == 0 { 0.0 } else { (v as f64).log2() }
+    }
+
+    /// Heuristic evaluation combining empty cells, monotonicity, corner
+    /// placement, smoothness, and merge potential.
+    fn evaluate_board(state: &Game2048) -> i64 {
+        let empty = state.empty_cells().len() as i64;
+        let empty_score = empty * empty * 270;
+
+        // Monotonicity: for each row/col, score how well tiles decrease
+        // in the better of two directions (left-to-right vs right-to-left).
+        let mut mono_score: f64 = 0.0;
+        for r in 0..4 {
+            let row: [f64; 4] = std::array::from_fn(|c| Self::log2(state.board[r][c]));
+            let (mut inc, mut dec) = (0.0, 0.0);
+            for i in 0..3 {
+                if row[i] <= row[i + 1] {
+                    inc += row[i + 1] - row[i];
+                } else {
+                    dec += row[i] - row[i + 1];
+                }
+            }
+            mono_score += inc.max(dec);
+        }
+        for c in 0..4 {
+            let col: [f64; 4] = std::array::from_fn(|r| Self::log2(state.board[r][c]));
+            let (mut inc, mut dec) = (0.0, 0.0);
+            for i in 0..3 {
+                if col[i] <= col[i + 1] {
+                    inc += col[i + 1] - col[i];
+                } else {
+                    dec += col[i] - col[i + 1];
+                }
+            }
+            mono_score += inc.max(dec);
+        }
+
+        // Max tile in corner bonus
+        let max_tile = state.max_tile();
+        let corner_bonus: i64 =
+            if [(0, 0), (0, 3), (3, 0), (3, 3)]
+                .iter()
+                .any(|&(r, c)| state.board[r][c] == max_tile)
+            {
+                200
+            } else {
+                0
+            };
+
+        // Smoothness: penalize log2 differences between adjacent non-zero tiles
+        let mut smoothness: f64 = 0.0;
+        for r in 0..4 {
+            for c in 0..4 {
+                if state.board[r][c] == 0 {
+                    continue;
+                }
+                let v = Self::log2(state.board[r][c]);
+                if c + 1 < 4 && state.board[r][c + 1] != 0 {
+                    smoothness -= (v - Self::log2(state.board[r][c + 1])).abs();
+                }
+                if r + 1 < 4 && state.board[r + 1][c] != 0 {
+                    smoothness -= (v - Self::log2(state.board[r + 1][c])).abs();
+                }
+            }
+        }
+
+        // Merge potential: count adjacent equal non-zero pairs
+        let mut merges: i64 = 0;
+        for r in 0..4 {
+            for c in 0..4 {
+                if state.board[r][c] != 0 {
+                    if c + 1 < 4 && state.board[r][c] == state.board[r][c + 1] {
+                        merges += 1;
+                    }
+                    if r + 1 < 4 && state.board[r][c] == state.board[r + 1][c] {
+                        merges += 1;
+                    }
+                }
+            }
+        }
+
+        empty_score
+            + (mono_score * 50.0) as i64
+            + corner_bonus
+            + (smoothness * 10.0) as i64
+            + merges * 700
+    }
+}
+
 impl Evaluator<Game2048Config> for Game2048Eval {
     type StateEvaluation = i64;
 
@@ -224,10 +315,7 @@ impl Evaluator<Game2048Config> for Game2048Eval {
         moves: &Vec<Dir>,
         _: Option<SearchHandle<Game2048Config>>,
     ) -> (Vec<()>, i64) {
-        let value = state.score as i64
-            + state.empty_cells().len() as i64 * 10
-            + state.max_tile() as i64;
-        (vec![(); moves.len()], value)
+        (vec![(); moves.len()], Self::evaluate_board(state))
     }
 
     fn interpret_evaluation_for_player(&self, evaln: &i64, _: &()) -> i64 {
@@ -240,7 +328,7 @@ impl Evaluator<Game2048Config> for Game2048Eval {
         _: &i64,
         _: SearchHandle<Game2048Config>,
     ) -> i64 {
-        state.score as i64 + state.empty_cells().len() as i64 * 10 + state.max_tile() as i64
+        Self::evaluate_board(state)
     }
 }
 
