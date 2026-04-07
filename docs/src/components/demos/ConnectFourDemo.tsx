@@ -107,7 +107,12 @@ function ConnectFourDemoInner() {
     setGameOver(false);
     syncState();
     runAnalysis();
-  }, [wasm, sCols, sRows, sK, sPlayers, syncState, runAnalysis]);
+    // If first player is MCTS, kick off their turn
+    const firstPlayer = gameRef.current.current_player();
+    if (playerTypesRef.current[firstPlayer] === 'mcts') {
+      setTimeout(() => triggerMCTSTurn(), 100);
+    }
+  }, [wasm, sCols, sRows, sK, sPlayers, syncState, runAnalysis]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (ready) initGame();
@@ -170,16 +175,6 @@ function ConnectFourDemoInner() {
       }
     }, 50);
   }, [syncState, runAnalysis]);
-
-  // After init, if first player is MCTS, trigger their turn
-  useEffect(() => {
-    if (ready && gameRef.current && !gameOver && !thinking) {
-      const cp = gameRef.current.current_player();
-      if (playerTypesRef.current[cp] === 'mcts') {
-        triggerMCTSTurn();
-      }
-    }
-  }, [ready, gameOver]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleColumnClick = useCallback((col: number) => {
     if (!gameRef.current || gameOver || thinking) return;
