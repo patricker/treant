@@ -33,10 +33,23 @@ const TILE_DATA_VALUES = [
 
 function tileDataValue(v: number): string {
   if (TILE_DATA_VALUES.includes(v)) return String(v);
-  // For any value beyond our explicit CSS rules, use the largest bracket
   if (v > 2048) return '4096';
   return String(v);
 }
+
+const PLAYOUT_OPTIONS = [
+  { label: '50 (fast, weak)', value: 50 },
+  { label: '200 (balanced)', value: 200 },
+  { label: '500 (strong)', value: 500 },
+  { label: '2000 (strongest)', value: 2000 },
+];
+
+const SPEED_OPTIONS = [
+  { label: 'Instant', value: 0 },
+  { label: 'Fast (100ms)', value: 100 },
+  { label: 'Normal (300ms)', value: 300 },
+  { label: 'Slow (700ms)', value: 700 },
+];
 
 function Game2048DemoInner() {
   const { useWasm } = require('../mcts/WasmProvider');
@@ -51,6 +64,15 @@ function Game2048DemoInner() {
   const [suggestion, setSuggestion] = useState<string | undefined>(undefined);
   const [autoPlay, setAutoPlay] = useState(false);
   const autoPlayRef = useRef(false);
+  const [playouts, setPlayouts] = useState(200);
+  const playoutsRef = useRef(200);
+  const [speed, setSpeed] = useState(300);
+  const speedRef = useRef(300);
+  const [moveCount, setMoveCount] = useState(0);
+
+  // Keep refs in sync for use inside intervals
+  useEffect(() => { playoutsRef.current = playouts; }, [playouts]);
+  useEffect(() => { speedRef.current = speed; }, [speed]);
 
   const syncState = useCallback(() => {
     if (!gameRef.current) return;
@@ -67,7 +89,7 @@ function Game2048DemoInner() {
       setSuggestion(undefined);
       return;
     }
-    gameRef.current.playout_n(2000);
+    gameRef.current.playout_n(playoutsRef.current);
     const s: SearchStats = gameRef.current.get_stats();
     setStats(s);
     setSuggestion(s.best_move ?? undefined);
@@ -79,6 +101,7 @@ function Game2048DemoInner() {
       gameRef.current.free();
     }
     gameRef.current = new wasm.Game2048Wasm();
+    setMoveCount(0);
     syncState();
     runAnalysis();
   }, [wasm, syncState, runAnalysis]);
@@ -100,6 +123,7 @@ function Game2048DemoInner() {
       if (!gameRef.current || terminal) return;
       const moved = gameRef.current.apply_move(dir);
       if (!moved) return;
+      setMoveCount((c) => c + 1);
       syncState();
       runAnalysis();
     },
@@ -109,34 +133,80 @@ function Game2048DemoInner() {
   const handleMCTSMove = useCallback(() => {
     if (!gameRef.current || terminal || !suggestion) return;
     gameRef.current.apply_move(suggestion);
+    setMoveCount((c) => c + 1);
     syncState();
     runAnalysis();
   }, [terminal, suggestion, syncState, runAnalysis]);
 
-  // Auto-play: step every 300ms using MCTS moves
+  // Auto-play loop
   useEffect(() => {
     autoPlayRef.current = autoPlay;
     if (!autoPlay) return;
 
-    const interval = setInterval(() => {
+    const doStep = () => {
       if (!autoPlayRef.current || !gameRef.current) return;
       if (gameRef.current.is_terminal()) {
         setAutoPlay(false);
         setTerminal(true);
         return;
       }
-      gameRef.current.playout_n(2000);
+      gameRef.current.playout_n(playoutsRef.current);
       const s: SearchStats = gameRef.current.get_stats();
       setStats(s);
       const best = s.best_move;
       setSuggestion(best ?? undefined);
       if (best) {
         gameRef.current.apply_move(best);
+        setMoveCount((c) => c + 1);
         syncState();
       }
-    }, 500);
+    };
 
-    return () => clearInterval(interval);
+    if (speedRef.current === 0) {
+      // Instant mode: use requestAnimationFrame to run as fast as possible
+      // while still allowing the UI to update between batches
+      let running = true;
+      const runBatch = () => {
+        if (!running || !autoPlayRef.current) return;
+        // Do multiple steps per frame for speed
+        for (let i = 0; i < 5; i++) {
+          if (!autoPlayRef.current || !gameRef.current || gameRef.current.is_terminal()) {
+            if (gameRef.current?.is_terminal()) {
+              setAutoPlay(false);
+              setTerminal(true);
+              syncState();
+            }
+            running = false;
+            return;
+          }
+          gameRef.current.playout_n(playoutsRef.current);
+          const s: SearchStats = gameRef.current.get_stats();
+          const best = s.best_move;
+          if (best) {
+            gameRef.current.apply_move(best);
+            setMoveCount((c) => c + 1);
+          } else {
+            running = false;
+            return;
+          }
+        }
+        // Update UI after the batch
+        syncState();
+        if (gameRef.current) {
+          gameRef.current.playout_n(playoutsRef.current);
+          const s2: SearchStats = gameRef.current.get_stats();
+          setStats(s2);
+          setSuggestion(s2.best_move ?? undefined);
+        }
+        requestAnimationFrame(runBatch);
+      };
+      requestAnimationFrame(runBatch);
+      return () => { running = false; };
+    } else {
+      // Timed mode: step at the chosen interval
+      const interval = setInterval(doStep, speedRef.current);
+      return () => clearInterval(interval);
+    }
   }, [autoPlay, syncState]);
 
   // Keyboard support
@@ -191,11 +261,15 @@ function Game2048DemoInner() {
         <div className={styles.scoreRow}>
           <div className={styles.scoreBadge}>
             <span>Score</span>
-            <span>{score}</span>
+            <span>{score.toLocaleString()}</span>
           </div>
           <div className={styles.scoreBadge}>
             <span>Max Tile</span>
             <span>{maxTile}</span>
+          </div>
+          <div className={styles.scoreBadge}>
+            <span>Moves</span>
+            <span>{moveCount}</span>
           </div>
         </div>
 
@@ -213,15 +287,48 @@ function Game2048DemoInner() {
           {terminal && (
             <div className={styles.gameOverOverlay}>
               <p>Game Over!</p>
+              <p style={{ fontSize: '0.875rem', fontWeight: 400 }}>
+                Score: {score.toLocaleString()} | Max: {maxTile} | Moves: {moveCount}
+              </p>
               <button
                 className="button button--sm button--primary"
-                onClick={initGame}
+                onClick={() => { setAutoPlay(false); initGame(); }}
               >
                 New Game
               </button>
             </div>
           )}
         </div>
+      </div>
+
+      {/* Settings row */}
+      <div className={styles.settingsRow}>
+        <label className={styles.settingLabel}>
+          <span>Playouts</span>
+          <select
+            value={playouts}
+            onChange={(e) => setPlayouts(Number(e.target.value))}
+            className={styles.select}
+            disabled={autoPlay}
+          >
+            {PLAYOUT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </label>
+        <label className={styles.settingLabel}>
+          <span>Auto Speed</span>
+          <select
+            value={speed}
+            onChange={(e) => setSpeed(Number(e.target.value))}
+            className={styles.select}
+            disabled={autoPlay}
+          >
+            {SPEED_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </label>
       </div>
 
       {/* Arrow controls */}
@@ -231,7 +338,7 @@ function Game2048DemoInner() {
           <button
             className={styles.arrowBtn}
             onClick={() => handleMove('Up')}
-            disabled={terminal}
+            disabled={terminal || autoPlay}
             title="Up (W / Arrow Up)"
           >
             {DIRECTION_ARROWS.Up}
@@ -242,7 +349,7 @@ function Game2048DemoInner() {
           <button
             className={styles.arrowBtn}
             onClick={() => handleMove('Left')}
-            disabled={terminal}
+            disabled={terminal || autoPlay}
             title="Left (A / Arrow Left)"
           >
             {DIRECTION_ARROWS.Left}
@@ -250,7 +357,7 @@ function Game2048DemoInner() {
           <button
             className={styles.arrowBtn}
             onClick={() => handleMove('Down')}
-            disabled={terminal}
+            disabled={terminal || autoPlay}
             title="Down (S / Arrow Down)"
           >
             {DIRECTION_ARROWS.Down}
@@ -258,7 +365,7 @@ function Game2048DemoInner() {
           <button
             className={styles.arrowBtn}
             onClick={() => handleMove('Right')}
-            disabled={terminal}
+            disabled={terminal || autoPlay}
             title="Right (D / Arrow Right)"
           >
             {DIRECTION_ARROWS.Right}
@@ -278,7 +385,7 @@ function Game2048DemoInner() {
             onClick={() => setAutoPlay(!autoPlay)}
             disabled={terminal}
           >
-            {autoPlay ? 'Stop Auto' : 'Auto Play'}
+            {autoPlay ? 'Stop' : 'Auto Play'}
           </button>
           <button
             className="button button--sm button--outline button--danger"

@@ -450,3 +450,94 @@ impl Game2048Wasm {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn play_one_game(playouts: u64) -> (u32, u32) {
+        let mut state = Game2048::new();
+        let mut moves = 0u32;
+        loop {
+            let available: Vec<Dir> = ALL_DIRS
+                .iter()
+                .copied()
+                .filter(|&d| state.would_change(d))
+                .collect();
+            if available.is_empty() || state.is_game_over() {
+                break;
+            }
+            // Run MCTS from this state
+            let mut mgr = MCTSManager::new(
+                state.clone(),
+                Game2048Config,
+                Game2048Eval,
+                UCTPolicy::new(1.0),
+                (),
+            );
+            mgr.playout_n(playouts);
+            if let Some(best) = mgr.best_move() {
+                state.slide(best);
+                state.spawn_tile();
+                moves += 1;
+            } else {
+                break;
+            }
+        }
+        (state.max_tile(), state.score)
+    }
+
+    #[test]
+    #[ignore] // Run with: cargo test -p mcts-wasm -- --ignored bench_2048 --nocapture
+    fn bench_2048_10k_games() {
+        use std::collections::BTreeMap;
+        use std::time::Instant;
+
+        let num_games: u32 = std::env::var("GAMES")
+            .ok()
+            .and_then(|s| s.parse().ok())
+            .unwrap_or(100);
+        let playouts_per_move: u64 = std::env::var("PLAYOUTS")
+            .ok()
+            .and_then(|s| s.parse().ok())
+            .unwrap_or(2000);
+
+        let start = Instant::now();
+        let mut max_tile_counts: BTreeMap<u32, u32> = BTreeMap::new();
+        let mut total_score: u64 = 0;
+        let mut best_score: u32 = 0;
+        let mut worst_score: u32 = u32::MAX;
+
+        for i in 0..num_games {
+            let (max_tile, score) = play_one_game(playouts_per_move as u64);
+            *max_tile_counts.entry(max_tile).or_insert(0) += 1;
+            total_score += score as u64;
+            best_score = best_score.max(score);
+            worst_score = worst_score.min(score);
+
+            if (i + 1) % 10 == 0 {
+                let elapsed = start.elapsed().as_secs_f64();
+                let rate = (i + 1) as f64 / elapsed;
+                eprintln!(
+                    "[{}/{}] {:.1} games/sec, last: max_tile={}, score={}",
+                    i + 1, num_games, rate, max_tile, score
+                );
+            }
+        }
+
+        let elapsed = start.elapsed();
+        let avg_score = total_score / num_games as u64;
+
+        eprintln!("\n=== 2048 AI Results ({} games, {} playouts/move) ===", num_games, playouts_per_move);
+        eprintln!("Time: {:.1}s ({:.2} games/sec)", elapsed.as_secs_f64(), num_games as f64 / elapsed.as_secs_f64());
+        eprintln!("\nMax tile distribution:");
+        for (&tile, &count) in &max_tile_counts {
+            let pct = count as f64 / num_games as f64 * 100.0;
+            eprintln!("  {:>5}: {:>5} games ({:>5.1}%)", tile, count, pct);
+        }
+        eprintln!("\nScores:");
+        eprintln!("  Average: {}", avg_score);
+        eprintln!("  Best:    {}", best_score);
+        eprintln!("  Worst:   {}", worst_score);
+    }
+}
