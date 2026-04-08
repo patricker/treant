@@ -38,7 +38,7 @@ function ConnectFourDemoInner() {
   const [sRows, setSRows] = useState(6);
   const [sK, setSK] = useState(4);
   const [sPlayers, setSPlayers] = useState(2);
-  const [playouts, setPlayouts] = useState(20000);
+  const [playerPlayouts, setPlayerPlayouts] = useState<number[]>([20000, 20000]);
   const [playerTypes, setPlayerTypes] = useState<string[]>(['human', 'mcts']);
 
   // Game state
@@ -52,18 +52,22 @@ function ConnectFourDemoInner() {
   const [stats, setStats] = useState<SearchStats | null>(null);
   const [thinking, setThinking] = useState(false);
 
-  const playoutsRef = useRef(20000);
+  const playerPlayoutsRef = useRef<number[]>([20000, 20000]);
   const playerTypesRef = useRef(['human', 'mcts']);
-  useEffect(() => { playoutsRef.current = playouts; }, [playouts]);
+  useEffect(() => { playerPlayoutsRef.current = playerPlayouts; }, [playerPlayouts]);
   useEffect(() => { playerTypesRef.current = playerTypes; }, [playerTypes]);
 
-  // Adjust playerTypes array when player count changes
+  // Adjust playerTypes and playerPlayouts arrays when player count changes
   useEffect(() => {
     setPlayerTypes((prev) => {
       const next = Array.from({ length: sPlayers }, (_, i) =>
         i < prev.length ? prev[i] : 'mcts'
       );
       return next;
+    });
+    setPlayerPlayouts((prev) => {
+      const defaultVal = 20000;
+      return Array.from({ length: sPlayers }, (_, i) => (i < prev.length ? prev[i] : defaultVal));
     });
   }, [sPlayers]);
 
@@ -90,7 +94,7 @@ function ConnectFourDemoInner() {
       setStats(null);
       return;
     }
-    gameRef.current.playout_n(playoutsRef.current);
+    gameRef.current.playout_n(playerPlayoutsRef.current[gameRef.current.current_player()]);
     setStats(gameRef.current.get_stats());
   }, []);
 
@@ -152,7 +156,7 @@ function ConnectFourDemoInner() {
         setThinking(false);
         return;
       }
-      gameRef.current.playout_n(playoutsRef.current);
+      gameRef.current.playout_n(playerPlayoutsRef.current[gameRef.current.current_player()]);
       const s = gameRef.current.get_stats();
       setStats(s);
       const best = gameRef.current.best_move();
@@ -223,12 +227,6 @@ function ConnectFourDemoInner() {
             {[2,3,4].map((v) => <option key={v} value={v}>{v}</option>)}
           </select>
         </label>
-        <label className={bs.settingLabel}>
-          <span>Playouts</span>
-          <select value={playouts} onChange={(e) => setPlayouts(Number(e.target.value))} className={bs.select}>
-            {PLAYOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-        </label>
         <button
           className="button button--sm button--outline button--primary"
           onClick={initGame}
@@ -256,6 +254,21 @@ function ConnectFourDemoInner() {
             >
               <option value="human">Human</option>
               <option value="mcts">MCTS</option>
+            </select>
+            <select
+              value={playerPlayouts[i] || 20000}
+              onChange={(e) => {
+                setPlayerPlayouts((prev) => {
+                  const next = [...prev];
+                  next[i] = Number(e.target.value);
+                  return next;
+                });
+              }}
+              style={{ fontSize: '0.7rem', padding: '0.125rem 0.25rem', width: '4.5rem' }}
+            >
+              {PLAYOUT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
             </select>
           </div>
         ))}
@@ -324,7 +337,7 @@ function ConnectFourDemoInner() {
       {stats && stats.children.length > 0 && (
         <div className={styles.section}>
           <div className={styles.sectionLabel}>
-            MCTS analysis — {PLAYER_NAMES[currentPlayer]}&apos;s move ({stats.total_playouts.toLocaleString()} playouts)
+            MCTS analysis — {PLAYER_NAMES[currentPlayer]}&apos;s move ({(playerPlayouts[currentPlayer] || 20000).toLocaleString()} playouts)
           </div>
           <table className={bs.analysisTable}>
             <thead>

@@ -37,7 +37,7 @@ function ShiftDemoInner() {
   const [sK, setSK] = useState(3);
   const [sPieces, setSPieces] = useState(3);
   const [sPlayers, setSPlayers] = useState(2);
-  const [playouts, setPlayouts] = useState(5000);
+  const [playerPlayouts, setPlayerPlayouts] = useState<number[]>([5000, 5000]);
   const [playerTypes, setPlayerTypes] = useState<string[]>(['human', 'mcts']);
 
   // Game state
@@ -53,15 +53,19 @@ function ShiftDemoInner() {
   const [thinking, setThinking] = useState(false);
   const [selectedPiece, setSelectedPiece] = useState<number | null>(null);
 
-  const playoutsRef = useRef(5000);
+  const playerPlayoutsRef = useRef<number[]>([5000, 5000]);
   const playerTypesRef = useRef(['human', 'mcts']);
-  useEffect(() => { playoutsRef.current = playouts; }, [playouts]);
+  useEffect(() => { playerPlayoutsRef.current = playerPlayouts; }, [playerPlayouts]);
   useEffect(() => { playerTypesRef.current = playerTypes; }, [playerTypes]);
 
   useEffect(() => {
     setPlayerTypes((prev) =>
       Array.from({ length: sPlayers }, (_, i) => (i < prev.length ? prev[i] : 'mcts'))
     );
+    setPlayerPlayouts((prev) => {
+      const defaultVal = 5000;
+      return Array.from({ length: sPlayers }, (_, i) => (i < prev.length ? prev[i] : defaultVal));
+    });
   }, [sPlayers]);
 
   const syncState = useCallback(() => {
@@ -84,7 +88,7 @@ function ShiftDemoInner() {
       setStats(null);
       return;
     }
-    gameRef.current.playout_n(playoutsRef.current);
+    gameRef.current.playout_n(playerPlayoutsRef.current[gameRef.current.current_player()]);
     setStats(gameRef.current.get_stats());
     setProvenValue(gameRef.current.root_proven_value());
   }, []);
@@ -97,7 +101,7 @@ function ShiftDemoInner() {
         syncState();
         return;
       }
-      gameRef.current.playout_n(playoutsRef.current);
+      gameRef.current.playout_n(playerPlayoutsRef.current[gameRef.current.current_player()]);
       const s = gameRef.current.get_stats();
       setStats(s);
       setProvenValue(gameRef.current.root_proven_value());
@@ -256,12 +260,6 @@ function ShiftDemoInner() {
             {[2,3,4].map((v) => <option key={v} value={v}>{v}</option>)}
           </select>
         </label>
-        <label className={styles.settingLabel}>
-          <span>Playouts</span>
-          <select value={playouts} onChange={(e) => setPlayouts(Number(e.target.value))} className={styles.select}>
-            {PLAYOUT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-        </label>
         <button
           className="button button--sm button--outline button--primary"
           onClick={initGame}
@@ -297,6 +295,21 @@ function ShiftDemoInner() {
             >
               <option value="human">Human</option>
               <option value="mcts">MCTS</option>
+            </select>
+            <select
+              value={playerPlayouts[i] || 5000}
+              onChange={(e) => {
+                setPlayerPlayouts((prev) => {
+                  const next = [...prev];
+                  next[i] = Number(e.target.value);
+                  return next;
+                });
+              }}
+              style={{ fontSize: '0.7rem', padding: '0.125rem 0.25rem', width: '4.5rem' }}
+            >
+              {PLAYOUT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
             </select>
           </div>
         ))}
@@ -385,7 +398,7 @@ function ShiftDemoInner() {
       {stats && displayChildren.length > 0 && (
         <div className={sharedStyles.section}>
           <div className={sharedStyles.sectionLabel}>
-            MCTS analysis — {PLAYER_NAMES[currentPlayer]}&apos;s move ({stats.total_playouts.toLocaleString()} playouts)
+            MCTS analysis — {PLAYER_NAMES[currentPlayer]}&apos;s move ({(playerPlayouts[currentPlayer] || 5000).toLocaleString()} playouts)
           </div>
           <table className={styles.analysisTable}>
             <thead>
