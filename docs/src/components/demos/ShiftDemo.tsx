@@ -32,12 +32,18 @@ function ShiftDemoInner() {
   const gameRef = useRef<any>(null);
 
   // Settings
+  const [sCols, setSCols] = useState(3);
+  const [sRows, setSRows] = useState(3);
+  const [sK, setSK] = useState(3);
+  const [sPieces, setSPieces] = useState(3);
   const [sPlayers, setSPlayers] = useState(2);
   const [playouts, setPlayouts] = useState(5000);
   const [playerTypes, setPlayerTypes] = useState<string[]>(['human', 'mcts']);
 
   // Game state
-  const [board, setBoard] = useState('         ');
+  const [board, setBoard] = useState('');
+  const [cols, setCols] = useState(3);
+  const [rows, setRows] = useState(3);
   const [currentPlayer, setCurrentPlayer] = useState(0);
   const [isPlacement, setIsPlacement] = useState(true);
   const [gameOver, setGameOver] = useState(false);
@@ -117,7 +123,9 @@ function ShiftDemoInner() {
   const initGame = useCallback(() => {
     if (!wasm) return;
     if (gameRef.current) gameRef.current.free();
-    gameRef.current = new wasm.ShiftWasm(sPlayers);
+    gameRef.current = new wasm.ShiftWasm(sCols, sRows, sK, sPlayers, sPieces);
+    setCols(gameRef.current.cols());
+    setRows(gameRef.current.rows());
     setThinking(false);
     setStats(null);
     setProvenValue('Unknown');
@@ -130,7 +138,7 @@ function ShiftDemoInner() {
     if (playerTypesRef.current[firstPlayer] === 'mcts') {
       setTimeout(() => triggerMCTSTurn(), 100);
     }
-  }, [wasm, sPlayers, syncState, runAnalysis]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [wasm, sCols, sRows, sK, sPlayers, sPieces, syncState, runAnalysis]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (ready) initGame();
@@ -167,28 +175,22 @@ function ShiftDemoInner() {
     const mySymbol = PLAYER_NAMES[cp];
 
     if (isPlacement) {
-      // Placement phase: click empty cell
       if (cellChar !== ' ') return;
       const ok = gameRef.current.apply_move(`P${index}`);
       if (ok) afterMove();
     } else {
-      // Movement phase
       if (selectedPiece === null) {
-        // First click: select one of my pieces
         if (cellChar === mySymbol) {
           setSelectedPiece(index);
         }
       } else {
         if (index === selectedPiece) {
-          // Deselect
           setSelectedPiece(null);
         } else if (cellChar === ' ') {
-          // Second click: move to empty cell
           const ok = gameRef.current.apply_move(`M${selectedPiece},${index}`);
           if (ok) afterMove();
           else setSelectedPiece(null);
         } else if (cellChar === mySymbol) {
-          // Clicked another of my pieces — reselect
           setSelectedPiece(index);
         }
       }
@@ -202,22 +204,20 @@ function ShiftDemoInner() {
   const provenStatus = provenValue.toLowerCase() as 'win' | 'loss' | 'draw' | 'unknown';
   const displayChildren = (stats?.children ?? []).slice().sort((a, b) => b.visits - a.visits);
 
-  // Parse move descriptions for display
+  const cellSize = cols <= 5 ? 56 : cols <= 7 ? 44 : 36;
+  const fontSize = cols <= 5 ? '1.5rem' : cols <= 7 ? '1.1rem' : '0.9rem';
+
   const formatMove = (mov: string) => {
     if (mov.startsWith('P')) {
       const cell = parseInt(mov.slice(1), 10);
-      const r = Math.floor(cell / 3) + 1;
-      const c = (cell % 3) + 1;
+      const r = Math.floor(cell / cols) + 1;
+      const c = (cell % cols) + 1;
       return `Place (${r},${c})`;
     } else if (mov.startsWith('M')) {
       const parts = mov.slice(1).split(',');
       const from = parseInt(parts[0], 10);
       const to = parseInt(parts[1], 10);
-      const fr = Math.floor(from / 3) + 1;
-      const fc = (from % 3) + 1;
-      const tr = Math.floor(to / 3) + 1;
-      const tc = (to % 3) + 1;
-      return `(${fr},${fc})\u2192(${tr},${tc})`;
+      return `(${Math.floor(from / cols) + 1},${(from % cols) + 1})\u2192(${Math.floor(to / cols) + 1},${(to % cols) + 1})`;
     }
     return mov;
   };
@@ -227,9 +227,33 @@ function ShiftDemoInner() {
       {/* Settings */}
       <div className={styles.settingsRow}>
         <label className={styles.settingLabel}>
+          <span>Width</span>
+          <select value={sCols} onChange={(e) => setSCols(Number(e.target.value))} className={styles.select}>
+            {[2,3,4,5,6,7,8].map((v) => <option key={v} value={v}>{v}</option>)}
+          </select>
+        </label>
+        <label className={styles.settingLabel}>
+          <span>Height</span>
+          <select value={sRows} onChange={(e) => setSRows(Number(e.target.value))} className={styles.select}>
+            {[2,3,4,5,6,7,8].map((v) => <option key={v} value={v}>{v}</option>)}
+          </select>
+        </label>
+        <label className={styles.settingLabel}>
+          <span>In a Row</span>
+          <select value={sK} onChange={(e) => setSK(Number(e.target.value))} className={styles.select}>
+            {[2,3,4,5,6].map((v) => <option key={v} value={v}>{v}</option>)}
+          </select>
+        </label>
+        <label className={styles.settingLabel}>
+          <span>Pieces</span>
+          <select value={sPieces} onChange={(e) => setSPieces(Number(e.target.value))} className={styles.select}>
+            {[1,2,3,4,5,6,7,8].map((v) => <option key={v} value={v}>{v}</option>)}
+          </select>
+        </label>
+        <label className={styles.settingLabel}>
           <span>Players</span>
           <select value={sPlayers} onChange={(e) => setSPlayers(Number(e.target.value))} className={styles.select}>
-            {[2, 3, 4].map((v) => <option key={v} value={v}>{v}</option>)}
+            {[2,3,4].map((v) => <option key={v} value={v}>{v}</option>)}
           </select>
         </label>
         <label className={styles.settingLabel}>
@@ -278,6 +302,10 @@ function ShiftDemoInner() {
         ))}
       </div>
 
+      <div className={styles.boardInfo}>
+        {cols}x{rows}, {gameRef.current?.win_length() ?? sK}-in-a-row, {gameRef.current?.pieces_per_player() ?? sPieces} pieces each
+      </div>
+
       {/* Status */}
       <div className={styles.status}>
         {gameOver ? null : thinking ? (
@@ -304,8 +332,8 @@ function ShiftDemoInner() {
       )}
 
       {/* Board */}
-      <div className={styles.board}>
-        {board.split('').slice(0, 9).map((cell, i) => {
+      <div className={styles.board} style={{ gridTemplateColumns: `repeat(${cols}, ${cellSize}px)` }}>
+        {board.split('').slice(0, cols * rows).map((cell, i) => {
           const pIdx = cell === ' ' ? -1 : PLAYER_NAMES.indexOf(cell);
           const color = pIdx >= 0 ? PLAYER_COLORS[pIdx] : undefined;
           const isMyPiece = pIdx === currentPlayer;
@@ -320,11 +348,11 @@ function ShiftDemoInner() {
               key={i}
               className={[
                 styles.cell,
-                !canClick ? styles.cellDisabled : '',
+                !canClick && !isSelected ? styles.cellDisabled : '',
                 isSelected ? styles.cellSelected : '',
-                !isPlacement && isMyPiece && !isSelected ? styles.cellMovable : '',
+                !isPlacement && isMyPiece && !isSelected && isHumanTurn ? styles.cellMovable : '',
               ].filter(Boolean).join(' ')}
-              style={{ color: color ?? 'inherit' }}
+              style={{ width: cellSize, height: cellSize, fontSize, color: color ?? 'inherit' }}
               onClick={() => handleCellClick(i)}
               disabled={!canClick && !isSelected}
             >
