@@ -30,6 +30,12 @@ const tabs: TabInfo[] = [
     concepts: 'Stochastic games, open-loop chance nodes, depth-limited search',
   },
   {
+    id: 'shift',
+    label: 'Shift',
+    description: 'A tic-tac-toe variant where each player has only 3 pieces. Place them first, then shift them to new positions. Simple rules, deep strategy.',
+    concepts: 'Movement phase, solver, multi-player',
+  },
+  {
     id: 'nim',
     label: 'Nim',
     description: 'A classic combinatorial game. MCTS-Solver proves every Nim position \u2014 take 1 or 2 stones, and the solver tells you exactly who wins.',
@@ -73,6 +79,11 @@ function DemoLoader({ tab }: { tab: TabId }) {
       const Game2048Demo =
         require('@site/src/components/demos/Game2048Demo').default;
       return <Game2048Demo />;
+    }
+    case 'shift': {
+      const ShiftDemo =
+        require('@site/src/components/demos/ShiftDemo').default;
+      return <ShiftDemo />;
     }
     case 'counting': {
       const StepThroughDemo =

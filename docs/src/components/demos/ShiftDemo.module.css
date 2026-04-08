@@ -1,0 +1,152 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  gap: 4px;
+  width: fit-content;
+  margin: 0 auto 1rem;
+}
+
+.cell {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  background: var(--ifm-background-surface-color);
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.15s, box-shadow 0.15s;
+  user-select: none;
+  line-height: 1;
+  padding: 0;
+}
+
+.cell:hover:not(.cellDisabled) {
+  background: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-primary);
+}
+
+.cellDisabled {
+  cursor: default;
+}
+
+.cellSelected {
+  box-shadow: 0 0 0 3px var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+}
+
+.cellMovable {
+  cursor: pointer;
+  opacity: 0.85;
+}
+
+.cellMovable:hover {
+  opacity: 1;
+  border-color: var(--ifm-color-primary);
+}
+
+/* ---- Settings ---- */
+.settingsRow {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.settingLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.settingLabel span {
+  font-weight: 600;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.select {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  width: 5.5rem;
+  text-align: center;
+}
+
+.boardInfo {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-500);
+  margin-bottom: 0.5rem;
+}
+
+.status {
+  text-align: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  min-height: 1.5rem;
+}
+
+.phaseHint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-500);
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+/* ---- Analysis table ---- */
+.analysisTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.analysisTable th {
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-emphasis-600);
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.analysisTable td {
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-100);
+}
+
+.analysisTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.statusCell {
+  font-weight: 600;
+}
+
+.statusCell[data-status='win'] { color: #22c55e; }
+.statusCell[data-status='loss'] { color: #ef4444; }
+.statusCell[data-status='draw'] { color: #eab308; }
+
+[data-theme='dark'] .cell {
+  border-color: var(--ifm-color-emphasis-400);
+}
