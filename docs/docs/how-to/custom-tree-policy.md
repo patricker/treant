@@ -144,7 +144,14 @@ let mcts = MCTSManager::new(state, MyMCTS, eval, ThompsonPolicy, ());
 
 A custom tree policy plugs into the search with zero overhead beyond what `choose_child` itself costs. The policy is called once per node per playout, so keep it fast -- avoid allocations and complex math when possible.
 
+## Note on Gumbel search
+
+[Gumbel search](../tutorials/08-gumbel-search) is implemented as a standalone search engine (`mcts-gumbel` crate) rather than a `TreePolicy`. This is because Gumbel's Sequential Halving controls the root-level simulation budget -- it decides which actions get simulations and how many. This is fundamentally different from `choose_child`, which selects one child per descent step without controlling the playout count.
+
+If your custom policy needs similar root-level control (deciding how many simulations each action receives, rather than which action to descend through), consider the `mcts-gumbel` architecture as a model.
+
 ## See also
 
-- [Tree Policies](../concepts/tree-policies) -- theory behind UCT, PUCT, and selection formulas
+- [Tree Policies](../concepts/tree-policies) -- theory behind UCT, PUCT, Gumbel, and selection formulas
+- [Gumbel Search tutorial](../tutorials/08-gumbel-search) -- using the `mcts-gumbel` crate
 - [Traits reference](../reference/traits) -- full trait signatures for `TreePolicy`, `MoveInfo`, `SearchHandle`

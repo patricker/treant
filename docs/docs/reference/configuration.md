@@ -102,3 +102,22 @@ Some options interact with or require others.
 | `selection_temperature()` | Nothing | Only affects `best_move()`; `principal_variation()` always uses argmax |
 | `rng_seed()` | Nothing | Seeds policy thread data via `TreePolicy::seed_thread_data()` |
 | `max_children()` | Moves returned in priority order | Works with `TreePolicy::compare_move_evaluations()` for ordering |
+
+---
+
+## `mcts-gumbel` configuration
+
+The `mcts-gumbel` crate uses `GumbelConfig` instead of the `MCTS` trait. See [Gumbel Search tutorial](../tutorials/08-gumbel-search.md) and [Traits Reference](./traits.md).
+
+| Field | Type | Default | Purpose |
+|---|---|---|---|
+| `m_actions` | `usize` | `16` | Actions to consider after Gumbel-Top-k sampling; higher = broader search |
+| `c_puct` | `f64` | `1.25` | PUCT exploration constant for below-root tree traversal |
+| `max_depth` | `usize` | `200` | Maximum depth per simulation before forcing leaf evaluation |
+| `value_scale` | `f64` | `50.0` | Scale factor mapping Q-values to logit scale; controls Q vs prior balance in the improved policy |
+| `seed` | `u64` | `42` | RNG seed for reproducible Gumbel noise sampling |
+
+**Tuning guidance:**
+- `m_actions`: set to the typical number of legal moves or smaller. For games with 200+ moves, 16-32 is typical. For games with fewer than 10 moves, use the move count.
+- `value_scale`: higher values make the improved policy sharper (more exploitation). Lower values let the prior dominate. The paper uses 50.0 with Q-values in \[-1, 1\].
+- `c_puct`: same role as in `AlphaGoPolicy`. Typical range: 1.0-2.5.

@@ -10,7 +10,7 @@ The material serves two audiences: those learning MCTS from scratch, and experie
 
 ## Site structure
 
-- **[Tutorials](/docs/tutorials/01-what-is-mcts)** -- Build working MCTS programs step by step, from theory through two-player games, solvers, and neural network priors.
+- **[Tutorials](/docs/tutorials/01-what-is-mcts)** -- Build working MCTS programs step by step, from theory through two-player games, solvers, neural network priors, and Gumbel search.
 - **[How-To Guides](/docs/how-to/parallel-search)** -- Task-oriented recipes for parallel search, tree reuse, custom policies, WASM integration, and more.
 - **[Concepts](/docs/concepts/algorithm)** -- Deep dives into the algorithm, exploration-exploitation tradeoffs, tree policies, solver bounds, and lock-free parallelism.
 - **[Reference](/docs/reference/traits)** -- Trait signatures, configuration options, and a glossary of MCTS terminology.
@@ -29,7 +29,7 @@ The tutorials use simple games to teach concepts, but the [Playground](/playgrou
 
 ### Project status
 
-- **123 integration tests**, all passing, plus golden cross-language tests
+- **123+ integration tests**, all passing, plus golden cross-language tests and 39 Gumbel tests
 - **Zero clippy warnings** — strict Rust linting
 - Lock-free parallel search with correct Acquire/Release memory ordering for ARM
 - Benchmarked: ~250k playouts/sec single-threaded on a trivial game, ~40k playouts/sec on Mancala (realistic two-player)
@@ -38,3 +38,5 @@ The tutorials use simple games to teach concepts, but the [Playground](/playgrou
 ### Using from other languages
 
 The core library is Rust, but a **runtime-polymorphic adapter** (`mcts-dynamic`) enables language bindings without Rust generics. Games and evaluators are defined via trait objects (`GameCallbacks`, `EvalCallbacks`) using strings for moves. Overhead is ~1.4x for realistic games ([benchmarked](https://github.com/patricker/mcts)). WASM bindings power the [Playground](/playground).
+
+A separate **`mcts-gumbel`** crate provides [Gumbel MuZero search](/docs/tutorials/08-gumbel-search) -- Sequential Halving with Gumbel noise for monotonically improving policies. It reuses `GameState` from the core crate, so any game works with both standard MCTS and Gumbel search.

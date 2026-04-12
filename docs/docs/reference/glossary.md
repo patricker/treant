@@ -18,6 +18,9 @@ The average number of legal moves at each game position. Tic-Tac-Toe has branchi
 **Batched evaluation.**
 Processing multiple leaf nodes through the evaluator in a single call, amortizing GPU kernel launch overhead. Implemented via `BatchEvaluator` and `BatchedEvaluatorBridge`, which collects pending evaluations from search threads and dispatches them as a batch. See [Batched Evaluation](../how-to/batched-evaluation.md).
 
+**Completed Q-value.**
+A Q-value estimate for a root action that fills in missing data for unvisited actions. For visited actions, this is the empirical mean reward. For unvisited actions, it falls back to the parent's value estimate. Used by Gumbel search to score actions during Sequential Halving and to compute the improved policy. See [Tree Policies](../concepts/tree-policies.md).
+
 **Chance node.**
 A node where the next transition is determined by randomness (dice, cards) rather than player choice. In open-loop mode, outcomes are sampled but not stored in the tree. In closed-loop mode (`closed_loop_chance() = true`), each outcome gets its own child. See [Chance Nodes](../concepts/chance-nodes.md).
 
@@ -45,8 +48,17 @@ The parameter `C` in UCB1/PUCT that controls the trade-off between exploitation 
 **First Play Urgency (FPU).**
 The value assigned to unvisited children during selection. Configured via `MCTS::fpu_value()`. Default (`f64::INFINITY`) forces all children to be tried before any revisit. Set to a finite value (e.g., `0.0`) for neural-network-guided search where priors should control exploration order. See [Tutorial 6](../tutorials/06-neural-network-priors.md).
 
+**Gumbel noise.**
+Random noise sampled from the Gumbel(0,1) distribution, used by Gumbel search. Added to policy logits at the root to create a randomized ranking of actions. The Gumbel-Max trick guarantees that sampling the argmax of (logit + Gumbel noise) is equivalent to sampling from the softmax distribution. See [Tree Policies](../concepts/tree-policies.md) and [Gumbel Search](../tutorials/08-gumbel-search.md).
+
+**Gumbel search.**
+A root-level search algorithm that uses Gumbel noise sampling and Sequential Halving to select actions. Produces a monotonically improving policy -- more simulations always improve the output. Implemented in the `mcts-gumbel` crate. Single-threaded. Below the root, standard PUCT selection is used. Based on Danihelka et al., "Policy improvement by planning with Gumbel" (ICLR 2022). See [Gumbel Search tutorial](../tutorials/08-gumbel-search.md) and [Tree Policies](../concepts/tree-policies.md).
+
 **GameState.**
 The trait defining game rules: legal moves, state transitions, current player, and optional features (terminal classification, chance outcomes, progressive widening). Every game implemented with this library starts here. See [Tutorial 2](../tutorials/02-first-search.md) and [Traits Reference](./traits.md).
+
+**Improved policy.**
+The policy output from Gumbel search, computed as `softmax(logit + value_scale * completed_q)`. Unlike the visit-count-based policy from standard MCTS, the improved policy is a theoretically grounded policy improvement operator -- it is guaranteed to be at least as good as the prior policy. This makes it a better training target for self-play loops than raw visit counts. See [Tree Policies](../concepts/tree-policies.md).
 
 **Leaf (node).**
 A node at the frontier of the search tree that has been evaluated but not yet expanded into children. Each playout extends the tree by one leaf. Not to be confused with a terminal node (which has no legal moves).
@@ -55,7 +67,7 @@ A node at the frontier of the search tree that has been evaluated but not yet ex
 An extension that propagates proven game-theoretic values (win/loss/draw) up the tree. When a terminal node is proven, its value flows upward: a parent is proven Win if any child is proven Loss (from the child's perspective), and proven Loss if all children are proven Win. Enabled via `MCTS::solver_enabled()`. See [Solver and Bounds](../concepts/solver-and-bounds.md) and [Tutorial 4](../tutorials/04-solving-games.md).
 
 **Move evaluation.**
-A per-move value produced by the evaluator and consumed by the tree policy. For UCT (`UCTPolicy`), this is `()` -- all moves start equal. For PUCT (`AlphaGoPolicy`), this is an `f64` prior probability from a neural network. Type alias: `MoveEvaluation<Spec>`. See [UCT vs PUCT](../concepts/tree-policies.md).
+A per-move value produced by the evaluator and consumed by the tree policy. For UCT (`UCTPolicy`), this is `()` -- all moves start equal. For PUCT (`AlphaGoPolicy`), this is an `f64` prior probability from a neural network. Type alias: `MoveEvaluation<Spec>`. See [Tree Policies](../concepts/tree-policies.md).
 
 **Negamax.**
 A simplification of minimax where scores are negated at each level: a child's score of +5 becomes -5 from the parent's perspective. Used internally for score-bounded backpropagation: parent's lower bound = max(-child.upper) across all children. See [Solver and Bounds](../concepts/solver-and-bounds.md).
@@ -79,13 +91,16 @@ A technique that limits the number of children expanded at a node based on visit
 A game-theoretic classification of a node as Win, Loss, Draw, or Unknown. Set by MCTS-Solver through bottom-up propagation from terminal nodes. Represented by the `ProvenValue` enum. Proven subtrees are skipped during selection. See [Solver and Bounds](../concepts/solver-and-bounds.md).
 
 **PUCT (Predictor + UCB applied to Trees).**
-The tree policy used by AlphaGo and AlphaZero. Selects children using `(Q(a) + C * P(a) * sqrt(N)) / (1 + n(a))`, where `P(a)` is a prior probability. Implemented by `AlphaGoPolicy`. See [UCT vs PUCT](../concepts/tree-policies.md).
+The tree policy used by AlphaGo and AlphaZero. Selects children using `(Q(a) + C * P(a) * sqrt(N)) / (1 + n(a))`, where `P(a)` is a prior probability. Implemented by `AlphaGoPolicy`. See [Tree Policies](../concepts/tree-policies.md).
 
 **Rollout.**
 A synonym for playout. In classic MCTS, rollouts often involve random play to a terminal state. In this library, the evaluator replaces random rollouts with learned evaluation, though the term is sometimes still used. See [Algorithm](../concepts/algorithm.md).
 
 **Score bounds.**
 An interval `[lower, upper]` on the minimax value of a node, tracked by Score-Bounded MCTS. Bounds tighten during backpropagation via negamax. When `lower == upper`, the node's exact value is proven. Represented by `ScoreBounds`. Enabled via `MCTS::score_bounded_enabled()`. See [Solver and Bounds](../concepts/solver-and-bounds.md).
+
+**Sequential Halving.**
+A simulation budget allocation algorithm used by Gumbel search at the root. Starts with m candidate actions, runs simulations on each, scores them using Gumbel noise + logits + completed Q-values, then keeps the top half. Repeats until one action remains. This ensures the simulation budget is allocated efficiently across the most promising actions. See [Tree Policies](../concepts/tree-policies.md).
 
 **Selection.**
 The phase where the tree policy chooses a path from the root to a leaf by picking the most promising child at each internal node. Balances exploration and exploitation. Implemented by `TreePolicy::choose_child()`. See [Algorithm](../concepts/algorithm.md).
@@ -103,13 +118,13 @@ A parameter controlling the randomness of post-search move selection. At tempera
 A hash table that maps game states to existing search nodes, allowing the tree to become a directed acyclic graph (or graph with cycles). Implemented via the `TranspositionTable` trait. `ApproxTable` provides a lock-free approximate implementation. Use `()` for no transposition table. See [Architecture](../concepts/architecture.md) and [Tree Reuse](../how-to/tree-reuse.md).
 
 **Tree policy.**
-The algorithm that decides which child to explore at each node during selection. Implements the `TreePolicy<Spec>` trait. Built-in policies: `UCTPolicy` (UCB1) and `AlphaGoPolicy` (PUCT). See [UCT vs PUCT](../concepts/tree-policies.md) and [Custom Tree Policy](../how-to/custom-tree-policy.md).
+The algorithm that decides which child to explore at each node during selection. Implements the `TreePolicy<Spec>` trait. Built-in policies: `UCTPolicy` (UCB1) and `AlphaGoPolicy` (PUCT). See also Gumbel search (below) for an alternative architecture that controls root-level simulation allocation instead of per-node child selection. See [Tree Policies](../concepts/tree-policies.md) and [Custom Tree Policy](../how-to/custom-tree-policy.md).
 
 **UCB1 (Upper Confidence Bound 1).**
 The formula underlying UCT: `Q(a) + C * sqrt(2 * ln(N) / n(a))`. Provides a principled balance between exploitation (high `Q`) and exploration (low `n`). See [Exploration vs Exploitation](../concepts/exploration-exploitation.md).
 
 **UCT (Upper Confidence bounds applied to Trees).**
-The application of UCB1 to tree search, proposed by Kocsis and Szepesvari (2006). The standard MCTS selection policy. Implemented by `UCTPolicy`. See [UCT vs PUCT](../concepts/tree-policies.md).
+The application of UCB1 to tree search, proposed by Kocsis and Szepesvari (2006). The standard MCTS selection policy. Implemented by `UCTPolicy`. See [Tree Policies](../concepts/tree-policies.md).
 
 **Virtual loss.**
 A temporary penalty applied to a node's reward sum during descent in parallel search. Discourages multiple threads from exploring the same path simultaneously. Subtracted when a thread descends through a node, added back during backpropagation. Configured via `MCTS::virtual_loss()`. See [Parallel MCTS](../concepts/parallel-mcts.md) and [Parallel Search](../how-to/parallel-search.md).

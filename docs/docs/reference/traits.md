@@ -331,7 +331,7 @@ How to handle graph cycles caused by transposition tables. Default: `PanicWhenCy
 
 ## `TreePolicy<Spec>`
 
-Selects which child to explore during tree traversal. See [UCT vs PUCT](../concepts/tree-policies.md) and [Custom Tree Policy](../how-to/custom-tree-policy.md).
+Selects which child to explore during tree traversal. See [Tree Policies](../concepts/tree-policies.md) and [Custom Tree Policy](../how-to/custom-tree-policy.md).
 
 ```rust
 pub trait TreePolicy<Spec: MCTS<TreePolicy = Self>>: Sync + Sized {
@@ -896,7 +896,7 @@ pub struct ChildStats<Spec: MCTS> {
 
 ## `UCTPolicy`
 
-Classic UCB1 tree policy. Balances exploitation and exploration using `Q(a) + C * sqrt(2 * ln(N) / n(a))`. Move evaluations are `()` -- all moves start equal. See [UCT vs PUCT](../concepts/tree-policies.md).
+Classic UCB1 tree policy. Balances exploitation and exploration using `Q(a) + C * sqrt(2 * ln(N) / n(a))`. Move evaluations are `()` -- all moves start equal. See [Tree Policies](../concepts/tree-policies.md).
 
 ### Constructor
 
@@ -929,7 +929,7 @@ Returns the exploration constant `C`.
 
 ## `AlphaGoPolicy`
 
-PUCT tree policy used by AlphaGo/AlphaZero. Selects children using `(Q(a) + C * P(a) * sqrt(N)) / (1 + n(a))`, where `P(a)` is the prior probability from a neural network. See [UCT vs PUCT](../concepts/tree-policies.md) and [Tutorial 6](../tutorials/06-neural-network-priors.md).
+PUCT tree policy used by AlphaGo/AlphaZero. Selects children using `(Q(a) + C * P(a) * sqrt(N)) / (1 + n(a))`, where `P(a)` is the prior probability from a neural network. See [Tree Policies](../concepts/tree-policies.md) and [Tutorial 6](../tutorials/06-neural-network-priors.md).
 
 ### Constructor
 
@@ -1193,3 +1193,163 @@ pub enum AdvanceError {
 | `Player<Spec>` | `<Spec::State as GameState>::Player` | Player type |
 | `TreePolicyThreadData<Spec>` | `<Spec::TreePolicy as TreePolicy<Spec>>::ThreadLocalData` | Policy thread-local data type |
 | `MoveInfoHandle<'a, Spec>` | `&'a MoveInfo<Spec>` | Borrowed reference to a `MoveInfo` |
+
+---
+
+# `mcts-gumbel` Crate Reference
+
+The `mcts-gumbel` crate provides Gumbel MuZero search as a standalone search engine. It reuses `GameState` from the core crate but has its own evaluator trait, search manager, and result types. See [Gumbel Search tutorial](../tutorials/08-gumbel-search.md) and [Tree Policies](../concepts/tree-policies.md).
+
+---
+
+## `GumbelEvaluator<G>`
+
+Evaluator providing policy logits and value estimates. Simpler than the core crate's `Evaluator` -- returns a `(Vec<f64>, f64)` tuple.
+
+```rust
+pub trait GumbelEvaluator<G: GameState>: Send {
+    fn evaluate(&self, state: &G, moves: &[G::Move]) -> (Vec<f64>, f64);
+}
+```
+
+### Required methods
+
+#### `evaluate`
+
+```rust
+fn evaluate(&self, state: &G, moves: &[G::Move]) -> (Vec<f64>, f64);
+```
+
+Evaluate a game state. Returns `(logits, value)`.
+
+**Parameters:**
+- `state` -- the game state to evaluate
+- `moves` -- available moves (same order as `GameState::available_moves()`)
+
+**Returns:** `(logits, value)` where:
+- `logits`: one `f64` per move, unnormalized log-probabilities (policy head output)
+- `value`: state value for the current player, in `[-1.0, 1.0]` (value head output)
+
+---
+
+## `GumbelConfig`
+
+Configuration for Gumbel search. Derives `Clone`, `Copy`, `Debug`.
+
+```rust
+pub struct GumbelConfig {
+    pub m_actions: usize,
+    pub c_puct: f64,
+    pub max_depth: usize,
+    pub value_scale: f64,
+    pub seed: u64,
+}
+```
+
+| Field | Type | Default | Purpose |
+|---|---|---|---|
+| `m_actions` | `usize` | `16` | Number of actions after Gumbel-Top-k sampling |
+| `c_puct` | `f64` | `1.25` | PUCT exploration constant for below-root traversal |
+| `max_depth` | `usize` | `200` | Maximum search depth per simulation |
+| `value_scale` | `f64` | `50.0` | Scale factor mapping Q-values to logit scale (`c_visit` in the paper) |
+| `seed` | `u64` | `42` | RNG seed for Gumbel noise sampling |
+
+---
+
+## `GumbelSearch<G, E>`
+
+Gumbel MCTS search engine. Single-threaded, two-player zero-sum (negamax).
+
+### Constructor
+
+#### `new`
+
+```rust
+pub fn new(evaluator: E, config: GumbelConfig) -> Self
+```
+
+Create a new search engine.
+
+### Methods
+
+#### `search`
+
+```rust
+pub fn search(&mut self, state: &G, n_simulations: u32) -> SearchResult<G::Move>
+```
+
+Run Gumbel search from the given state. Panics if the state is terminal.
+
+**Parameters:**
+- `state` -- root game state (not modified)
+- `n_simulations` -- total simulation budget
+
+**Returns:** `SearchResult` with best move, value, and per-move statistics.
+
+#### `set_seed`
+
+```rust
+pub fn set_seed(&mut self, seed: u64)
+```
+
+Reset the RNG for reproducible searches.
+
+#### `evaluator`
+
+```rust
+pub fn evaluator(&self) -> &E
+```
+
+Access the evaluator.
+
+#### `config`
+
+```rust
+pub fn config(&self) -> &GumbelConfig
+```
+
+Access the configuration.
+
+---
+
+## `SearchResult<M>`
+
+Result of a Gumbel search. `#[must_use]`.
+
+```rust
+pub struct SearchResult<M: Clone> {
+    pub best_move: M,
+    pub root_value: f64,
+    pub move_stats: Vec<MoveStats<M>>,
+    pub simulations_used: u32,
+}
+```
+
+| Field | Type | Purpose |
+|---|---|---|
+| `best_move` | `M` | Best move found by search |
+| `root_value` | `f64` | Value estimate for root state's current player |
+| `move_stats` | `Vec<MoveStats<M>>` | Per-move statistics (one per legal move) |
+| `simulations_used` | `u32` | Total simulations actually used |
+
+---
+
+## `MoveStats<M>`
+
+Per-move statistics from Gumbel search.
+
+```rust
+pub struct MoveStats<M: Clone> {
+    pub mov: M,
+    pub visits: u32,
+    pub completed_q: f64,
+    pub improved_policy: f64,
+}
+```
+
+| Field | Type | Purpose |
+|---|---|---|
+| `mov` | `M` | The move |
+| `visits` | `u32` | Simulations allocated to this move |
+| `completed_q` | `f64` | Completed Q-value (empirical mean if visited, root value estimate otherwise) |
+| `improved_policy` | `f64` | Gumbel-improved policy probability (sums to 1.0 across all moves) |

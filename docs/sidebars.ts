@@ -14,6 +14,7 @@ const sidebars: SidebarsConfig = {
         'tutorials/05-stochastic-games',
         'tutorials/06-neural-network-priors',
         'tutorials/07-advanced-search',
+        'tutorials/08-gumbel-search',
       ],
     },
     {

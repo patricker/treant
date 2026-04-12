@@ -115,4 +115,4 @@ All `MCTS` trait and `GameState` methods covered in tutorials 1-7:
 
 ## What's next
 
-The tutorials covered the core API. For specific tasks, see the How-To guides: parallel search, batched neural network evaluation, and hyperparameter tuning. For deeper understanding of the algorithms, see the Concepts section.
+[Gumbel Search](./08-gumbel-search.md) introduces the `mcts-gumbel` crate -- a search algorithm with monotonic policy improvement, designed for self-play training loops. Or, if you're done with tutorials, see the How-To guides for parallel search, batched neural network evaluation, and hyperparameter tuning, and the Concepts section for deeper understanding of the algorithms.

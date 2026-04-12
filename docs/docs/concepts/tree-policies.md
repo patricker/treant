@@ -3,11 +3,11 @@ sidebar_position: 3
 id: tree-policies
 ---
 
-# UCT vs PUCT
+# Tree Policies: UCT, PUCT, and Gumbel
 
-The tree policy determines which child to explore at each node during selection. This library provides two built-in policies: `UCTPolicy` (classic UCB1) and `AlphaGoPolicy` (PUCT with prior probabilities). They share the same goal -- balancing exploration and exploitation -- but differ in how they treat moves before the search has gathered evidence about them.
+The tree policy determines which child to explore at each node during selection. This library provides two built-in policies -- `UCTPolicy` (classic UCB1) and `AlphaGoPolicy` (PUCT with prior probabilities) -- and the ecosystem includes `mcts-gumbel` for Gumbel-based search with provably monotonic policy improvement. All three balance exploration and exploitation, but differ in how they treat prior knowledge and what guarantees they offer.
 
-Choosing the right policy is a design decision that depends on your game's branching factor, whether you have a source of prior knowledge, and how many playouts you can afford.
+Choosing the right policy is a design decision that depends on your game's branching factor, whether you have a source of prior knowledge, how many playouts you can afford, and whether you need a training target with monotonic improvement guarantees.
 
 ## UCT: Upper Confidence Bounds for Trees
 
@@ -87,17 +87,44 @@ At 1 visit, only 1 child is available. At 100 visits, 10 children. At 10,000, 10
 
 Progressive widening composes with either policy. With UCT, it prevents round-robin waste on high-branching positions. With PUCT, it provides a hard cap that the prior-based soft gating cannot.
 
+## Gumbel: Policy Improvement by Planning
+
+PUCT produces an improved policy implicitly: the visit-count distribution after search is a better policy than the raw network prior. Self-play training systems use this visit distribution as the training target. But this improved policy has a surprising flaw -- it is not monotonically improving. Adding more simulations can make the visit distribution worse in some positions, because PUCT's exploration term can shift visits toward losing moves as the parent count grows. In training pipelines, this means more compute does not always produce better data.
+
+Gumbel-based search (Danihelka et al., "Policy improvement by planning with Gumbel," ICLR 2022) solves this problem by constructing an improved policy that provably gets better with every additional simulation.
+
+**How it works at the root.** The search samples Gumbel(0,1) noise independently for each action and adds it to the network's log-probabilities (logits). It then selects the top-m actions by perturbed score. This set of m candidates receives the entire simulation budget. The Gumbel noise serves as a principled exploration mechanism: it guarantees that every action has a nonzero probability of being selected, weighted by the prior, without the ad-hoc exploration terms in UCT or PUCT.
+
+**Sequential Halving.** The simulation budget is allocated to the m candidates in rounds. In each round, every surviving candidate receives an equal share of simulations. After each round, the bottom half (by value estimate) is eliminated. This continues until one candidate remains. Sequential Halving is an optimal budget allocation strategy from the pure-exploration bandit literature -- it finds the best arm with the fewest total samples.
+
+**Below the root.** Interior nodes use standard PUCT selection. The Gumbel mechanism and Sequential Halving apply only at the root, where the improved policy is constructed. This is a key architectural distinction: Gumbel search controls how simulations are allocated at the top level, not how individual nodes choose children.
+
+**Completed Q-values.** For visited actions, the search uses the empirical mean return. For unvisited actions, it uses the value network's estimate as a stand-in. This "completed" Q-value vector ensures that every action has a value estimate, even with very few simulations.
+
+**The improved policy.** The final output is not visit counts but a softmax over logit + sigma(q_completed), where sigma is a monotone transformation that maps Q-values into the logit scale. This improved policy is a theoretically grounded training target: it integrates the prior (logits) with search results (completed Q-values) in a way that is guaranteed to be at least as good as the prior alone. The key property is monotonic improvement -- running more simulations never makes the improved policy worse.
+
+**Architectural note.** Gumbel search is implemented in the separate `mcts-gumbel` crate, not as a `TreePolicy` implementation in the core library. This is because Sequential Halving controls root-level simulation allocation, which is incompatible with the `TreePolicy::choose_child` interface. The core library's search loop calls `choose_child` uniformly at every node; Gumbel search requires a fundamentally different control flow at the root.
+
+## When Gumbel wins
+
+Gumbel search is the better choice when:
+
+- **Self-play training.** The improved policy is a better training target than PUCT's visit-count distribution. Because it is provably monotonically improving, more search always produces higher-quality training data. This eliminates a subtle source of noise in AlphaZero-style training loops.
+- **Low simulation budgets.** Sequential Halving allocates simulations optimally among candidate moves. With only 8 or 16 simulations total, Gumbel search finds the best move more reliably than PUCT, which may spread those simulations too thinly.
+- **Monotonic improvement matters.** In safety-critical applications or verified search, the guarantee that more compute never hurts is valuable. PUCT offers no such guarantee.
+- **Policy distillation.** When you need to compress a search procedure into a fast neural network, the improved policy provides a cleaner distillation target than visit counts.
+
+See the [Gumbel Search tutorial](../tutorials/08-gumbel-search.md) for a hands-on walkthrough.
+
 ## Future directions
 
-The tree policy design is an active research area. Several alternatives to UCT and PUCT exist but are not yet in this library:
-
-**Gumbel-Top-k (Policy Improvement Through Planning, 2022).** Adds Gumbel noise and uses the completed Q-values to improve the policy. Provably improves the policy with any number of simulations, even one. Promising for very low simulation budgets.
+The tree policy design is an active research area. Several alternatives exist beyond the three policies covered above:
 
 **Thompson Sampling.** Instead of upper confidence bounds, sample from the posterior distribution of each arm's reward. Naturally explores uncertain arms. Harder to implement efficiently in trees.
 
 **RAVE (Rapid Action Value Estimation).** Shares information between sibling nodes -- if a move is good in one context, it is probably good in similar contexts. Effective in Go but less general.
 
-Each of these could be implemented as a `TreePolicy` in this library's architecture. The trait boundary is the key design decision: the game, evaluator, and policy are independent, so new policies can be developed without modifying the search engine.
+Thompson Sampling and RAVE could be implemented as a `TreePolicy` in this library's architecture. The trait boundary is the key design decision: the game, evaluator, and policy are independent, so new policies can be developed without modifying the search engine.
 
 ## Solver integration
 
@@ -120,5 +147,7 @@ Deterministic tie-breaking (e.g., always pick the first child) creates systemati
 If you are building a game with fewer than 20 legal moves per position and no neural network, use `UCTPolicy`. Set C = sqrt(2) and leave FPU at infinity. This configuration requires zero tuning and works out of the box.
 
 If you are building a system with a neural network (or any source of per-move prior probabilities), use `AlphaGoPolicy`. Set C between 1.0 and 2.5, set FPU to 0.0 or a small negative value, and return prior probabilities from your evaluator's `evaluate_new_state`. This is the configuration used by every major game AI since 2016.
+
+If you need a training target with guaranteed monotonic improvement, or you are distilling search into a neural network, use Gumbel search from the `mcts-gumbel` crate. Note the architectural difference: Gumbel search is a standalone search procedure, not a `TreePolicy` implementation, because Sequential Halving controls root-level simulation allocation in a way that is incompatible with the `choose_child` interface.
 
 If you are unsure, start with `UCTPolicy`. It is simpler, has stronger theoretical guarantees, and exposes problems clearly (if the search is bad, the game is hard or the playout budget is too small). Switch to `AlphaGoPolicy` when you have a prior source and evidence that it helps.
