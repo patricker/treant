@@ -2,6 +2,15 @@
 
 **A high-performance, lock-free Monte Carlo Tree Search library for Rust.**
 
+[![Crates.io](https://img.shields.io/crates/v/treant.svg)](https://crates.io/crates/treant)
+[![Docs site](https://img.shields.io/badge/docs-mcts.dev-brightgreen)](https://mcts.dev)
+[![API Docs](https://img.shields.io/badge/api-docs.rs-blue)](https://docs.rs/treant)
+[![License](https://img.shields.io/crates/l/treant.svg)](./LICENSE)
+
+> ### Full documentation & interactive playground → **[mcts.dev](https://mcts.dev)**
+>
+> Tutorials, how-to guides, concept explainers, API reference, and browser-based demos of every feature. New here? **Start with [What is MCTS?](https://mcts.dev/docs/tutorials/01-what-is-mcts)**.
+
 *Fork and significant modernization of [zxqfl/mcts](https://github.com/zxqfl/mcts) by Jacob Jackson.*
 
 ## Features
@@ -109,6 +118,16 @@ Score leaf nodes during search. `evaluate_new_state` is called when a node is fi
 ### `MCTS`
 
 Wire everything together. Associate your `GameState`, `Evaluator`, `TreePolicy`, and `TranspositionTable` types, and configure search behavior: virtual loss, FPU, solver/score-bounded modes, Dirichlet noise, temperature, depth limits, and RNG seeding.
+
+## Learn more
+
+The material in this README is a taste. Everything else lives at **[mcts.dev](https://mcts.dev)**:
+
+- **[Tutorials](https://mcts.dev/docs/tutorials/01-what-is-mcts)** — from "what is MCTS" through AlphaZero-style PUCT and Gumbel search
+- **[How-To Guides](https://mcts.dev/docs/how-to/parallel-search)** — parallel search, tree reuse, custom policies, WASM integration
+- **[Concepts](https://mcts.dev/docs/concepts/algorithm)** — algorithm deep dives, exploration-exploitation, lock-free parallelism
+- **[Reference](https://mcts.dev/docs/reference/traits)** — full trait signatures, configuration options, glossary
+- **[Playground](https://mcts.dev/playground)** — play Tic-Tac-Toe, Connect Four, Nim, and 2048 against the search, all in-browser
 
 ## Credits
 
