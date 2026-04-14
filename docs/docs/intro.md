@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# MCTS Documentation
+# Treant Documentation
 
 This site teaches Monte Carlo Tree Search and how to use the `treant` Rust crate.
 

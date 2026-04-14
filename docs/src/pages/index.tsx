@@ -40,14 +40,14 @@ const capabilities = [
 export default function Home(): JSX.Element {
   return (
     <Layout
-      title="MCTS"
+      title="Treant"
       description="High-performance, lock-free Monte Carlo Tree Search for Rust"
     >
       <main>
         {/* Hero */}
         <section className={styles.hero}>
           <div className="container">
-            <h1 className={styles.heroTitle}>MCTS</h1>
+            <h1 className={styles.heroTitle}>Treant</h1>
             <p className={styles.heroSubtitle}>
               High-performance, lock-free Monte Carlo Tree Search for Rust
             </p>

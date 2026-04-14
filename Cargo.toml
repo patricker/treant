@@ -2,14 +2,18 @@
 members = [".", "treant-wasm", "treant-dynamic", "treant-gumbel"]
 
 [package]
-authors = ["Jacob Jackson <jacobbfjackson@gmail.com>"]
+authors = [
+    "Peter Wicks <patricker@gmail.com>",
+    "Jacob Jackson <jacobbfjackson@gmail.com>",
+]
 name = "treant"
-version = "0.3.0"
+version = "0.4.0"
 description = "High-performance, lock-free Monte Carlo Tree Search library for Rust."
 repository = "https://github.com/patricker/treant"
+homepage = "https://mcts.dev"
 readme = "README.md"
 keywords = ["mcts", "monte-carlo", "tree-search", "game-ai", "alphazero"]
-categories = ["algorithms"]
+categories = ["algorithms", "game-development", "simulation", "concurrency"]
 license = "MIT"
 edition = "2021"
 

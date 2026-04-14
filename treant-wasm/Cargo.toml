@@ -2,13 +2,20 @@
 name = "treant-wasm"
 version = "0.1.0"
 edition = "2021"
-description = "WASM bindings for the treant crate — powers the interactive playground."
+authors = ["Peter Wicks <patricker@gmail.com>"]
+description = "WebAssembly bindings for the treant Monte Carlo Tree Search library. Powers browser-based playgrounds and demos."
+repository = "https://github.com/patricker/treant"
+homepage = "https://mcts.dev"
+readme = "README.md"
+keywords = ["mcts", "wasm", "webassembly", "tree-search", "game-ai"]
+categories = ["algorithms", "game-development", "wasm"]
+license = "MIT"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-treant = { path = ".." }
+treant = { version = "0.4", path = ".." }
 wasm-bindgen = "0.2"
 serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = "0.6"

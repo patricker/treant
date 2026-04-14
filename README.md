@@ -2,6 +2,8 @@
 
 **A high-performance, lock-free Monte Carlo Tree Search library for Rust.**
 
+*Fork and significant modernization of [zxqfl/mcts](https://github.com/zxqfl/mcts) by Jacob Jackson.*
+
 ## Features
 
 - **Lock-free parallel search** -- uses `std::thread::scope` with an atomic pointer tree for safe, scalable concurrency
@@ -108,6 +110,11 @@ Score leaf nodes during search. `evaluate_new_state` is called when a node is fi
 
 Wire everything together. Associate your `GameState`, `Evaluator`, `TreePolicy`, and `TranspositionTable` types, and configure search behavior: virtual loss, FPU, solver/score-bounded modes, Dirichlet noise, temperature, depth limits, and RNG seeding.
 
+## Credits
+
+`treant` is maintained by Peter Wicks. The original MCTS engine was written by Jacob Jackson and published as [zxqfl/mcts](https://github.com/zxqfl/mcts). `treant` continues and extends that work with lock-free parallelism, PUCT/AlphaGo policies, batched neural-net evaluation, MCTS-Solver, Score-Bounded MCTS, chance nodes, Gumbel search, and WASM/dynamic language bindings.
+
 ## License
 
 MIT
+

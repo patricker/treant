@@ -2,10 +2,17 @@
 name = "treant-dynamic"
 version = "0.1.0"
 edition = "2021"
-description = "Runtime-polymorphic adapter for the treant crate, enabling language bindings."
+authors = ["Peter Wicks <patricker@gmail.com>"]
+description = "Runtime-polymorphic adapter for the treant crate, enabling language bindings without Rust generics."
+repository = "https://github.com/patricker/treant"
+homepage = "https://mcts.dev"
+readme = "README.md"
+keywords = ["mcts", "ffi", "bindings", "tree-search", "game-ai"]
+categories = ["algorithms", "game-development", "api-bindings"]
+license = "MIT"
 
 [dependencies]
-treant = { path = ".." }
+treant = { version = "0.4", path = ".." }
 rand = { version = "0.8", features = ["small_rng"] }
 rand_xoshiro = "0.6"
 

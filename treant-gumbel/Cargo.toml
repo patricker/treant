@@ -2,10 +2,16 @@
 name = "treant-gumbel"
 version = "0.1.0"
 edition = "2021"
-description = "Gumbel MuZero search: Sequential Halving with Gumbel noise for MCTS"
+authors = ["Peter Wicks <patricker@gmail.com>"]
+description = "Gumbel MuZero search: Sequential Halving with Gumbel noise for MCTS. Built on the treant crate."
+repository = "https://github.com/patricker/treant"
+homepage = "https://mcts.dev"
+readme = "README.md"
+keywords = ["mcts", "gumbel", "muzero", "alphazero", "game-ai"]
+categories = ["algorithms", "game-development", "simulation"]
 license = "MIT"
 
 [dependencies]
-treant = { path = ".." }
+treant = { version = "0.4", path = ".." }
 rand = "0.8"
 rand_xoshiro = "0.6"
