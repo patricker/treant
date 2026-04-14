@@ -102,7 +102,7 @@ Read `docs/docs/intro.md` in full. After the "Learn with real games" section (re
 
 ### Using from other languages
 
-The core library is Rust, but a **runtime-polymorphic adapter** (`mcts-dynamic`) enables language bindings. Games and evaluators are defined via trait objects (`GameCallbacks`, `EvalCallbacks`) using strings for moves — no Rust generics required. Overhead is ~1.4x for realistic games ([benchmarked](https://github.com/patricker/mcts)). WASM bindings power the [Playground](/playground).
+The core library is Rust, but a **runtime-polymorphic adapter** (`treant-dynamic`) enables language bindings. Games and evaluators are defined via trait objects (`GameCallbacks`, `EvalCallbacks`) using strings for moves — no Rust generics required. Overhead is ~1.4x for realistic games ([benchmarked](https://github.com/patricker/mcts)). WASM bindings power the [Playground](/playground).
 ```
 
 - [ ] **Step 2: Verify docs build**
@@ -247,7 +247,7 @@ cd docs && npm run build    # all changes build cleanly
 | # | Naive Reader Issue | Task |
 |---|-------------------|------|
 | 1 | No maturity/performance signals | Task 2 (intro) |
-| 2 | mcts-dynamic / non-Rust undocumented | Task 2 (intro) |
+| 2 | treant-dynamic / non-Rust undocumented | Task 2 (intro) |
 | 3 | No time-control guidance | Task 4 (parallel how-to) |
 | 5 | "Principal variation" undefined on first use | Task 1 |
 | 6 | Virtual loss guidance missing | Task 1 |
@@ -260,4 +260,4 @@ cd docs && npm run build    # all changes build cleanly
 |---|-------|--------|
 | 4 | Evaluator-writing how-to | New content page — larger scope, plan separately |
 | 8 | Competitor comparison | Marketing/positioning decision, not a docs bug |
-| 10 | Full Python bindings tutorial | Depends on mcts-python crate (not yet built) |
+| 10 | Full Python bindings tutorial | Depends on treant-python crate (not yet built) |

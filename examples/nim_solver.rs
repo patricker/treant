@@ -6,8 +6,8 @@
 //! Run: cargo run --example nim_solver
 //! Output: cargo run --example nim_solver > examples/output/nim_solver.txt
 
-use mcts::tree_policy::*;
-use mcts::*;
+use treant::tree_policy::*;
+use treant::*;
 
 // --- Game ---
 

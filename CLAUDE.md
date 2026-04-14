@@ -1,15 +1,15 @@
-# MCTS Crate
+# Treant
 
 > **Wiki**: Run `wiki briefing` for pre-compiled cross-repo context, or `wiki search <term>` to find specific topics. Use the `/wiki` skill for full command reference. Wiki lives at `/home/peter/code/wiki/`.
 
 
 High-performance, lock-free Monte Carlo Tree Search library for Rust.
-Fork of zxqfl/mcts, significantly modernized.
+Fork of zxqfl/mcts, significantly modernized. Published as `treant` on crates.io.
 
 ## Project structure
 
 ```
-Cargo.toml          # Workspace root (members: ".", "mcts-wasm", "mcts-dynamic")
+Cargo.toml          # Workspace root (members: ".", "treant-wasm", "treant-dynamic")
 src/                # Core library
   lib.rs            # Public API: MCTS, GameState, Evaluator traits, MCTSManager
   search_tree.rs    # SearchNode, MoveInfo, playout logic, solver/bounds propagation
@@ -22,19 +22,19 @@ tests/
   mcts_tests.rs     # 111 integration tests
   golden/           # Cross-language golden test definitions (JSON)
 benches/bench.rs    # Criterion benchmarks
-mcts-dynamic/       # Runtime-polymorphic adapter for language bindings
-mcts-wasm/          # WASM bindings crate (wasm-bindgen, cdylib)
+treant-dynamic/     # Runtime-polymorphic adapter for language bindings
+treant-wasm/        # WASM bindings crate (wasm-bindgen, cdylib)
 docs/               # Docusaurus 3 site (TypeScript)
 ```
 
 ## Commands
 
-- `cargo test` — run all tests (111 core + 26 mcts-dynamic + doc tests)
+- `cargo test` — run all tests (111 core + 26 treant-dynamic + doc tests)
 - `cargo test --test mcts_tests` — core integration tests only
-- `cargo test -p mcts-dynamic` — dynamic adapter tests + golden tests
+- `cargo test -p treant-dynamic` — dynamic adapter tests + golden tests
 - `cargo clippy` — lint (must stay at 0 warnings)
 - `cargo bench` — criterion benchmarks
-- `cd mcts-wasm && wasm-pack build --target web` — build WASM package
+- `cd treant-wasm && wasm-pack build --target web` — build WASM package
 - `cd docs && npm run build` — build docs site
 - `cd docs && npm start` — dev server for docs site
 
@@ -57,16 +57,16 @@ docs/               # Docusaurus 3 site (TypeScript)
 
 ## Dynamic adapter crate
 
-- `mcts-dynamic/` — workspace member, runtime-polymorphic adapter for language bindings
+- `treant-dynamic/` — workspace member, runtime-polymorphic adapter for language bindings
 - Bridges static generics (`MCTSManager<Spec>`) to trait-object-based API (`DynMCTSManager`)
 - Key traits: `GameCallbacks` (game state), `EvalCallbacks` (evaluator) — dyn-safe, host languages implement these
 - Always uses `AlphaGoPolicy` internally (PUCT); UCT behavior via uniform priors
 - Built-in `RandomRollout` evaluator; custom evaluators via `EvalCallbacks`
 - Golden tests in `tests/golden/golden_tests.json` — shared across all language bindings
-- Dependencies: mcts (path), rand 0.8
+- Dependencies: treant (path), rand 0.8
 
 ## WASM crate
 
-- `mcts-wasm/` — workspace member, `cdylib` + `rlib`
-- Dependencies: mcts (path), wasm-bindgen, serde, serde-wasm-bindgen, getrandom (js feature)
+- `treant-wasm/` — workspace member, `cdylib` + `rlib`
+- Dependencies: treant (path), wasm-bindgen, serde, serde-wasm-bindgen, getrandom (js feature)
 - Release profile at workspace root: `opt-level = "s"`, `lto = true`

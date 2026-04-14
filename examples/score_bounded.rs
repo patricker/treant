@@ -7,8 +7,8 @@
 //! Run: cargo run --example score_bounded
 //! Output: cargo run --example score_bounded > examples/output/score_bounded.txt
 
-use mcts::tree_policy::*;
-use mcts::*;
+use treant::tree_policy::*;
+use treant::*;
 
 // region: score_game
 

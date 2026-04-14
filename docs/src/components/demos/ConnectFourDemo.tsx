@@ -29,7 +29,7 @@ const PLAYOUT_OPTIONS = [
 ];
 
 function ConnectFourDemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
+  const { useWasm } = require('../treant/WasmProvider');
   const { wasm, ready, error } = useWasm();
   const gameRef = useRef<any>(null);
 
@@ -381,7 +381,7 @@ export default function ConnectFourDemo() {
   return (
     <BrowserOnly fallback={<div className={styles.loading}>Loading...</div>}>
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <ConnectFourDemoInner />

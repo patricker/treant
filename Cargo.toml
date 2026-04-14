@@ -1,14 +1,14 @@
 [workspace]
-members = [".", "mcts-wasm", "mcts-dynamic", "mcts-gumbel"]
+members = [".", "treant-wasm", "treant-dynamic", "treant-gumbel"]
 
 [package]
 authors = ["Jacob Jackson <jacobbfjackson@gmail.com>"]
-name = "mcts"
+name = "treant"
 version = "0.3.0"
-description = "This is a library for Monte Carlo tree search."
-repository = "https://github.com/zxqfl/mcts"
+description = "High-performance, lock-free Monte Carlo Tree Search library for Rust."
+repository = "https://github.com/patricker/mcts"
 readme = "README.md"
-keywords = ["monte", "carlo", "tree", "search", "ai"]
+keywords = ["mcts", "monte-carlo", "tree-search", "game-ai", "alphazero"]
 categories = ["algorithms"]
 license = "MIT"
 edition = "2021"
@@ -28,5 +28,5 @@ harness = false
 [profile.release]
 lto = true
 
-[profile.release.package.mcts-wasm]
+[profile.release.package.treant-wasm]
 opt-level = "s"

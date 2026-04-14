@@ -5,7 +5,7 @@ id: 08-gumbel-search
 
 # Gumbel Search
 
-Standard MCTS suffers from a surprising flaw: more simulations don't always produce a better policy. The visit distribution can oscillate as search deepens, making it an unreliable training signal. Gumbel MuZero search fixes this by replacing UCT/PUCT root selection with Gumbel noise and Sequential Halving, guaranteeing monotonic policy improvement. The `mcts-gumbel` crate implements this algorithm as a standalone search engine that reuses the core crate's `GameState` trait.
+Standard MCTS suffers from a surprising flaw: more simulations don't always produce a better policy. The visit distribution can oscillate as search deepens, making it an unreliable training signal. Gumbel MuZero search fixes this by replacing UCT/PUCT root selection with Gumbel noise and Sequential Halving, guaranteeing monotonic policy improvement. The `treant-gumbel` crate implements this algorithm as a standalone search engine that reuses the core crate's `GameState` trait.
 
 **You will learn to:**
 - Explain why Gumbel search improves on standard MCTS for training targets
@@ -51,7 +51,7 @@ Nim from [tutorial 03](./03-two-player-games.md): a pile of stones, take 1 or 2 
 The `GameState` implementation is identical to tutorial 03, so here it is in condensed form:
 
 ```rust,ignore
-use mcts::{GameState, ProvenValue};
+use treant::{GameState, ProvenValue};
 use mcts_gumbel::{GumbelSearch, GumbelConfig, GumbelEvaluator};
 
 #[derive(Clone, Debug)]
@@ -169,8 +169,8 @@ The improved policy in `move_stats` is the key output. It combines the prior log
 The same position with standard MCTS using `UCTPolicy`:
 
 ```rust,ignore
-use mcts::tree_policy::UCTPolicy;
-use mcts::*;
+use treant::tree_policy::UCTPolicy;
+use treant::*;
 
 #[derive(Default)]
 struct NimMCTS;

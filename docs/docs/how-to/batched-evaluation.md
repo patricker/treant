@@ -18,8 +18,8 @@ Evaluate multiple leaf nodes in a single forward pass for 10-100x faster GPU inf
 Instead of evaluating one leaf at a time, `BatchEvaluator` receives a slice of states and returns all evaluations at once:
 
 ```rust
-use mcts::batch::*;
-use mcts::*;
+use treant::batch::*;
+use treant::*;
 
 impl BatchEvaluator<MyMCTS> for MyNNEvaluator {
     type StateEvaluation = NNOutput;

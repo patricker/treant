@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # MCTS Documentation
 
-This site teaches Monte Carlo Tree Search and how to use the `mcts` Rust crate.
+This site teaches Monte Carlo Tree Search and how to use the `treant` Rust crate.
 
 The material serves two audiences: those learning MCTS from scratch, and experienced practitioners who need a production-grade implementation. Everything here applies to both.
 
@@ -37,6 +37,6 @@ The tutorials use simple games to teach concepts, but the [Playground](/playgrou
 
 ### Using from other languages
 
-The core library is Rust, but a **runtime-polymorphic adapter** (`mcts-dynamic`) enables language bindings without Rust generics. Games and evaluators are defined via trait objects (`GameCallbacks`, `EvalCallbacks`) using strings for moves. Overhead is ~1.4x for realistic games ([benchmarked](https://github.com/patricker/mcts)). WASM bindings power the [Playground](/playground).
+The core library is Rust, but a **runtime-polymorphic adapter** (`treant-dynamic`) enables language bindings without Rust generics. Games and evaluators are defined via trait objects (`GameCallbacks`, `EvalCallbacks`) using strings for moves. Overhead is ~1.4x for realistic games ([benchmarked](https://github.com/patricker/mcts)). WASM bindings power the [Playground](/playground).
 
-A separate **`mcts-gumbel`** crate provides [Gumbel MuZero search](/docs/tutorials/08-gumbel-search) -- Sequential Halving with Gumbel noise for monotonically improving policies. It reuses `GameState` from the core crate, so any game works with both standard MCTS and Gumbel search.
+A separate **`treant-gumbel`** crate provides [Gumbel MuZero search](/docs/tutorials/08-gumbel-search) -- Sequential Halving with Gumbel noise for monotonically improving policies. It reuses `GameState` from the core crate, so any game works with both standard MCTS and Gumbel search.

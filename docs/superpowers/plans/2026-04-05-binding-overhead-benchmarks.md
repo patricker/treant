@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Quantify the performance cost of `mcts-dynamic` (trait-object, String-based) vs native Rust (monomorphized, zero-cost types) by benchmarking identical games through both paths, including a realistic Mancala game.
+**Goal:** Quantify the performance cost of `treant-dynamic` (trait-object, String-based) vs native Rust (monomorphized, zero-cost types) by benchmarking identical games through both paths, including a realistic Mancala game.
 
-**Architecture:** A single benchmark file `mcts-dynamic/benches/overhead.rs` implements Mancala (Kalah rules, 4 stones/pit) in both native `GameState` and dynamic `GameCallbacks` forms, plus a trivial CountingGame baseline. Criterion groups produce side-by-side comparisons. The native side uses `AlphaGoPolicy` (same as dynamic) so the only difference is the binding layer.
+**Architecture:** A single benchmark file `treant-dynamic/benches/overhead.rs` implements Mancala (Kalah rules, 4 stones/pit) in both native `GameState` and dynamic `GameCallbacks` forms, plus a trivial CountingGame baseline. Criterion groups produce side-by-side comparisons. The native side uses `AlphaGoPolicy` (same as dynamic) so the only difference is the binding layer.
 
-**Tech Stack:** Rust, criterion 0.5, mcts (core), mcts-dynamic
+**Tech Stack:** Rust, criterion 0.5, treant (core), treant-dynamic
 
 ---
 
@@ -14,8 +14,8 @@
 
 | File | Responsibility |
 |------|---------------|
-| `mcts-dynamic/benches/overhead.rs` | All benchmark code: Mancala game (native + dynamic), CountingGame (native + dynamic), criterion groups |
-| `mcts-dynamic/Cargo.toml` | Add criterion dev-dependency and `[[bench]]` section |
+| `treant-dynamic/benches/overhead.rs` | All benchmark code: Mancala game (native + dynamic), CountingGame (native + dynamic), criterion groups |
+| `treant-dynamic/Cargo.toml` | Add criterion dev-dependency and `[[bench]]` section |
 
 Everything lives in one file. The game implementations are benchmark-internal (not exported). This keeps the diff small and self-contained.
 
@@ -45,14 +45,14 @@ Branching factor: 1-6 per turn. Average game length: ~40-60 moves. State: 14 `u8
 
 ---
 
-### Task 1: Add criterion to mcts-dynamic
+### Task 1: Add criterion to treant-dynamic
 
 **Files:**
-- Modify: `mcts-dynamic/Cargo.toml`
+- Modify: `treant-dynamic/Cargo.toml`
 
 - [ ] **Step 1: Add criterion dev-dependency and bench config**
 
-Add to `mcts-dynamic/Cargo.toml`:
+Add to `treant-dynamic/Cargo.toml`:
 
 ```toml
 [dev-dependencies]
@@ -66,7 +66,7 @@ harness = false
 
 - [ ] **Step 2: Create empty benchmark file**
 
-Create `mcts-dynamic/benches/overhead.rs`:
+Create `treant-dynamic/benches/overhead.rs`:
 
 ```rust
 use criterion::{criterion_group, criterion_main, Criterion};
@@ -81,14 +81,14 @@ criterion_main!(benches);
 
 - [ ] **Step 3: Verify it compiles and runs**
 
-Run: `cargo bench -p mcts-dynamic --bench overhead -- --test`
+Run: `cargo bench -p treant-dynamic --bench overhead -- --test`
 Expected: Compiles, runs the placeholder benchmark, exits.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add mcts-dynamic/Cargo.toml mcts-dynamic/benches/overhead.rs
-git commit -m "scaffold: criterion benchmark for mcts-dynamic overhead tests"
+git add treant-dynamic/Cargo.toml treant-dynamic/benches/overhead.rs
+git commit -m "scaffold: criterion benchmark for treant-dynamic overhead tests"
 ```
 
 ---
@@ -96,7 +96,7 @@ git commit -m "scaffold: criterion benchmark for mcts-dynamic overhead tests"
 ### Task 2: Implement native Mancala (GameState)
 
 **Files:**
-- Modify: `mcts-dynamic/benches/overhead.rs`
+- Modify: `treant-dynamic/benches/overhead.rs`
 
 - [ ] **Step 1: Write a basic test for Mancala move logic**
 
@@ -104,8 +104,8 @@ Add to `overhead.rs` (replacing placeholder content but keeping criterion import
 
 ```rust
 use criterion::{criterion_group, criterion_main, Criterion};
-use mcts::tree_policy::AlphaGoPolicy;
-use mcts::*;
+use treant::tree_policy::AlphaGoPolicy;
+use treant::*;
 
 // -----------------------------------------------------------------------
 // Mancala (Kalah) — native implementation
@@ -337,13 +337,13 @@ criterion_main!(benches);
 
 - [ ] **Step 4: Verify it compiles and runs**
 
-Run: `cargo bench -p mcts-dynamic --bench overhead -- --test`
+Run: `cargo bench -p treant-dynamic --bench overhead -- --test`
 Expected: Compiles, runs the benchmark, exits.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add mcts-dynamic/benches/overhead.rs
+git add treant-dynamic/benches/overhead.rs
 git commit -m "bench: native Mancala (Kalah) game implementation for overhead comparison"
 ```
 
@@ -352,7 +352,7 @@ git commit -m "bench: native Mancala (Kalah) game implementation for overhead co
 ### Task 3: Implement dynamic Mancala (GameCallbacks)
 
 **Files:**
-- Modify: `mcts-dynamic/benches/overhead.rs`
+- Modify: `treant-dynamic/benches/overhead.rs`
 
 - [ ] **Step 1: Add the dynamic Mancala implementation**
 
@@ -525,13 +525,13 @@ criterion_group!(benches, bench_mancala_native, bench_mancala_dynamic);
 
 - [ ] **Step 4: Verify both benchmarks compile and run**
 
-Run: `cargo bench -p mcts-dynamic --bench overhead -- --test`
+Run: `cargo bench -p treant-dynamic --bench overhead -- --test`
 Expected: Both benchmarks run.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add mcts-dynamic/benches/overhead.rs
+git add treant-dynamic/benches/overhead.rs
 git commit -m "bench: dynamic Mancala for native-vs-dynamic overhead comparison"
 ```
 
@@ -540,7 +540,7 @@ git commit -m "bench: dynamic Mancala for native-vs-dynamic overhead comparison"
 ### Task 4: Add CountingGame baseline benchmarks
 
 **Files:**
-- Modify: `mcts-dynamic/benches/overhead.rs`
+- Modify: `treant-dynamic/benches/overhead.rs`
 
 - [ ] **Step 1: Add native CountingGame PUCT benchmark**
 
@@ -725,13 +725,13 @@ criterion_main!(benches);
 
 - [ ] **Step 4: Verify all four benchmarks run**
 
-Run: `cargo bench -p mcts-dynamic --bench overhead -- --test`
+Run: `cargo bench -p treant-dynamic --bench overhead -- --test`
 Expected: 4 benchmarks compile and run.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add mcts-dynamic/benches/overhead.rs
+git add treant-dynamic/benches/overhead.rs
 git commit -m "bench: CountingGame baseline for native-vs-dynamic overhead comparison"
 ```
 
@@ -740,7 +740,7 @@ git commit -m "bench: CountingGame baseline for native-vs-dynamic overhead compa
 ### Task 5: Add parallel Mancala benchmarks
 
 **Files:**
-- Modify: `mcts-dynamic/benches/overhead.rs`
+- Modify: `treant-dynamic/benches/overhead.rs`
 
 - [ ] **Step 1: Add parallel benchmarks**
 
@@ -797,12 +797,12 @@ criterion_main!(benches);
 
 - [ ] **Step 3: Verify all six benchmarks run**
 
-Run: `cargo bench -p mcts-dynamic --bench overhead -- --test`
+Run: `cargo bench -p treant-dynamic --bench overhead -- --test`
 Expected: 6 benchmarks compile and run.
 
 - [ ] **Step 4: Run the actual benchmarks and record results**
 
-Run: `cargo bench -p mcts-dynamic --bench overhead`
+Run: `cargo bench -p treant-dynamic --bench overhead`
 
 Expected output format (example — actual numbers will vary):
 ```
@@ -822,13 +822,13 @@ Compute overhead ratios:
 - [ ] **Step 5: Commit**
 
 ```bash
-git add mcts-dynamic/benches/overhead.rs
+git add treant-dynamic/benches/overhead.rs
 git commit -m "bench: parallel Mancala + complete 6-benchmark overhead suite"
 ```
 
-- [ ] **Step 6: Run `cargo clippy -p mcts-dynamic --all-targets` and fix any warnings**
+- [ ] **Step 6: Run `cargo clippy -p treant-dynamic --all-targets` and fix any warnings**
 
-Run: `cargo clippy -p mcts-dynamic --all-targets`
+Run: `cargo clippy -p treant-dynamic --all-targets`
 Expected: 0 warnings
 
 ---
@@ -838,15 +838,15 @@ Expected: 0 warnings
 After all tasks:
 
 ```bash
-cargo bench -p mcts-dynamic --bench overhead -- --test   # all 6 benchmarks compile
-cargo test -p mcts-dynamic                                # existing 26 tests still pass
-cargo clippy -p mcts-dynamic --all-targets                # 0 warnings
+cargo bench -p treant-dynamic --bench overhead -- --test   # all 6 benchmarks compile
+cargo test -p treant-dynamic                                # existing 26 tests still pass
+cargo clippy -p treant-dynamic --all-targets                # 0 warnings
 ```
 
 To run the full benchmark suite and see overhead ratios:
 
 ```bash
-cargo bench -p mcts-dynamic --bench overhead
+cargo bench -p treant-dynamic --bench overhead
 ```
 
 ## Interpreting Results

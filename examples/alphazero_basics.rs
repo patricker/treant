@@ -7,8 +7,8 @@
 //! Run: cargo run --example alphazero_basics
 //! Output: cargo run --example alphazero_basics > examples/output/alphazero_basics.txt
 
-use mcts::tree_policy::*;
-use mcts::*;
+use treant::tree_policy::*;
+use treant::*;
 
 // --- Game: simple 3-move game with known optimal play ---
 

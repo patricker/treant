@@ -120,4 +120,4 @@ Try adjusting **C (exploration)** — lower values concentrate visits on the cur
 
 ## What's next
 
-In [Your First Search](./02-first-search.md), you'll implement this algorithm in Rust using the `mcts` crate.
+In [Your First Search](./02-first-search.md), you'll implement this algorithm in Rust using the `treant` crate.

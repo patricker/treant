@@ -5,7 +5,7 @@ id: tree-policies
 
 # Tree Policies: UCT, PUCT, and Gumbel
 
-The tree policy determines which child to explore at each node during selection. This library provides two built-in policies -- `UCTPolicy` (classic UCB1) and `AlphaGoPolicy` (PUCT with prior probabilities) -- and the ecosystem includes `mcts-gumbel` for Gumbel-based search with provably monotonic policy improvement. All three balance exploration and exploitation, but differ in how they treat prior knowledge and what guarantees they offer.
+The tree policy determines which child to explore at each node during selection. This library provides two built-in policies -- `UCTPolicy` (classic UCB1) and `AlphaGoPolicy` (PUCT with prior probabilities) -- and the ecosystem includes `treant-gumbel` for Gumbel-based search with provably monotonic policy improvement. All three balance exploration and exploitation, but differ in how they treat prior knowledge and what guarantees they offer.
 
 Choosing the right policy is a design decision that depends on your game's branching factor, whether you have a source of prior knowledge, how many playouts you can afford, and whether you need a training target with monotonic improvement guarantees.
 
@@ -103,7 +103,7 @@ Gumbel-based search (Danihelka et al., "Policy improvement by planning with Gumb
 
 **The improved policy.** The final output is not visit counts but a softmax over logit + sigma(q_completed), where sigma is a monotone transformation that maps Q-values into the logit scale. This improved policy is a theoretically grounded training target: it integrates the prior (logits) with search results (completed Q-values) in a way that is guaranteed to be at least as good as the prior alone. The key property is monotonic improvement -- running more simulations never makes the improved policy worse.
 
-**Architectural note.** Gumbel search is implemented in the separate `mcts-gumbel` crate, not as a `TreePolicy` implementation in the core library. This is because Sequential Halving controls root-level simulation allocation, which is incompatible with the `TreePolicy::choose_child` interface. The core library's search loop calls `choose_child` uniformly at every node; Gumbel search requires a fundamentally different control flow at the root.
+**Architectural note.** Gumbel search is implemented in the separate `treant-gumbel` crate, not as a `TreePolicy` implementation in the core library. This is because Sequential Halving controls root-level simulation allocation, which is incompatible with the `TreePolicy::choose_child` interface. The core library's search loop calls `choose_child` uniformly at every node; Gumbel search requires a fundamentally different control flow at the root.
 
 ## When Gumbel wins
 
@@ -148,6 +148,6 @@ If you are building a game with fewer than 20 legal moves per position and no ne
 
 If you are building a system with a neural network (or any source of per-move prior probabilities), use `AlphaGoPolicy`. Set C between 1.0 and 2.5, set FPU to 0.0 or a small negative value, and return prior probabilities from your evaluator's `evaluate_new_state`. This is the configuration used by every major game AI since 2016.
 
-If you need a training target with guaranteed monotonic improvement, or you are distilling search into a neural network, use Gumbel search from the `mcts-gumbel` crate. Note the architectural difference: Gumbel search is a standalone search procedure, not a `TreePolicy` implementation, because Sequential Halving controls root-level simulation allocation in a way that is incompatible with the `choose_child` interface.
+If you need a training target with guaranteed monotonic improvement, or you are distilling search into a neural network, use Gumbel search from the `treant-gumbel` crate. Note the architectural difference: Gumbel search is a standalone search procedure, not a `TreePolicy` implementation, because Sequential Halving controls root-level simulation allocation in a way that is incompatible with the `choose_child` interface.
 
 If you are unsure, start with `UCTPolicy`. It is simpler, has stronger theoretical guarantees, and exposes problems clearly (if the search is bad, the game is hard or the playout budget is too small). Switch to `AlphaGoPolicy` when you have a prior source and evidence that it helps.

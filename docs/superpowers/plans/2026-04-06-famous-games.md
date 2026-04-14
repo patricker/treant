@@ -4,9 +4,9 @@
 
 **Goal:** Add Tic-Tac-Toe, Connect Four, and 2048 to the WASM playground as recognizable, playable games that showcase MCTS capabilities (solver, deep search, chance nodes).
 
-**Architecture:** Each game is a self-contained Rust module in `mcts-wasm/src/` implementing `GameState` + evaluator + MCTS config + `#[wasm_bindgen]` wrapper, plus a React demo component in `docs/src/components/demos/` and a tab in the playground. Follow existing patterns from `nim.rs`/`NimSolverDemo.tsx`.
+**Architecture:** Each game is a self-contained Rust module in `treant-wasm/src/` implementing `GameState` + evaluator + MCTS config + `#[wasm_bindgen]` wrapper, plus a React demo component in `docs/src/components/demos/` and a tab in the playground. Follow existing patterns from `nim.rs`/`NimSolverDemo.tsx`.
 
-**Tech Stack:** Rust (mcts core), wasm-bindgen, React/TypeScript, Docusaurus, CSS Modules
+**Tech Stack:** Rust (treant core), wasm-bindgen, React/TypeScript, Docusaurus, CSS Modules
 
 ---
 
@@ -15,28 +15,28 @@
 ### Tic-Tac-Toe
 | File | Responsibility |
 |------|---------------|
-| `mcts-wasm/src/tictactoe.rs` | Game logic, evaluator, MCTS config, WASM bindings |
+| `treant-wasm/src/tictactoe.rs` | Game logic, evaluator, MCTS config, WASM bindings |
 | `docs/src/components/demos/TicTacToeDemo.tsx` | Interactive demo: human vs MCTS |
 | `docs/src/components/demos/TicTacToeDemo.module.css` | Board grid styling |
 
 ### Connect Four
 | File | Responsibility |
 |------|---------------|
-| `mcts-wasm/src/connectfour.rs` | Game logic, evaluator, MCTS config, WASM bindings |
+| `treant-wasm/src/connectfour.rs` | Game logic, evaluator, MCTS config, WASM bindings |
 | `docs/src/components/demos/ConnectFourDemo.tsx` | Interactive demo: human vs MCTS |
 | `docs/src/components/demos/ConnectFourDemo.module.css` | Board grid styling |
 
 ### 2048
 | File | Responsibility |
 |------|---------------|
-| `mcts-wasm/src/game2048.rs` | Game logic with chance nodes, evaluator, MCTS config, WASM bindings |
+| `treant-wasm/src/game2048.rs` | Game logic with chance nodes, evaluator, MCTS config, WASM bindings |
 | `docs/src/components/demos/Game2048Demo.tsx` | Interactive demo: MCTS suggests moves |
 | `docs/src/components/demos/Game2048Demo.module.css` | Tile grid styling |
 
 ### Shared modifications
 | File | Change |
 |------|--------|
-| `mcts-wasm/src/lib.rs` | Add `mod` and `pub use` for 3 new modules |
+| `treant-wasm/src/lib.rs` | Add `mod` and `pub use` for 3 new modules |
 | `docs/src/pages/playground.tsx` | Add 3 tabs + DemoLoader cases |
 
 ---
@@ -69,16 +69,16 @@
 ### Task 1: Tic-Tac-Toe Rust + WASM
 
 **Files:**
-- Create: `mcts-wasm/src/tictactoe.rs`
-- Modify: `mcts-wasm/src/lib.rs`
+- Create: `treant-wasm/src/tictactoe.rs`
+- Modify: `treant-wasm/src/lib.rs`
 
 - [ ] **Step 1: Create the game module**
 
-Create `mcts-wasm/src/tictactoe.rs` with the complete game implementation:
+Create `treant-wasm/src/tictactoe.rs` with the complete game implementation:
 
 ```rust
-use mcts::*;
-use mcts::tree_policy::UCTPolicy;
+use treant::*;
+use treant::tree_policy::UCTPolicy;
 use wasm_bindgen::prelude::*;
 use serde_wasm_bindgen;
 
@@ -339,19 +339,19 @@ impl TicTacToeWasm {
 
 - [ ] **Step 2: Register the module in lib.rs**
 
-Add to `mcts-wasm/src/lib.rs`:
+Add to `treant-wasm/src/lib.rs`:
 - `mod tictactoe;` in the module declarations
 - `pub use tictactoe::TicTacToeWasm;` in the re-exports
 
 - [ ] **Step 3: Verify compilation**
 
-Run: `cargo check -p mcts-wasm`
+Run: `cargo check -p treant-wasm`
 Expected: Compiles with 0 errors.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add mcts-wasm/src/tictactoe.rs mcts-wasm/src/lib.rs
+git add treant-wasm/src/tictactoe.rs treant-wasm/src/lib.rs
 git commit -m "feat: Tic-Tac-Toe WASM game with solver"
 ```
 
@@ -522,7 +522,7 @@ interface Stats {
 const PLAYOUTS = 5000;
 
 function TicTacToeDemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
+  const { useWasm } = require('../treant/WasmProvider');
   const { wasm, ready, error } = useWasm();
   const gameRef = useRef<any>(null);
   const [board, setBoard] = useState(' '.repeat(9));
@@ -664,7 +664,7 @@ export default function TicTacToeDemo() {
   return (
     <BrowserOnly fallback={<div className={styles.status}>Loading...</div>}>
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <TicTacToeDemoInner />
@@ -711,16 +711,16 @@ git commit -m "feat: Tic-Tac-Toe playground demo with solver analysis"
 ### Task 3: Connect Four Rust + WASM
 
 **Files:**
-- Create: `mcts-wasm/src/connectfour.rs`
-- Modify: `mcts-wasm/src/lib.rs`
+- Create: `treant-wasm/src/connectfour.rs`
+- Modify: `treant-wasm/src/lib.rs`
 
 - [ ] **Step 1: Create the game module**
 
-Create `mcts-wasm/src/connectfour.rs`:
+Create `treant-wasm/src/connectfour.rs`:
 
 ```rust
-use mcts::*;
-use mcts::tree_policy::UCTPolicy;
+use treant::*;
+use treant::tree_policy::UCTPolicy;
 use wasm_bindgen::prelude::*;
 use serde_wasm_bindgen;
 
@@ -1040,17 +1040,17 @@ impl ConnectFourWasm {
 
 - [ ] **Step 2: Register in lib.rs**
 
-Add `mod connectfour;` and `pub use connectfour::ConnectFourWasm;` to `mcts-wasm/src/lib.rs`.
+Add `mod connectfour;` and `pub use connectfour::ConnectFourWasm;` to `treant-wasm/src/lib.rs`.
 
 - [ ] **Step 3: Verify compilation**
 
-Run: `cargo check -p mcts-wasm`
+Run: `cargo check -p treant-wasm`
 Expected: 0 errors.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add mcts-wasm/src/connectfour.rs mcts-wasm/src/lib.rs
+git add treant-wasm/src/connectfour.rs treant-wasm/src/lib.rs
 git commit -m "feat: Connect Four WASM game with center-control heuristic"
 ```
 
@@ -1222,7 +1222,7 @@ interface Stats {
 const PLAYOUTS = 10000;
 
 function ConnectFourDemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
+  const { useWasm } = require('../treant/WasmProvider');
   const { wasm, ready, error } = useWasm();
   const gameRef = useRef<any>(null);
   const [board, setBoard] = useState(' '.repeat(42));
@@ -1363,7 +1363,7 @@ export default function ConnectFourDemo() {
   return (
     <BrowserOnly fallback={<div className={styles.status}>Loading...</div>}>
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <ConnectFourDemoInner />
@@ -1395,19 +1395,19 @@ git commit -m "feat: Connect Four playground demo with MCTS analysis"
 ### Task 5: 2048 Rust + WASM
 
 **Files:**
-- Create: `mcts-wasm/src/game2048.rs`
-- Modify: `mcts-wasm/src/lib.rs`
+- Create: `treant-wasm/src/game2048.rs`
+- Modify: `treant-wasm/src/lib.rs`
 
 - [ ] **Step 1: Create the game module**
 
-Create `mcts-wasm/src/game2048.rs`. This is the most complex game — it needs:
+Create `treant-wasm/src/game2048.rs`. This is the most complex game — it needs:
 - 4x4 grid with slide/merge mechanics
 - Random tile spawning (90% "2", 10% "4") as open-loop stochastic events
 - Scoring based on merged tile values
 
 ```rust
-use mcts::*;
-use mcts::tree_policy::UCTPolicy;
+use treant::*;
+use treant::tree_policy::UCTPolicy;
 use rand::prelude::*;
 use rand::rngs::SmallRng;
 use wasm_bindgen::prelude::*;
@@ -1717,17 +1717,17 @@ impl Game2048Wasm {
 
 - [ ] **Step 2: Register in lib.rs**
 
-Add `mod game2048;` and `pub use game2048::Game2048Wasm;` to `mcts-wasm/src/lib.rs`.
+Add `mod game2048;` and `pub use game2048::Game2048Wasm;` to `treant-wasm/src/lib.rs`.
 
 - [ ] **Step 3: Verify compilation**
 
-Run: `cargo check -p mcts-wasm`
+Run: `cargo check -p treant-wasm`
 Expected: 0 errors. Note: `SmallRng` may need to be `rand_xoshiro::Xoshiro256PlusPlus` — check what the crate uses.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add mcts-wasm/src/game2048.rs mcts-wasm/src/lib.rs
+git add treant-wasm/src/game2048.rs treant-wasm/src/lib.rs
 git commit -m "feat: 2048 WASM game with open-loop stochastic tile spawning"
 ```
 
@@ -1904,7 +1904,7 @@ interface Stats {
 const PLAYOUTS = 500;
 
 function Game2048DemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
+  const { useWasm } = require('../treant/WasmProvider');
   const { wasm, ready, error } = useWasm();
   const gameRef = useRef<any>(null);
   const [board, setBoard] = useState<number[]>(new Array(16).fill(0));
@@ -2050,7 +2050,7 @@ export default function Game2048Demo() {
   return (
     <BrowserOnly fallback={<div className={styles.status}>Loading...</div>}>
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <Game2048DemoInner />
@@ -2082,17 +2082,17 @@ git commit -m "feat: 2048 playground demo with MCTS move suggestions"
 ### Task 7: Final integration + WASM rebuild
 
 **Files:**
-- Verify: `mcts-wasm/src/lib.rs` (all 3 modules registered)
+- Verify: `treant-wasm/src/lib.rs` (all 3 modules registered)
 - Verify: `docs/src/pages/playground.tsx` (all 3 tabs added)
 
 - [ ] **Step 1: Verify all Rust code compiles**
 
-Run: `cargo check -p mcts-wasm`
+Run: `cargo check -p treant-wasm`
 Expected: 0 errors.
 
 - [ ] **Step 2: Verify clippy**
 
-Run: `cargo clippy -p mcts-wasm --all-targets`
+Run: `cargo clippy -p treant-wasm --all-targets`
 Expected: 0 warnings.
 
 - [ ] **Step 3: Verify docs build**
@@ -2102,8 +2102,8 @@ Expected: Build succeeds.
 
 - [ ] **Step 4: Build WASM package (if wasm-pack available)**
 
-Run: `cd mcts-wasm && wasm-pack build --target web`
-Expected: Package built in `mcts-wasm/pkg/`.
+Run: `cd treant-wasm && wasm-pack build --target web`
+Expected: Package built in `treant-wasm/pkg/`.
 
 - [ ] **Step 5: Test playground locally (if wasm-pack succeeded)**
 
@@ -2124,13 +2124,13 @@ git commit -m "fix: final integration fixes for famous games playground"
 
 After all tasks:
 ```bash
-cargo check -p mcts-wasm                      # all 3 new games compile
-cargo clippy -p mcts-wasm --all-targets        # 0 warnings
+cargo check -p treant-wasm                      # all 3 new games compile
+cargo clippy -p treant-wasm --all-targets        # 0 warnings
 cd docs && npm run build                       # docs site builds
 ```
 
 If wasm-pack is available:
 ```bash
-cd mcts-wasm && wasm-pack build --target web   # WASM package builds
+cd treant-wasm && wasm-pack build --target web   # WASM package builds
 cd docs && npm start                           # playground runs locally
 ```

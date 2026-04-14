@@ -1,6 +1,6 @@
-use mcts::transposition_table::*;
-use mcts::tree_policy::*;
-use mcts::*;
+use treant::transposition_table::*;
+use treant::tree_policy::*;
+use treant::*;
 use std::time::Duration;
 
 fn make_no_transposition_mcts() -> MCTSManager<NoTranspositionMCTS> {
@@ -3369,7 +3369,7 @@ fn test_on_backpropagation_called() {
 
 #[test]
 fn test_advance_error_display() {
-    use mcts::AdvanceError;
+    use treant::AdvanceError;
     let e1 = AdvanceError::MoveNotFound;
     let e2 = AdvanceError::ChildNotExpanded;
     let e3 = AdvanceError::ChildNotOwned;

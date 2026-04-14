@@ -3,7 +3,7 @@
 //! The following example demonstrates basic usage:
 //!
 //! ```
-//! use mcts::{transposition_table::*, tree_policy::*, *};
+//! use treant::{transposition_table::*, tree_policy::*, *};
 //!
 //! // A really simple game. There's one player and one number. In each move the player can
 //! // increase or decrease the number. The player's score is the number.

@@ -105,9 +105,9 @@ Some options interact with or require others.
 
 ---
 
-## `mcts-gumbel` configuration
+## `treant-gumbel` configuration
 
-The `mcts-gumbel` crate uses `GumbelConfig` instead of the `MCTS` trait. See [Gumbel Search tutorial](../tutorials/08-gumbel-search.md) and [Traits Reference](./traits.md).
+The `treant-gumbel` crate uses `GumbelConfig` instead of the `MCTS` trait. See [Gumbel Search tutorial](../tutorials/08-gumbel-search.md) and [Traits Reference](./traits.md).
 
 | Field | Type | Default | Purpose |
 |---|---|---|---|

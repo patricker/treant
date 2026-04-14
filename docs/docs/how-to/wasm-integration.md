@@ -18,7 +18,7 @@ Compile your MCTS game to WebAssembly and call it from JavaScript.
 Create a new crate for the WASM bindings:
 
 ```bash
-cargo new mcts-wasm --lib
+cargo new treant-wasm --lib
 ```
 
 Configure `Cargo.toml`:
@@ -43,8 +43,8 @@ Expose a `#[wasm_bindgen]` struct that owns the `MCTSManager` and provides metho
 
 ```rust
 use wasm_bindgen::prelude::*;
-use mcts::*;
-use mcts::tree_policy::UCTPolicy;
+use treant::*;
+use treant::tree_policy::UCTPolicy;
 
 // Your GameState, Evaluator, MCTS config (defined elsewhere)
 use crate::game::{MyGame, MyEval, MyMCTS};

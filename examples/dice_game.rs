@@ -7,8 +7,8 @@
 //! Run: cargo run --example dice_game
 //! Output: cargo run --example dice_game > examples/output/dice_game.txt
 
-use mcts::tree_policy::*;
-use mcts::*;
+use treant::tree_policy::*;
+use treant::*;
 
 // --- Game ---
 

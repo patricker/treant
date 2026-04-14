@@ -5,7 +5,7 @@ id: traits
 
 # Core Traits Reference
 
-Complete API reference for every public trait, struct, and enum in the `mcts` crate.
+Complete API reference for every public trait, struct, and enum in the `treant` crate.
 
 ---
 
@@ -1196,9 +1196,9 @@ pub enum AdvanceError {
 
 ---
 
-# `mcts-gumbel` Crate Reference
+# `treant-gumbel` Crate Reference
 
-The `mcts-gumbel` crate provides Gumbel MuZero search as a standalone search engine. It reuses `GameState` from the core crate but has its own evaluator trait, search manager, and result types. See [Gumbel Search tutorial](../tutorials/08-gumbel-search.md) and [Tree Policies](../concepts/tree-policies.md).
+The `treant-gumbel` crate provides Gumbel MuZero search as a standalone search engine. It reuses `GameState` from the core crate but has its own evaluator trait, search manager, and result types. See [Gumbel Search tutorial](../tutorials/08-gumbel-search.md) and [Tree Policies](../concepts/tree-policies.md).
 
 ---
 

@@ -17,12 +17,12 @@ interface SearchStats {
 }
 
 function UCTvsPUCTDemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
-  const BarChart = require('../mcts/BarChart').default;
-  const ParameterControls = require('../mcts/ParameterControls').default;
-  const PlaybackControls = require('../mcts/PlaybackControls').default;
-  const SideBySide = require('../mcts/SideBySide').default;
-  const StatsPanel = require('../mcts/StatsPanel').default;
+  const { useWasm } = require('../treant/WasmProvider');
+  const BarChart = require('../treant/BarChart').default;
+  const ParameterControls = require('../treant/ParameterControls').default;
+  const PlaybackControls = require('../treant/PlaybackControls').default;
+  const SideBySide = require('../treant/SideBySide').default;
+  const StatsPanel = require('../treant/StatsPanel').default;
 
   const { wasm, ready, error } = useWasm();
   const uctRef = useRef<any>(null);
@@ -190,7 +190,7 @@ export default function UCTvsPUCTDemo() {
   return (
     <BrowserOnly fallback={<div className={styles.loading}>Loading...</div>}>
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <UCTvsPUCTDemoInner />

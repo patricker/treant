@@ -1,4 +1,4 @@
-# mcts
+# treant
 
 **A high-performance, lock-free Monte Carlo Tree Search library for Rust.**
 
@@ -21,8 +21,8 @@
 ## Quick Start
 
 ```rust
-use mcts::tree_policy::*;
-use mcts::*;
+use treant::tree_policy::*;
+use treant::*;
 
 // A single-player game: count from 0 to 100. Best strategy is always Add.
 #[derive(Clone, Debug, PartialEq)]

@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 import remarkCodeRegion from 'remark-code-region';
 
 const config: Config = {
-  title: 'MCTS',
+  title: 'Treant',
   tagline: 'High-performance, lock-free Monte Carlo Tree Search for Rust',
   favicon: 'img/favicon.ico',
 
@@ -45,7 +45,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'MCTS',
+      title: 'Treant',
       items: [
         {
           type: 'docSidebar',
@@ -59,12 +59,12 @@ const config: Config = {
           position: 'left',
         },
         {
-          href: 'https://docs.rs/mcts',
+          href: 'https://docs.rs/treant',
           label: 'API',
           position: 'left',
         },
         {
-          href: 'https://github.com/peterw/mcts',
+          href: 'https://github.com/patricker/mcts',
           label: 'GitHub',
           position: 'right',
         },
@@ -91,11 +91,11 @@ const config: Config = {
           items: [
             {
               label: 'API (docs.rs)',
-              href: 'https://docs.rs/mcts',
+              href: 'https://docs.rs/treant',
             },
             {
               label: 'Crates.io',
-              href: 'https://crates.io/crates/mcts',
+              href: 'https://crates.io/crates/treant',
             },
           ],
         },
@@ -104,12 +104,12 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/peterw/mcts',
+              href: 'https://github.com/patricker/mcts',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} MCTS Contributors. MIT License.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Treant Contributors. MIT License.`,
     },
     prism: {
       theme: prismThemes.github,

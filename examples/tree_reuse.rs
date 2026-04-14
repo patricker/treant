@@ -8,8 +8,8 @@
 //! Run: cargo run --example tree_reuse
 //! Output: cargo run --example tree_reuse > examples/output/tree_reuse.txt
 
-use mcts::tree_policy::*;
-use mcts::*;
+use treant::tree_policy::*;
+use treant::*;
 
 // --- Reuse the CountingGame from the main example ---
 

@@ -52,7 +52,7 @@ const SPEED_OPTIONS = [
 ];
 
 function Game2048DemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
+  const { useWasm } = require('../treant/WasmProvider');
   const { wasm, ready, error } = useWasm();
   const gameRef = useRef<any>(null);
 
@@ -451,7 +451,7 @@ export default function Game2048Demo() {
       fallback={<div className={sharedStyles.loading}>Loading...</div>}
     >
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <Game2048DemoInner />

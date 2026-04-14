@@ -54,7 +54,7 @@ pub trait TreePolicy<Spec: MCTS<TreePolicy = Self>>: Sync + Sized {
 `PolicyRng::select_by_key` scores every child and returns the one with the highest score. When multiple children tie, one is chosen uniformly at random.
 
 ```rust
-use mcts::tree_policy::PolicyRng;
+use treant::tree_policy::PolicyRng;
 
 handle
     .thread_data()
@@ -73,8 +73,8 @@ This is the recommended way to implement `choose_child`. It handles tie-breaking
 Thompson Sampling selects children by sampling from each child's posterior distribution rather than using an upper confidence bound. Here is a skeleton implementation using a Beta distribution:
 
 ```rust
-use mcts::*;
-use mcts::tree_policy::*;
+use treant::*;
+use treant::tree_policy::*;
 
 #[derive(Clone, Debug)]
 struct ThompsonPolicy;
@@ -146,12 +146,12 @@ A custom tree policy plugs into the search with zero overhead beyond what `choos
 
 ## Note on Gumbel search
 
-[Gumbel search](../tutorials/08-gumbel-search) is implemented as a standalone search engine (`mcts-gumbel` crate) rather than a `TreePolicy`. This is because Gumbel's Sequential Halving controls the root-level simulation budget -- it decides which actions get simulations and how many. This is fundamentally different from `choose_child`, which selects one child per descent step without controlling the playout count.
+[Gumbel search](../tutorials/08-gumbel-search) is implemented as a standalone search engine (`treant-gumbel` crate) rather than a `TreePolicy`. This is because Gumbel's Sequential Halving controls the root-level simulation budget -- it decides which actions get simulations and how many. This is fundamentally different from `choose_child`, which selects one child per descent step without controlling the playout count.
 
-If your custom policy needs similar root-level control (deciding how many simulations each action receives, rather than which action to descend through), consider the `mcts-gumbel` architecture as a model.
+If your custom policy needs similar root-level control (deciding how many simulations each action receives, rather than which action to descend through), consider the `treant-gumbel` architecture as a model.
 
 ## See also
 
 - [Tree Policies](../concepts/tree-policies) -- theory behind UCT, PUCT, Gumbel, and selection formulas
-- [Gumbel Search tutorial](../tutorials/08-gumbel-search) -- using the `mcts-gumbel` crate
+- [Gumbel Search tutorial](../tutorials/08-gumbel-search) -- using the `treant-gumbel` crate
 - [Traits reference](../reference/traits) -- full trait signatures for `TreePolicy`, `MoveInfo`, `SearchHandle`

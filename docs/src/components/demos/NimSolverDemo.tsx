@@ -41,11 +41,11 @@ interface MoveEntry {
 type Phase = 'human' | 'mcts' | 'gameover';
 
 function NimSolverDemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
-  const TreeVisualization = require('../mcts/TreeVisualization').default;
-  const StatsPanel = require('../mcts/StatsPanel').default;
-  const ParameterControls = require('../mcts/ParameterControls').default;
-  const NimBoard = require('../mcts/GameBoard/NimBoard').default;
+  const { useWasm } = require('../treant/WasmProvider');
+  const TreeVisualization = require('../treant/TreeVisualization').default;
+  const StatsPanel = require('../treant/StatsPanel').default;
+  const ParameterControls = require('../treant/ParameterControls').default;
+  const NimBoard = require('../treant/GameBoard/NimBoard').default;
 
   const { wasm, ready, error } = useWasm();
   const gameRef = useRef<any>(null);
@@ -356,7 +356,7 @@ export default function NimSolverDemo() {
   return (
     <BrowserOnly fallback={<div className={styles.loading}>Loading...</div>}>
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <NimSolverDemoInner />

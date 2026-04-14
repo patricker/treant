@@ -1,7 +1,7 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use mcts::transposition_table::*;
-use mcts::tree_policy::*;
-use mcts::*;
+use treant::transposition_table::*;
+use treant::tree_policy::*;
+use treant::*;
 
 #[derive(Clone)]
 struct CountingGame(i64);

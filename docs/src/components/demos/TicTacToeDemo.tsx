@@ -28,7 +28,7 @@ const PLAYOUT_OPTIONS = [
 ];
 
 function TicTacToeDemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
+  const { useWasm } = require('../treant/WasmProvider');
   const { wasm, ready, error } = useWasm();
   const gameRef = useRef<any>(null);
 
@@ -386,7 +386,7 @@ export default function TicTacToeDemo() {
   return (
     <BrowserOnly fallback={<div className={sharedStyles.loading}>Loading...</div>}>
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <TicTacToeDemoInner />

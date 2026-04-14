@@ -16,10 +16,10 @@ interface SearchStats {
 }
 
 function ChanceNodesDemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
-  const BarChart = require('../mcts/BarChart').default;
-  const StatsPanel = require('../mcts/StatsPanel').default;
-  const PlaybackControls = require('../mcts/PlaybackControls').default;
+  const { useWasm } = require('../treant/WasmProvider');
+  const BarChart = require('../treant/BarChart').default;
+  const StatsPanel = require('../treant/StatsPanel').default;
+  const PlaybackControls = require('../treant/PlaybackControls').default;
 
   const { wasm, ready, error } = useWasm();
   const gameRef = useRef<any>(null);
@@ -126,7 +126,7 @@ export default function ChanceNodesDemo() {
   return (
     <BrowserOnly fallback={<div className={styles.loading}>Loading...</div>}>
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <ChanceNodesDemoInner />

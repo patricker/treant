@@ -27,9 +27,9 @@ interface TreeNode {
 }
 
 function TreeGrowthDemoInner() {
-  const { useWasm } = require('../mcts/WasmProvider');
-  const TreeVisualization = require('../mcts/TreeVisualization').default;
-  const StatsPanel = require('../mcts/StatsPanel').default;
+  const { useWasm } = require('../treant/WasmProvider');
+  const TreeVisualization = require('../treant/TreeVisualization').default;
+  const StatsPanel = require('../treant/StatsPanel').default;
 
   const { wasm, ready, error } = useWasm();
   const gameRef = useRef<any>(null);
@@ -173,7 +173,7 @@ export default function TreeGrowthDemo() {
   return (
     <BrowserOnly fallback={<div className={styles.loading}>Loading...</div>}>
       {() => {
-        const { WasmProvider } = require('../mcts/WasmProvider');
+        const { WasmProvider } = require('../treant/WasmProvider');
         return (
           <WasmProvider>
             <TreeGrowthDemoInner />

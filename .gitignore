@@ -8,8 +8,8 @@ docs/node_modules/
 docs/.docusaurus/
 
 # WASM
-mcts-wasm/pkg/
-mcts-wasm/target/
+treant-wasm/pkg/
+treant-wasm/target/
 
 # Playwright / screenshots
 .playwright-mcp/

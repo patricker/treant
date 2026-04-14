@@ -367,7 +367,7 @@ loss. But there's more:
 
 **Monorepo structure:**
 ```
-mcts/
+treant/
   core/              # Rust core library
   ffi/               # C FFI layer (cbindgen-generated header)
   clients/
@@ -454,7 +454,7 @@ parts are already done:
 | Batched neural network evaluation | Ships |
 | MCTS-Solver (proven value propagation) | Ships |
 | Chance nodes (open-loop stochastic transitions) | Ships |
-| Gumbel-Top-k + Sequential Halving (`mcts-gumbel`) | Ships |
+| Gumbel-Top-k + Sequential Halving (`treant-gumbel`) | Ships |
 
 Every vision above builds on something that already works. The architecture
 (trait-based `GameState` + `Evaluator` + `TreePolicy` separation) is

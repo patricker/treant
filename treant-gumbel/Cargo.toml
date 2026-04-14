@@ -1,0 +1,11 @@
+[package]
+name = "treant-gumbel"
+version = "0.1.0"
+edition = "2021"
+description = "Gumbel MuZero search: Sequential Halving with Gumbel noise for MCTS"
+license = "MIT"
+
+[dependencies]
+treant = { path = ".." }
+rand = "0.8"
+rand_xoshiro = "0.6"
