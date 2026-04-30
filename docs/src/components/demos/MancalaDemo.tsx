@@ -174,15 +174,51 @@ function MancalaDemoInner() {
   if (error) return <div className={styles.error}>Failed to load WASM: {error}</div>;
   if (!ready) return <div className={styles.loading}>Loading...</div>;
 
-  // 2-player layout helpers
-  const p0Pits = Array.from({ length: pits }, (_, j) => board[j] ?? 0);
-  const p1Pits = Array.from({ length: pits }, (_, j) => board[(pits + 1) + j] ?? 0);
-  // P1 pits displayed RIGHT-TO-LEFT (matches sowing direction in physical layout):
-  // leftmost displayed cell = P1 local pits-1; rightmost = P1 local 0.
+  // Per-player pit stones, indexed by LOCAL pit index (0..pits-1).
+  const playerPits = (p: number) =>
+    Array.from({ length: pits }, (_, j) => board[p * (pits + 1) + j] ?? 0);
+
+  // 2-player display: bottom row is P0 in local order; top row is P1 in
+  // reversed local order (rightmost cell = P1 local 0, near P0's store).
+  const p0Pits = playerPits(0);
+  const p1Pits = playerPits(1);
   const p1RowDisplay = p1Pits.map((stones, local) => ({ stones, local })).reverse();
+
+  // 4-player display orientation per edge (matches counterclockwise sowing):
+  //   bottom (P0): left→right is local 0..pits-1
+  //   right  (P1): top→bottom is local pits-1..0
+  //   top    (P2): left→right is local pits-1..0
+  //   left   (P3): top→bottom is local 0..pits-1
+  const bottomRow = p0Pits.map((stones, local) => ({ stones, local }));
+  const rightCol =
+    numPlayers === 4
+      ? playerPits(1)
+          .map((stones, local) => ({ stones, local }))
+          .reverse()
+      : [];
+  const topRow =
+    numPlayers === 4
+      ? playerPits(2)
+          .map((stones, local) => ({ stones, local }))
+          .reverse()
+      : [];
+  const leftCol =
+    numPlayers === 4 ? playerPits(3).map((stones, local) => ({ stones, local })) : [];
 
   const maxVisits = stats ? Math.max(...stats.children.map((c) => c.visits), 1) : 1;
   const isHumanTurn = !gameOver && !thinking && playerTypes[currentPlayer] === 'human';
+
+  const renderPit = (player: number, local: number, stones: number) => (
+    <button
+      key={`${player}-${local}`}
+      className={`${bs.pit} ${currentPlayer === player && isHumanTurn ? bs.pitActive : ''}`}
+      onClick={() => handlePitClick(player, local)}
+      disabled={!(currentPlayer === player && isHumanTurn) || stones === 0}
+      title={`${PLAYER_NAMES[player]} pit ${local + 1}: ${stones} stones`}
+    >
+      <span className={bs.pitStones}>{stones}</span>
+    </button>
+  );
 
   return (
     <div className={styles.demo}>
@@ -320,9 +356,58 @@ function MancalaDemoInner() {
       )}
 
       {numPlayers === 4 && (
-        <div className={bs.fourPlayerStub}>
-          4-player layout is coming next. The rules engine already supports it —
-          watch this space.
+        <div className={styles.section} style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className={bs.boardSquare}>
+            {/* Stores at the four corners */}
+            <div
+              className={`${bs.cornerStore} ${bs.cornerTL}`}
+              style={{ borderColor: PLAYER_COLORS[2] }}
+              title={`${PLAYER_NAMES[2]}'s store`}
+            >
+              <div className={bs.storeLabel}>{PLAYER_NAMES[2]}</div>
+              <div className={bs.storeValue}>{scores[2] ?? 0}</div>
+            </div>
+            <div
+              className={`${bs.cornerStore} ${bs.cornerTR}`}
+              style={{ borderColor: PLAYER_COLORS[1] }}
+              title={`${PLAYER_NAMES[1]}'s store`}
+            >
+              <div className={bs.storeLabel}>{PLAYER_NAMES[1]}</div>
+              <div className={bs.storeValue}>{scores[1] ?? 0}</div>
+            </div>
+            <div
+              className={`${bs.cornerStore} ${bs.cornerBL}`}
+              style={{ borderColor: PLAYER_COLORS[3] }}
+              title={`${PLAYER_NAMES[3]}'s store`}
+            >
+              <div className={bs.storeLabel}>{PLAYER_NAMES[3]}</div>
+              <div className={bs.storeValue}>{scores[3] ?? 0}</div>
+            </div>
+            <div
+              className={`${bs.cornerStore} ${bs.cornerBR}`}
+              style={{ borderColor: PLAYER_COLORS[0] }}
+              title={`${PLAYER_NAMES[0]}'s store`}
+            >
+              <div className={bs.storeLabel}>{PLAYER_NAMES[0]}</div>
+              <div className={bs.storeValue}>{scores[0] ?? 0}</div>
+            </div>
+
+            {/* Edges */}
+            <div className={bs.topRow}>
+              {topRow.map(({ stones, local }) => renderPit(2, local, stones))}
+            </div>
+            <div className={bs.rightCol}>
+              {rightCol.map(({ stones, local }) => renderPit(1, local, stones))}
+            </div>
+            <div className={bs.bottomRow}>
+              {bottomRow.map(({ stones, local }) => renderPit(0, local, stones))}
+            </div>
+            <div className={bs.leftCol}>
+              {leftCol.map(({ stones, local }) => renderPit(3, local, stones))}
+            </div>
+
+            <div className={bs.centerLabel}>Mancala</div>
+          </div>
         </div>
       )}
 
