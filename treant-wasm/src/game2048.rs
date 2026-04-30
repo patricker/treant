@@ -1,6 +1,6 @@
+use rand::Rng;
 use treant::tree_policy::*;
 use treant::*;
-use rand::Rng;
 use wasm_bindgen::prelude::*;
 
 use crate::types;

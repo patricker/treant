@@ -1,5 +1,5 @@
-use treant::{ProvenValue, ScoreBounds};
 use std::fmt;
+use treant::{ProvenValue, ScoreBounds};
 
 /// A type-erased move represented as a string.
 /// Every host language can produce and consume strings natively.

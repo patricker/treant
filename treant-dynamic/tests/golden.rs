@@ -1,6 +1,6 @@
+use serde_json::Value;
 use treant::ProvenValue;
 use treant_dynamic::*;
-use serde_json::Value;
 
 // ---------------------------------------------------------------------------
 // Canonical test games — these must be implemented identically in every language

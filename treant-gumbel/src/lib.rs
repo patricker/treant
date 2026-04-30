@@ -44,10 +44,10 @@
 //! println!("Best move: {:?}", result.best_move);
 //! ```
 
-use treant::{GameState, ProvenValue};
 use rand::Rng;
 use rand::SeedableRng;
 use rand_xoshiro::Xoshiro256PlusPlus;
+use treant::{GameState, ProvenValue};
 
 // ============================================================
 // Public API

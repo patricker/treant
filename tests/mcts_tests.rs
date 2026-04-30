@@ -1,7 +1,7 @@
+use std::time::Duration;
 use treant::transposition_table::*;
 use treant::tree_policy::*;
 use treant::*;
-use std::time::Duration;
 
 fn make_no_transposition_mcts() -> MCTSManager<NoTranspositionMCTS> {
     MCTSManager::new(
