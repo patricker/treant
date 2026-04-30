@@ -492,10 +492,19 @@ impl MancalaWasm {
             Ok(n) if (n as usize) < self.pits => n,
             _ => return false,
         };
+        // Reject empty-pit moves up front so we don't burn 100 playouts on a
+        // move that's never going to be legal.
+        let state = self.manager.tree().root_state();
+        let cur = state.current as usize;
+        if state.board[state.player_pit_start(cur) + pit_num as usize] == 0 {
+            return false;
+        }
         let m = MancalaMove(pit_num);
         if self.manager.advance(&m).is_ok() {
             return true;
         }
+        // Legal move that hasn't been expanded yet — give the search a chance
+        // to materialize it as a root child, then advance.
         self.manager.playout_n(100);
         self.manager.advance(&m).is_ok()
     }
@@ -530,10 +539,10 @@ mod tests {
     }
 
     #[test]
-    fn basic_sow_no_bonus_no_capture() {
+    fn basic_sow_lands_in_own_store_grants_bonus_turn() {
         let mut g = Mancala::new(6, 4, 2);
-        // P0 plays pit 2 (4 stones): sows into pits 3, 4, 5, 6 (own store)
-        // 4 stones lands the last one in own store → bonus turn
+        // P0 plays pit 2 (4 stones): sows into pits 3, 4, 5, 6 (own store).
+        // Last stone in own store → bonus turn (current stays at 0).
         g.make_move(&MancalaMove(2));
         assert_eq!(g.board[2], 0);
         assert_eq!(g.board[3], 5);
@@ -544,15 +553,15 @@ mod tests {
     }
 
     #[test]
-    fn sow_past_own_store_skips_opponent_store() {
+    fn sow_visits_own_store_and_continues_into_opponent_pits() {
         let mut g = Mancala::new(6, 4, 2);
-        // Hand-craft: put 12 stones in P0's pit 0; should sow 0..12 wrapping
-        // past own store, into P1's pits, skipping P1's store at index 13.
+        // Hand-craft: 12 stones in P0's pit 0 sow through every cell from 1..12,
+        // including P0's own store at 6 (own stores are not skipped) and ending
+        // in P1's last pit at index 12. P1's store at 13 is not reached here —
+        // see `sow_skips_opponent_store_on_long_throw` for the actual skip test.
         g.board = [0; MAX_RING];
         g.board[0] = 12;
         g.make_move(&MancalaMove(0));
-        // Sow into 1..12 (12 cells), then would hit 13 (P1 store) — skip — but
-        // we only have 12 stones, so last lands in 12 (P1's last pit).
         for i in 1..=6 {
             assert_eq!(g.board[i], 1);
         }
