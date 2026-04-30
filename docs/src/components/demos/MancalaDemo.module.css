@@ -1,0 +1,243 @@
+/* ---- Settings & player controls (shared with ConnectFour pattern) ---- */
+.settingsRow {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.settingLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.settingLabel span {
+  font-weight: 600;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.select {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  width: 5.5rem;
+  text-align: center;
+}
+
+.playerRow {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.playerBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.playerName {
+  min-width: 3rem;
+}
+
+.playerScore {
+  font-family: var(--ifm-font-family-monospace);
+  background: var(--ifm-color-emphasis-100);
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+}
+
+.playerBadge select {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.25rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 3px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+}
+
+.playoutSelect {
+  font-size: 0.7rem;
+  padding: 0.125rem 0.25rem;
+  width: 4.5rem;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.statusBar {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-height: 1.5rem;
+}
+
+/* ---- Board (2-player layout) ---- */
+.board {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  background: #92684a;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pitRow {
+  display: flex;
+  gap: 8px;
+}
+
+.pit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: #6f4f3a;
+  color: #fff;
+  border-radius: 50%;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: default;
+  transition: transform 0.1s, background 0.15s, border-color 0.15s;
+  padding: 0;
+}
+
+.pitStones {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.pitActive:not(:disabled) {
+  cursor: pointer;
+  border-color: #fde68a;
+}
+
+.pitActive:not(:disabled):hover {
+  background: #845a44;
+  transform: translateY(-1px);
+}
+
+.pit:disabled {
+  opacity: 0.85;
+}
+
+.store {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  background: #6f4f3a;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  color: #fff;
+  padding: 8px 4px;
+  gap: 0.4rem;
+}
+
+.storeLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+}
+
+.storeValue {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 1.4rem;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.fourPlayerStub {
+  text-align: center;
+  padding: 1.5rem;
+  border: 1px dashed var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.9rem;
+  margin: 1rem auto;
+  max-width: 32rem;
+}
+
+/* ---- Analysis table ---- */
+.analysisTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.analysisTable th {
+  text-align: left;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-emphasis-600);
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.analysisTable td {
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-100);
+}
+
+.analysisTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mono {
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.bestPit {
+  font-weight: 700;
+  color: #22c55e;
+}
+
+.barCell {
+  width: 40%;
+}
+
+.bar {
+  height: 10px;
+  border-radius: 3px;
+  background: var(--ifm-color-primary);
+  transition: width 0.3s;
+}

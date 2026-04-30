@@ -30,6 +30,12 @@ const tabs: TabInfo[] = [
     concepts: 'Stochastic games, open-loop chance nodes, depth-limited search',
   },
   {
+    id: 'mancala',
+    label: 'Mancala',
+    description: 'The classic sowing game (Kalah rules). Configurable pits, stones, and player count \u2014 the rules engine generalizes from standard 2-player Kalah to a 4-player ring variant.',
+    concepts: 'Bonus turns, capture rules, parametric games',
+  },
+  {
     id: 'shift',
     label: 'Shift',
     description: 'A tic-tac-toe variant where each player has only 3 pieces. Place them first, then shift them to new positions. Simple rules, deep strategy.',
@@ -79,6 +85,11 @@ function DemoLoader({ tab }: { tab: TabId }) {
       const Game2048Demo =
         require('@site/src/components/demos/Game2048Demo').default;
       return <Game2048Demo />;
+    }
+    case 'mancala': {
+      const MancalaDemo =
+        require('@site/src/components/demos/MancalaDemo').default;
+      return <MancalaDemo />;
     }
     case 'shift': {
       const ShiftDemo =

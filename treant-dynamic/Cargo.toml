@@ -19,6 +19,7 @@ rand_xoshiro = "0.6"
 [dev-dependencies]
 serde_json = "1"
 criterion = "0.5"
+treant-wasm = { path = "../treant-wasm" }
 
 [[bench]]
 name = "overhead"
