@@ -6,7 +6,7 @@ import remarkCodeRegion from 'remark-code-region';
 const config: Config = {
   title: 'Treant',
   tagline: 'High-performance, lock-free Monte Carlo Tree Search for Rust',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.svg',
 
   future: {
     v4: true,
@@ -46,6 +46,10 @@ const config: Config = {
     },
     navbar: {
       title: 'Treant',
+      logo: {
+        alt: 'Treant logo',
+        src: 'img/logo.svg',
+      },
       items: [
         {
           type: 'docSidebar',

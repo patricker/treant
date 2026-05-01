@@ -1,4 +1,6 @@
-# treant
+<p align="center">
+  <img src="docs/static/img/wordmark.svg" alt="treant" width="280" />
+</p>
 
 **A high-performance, lock-free Monte Carlo Tree Search library for Rust.**
 

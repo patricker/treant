@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 64" width="220" height="64">
+  <style>
+    .stroke { stroke: #1a1a1a; }
+    .fill   { fill:   #1a1a1a; }
+    @media (prefers-color-scheme: dark) {
+      .stroke { stroke: #e5e7eb; }
+      .fill   { fill:   #e5e7eb; }
+    }
+    text {
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+                   Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+  </style>
+  <circle cx="32" cy="24" r="20" fill="none" class="stroke" stroke-width="3.5"/>
+  <rect x="27" y="42" width="10" height="14" class="fill"/>
+  <line x1="32" y1="56" x2="20" y2="60" class="stroke" stroke-width="3" stroke-linecap="round"/>
+  <line x1="32" y1="56" x2="44" y2="60" class="stroke" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="25" cy="22" r="3" class="fill"/>
+  <circle cx="39" cy="22" r="3" class="fill"/>
+  <text x="74" y="48" font-size="42" class="fill">treant</text>
+</svg>
