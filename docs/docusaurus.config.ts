@@ -49,6 +49,7 @@ const config: Config = {
       logo: {
         alt: 'Treant logo',
         src: 'img/logo.svg',
+        srcDark: 'img/logo-dark.svg',
       },
       items: [
         {
