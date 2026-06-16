@@ -1,7 +1,7 @@
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
 import styles from '../arcade.module.css';
 
-const SEAT_COLOR = ['var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)'];
+const SEAT_COLOR = ['var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)', 'var(--arc-p5)', 'var(--arc-p6)'];
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
   const g = new wasm.MancalaWasm(p.pits, p.stones, p.numPlayers);
@@ -85,7 +85,7 @@ export const mancala: GameDefinition = {
   knobs: [
     { key: 'pits', label: 'Pits', min: 3, max: 8, step: 1 },
     { key: 'stones', label: 'Stones', min: 2, max: 6, step: 1 },
-    { key: 'numPlayers', label: 'Players', min: 2, max: 4, step: 1 },
+    { key: 'numPlayers', label: 'Players', min: 2, max: 6, step: 1 },
   ],
   create: makeHandle,
   Board: MancalaBoard,

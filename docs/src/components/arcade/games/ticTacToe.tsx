@@ -7,6 +7,8 @@ const COLOR: Record<string, string> = {
   O: 'var(--arc-p2)',
   A: 'var(--arc-p3)',
   B: 'var(--arc-p4)',
+  C: 'var(--arc-p5)',
+  D: 'var(--arc-p6)',
 };
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
@@ -64,12 +66,13 @@ export const ticTacToe: GameDefinition = {
     { label: 'Gomoku-lite', emoji: '🧠', params: { cols: 9, rows: 9, k: 5, numPlayers: 2 } },
     { label: 'Big Board', emoji: '🔲', params: { cols: 6, rows: 6, k: 4, numPlayers: 2 } },
     { label: '3-Player', emoji: '👨‍👩‍👦', params: { cols: 6, rows: 6, k: 4, numPlayers: 3 } },
+    { label: '6-Player Chaos', emoji: '🤯', params: { cols: 10, rows: 10, k: 4, numPlayers: 6 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 2, max: 10, step: 1 },
     { key: 'rows', label: 'Height', min: 2, max: 10, step: 1 },
     { key: 'k', label: 'In a row', min: 2, max: 10, step: 1 },
-    { key: 'numPlayers', label: 'Players', min: 2, max: 4, step: 1 },
+    { key: 'numPlayers', label: 'Players', min: 2, max: 6, step: 1 },
   ],
   create: makeHandle,
   Board: TicTacToeBoard,

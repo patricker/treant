@@ -8,6 +8,8 @@ const COLOR: Record<string, string> = {
   O: 'var(--arc-p2)',
   A: 'var(--arc-p3)',
   B: 'var(--arc-p4)',
+  C: 'var(--arc-p5)',
+  D: 'var(--arc-p6)',
 };
 
 // A generic "place a mark on a grid cell" handle over a TTT-style WASM class.

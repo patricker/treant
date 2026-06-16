@@ -1,7 +1,7 @@
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
 import styles from '../arcade.module.css';
 
-const SEAT = ['var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)'];
+const SEAT = ['var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)', 'var(--arc-p5)', 'var(--arc-p6)'];
 const PIPS: Record<number, string> = { 1: '⚀', 2: '⚁', 3: '⚂', 4: '⚃', 5: '⚄', 6: '⚅' };
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
@@ -77,7 +77,7 @@ export const pig: GameDefinition = {
     { label: '4-Player', emoji: '🎉', params: { numPlayers: 4, target: 100 } },
   ],
   knobs: [
-    { key: 'numPlayers', label: 'Players', min: 2, max: 4, step: 1 },
+    { key: 'numPlayers', label: 'Players', min: 2, max: 6, step: 1 },
     { key: 'target', label: 'Target', min: 50, max: 150, step: 10 },
   ],
   create: makeHandle,

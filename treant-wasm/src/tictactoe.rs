@@ -6,8 +6,8 @@ use wasm_bindgen::prelude::*;
 use crate::types;
 
 const MAX_DIM: usize = 10;
-const MAX_PLAYERS: usize = 4;
-const PLAYER_SYMBOLS: [char; MAX_PLAYERS] = ['X', 'O', 'A', 'B'];
+const MAX_PLAYERS: usize = 6;
+const PLAYER_SYMBOLS: [char; MAX_PLAYERS] = ['X', 'O', 'A', 'B', 'C', 'D'];
 
 fn config(cols: usize, rows: usize, k: usize, num_players: usize) -> GridConfig {
     let cols = cols.clamp(2, MAX_DIM);

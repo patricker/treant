@@ -147,7 +147,7 @@ pub struct PigWasm {
 impl PigWasm {
     #[wasm_bindgen(constructor)]
     pub fn new(num_players: u32, target: u32) -> Self {
-        let np = (num_players as u8).clamp(2, 4);
+        let np = (num_players as u8).clamp(2, 6);
         let target = target.clamp(20, 200);
         Self {
             manager: MCTSManager::new(Pig::new(np, target), PigConfig, PigEval, UCTPolicy::new(0.7), ()),

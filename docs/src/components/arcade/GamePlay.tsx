@@ -5,7 +5,7 @@ import { GameIcon } from './icons';
 import { gameRules } from './rules';
 import styles from './arcade.module.css';
 
-const PLAYER_LABEL = ['Red', 'Yellow', 'Green', 'Purple'];
+const PLAYER_LABEL = ['Red', 'Yellow', 'Green', 'Purple', 'Teal', 'Orange'];
 
 function winnerLabel(result: string, labels: string[]): string {
   if (result === 'Draw') return "It's a draw!";

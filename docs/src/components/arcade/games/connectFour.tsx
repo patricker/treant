@@ -2,7 +2,7 @@ import type { GameDefinition, GameHandle, GameParams, BoardProps } from '../game
 import styles from '../arcade.module.css';
 import { usePrevBoard, changedIndex } from '../boardDiff';
 
-const DISC = ['', 'var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)'];
+const DISC = ['', 'var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)', 'var(--arc-p5)', 'var(--arc-p6)'];
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
   const g = new wasm.ConnectFourWasm(p.cols, p.rows, p.k, p.numPlayers);
@@ -66,19 +66,20 @@ export const connectFour: GameDefinition = {
   id: 'connect-four',
   name: 'Connect Four',
   icon: '🔴',
-  blurb: 'Drop discs, line up four. Or seven. With four players.',
+  blurb: 'Drop discs, line up four. Or seven. With up to six players.',
   defaultParams: { cols: 7, rows: 6, k: 4, numPlayers: 2 },
   presets: [
     { label: 'Classic', emoji: '⭐', params: { cols: 7, rows: 6, k: 4, numPlayers: 2 } },
     { label: 'Connect-5', emoji: '🖐️', params: { cols: 9, rows: 7, k: 5, numPlayers: 2 } },
     { label: '4-Player Frenzy', emoji: '🎉', params: { cols: 9, rows: 8, k: 4, numPlayers: 4 } },
     { label: 'Giant', emoji: '🦣', params: { cols: 10, rows: 10, k: 5, numPlayers: 2 } },
+    { label: '6-Player Mayhem', emoji: '🤯', params: { cols: 10, rows: 10, k: 4, numPlayers: 6 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 3, max: 10, step: 1 },
     { key: 'rows', label: 'Height', min: 3, max: 10, step: 1 },
     { key: 'k', label: 'In a row', min: 3, max: 10, step: 1 },
-    { key: 'numPlayers', label: 'Players', min: 2, max: 4, step: 1 },
+    { key: 'numPlayers', label: 'Players', min: 2, max: 6, step: 1 },
   ],
   create: makeHandle,
   Board: ConnectFourBoard,

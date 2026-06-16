@@ -12,9 +12,9 @@ use crate::types;
 const MAX_COLS: usize = 10;
 const MAX_ROWS: usize = 10;
 const MAX_CELLS: usize = MAX_COLS * MAX_ROWS;
-const MAX_PLAYERS: usize = 4;
+const MAX_PLAYERS: usize = 6;
 
-const PLAYER_SYMBOLS: [char; MAX_PLAYERS] = ['X', 'O', 'A', 'B'];
+const PLAYER_SYMBOLS: [char; MAX_PLAYERS] = ['X', 'O', 'A', 'B', 'C', 'D'];
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Cell {

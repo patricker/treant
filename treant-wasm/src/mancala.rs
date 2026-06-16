@@ -12,8 +12,8 @@ use crate::types;
 // Sowing direction is counterclockwise (always +1 mod ring_len).
 
 pub const MAX_PITS: usize = 8;
-pub const MAX_PLAYERS: usize = 4;
-pub const MAX_RING: usize = MAX_PLAYERS * (MAX_PITS + 1); // 4 * 9 = 36
+pub const MAX_PLAYERS: usize = 6;
+pub const MAX_RING: usize = MAX_PLAYERS * (MAX_PITS + 1); // 6 * 9 = 54
 
 #[derive(Clone, Debug)]
 pub struct Mancala {

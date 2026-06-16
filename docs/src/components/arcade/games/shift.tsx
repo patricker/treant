@@ -3,12 +3,14 @@ import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../game
 import styles from '../arcade.module.css';
 import { usePrevBoard, changedIndex } from '../boardDiff';
 
-const SYM = ['X', 'O', 'A', 'B'];
+const SYM = ['X', 'O', 'A', 'B', 'C', 'D'];
 const SEAT_COLOR: Record<string, string> = {
   X: 'var(--arc-p1)',
   O: 'var(--arc-p2)',
   A: 'var(--arc-p3)',
   B: 'var(--arc-p4)',
+  C: 'var(--arc-p5)',
+  D: 'var(--arc-p6)',
 };
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
@@ -108,12 +110,13 @@ export const shift: GameDefinition = {
     { label: 'Classic', emoji: '⭐', params: { numPlayers: 2, cols: 3, rows: 3, k: 3, pieces: 3 } },
     { label: 'Big', emoji: '🔲', params: { numPlayers: 2, cols: 5, rows: 4, k: 4, pieces: 4 } },
     { label: '3-Player', emoji: '👨‍👩‍👦', params: { numPlayers: 3, cols: 4, rows: 4, k: 3, pieces: 2 } },
+    { label: '6-Player Scrum', emoji: '🤯', params: { numPlayers: 6, cols: 6, rows: 6, k: 3, pieces: 2 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 2, max: 8, step: 1 },
     { key: 'rows', label: 'Height', min: 2, max: 8, step: 1 },
     { key: 'k', label: 'In a row', min: 2, max: 6, step: 1 },
-    { key: 'numPlayers', label: 'Players', min: 2, max: 4, step: 1 },
+    { key: 'numPlayers', label: 'Players', min: 2, max: 6, step: 1 },
     { key: 'pieces', label: 'Pieces', min: 1, max: 4, step: 1 },
   ],
   create: makeHandle,
