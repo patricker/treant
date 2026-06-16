@@ -521,3 +521,75 @@
   transform: scale(1.06);
   box-shadow: 0 4px 12px rgba(255, 59, 92, 0.35);
 }
+
+/* ---------- 2048 ---------- */
+.g2048Wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.g2048Grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: #bbada0;
+  padding: 8px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 320px;
+  touch-action: none;
+}
+.g2048Tile {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+.g2048Arrows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.g2048ArrowRow {
+  display: flex;
+  gap: 8px;
+}
+.g2048Arrow {
+  width: 56px;
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background: var(--arc-soft);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+.g2048Arrow:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------- Hint (solo) ---------- */
+.hintRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.hintBtn {
+  border: 2px solid var(--arc-accent);
+  background: var(--arc-card);
+  color: var(--arc-accent);
+  font-weight: 800;
+  padding: 10px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.hintText {
+  font-weight: 800;
+  color: var(--arc-accent);
+}
