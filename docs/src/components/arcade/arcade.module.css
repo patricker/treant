@@ -619,6 +619,39 @@
   cursor: pointer;
 }
 
+/* ---------- Euclid's Game ---------- */
+.euclidWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.euclidNums {
+  display: flex;
+  gap: 18px;
+}
+.euclidTile {
+  min-width: 64px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: var(--arc-card);
+  font-size: 2rem;
+  font-weight: 900;
+  text-align: center;
+  color: var(--arc-ink, #4a4a5a);
+}
+.euclidBig {
+  background: var(--arc-p1);
+  color: #fff;
+}
+.euclidButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 360px;
+}
+
 /* ---------- Fox & Hounds (checkerboard) ---------- */
 .fhCell {
   aspect-ratio: 1;

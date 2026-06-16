@@ -178,6 +178,14 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  euclid: (
+    <g fill="currentColor">
+      <circle cx="12" cy="6" r="1.7" />
+      <rect x="5" y="11" width="14" height="2" rx="1" />
+      <circle cx="9" cy="18" r="1.5" />
+      <circle cx="15" cy="18" r="1.5" />
+    </g>
+  ),
   'subtract-square': (
     <g fill="currentColor">
       <rect x="3" y="14" width="7" height="7" rx="1" />

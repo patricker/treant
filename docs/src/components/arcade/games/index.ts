@@ -26,6 +26,7 @@ import { sim } from './sim';
 import { foxHounds } from './foxhounds';
 import { treblecross } from './treblecross';
 import { subtractSquare } from './subtractsquare';
+import { euclid } from './euclid';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -53,6 +54,7 @@ export const GAMES: GameDefinition[] = [
   chomp,
   wythoff,
   subtractSquare,
+  euclid,
   nogo,
   col,
   sim,
