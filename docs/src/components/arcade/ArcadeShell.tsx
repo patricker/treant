@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { gameById } from './games';
 import type { Difficulty, GameParams, Mode } from './gameTypes';
+import { parseArcadeParams } from './shareLink';
 import Launcher from './Launcher';
 import GameSetup from './GameSetup';
 import GamePlay from './GamePlay';
@@ -9,11 +10,22 @@ import styles from './arcade.module.css';
 
 type Screen =
   | { name: 'launcher' }
-  | { name: 'setup'; gameId: string }
+  | { name: 'setup'; gameId: string; initialMode?: Mode; initialDifficulty?: Difficulty }
   | { name: 'playing'; gameId: string; params: GameParams; mode: Mode; difficulty: Difficulty };
 
 export default function ArcadeShell({ wasm }: { wasm: any }) {
-  const [screen, setScreen] = useState<Screen>({ name: 'launcher' });
+  const [screen, setScreen] = useState<Screen>(() => {
+    const dl = parseArcadeParams();
+    if (dl.gameId && gameById(dl.gameId)) {
+      return {
+        name: 'setup',
+        gameId: dl.gameId,
+        initialMode: dl.mode,
+        initialDifficulty: dl.difficulty,
+      };
+    }
+    return { name: 'launcher' };
+  });
 
   let content: JSX.Element;
   if (screen.name === 'launcher') {
@@ -24,6 +36,8 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
       content = (
         <GameSetup
           def={def}
+          initialMode={screen.initialMode}
+          initialDifficulty={screen.initialDifficulty}
           onBack={() => setScreen({ name: 'launcher' })}
           onStart={({ params, mode, difficulty }) =>
             setScreen({ name: 'playing', gameId: screen.gameId, params, mode, difficulty })

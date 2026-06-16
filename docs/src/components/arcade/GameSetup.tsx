@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Difficulty, GameDefinition, GameParams, Mode } from './gameTypes';
+import { buildShareUrl } from './shareLink';
 import ModePicker from './controls/ModePicker';
 import DifficultyPicker from './controls/DifficultyPicker';
 import PresetChips from './controls/PresetChips';
@@ -10,15 +11,30 @@ export default function GameSetup({
   def,
   onStart,
   onBack,
+  initialMode,
+  initialDifficulty,
 }: {
   def: GameDefinition;
   onStart: (cfg: { params: GameParams; mode: Mode; difficulty: Difficulty }) => void;
   onBack: () => void;
+  initialMode?: Mode;
+  initialDifficulty?: Difficulty;
 }) {
-  const [mode, setMode] = useState<Mode>(def.solo ? 'solo' : 'pvai');
-  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
+  const [mode, setMode] = useState<Mode>(initialMode ?? (def.solo ? 'solo' : 'pvai'));
+  const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty ?? 'medium');
   const [params, setParams] = useState<GameParams>(def.defaultParams);
   const [showCustom, setShowCustom] = useState(false);
+  const [shared, setShared] = useState('');
+
+  const share = () => {
+    const url = buildShareUrl(def.id, mode, difficulty, !def.solo && mode !== 'pvp');
+    const clip = typeof navigator !== 'undefined' ? navigator.clipboard : undefined;
+    if (clip?.writeText) {
+      clip.writeText(url).then(() => setShared('Link copied!')).catch(() => setShared(url));
+    } else {
+      setShared(url);
+    }
+  };
 
   return (
     <div className={styles.setup}>
@@ -77,6 +93,11 @@ export default function GameSetup({
       <button className={styles.playBtn} onClick={() => onStart({ params, mode, difficulty })}>
         ▶ Start game
       </button>
+
+      <button className={styles.shareBtn} onClick={share}>
+        🔗 Share this game
+      </button>
+      {shared && <div className={styles.sharedText}>{shared}</div>}
     </div>
   );
 }

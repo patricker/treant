@@ -78,6 +78,7 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
         Pass-and-play or take on the AI. Crank the knobs and make it weird.
       </p>
 
+      <div className={styles.launcherBody}>
       <div
         className={styles.heroCard}
         style={{ background: HERO_BG[game.id] ?? 'linear-gradient(135deg,#ff5e7e,#ffb347)' }}
@@ -107,14 +108,17 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
         </div>
       </div>
 
-      <div className={styles.moreLabel}>All games</div>
-      <div className={styles.gameStrip}>
-        {GAMES.map((g) => (
-          <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
-            <span className={styles.stripIcon}>{g.icon}</span>
-            <span className={styles.stripName}>{g.name}</span>
-          </button>
-        ))}
+      <div className={styles.launcherGames}>
+        <div className={styles.moreLabel}>All games</div>
+        <div className={styles.gameStrip}>
+          {GAMES.map((g) => (
+            <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
+              <span className={styles.stripIcon}>{g.icon}</span>
+              <span className={styles.stripName}>{g.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
       </div>
     </div>
   );
