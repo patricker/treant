@@ -21,6 +21,7 @@ import { domineering } from './domineering';
 import { konane } from './konane';
 import { nogo } from './nogo';
 import { amazons } from './amazons';
+import { col } from './col';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -46,6 +47,7 @@ export const GAMES: GameDefinition[] = [
   chomp,
   wythoff,
   nogo,
+  col,
   mancala,
   muTorere,
   domineering,

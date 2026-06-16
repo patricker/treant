@@ -619,6 +619,15 @@
   cursor: pointer;
 }
 
+/* ---------- Col ---------- */
+.colLegal {
+  cursor: pointer;
+}
+.colLegal:hover {
+  background: var(--col-hint) !important;
+  opacity: 0.5;
+}
+
 /* ---------- Amazons ---------- */
 .azArrow {
   outline: 3px dashed var(--arc-accent);

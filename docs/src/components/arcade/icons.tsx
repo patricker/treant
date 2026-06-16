@@ -178,6 +178,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  col: (
+    <g fill="currentColor">
+      {/* two same-colour patches kept apart by a gap */}
+      <rect x="3" y="3" width="8" height="8" rx="1.5" />
+      <rect x="13" y="13" width="8" height="8" rx="1.5" />
+      <rect x="13" y="3" width="8" height="8" rx="1.5" opacity="0.3" />
+      <rect x="3" y="13" width="8" height="8" rx="1.5" opacity="0.3" />
+    </g>
+  ),
   amazons: (
     <g stroke="currentColor" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       {/* a crown (amazon) with an arrow flying off it */}
