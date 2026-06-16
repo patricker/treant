@@ -37,7 +37,7 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 - This is a practical read, **not legal advice** — do a quick trademark search
   before committing to a public name.
 
-## 3. Already shipped — 26 games
+## 3. Already shipped — 30 games
 
 **Original 6:** Tic-Tac-Toe · Connect Four · Shift · Nim · Mancala (Kalah) · 2048.
 
@@ -65,6 +65,10 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 | Wythoff's Queen | two-heap subtraction (queen on a grid) | 🏆 |
 | Mu Tōrere | slide on an 8-point star (kewai rule) | 🏆 |
 | Domineering | partisan domino placement (V vs H) | 🏆 |
+| Amazons | move a queen then shoot a blocking arrow | 💪 |
+| Col | map-colouring: no two own patches touch | 🏆 |
+| Sim | edge-colouring on K6, avoid own triangle (misère) | 🏆 |
+| Fox & Hounds | asymmetric chase (1 fox vs 4 forward-only hounds) | 💪 |
 
 Each has its own `treant-wasm` GameState + Rust unit tests, an arcade
 `GameDefinition`, a custom SVG icon, and was browser-verified. Reusable arcade
