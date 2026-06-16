@@ -32,7 +32,7 @@ function cellHandle(g: any, cols: number, rows: number): GameHandle {
 
 // A generic grid board: tap an empty cell to place. Reused by Connect Six,
 // Trap-Three, No-Tac-Toe and Square Up.
-function MarkGridBoard({ board, params, interactive, onMove }: BoardProps) {
+export function MarkGridBoard({ board, params, interactive, onMove }: BoardProps) {
   const { cols, rows } = params;
   const placed = changedIndex(usePrevBoard(board), board);
   return (

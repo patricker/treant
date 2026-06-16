@@ -85,6 +85,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  'first-capture': (
+    <g fill="currentColor">
+      <circle cx="12" cy="12" r="2.6" opacity="0.4" />
+      <circle cx="12" cy="4.5" r="2.2" />
+      <circle cx="12" cy="19.5" r="2.2" />
+      <circle cx="4.5" cy="12" r="2.2" />
+      <circle cx="19.5" cy="12" r="2.2" />
+    </g>
+  ),
   trails: (
     <g stroke="currentColor" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 20v-6h6V8h6V4" />

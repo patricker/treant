@@ -1,5 +1,6 @@
 use wasm_bindgen::prelude::*;
 
+mod capturego;
 mod clobber;
 mod connectfour;
 mod counting;
@@ -19,6 +20,7 @@ mod tictactoe;
 mod trails;
 mod types;
 
+pub use capturego::CaptureGoWasm;
 pub use clobber::ClobberWasm;
 pub use connectfour::ConnectFourWasm;
 pub use counting::CountingGameWasm;
