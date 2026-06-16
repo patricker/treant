@@ -95,6 +95,12 @@ impl ShiftGame {
         self.cols * self.rows
     }
 
+    /// No empty cells remain. With no winner this is a stalemate: the movement
+    /// phase has no legal destinations (and placement has no empty cells).
+    fn is_full(&self) -> bool {
+        (0..self.cell_count()).all(|i| self.board[i] != Cell::Empty)
+    }
+
     fn in_placement_phase(&self) -> bool {
         self.pieces_placed[self.current as usize] < self.pieces_per_player
     }
@@ -260,6 +266,9 @@ impl GameState for ShiftGame {
     fn terminal_value(&self) -> Option<ProvenValue> {
         if self.winner().is_some() {
             Some(ProvenValue::Loss)
+        } else if self.is_full() {
+            // No winner and no empty cells: nobody can move -> draw.
+            Some(ProvenValue::Draw)
         } else {
             None
         }
@@ -433,12 +442,16 @@ impl ShiftWasm {
     }
 
     pub fn is_terminal(&self) -> bool {
-        self.manager.tree().root_state().winner().is_some()
+        let s = self.manager.tree().root_state();
+        s.winner().is_some() || s.is_full()
     }
 
     pub fn result(&self) -> String {
-        if let Some(w) = self.manager.tree().root_state().winner() {
+        let s = self.manager.tree().root_state();
+        if let Some(w) = s.winner() {
             format!("{}", w + 1)
+        } else if s.is_full() {
+            "Draw".into()
         } else {
             String::new()
         }
@@ -481,5 +494,35 @@ impl ShiftWasm {
             UCTPolicy::new(1.4),
             (),
         );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn full_board_without_winner_is_a_draw() {
+        // 3x2 board, k=3, 3 pieces each, 2 players => 6 placements fill the board
+        // with no line, leaving zero empty cells. Without draw detection the
+        // movement phase deadlocks (select works, no shift possible).
+        let mut g = ShiftWasm::new(3, 2, 3, 2, 3);
+        for m in ["P0", "P1", "P2", "P4", "P3", "P5"] {
+            assert!(g.apply_move(m), "placement {m} should be legal");
+        }
+        assert_eq!(g.get_board(), "XOXXOO");
+        assert!(g.is_terminal(), "a full board with no winner must be terminal");
+        assert_eq!(g.result(), "Draw");
+    }
+
+    #[test]
+    fn non_full_board_is_not_terminal() {
+        // default 3x3, 3 pieces each => 6 placed, 3 empty: still playable.
+        let mut g = ShiftWasm::new(3, 3, 3, 2, 3);
+        for m in ["P0", "P1", "P2", "P3", "P6", "P7"] {
+            assert!(g.apply_move(m), "placement {m} should be legal");
+        }
+        assert!(!g.is_terminal(), "board with empty cells must not be a draw");
+        assert_eq!(g.result(), "");
     }
 }

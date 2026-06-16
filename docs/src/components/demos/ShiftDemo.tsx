@@ -75,7 +75,9 @@ function ShiftDemoInner() {
     setIsPlacement(gameRef.current.in_placement_phase());
     setGameOver(gameRef.current.is_terminal());
     const result = gameRef.current.result();
-    if (result) {
+    if (result === 'Draw') {
+      setResultText("It's a draw — the board filled up!");
+    } else if (result) {
       const pIdx = parseInt(result, 10) - 1;
       setResultText(`${PLAYER_NAMES[pIdx] ?? `Player ${result}`} wins!`);
     } else {
