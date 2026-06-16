@@ -66,8 +66,19 @@ Publish order for multi-crate releases: `treant` first, wait for indexing (~1 mi
 - Docusaurus 3.9, TypeScript, classic preset
 - `remark-code-region` is installed and configured — use `// #region name` / `// #endregion name` tags in Rust source (tests/examples) and embed in MDX via `region` prop on code blocks
 - Prism languages: rust, toml
-- Pages: home (`/`), docs (`/docs`), playground (`/playground`), API link to docs.rs
+- Pages: home (`/`), docs (`/docs`), playground (`/playground`), arcade (`/arcade`), API link to docs.rs
 - No blog
+
+## Arcade
+
+The `/arcade` route is a family game arcade (pass-and-play / vs-AI / watch-AI)
+that doubles as the treant showcase — every opponent is treant searching the
+tree. **Before adding or changing an arcade game, read [`ARCADE.md`](ARCADE.md)**:
+the two-layer architecture (Rust engine ↔ React `GameDefinition`), the engine
+contract and `terminal_value` sign conventions, the reusable handles/boards, the
+UX philosophy (locked setup→play flow, presets + knobs / "go crazy", player
+colours), naming rules, gotchas, and the add-a-game checklist. The game backlog
+and shipped list live in [`GAME-IDEAS.md`](GAME-IDEAS.md).
 
 ## Dynamic adapter crate
 

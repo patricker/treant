@@ -1,0 +1,341 @@
+# Building Treant Arcade games
+
+> How the arcade is put together, how we think about UX and "knobs", and the
+> exact recipe + checklist for adding a new game. Read this before adding or
+> changing a game. Companion to [`GAME-IDEAS.md`](GAME-IDEAS.md) (the backlog).
+
+The arcade lives at **mcts.dev/arcade** — a free, static, family game arcade
+where every game is playable pass-and-play, vs the treant AI (Easy/Medium/Hard),
+or watch-AI. It doubles as the showcase for the `treant` MCTS library: **every
+opponent is treant searching the game tree.**
+
+---
+
+## 1. The two layers
+
+Every game is two thin pieces with a string-based boundary between them:
+
+```
+treant-wasm/src/<game>.rs      Rust: rules + a wasm-bindgen class   (the engine + AI)
+        │  strings over wasm-bindgen ("X O  X", "3-7", "12", …)
+docs/src/components/arcade/games/<game>.tsx   React: a GameDefinition   (the UI)
+```
+
+The Rust side owns **rules and search**; the React side owns **presentation and
+interaction**. They never share types — only flat strings (board state, move
+encodings, results). That keeps the boundary trivial to reason about and means
+the same engine can back a CLI, a golden test, or the web UI unchanged.
+
+**Rust engine** (`treant-wasm/src/<game>.rs`):
+- A `GameState` implementing the rules (`treant`'s core trait).
+- An `Evaluator` + `MCTS` config (usually trivial — pure rollouts + the solver).
+- A `#[wasm_bindgen]` class exposing the handle methods the UI calls.
+
+**React definition** (`docs/src/components/arcade/games/<game>.tsx`):
+- A `GameDefinition` (metadata + presets + knobs + how to build a handle + a Board).
+- Usually reuses a shared Board component; sometimes a small custom one.
+
+---
+
+## 2. The engine contract (`<game>.rs`)
+
+### GameState
+
+```rust
+impl GameState for MyGame {
+    type Move = u16;          // or a small Copy struct with a Display impl
+    type Player = u8;         // seat index, 0-based
+    type MoveList = Vec<Move>;
+    fn current_player(&self) -> u8 { self.current }
+    fn available_moves(&self) -> Vec<Move> { self.gen() }
+    fn make_move(&mut self, m: &Move) { /* mutate + flip current */ }
+    fn terminal_value(&self) -> Option<ProvenValue> { self.term() }
+}
+```
+
+`terminal_value` returns `Some(...)` **from the perspective of the player to
+move** (negamax). Get the sign right — it's the #1 source of subtle bugs:
+
+| Game shape | When it ends | What the player-to-move sees |
+|---|---|---|
+| Line-to-win (Connect Four, Gomoku) | previous player completed a line | `Loss` |
+| Misère (No-Tac-Toe, Sim, Trap-Three's 3-in-a-row) | previous player made the bad shape | `Win` |
+| Last-to-move-wins (Nim, Kōnane, Domineering, Col) | current player has no move | `Loss` |
+| Race (Frontline, Fox & Hounds) | someone reached the goal | depends who — compute it |
+
+Write a Rust unit test that asserts the verdict for a hand-built terminal
+position. We always do this; it has caught real sign errors.
+
+### Evaluator + MCTS config
+
+For almost every game the evaluator is a no-op (priors uniform, value 0) — the
+AI strength comes from MCTS rollouts + the exact solver, not a heuristic:
+
+```rust
+fn evaluate_new_state(&self, _, m: &Vec<Move>, _) -> (Vec<()>, i64) { (vec![(); m.len()], 0) }
+fn interpret_evaluation_for_player(&self, e: &i64, _) -> i64 { *e }
+fn evaluate_existing_state(&self, _, _, _) -> i64 { 0 }
+```
+
+```rust
+impl MCTS for MyCfg {
+    type TreePolicy = UCTPolicy;
+    type TranspositionTable = ();
+    fn solver_enabled(&self) -> bool { true }   // exact endgame solving for small games
+}
+```
+
+`solver_enabled()` turns on Score-Bounded MCTS / exact solving — leave it on for
+finite games; it makes small games perfect and decisive ones sharp.
+
+### ⚠️ Every playout must terminate
+
+MCTS does **random rollouts to a terminal state**. If a random line of play can
+loop forever, a single playout hangs the browser. This is the hard constraint
+that shapes which games we pick:
+
+- **Safe:** placement games (the board fills), removal/capture games (pieces
+  strictly decrease), monotonic-progress games (Fox & Hounds: hounds only ever
+  advance), bounded-value games (Euclid: the larger number strictly shrinks).
+- **Dangerous:** pure sliding games with no progress measure (a piece can
+  shuffle back and forth). Mu Tōrere is tiny enough that the solver resolves it,
+  but in general prefer a mechanic that *provably* terminates. If you must ship a
+  cycling game, add a ply cap that declares a draw.
+
+This is why the overnight batch leaned on placement / capture / shoot-and-burn
+mechanics — they can't cycle, so AI-vs-AI "Watch" mode is always safe.
+
+### The wasm-bindgen class
+
+A fixed surface the UI relies on (names matter — the handles call them):
+
+```rust
+#[wasm_bindgen]
+impl MyGameWasm {
+    #[wasm_bindgen(constructor)] pub fn new(/* params */) -> Self
+    pub fn playout_n(&mut self, n: u32)          // run n MCTS iterations
+    pub fn get_board(&self) -> String            // one char/cell, ' '=empty, 'X'/'O'/'A'/'B'/'C'/'D'
+    pub fn current_player(&self) -> u32
+    pub fn is_terminal(&self) -> bool
+    pub fn result(&self) -> String               // winner seat 1-indexed, "Draw", or "" if unfinished
+    pub fn legal_moves(&self) -> String          // comma-joined move encodings (for move-based games)
+    pub fn best_move(&self) -> Option<String>
+    pub fn apply_move(&mut self, mov: &str) -> bool   // validate, apply, REBUILD the manager (fresh tree)
+    pub fn reset(&mut self)
+}
+```
+
+`apply_move` validates against `available_moves()` and, on success, **rebuilds
+`MCTSManager` from the new root state** — we throw away the old tree each move
+rather than re-root it. Simple and correct; tree reuse isn't worth the
+complexity at these search sizes.
+
+Board/move **string encodings** by convention:
+- Board: `' '` empty, `'X' 'O' 'A' 'B' 'C' 'D'` for seats 0–5 (or digits for
+  Connect Four), `'#'` for a blocked/burnt cell (Amazons), etc.
+- Move: a single cell index (`"12"`), a `from-to` pair (`"3-7"`), a `from-to-arrow`
+  triple (Amazons), or a domain token (`"Roll"`, `"Take 4"`).
+
+### Player count lives in the engine
+
+Multiplayer games clamp to `MAX_PLAYERS` (currently **6**) and index a
+`PLAYER_SYMBOLS = ['X','O','A','B','C','D']` array. To change the cap you touch
+the const + symbol array in each multiplayer engine (`tictactoe`, `connectfour`,
+`shift`, `mancala`, `pig`) **and** the UI colour/label/symbol maps (§5).
+
+---
+
+## 3. The React definition (`<game>.tsx`)
+
+```ts
+export interface GameDefinition {
+  id: string;            // kebab-case, stable — used in URLs, icons, rules
+  name: string;          // display name (non-copyrighted! see §6)
+  icon: string;          // emoji fallback; real games get an SVG in icons.tsx
+  blurb: string;         // one-liner on the tile/hero
+  rules?: string;        // full how-to-play (else falls back to rules.ts map, then blurb)
+  defaultParams: GameParams;          // { numPlayers, ...game-specific }
+  presets: Preset[];     // quick-play + "go crazy" — see §4
+  knobs: Knob[];         // { key, label, min, max, step } sliders behind "Customize"
+  create(wasm, p): GameHandle;        // build the handle from params
+  Board: ComponentType<BoardProps>;   // the board renderer
+  solo?: boolean;        // single-player flow (2048): You-play + Hint / Watch-AI
+  formatHint?(m): string;
+  moveSound?: 'move' | 'drop';
+  playerLabels?: string[];            // must match the rendered piece colours!
+}
+```
+
+### The handle (UI ↔ engine adapter)
+
+`GameHandle` wraps the wasm class with the methods `useGameSession` calls
+(`applyMove`, `getBoard`, `currentPlayer`, `isTerminal`, `result`, `bestMove`,
+`playoutN`, `legalMoves`, `free`, optional `statusText`/`endText`). Don't
+hand-roll it — pick a shared one:
+
+- **`cellHandle(g, cols, rows)`** (`gridpack.tsx`) — "place a mark on an empty
+  cell". `legalMoves` = every empty cell. For games where *any* empty cell is
+  legal (TTT, Connect Six, Notakto).
+- **`moveHandle(g)`** (`frontline.tsx`) — moves come from the engine's
+  `legal_moves()`. Use whenever legality is non-trivial: movement (`from-to`),
+  player-dependent placement (Domineering), or constrained placement (NoGo, Col
+  — where legal cells are a *subset* of empty cells).
+- A **custom handle** only when the state isn't a board string (Nim/Euclid expose
+  a count/pair; the handle adapts `getBoard`/`legalMoves` accordingly).
+
+### The Board (`BoardProps → JSX`)
+
+`BoardProps = { board, params, currentPlayer, interactive, legalMoves, onMove }`.
+The board is **pure**: it renders `board`, highlights `legalMoves`, and calls
+`onMove(encoded)`. It never talks to the engine or decides turns — the session
+does. Reuse before building:
+
+- **`MarkGridBoard`** (`gridpack.tsx`) — tap an empty cell to place. Grid games.
+- **`makeMoveBoard('pawn' | 'disc')` / `MoveBoard`** (`frontline.tsx`) —
+  select-then-move using `legalMoves` for target highlights. Movement/capture
+  games. `Piece` renders a pawn or stone coloured by seat.
+- **A custom board** for non-grid geometry: SVG hexagons (Hex), an SVG hexagon of
+  edges (Sim), absolutely-positioned points (Mu Tōrere's star), a pile + buttons
+  (Nim, Square Subtract), two number tiles (Euclid).
+
+**Board rules that are easy to forget:**
+- Selection state (`sel`/`from`) must reset when the board changes:
+  `useEffect(() => setSel(null), [board])`. Otherwise a stale highlight points at
+  the wrong cell after the opponent moves. (`board` is a string, so the effect
+  only fires on a real move.)
+- Boards must **fill width**, not size to content — see §7.
+- Colour pieces by seat using `--arc-p1..p6`; never hard-code hexes.
+
+### Registration
+
+1. Add the game to the `GAMES` array in `games/index.ts`.
+2. Slot its `id` into a category in `Launcher.tsx` (`CATEGORIES`).
+3. Add an SVG glyph to `icons.tsx` `GLYPHS` (currentColor, 24×24 viewBox) — we
+   give **every** game a real icon, not just the emoji fallback.
+4. Add a one-line rules entry to `rules.ts` (or set `def.rules`).
+
+---
+
+## 4. How we think about UX
+
+The product is a **family arcade**, mobile-first, playful — not a research demo.
+Principles, in priority order:
+
+1. **A locked, obvious flow.** `launcher → setup → play → game-over`. Each screen
+   does one thing. The setup screen is where all choices happen.
+2. **No mid-game rule changes.** You choose mode/board/players, it loads, and that
+   game is fixed until it ends. (This was an explicit product rule — don't add
+   controls that mutate the running game.)
+3. **Quick-play *and* "go crazy".** Every game ships **presets** — a `⭐ Classic`
+   for instant play, plus **wild presets** that crank the knobs: bigger boards,
+   higher win-lengths, and **more players** (`🤯 6-Player Mayhem`, `4-Player
+   15×15`). Power users open **Customize** for the raw knob sliders. The wild
+   flexibility is a headline feature, not an afterthought — if a game *can* be
+   cranked (size, win-length, players), expose it.
+4. **Three ways to play, always:** pass-and-play (`pvp`), vs AI with Easy/Medium/
+   Hard (`pvai`), and Watch-AI (`aivai`). Single-player games (2048) use the
+   `solo` flow (You-play + Hint, or Watch-AI). The AI is always treant; difficulty
+   = MCTS playout budget + ε-greedy noise (`gameTypes.DIFFICULTY`).
+5. **It should look like the thing.** Pawns are pawns, hexes are hexagons, stones
+   are stones, territory is filled colour. Pieces are coloured by player. We took
+   the time to replace "X/O letters on a circle" with real shapes — that's the bar.
+6. **Game feel.** Diff-driven CSS animations (`boardDiff.ts`) and synthesized Web
+   Audio SFX (`sound.ts`) on moves/wins. A mute toggle. Keep it cheap and subtle.
+7. **Self-explanatory.** Every game has a **📖 How to play** panel (setup screen)
+   and a **? Rules** toggle in-game, plus a one-line blurb. A new player should
+   never be stuck wondering what the goal is.
+
+### Knobs & presets — design guidance
+
+- Give a knob a clamped, *sane* range that the engine actually supports
+  (`MAX_DIM`, `MAX_PLAYERS`, `MAX_PITS`…). The slider should never produce an
+  illegal config.
+- Presets are curated points in knob-space with playful names + an emoji. Aim for
+  ~3–5: one Classic, one or two "interesting", one "🤯 maxed".
+- `numPlayers` is a knob like any other (2–6) **only if the engine is genuinely
+  N-player** (the symmetric line/sow/race games). Partisan and impartial 2-player
+  games (Hex, Domineering, Nim, …) are 2-player by nature — don't fake it.
+- Keep `defaultParams` = the `⭐ Classic` preset.
+
+---
+
+## 5. The player-colour system
+
+Six seats, one source of truth per layer. To support a seat you must extend
+**all** of these:
+
+- CSS vars `--arc-p1..--arc-p6` (`arcade.module.css`).
+- `PLAYER_LABEL` (`GamePlay.tsx`) — Red, Yellow, Green, Purple, Teal, Orange.
+- Per-game seat maps: `COLOR`/`SEAT_COLOR`/`DISC`/`SEAT` arrays and the
+  `X/O/A/B/C/D` symbol→colour maps in the grid/mancala/pig/shift boards.
+- Engine `PLAYER_SYMBOLS` + `MAX_PLAYERS`.
+
+`def.playerLabels` overrides the default labels per game and **must match the
+rendered colours** (e.g. Frontline pieces are `--arc-p1`/`--arc-p2`, so its
+labels are `['Red','Gold']`, not `['Red','Black']`).
+
+---
+
+## 6. Naming & rules
+
+- **Non-copyrighted names only.** Use the public/abstract name, not the
+  trademarked product: *Shift* not Othello, *Frontline* not Breakthrough™,
+  *Trap-Three* not Squava™, *No-Tac-Toe* not Notakto™, *First Capture* not
+  Atari-Go. Traditional/public-domain names are fine (Hex, Kōnane, Mu Tōrere,
+  Mancala, Nim, Sim, Domineering, Col).
+- Every game needs concise, kid-readable **rules** in `rules.ts`: what you do on a
+  turn and how you win, in 1–3 sentences.
+
+---
+
+## 7. Gotchas (learned the hard way)
+
+- **Board sizing / "it resizes when I place a piece".** Boards must fill width,
+  not shrink to content. The root container `.arcade` needs `width: 100%`
+  (a flex item with `margin: auto` shrinks to content and *centers* — so an empty
+  grid had tiny min-content width and grew on the first move). Board grids use
+  `grid-template-columns: repeat(n, 1fr)` and fill their parent.
+- **Routing.** Arcade screens are encoded in the URL search string and driven
+  through Docusaurus's own router (`useHistory`/`useLocation` in `ArcadeShell`).
+  **Never** poke `window.history` directly — it desyncs react-router and the
+  browser Back button breaks (jumps out to the docs home). Screens are
+  deep-linkable: `?game=&mode=&difficulty=&play=1&p=<json>`.
+- **gtag in dev.** The GA4 plugin's pageview hook runs on every client navigation
+  but isn't loaded on localhost, throwing "gtag is not a function" and a red error
+  overlay. `ArcadeShell` guards it with a no-op (production has the real gtag).
+- **AI turn cancellation.** `useGameSession` schedules AI moves on a timer; a
+  generation guard + `clearTimeout` cancel stale turns (else double-clicking "Play
+  again" on an AI-first game leaves two AI loops racing one handle).
+- **`npm install treant-wasm` reorders `package.json`.** It re-alphabetizes deps;
+  `git checkout docs/package.json` after each install.
+- **Playwright stability vs animations.** The rotating hero / move animations fight
+  screenshot/click stability — verify via DOM (`browser_evaluate` on the
+  accessibility tree / element state), not screenshots, and use `.click()` /
+  dispatched events rather than waiting for "stable".
+
+---
+
+## 8. The add-a-game recipe + checklist
+
+1. **Rust** `treant-wasm/src/<game>.rs`: `GameState`, eval/cfg, wasm class.
+   - `mod <game>;` + `pub use <game>::<Game>Wasm;` in `lib.rs` (alphabetical).
+   - Unit tests: move generation, a terminal-verdict assertion, `ai_plays`.
+2. **React** `docs/src/components/arcade/games/<game>.tsx`: `GameDefinition`
+   (reuse a handle + Board; custom board only if needed).
+3. Register: `games/index.ts`, a `Launcher.tsx` category, an `icons.tsx` glyph, a
+   `rules.ts` entry.
+4. **Verify — the whole loop, every time:**
+   ```
+   cargo clippy -p treant-wasm          # 0 warnings
+   cargo test -p treant-wasm <game>     # unit tests pass
+   cd treant-wasm && wasm-pack build --target web
+   cd ../docs && npm install treant-wasm && git checkout package.json
+   npm run build                        # typecheck the whole site
+   # restart dev server on 0.0.0.0:3939, then Playwright DOM-verify:
+   #   open the game, start vs-AI, make a real move, confirm the AI replies,
+   #   check the move/legality is correct, and the console has 0 errors.
+   ```
+5. **Commit, do not push.** A push triggers a production deploy. Commit locally
+   with the `Co-Authored-By` trailer; the human pushes when ready.
+
+Keep `GAME-IDEAS.md`'s "shipped" count in sync.
