@@ -53,6 +53,11 @@ export const reversi: GameDefinition = {
   name: 'Reversi',
   icon: '⚫',
   blurb: 'Flank a line of enemy discs to flip them. Most discs when the board fills wins.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3.0 },
+    medium: { playouts: 100, topK: 4, temp: 1.0 },
+    hard: { playouts: 4000, topK: 1, temp: 0.0 },
+  },
   defaultParams: { numPlayers: 2, cols: 8, rows: 8 },
   presets: [
     { label: 'Classic 8×8', emoji: '⭐', params: { numPlayers: 2, cols: 8, rows: 8 } },

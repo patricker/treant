@@ -61,6 +61,11 @@ export const ticTacToe: GameDefinition = {
   name: 'Tic-Tac-Toe',
   icon: '⭕',
   blurb: 'Classic 3×3 — or a giant 5-in-a-row brain-bender.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3.0 },
+    medium: { playouts: 30, topK: 5, temp: 2.0 },
+    hard: { playouts: 100, topK: 4, temp: 1.0 },
+  },
   defaultParams: { cols: 3, rows: 3, k: 3, numPlayers: 2 },
   presets: [
     { label: 'Classic', emoji: '⭐', params: { cols: 3, rows: 3, k: 3, numPlayers: 2 } },

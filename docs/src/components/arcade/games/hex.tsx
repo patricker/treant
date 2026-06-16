@@ -100,6 +100,11 @@ export const hex: GameDefinition = {
   blurb: 'Connect your two sides with one unbroken chain of stones. It can never be a draw.',
   rules:
     'Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3.0 },
+    medium: { playouts: 100, topK: 4, temp: 1.0 },
+    hard: { playouts: 4000, topK: 1, temp: 0.0 },
+  },
   defaultParams: { numPlayers: 2, size: 7 },
   presets: [
     { label: 'Classic 7×7', emoji: '⭐', params: { numPlayers: 2, size: 7 } },

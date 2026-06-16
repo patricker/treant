@@ -8,6 +8,11 @@ export const gomoku: GameDefinition = {
   name: 'Gomoku',
   icon: '⬛',
   blurb: 'Five stones in a row on a big board. Simple to learn, deep to master.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3.0 },
+    medium: { playouts: 30, topK: 5, temp: 2.0 },
+    hard: { playouts: 100, topK: 4, temp: 1.0 },
+  },
   defaultParams: { numPlayers: 2, cols: 13, rows: 13, k: 5 },
   presets: [
     { label: 'Classic 13×13', emoji: '⭐', params: { numPlayers: 2, cols: 13, rows: 13, k: 5 } },

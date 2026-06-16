@@ -68,6 +68,11 @@ export const connectFour: GameDefinition = {
   name: 'Connect Four',
   icon: '🔴',
   blurb: 'Drop discs, line up four. Or seven. With up to six players.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3.0 },
+    medium: { playouts: 30, topK: 5, temp: 2.0 },
+    hard: { playouts: 300, topK: 3, temp: 0.6 },
+  },
   defaultParams: { cols: 7, rows: 6, k: 4, numPlayers: 2 },
   presets: [
     { label: 'Classic', emoji: '⭐', params: { cols: 7, rows: 6, k: 4, numPlayers: 2 } },
