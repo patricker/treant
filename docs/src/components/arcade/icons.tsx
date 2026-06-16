@@ -178,6 +178,22 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  'mu-torere': (
+    <g stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 4l5.66 2.34L20 12l-2.34 5.66L12 20l-5.66-2.34L4 12l2.34-5.66z" opacity="0.5" />
+      {Array.from({ length: 8 }, (_, k) => {
+        const a = ((k * 45 - 90) * Math.PI) / 180;
+        return <line key={k} x1="12" y1="12" x2={12 + 8 * Math.cos(a)} y2={12 + 8 * Math.sin(a)} opacity="0.5" />;
+      })}
+      <g fill="currentColor" stroke="none">
+        {Array.from({ length: 8 }, (_, k) => {
+          const a = ((k * 45 - 90) * Math.PI) / 180;
+          return <circle key={k} cx={12 + 8 * Math.cos(a)} cy={12 + 8 * Math.sin(a)} r={k < 4 ? 1.7 : 1.4} opacity={k < 4 ? 1 : 0.45} />;
+        })}
+        <circle cx="12" cy="12" r="2" />
+      </g>
+    </g>
+  ),
   '2048': (
     <g>
       <rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />

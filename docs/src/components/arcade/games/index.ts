@@ -16,6 +16,7 @@ import { chomp } from './chomp';
 import { wythoff } from './wythoff';
 import { dotsBoxes } from './dotsboxes';
 import { gomoku } from './gomoku';
+import { muTorere } from './mutorere';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -39,6 +40,7 @@ export const GAMES: GameDefinition[] = [
   chomp,
   wythoff,
   mancala,
+  muTorere,
   pig,
   game2048,
 ];
