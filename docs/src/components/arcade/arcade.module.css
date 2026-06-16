@@ -380,3 +380,144 @@
 .tttCell:disabled {
   cursor: default;
 }
+
+/* ---------- Nim ---------- */
+.nimWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+}
+.nimPile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 360px;
+  min-height: 40px;
+}
+.nimStone {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #8fb2d7, var(--arc-p3));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.nimCount {
+  font-weight: 800;
+  opacity: 0.7;
+}
+.nimButtons {
+  display: flex;
+  gap: 12px;
+}
+.nimTake {
+  border: none;
+  border-radius: 14px;
+  background: var(--arc-accent);
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.05rem;
+  padding: 14px 26px;
+  min-height: 48px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 59, 92, 0.3);
+}
+.nimTake:disabled {
+  opacity: 0.35;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ---------- Mancala ---------- */
+.mancalaWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mancalaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid var(--arc-soft);
+  border-radius: 16px;
+  padding: 8px;
+}
+.mancalaRowActive {
+  background: var(--arc-soft);
+}
+.mancalaStore {
+  min-width: 44px;
+  min-height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+.mancalaPits {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.mancalaPit {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--arc-card);
+  border: 2px solid var(--arc-soft);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--arc-ink);
+  cursor: pointer;
+}
+.mancalaPit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.mancalaLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  opacity: 0.6;
+  width: 24px;
+}
+
+/* ---------- Shift ---------- */
+.shiftCaption {
+  text-align: center;
+  font-weight: 800;
+  color: var(--arc-accent);
+  padding: 6px 0 10px;
+}
+.shiftGrid {
+  display: grid;
+  gap: 6px;
+  background: var(--arc-soft);
+  padding: 8px;
+  border-radius: 14px;
+}
+.shiftCell {
+  aspect-ratio: 1;
+  border: none;
+  background: var(--arc-card);
+  border-radius: 12px;
+  font-size: clamp(1.2rem, 7vw, 2.4rem);
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.shiftCell:disabled {
+  cursor: default;
+}
+.shiftSel {
+  outline: 3px solid var(--arc-accent);
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px rgba(255, 59, 92, 0.35);
+}
