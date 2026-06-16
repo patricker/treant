@@ -1,6 +1,7 @@
 import { useHistory, useLocation } from '@docusaurus/router';
 import { gameById } from './games';
-import type { Difficulty, GameParams, Mode } from './gameTypes';
+import type { Difficulty, GameParams, Mode, PlayerKind } from './gameTypes';
+import { decodeSeats, encodeSeats, seatsForMode } from './gameTypes';
 import Launcher from './Launcher';
 import GameSetup from './GameSetup';
 import GamePlay from './GamePlay';
@@ -9,29 +10,27 @@ import styles from './arcade.module.css';
 
 type Screen =
   | { name: 'launcher' }
-  | { name: 'setup'; gameId: string; initialMode?: Mode; initialDifficulty?: Difficulty }
-  | { name: 'playing'; gameId: string; params: GameParams; mode: Mode; difficulty: Difficulty };
+  | { name: 'setup'; gameId: string; initialSeats?: PlayerKind[] }
+  | { name: 'playing'; gameId: string; params: GameParams; seats: PlayerKind[] };
 
 const MODES: Mode[] = ['pvp', 'pvai', 'aivai', 'solo'];
 const DIFFS: Difficulty[] = ['easy', 'medium', 'hard'];
 
 // The arcade screen lives entirely in the URL search string, driven through
-// Docusaurus's own router. That keeps the browser Back/Forward buttons moving
-// between arcade screens (launcher → setup → play) instead of jumping out to
-// the docs home, and makes every game deep-linkable.
+// Docusaurus's own router so the browser Back/Forward buttons move between
+// arcade screens (launcher → setup → play) instead of jumping out to the docs
+// home. Every game — and its exact per-seat line-up — is deep-linkable.
 
 function screenToSearch(screen: Screen): string {
   if (screen.name === 'launcher') return '';
   const p = new URLSearchParams();
   p.set('game', screen.gameId);
   if (screen.name === 'setup') {
-    if (screen.initialMode) p.set('mode', screen.initialMode);
-    if (screen.initialDifficulty) p.set('difficulty', screen.initialDifficulty);
+    if (screen.initialSeats) p.set('s', encodeSeats(screen.initialSeats));
   } else {
-    p.set('mode', screen.mode);
-    p.set('difficulty', screen.difficulty);
     p.set('play', '1');
     p.set('p', JSON.stringify(screen.params));
+    p.set('s', encodeSeats(screen.seats));
   }
   return '?' + p.toString();
 }
@@ -40,12 +39,15 @@ function screenFromSearch(search: string): Screen {
   const sp = new URLSearchParams(search);
   const gameId = sp.get('game');
   if (!gameId || !gameById(gameId)) return { name: 'launcher' };
+  const def = gameById(gameId)!;
+  const sCode = sp.get('s');
+  // Back-compat with old ?mode=&difficulty= links.
   const rawMode = sp.get('mode');
   const rawDiff = sp.get('difficulty');
   const mode = rawMode && MODES.includes(rawMode as Mode) ? (rawMode as Mode) : undefined;
-  const difficulty = rawDiff && DIFFS.includes(rawDiff as Difficulty) ? (rawDiff as Difficulty) : undefined;
+  const diff = rawDiff && DIFFS.includes(rawDiff as Difficulty) ? (rawDiff as Difficulty) : 'medium';
+
   if (sp.get('play') === '1') {
-    const def = gameById(gameId)!;
     let params: GameParams = def.defaultParams;
     try {
       const raw = sp.get('p');
@@ -53,9 +55,15 @@ function screenFromSearch(search: string): Screen {
     } catch {
       /* fall back to defaults */
     }
-    return { name: 'playing', gameId, params, mode: mode ?? 'pvai', difficulty: difficulty ?? 'medium' };
+    const np = params.numPlayers ?? 2;
+    const seats = sCode
+      ? decodeSeats(sCode, np)
+      : seatsForMode(mode ?? (def.solo ? 'solo' : 'pvai'), np, diff);
+    return { name: 'playing', gameId, params, seats };
   }
-  return { name: 'setup', gameId, initialMode: mode, initialDifficulty: difficulty };
+  const np = def.defaultParams.numPlayers ?? 2;
+  const initialSeats = sCode ? decodeSeats(sCode, np) : mode ? seatsForMode(mode, np, diff) : undefined;
+  return { name: 'setup', gameId, initialSeats };
 }
 
 export default function ArcadeShell({ wasm }: { wasm: any }) {
@@ -81,23 +89,19 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
       content = (
         <GameSetup
           def={def}
-          initialMode={screen.initialMode}
-          initialDifficulty={screen.initialDifficulty}
+          initialSeats={screen.initialSeats}
           onBack={() => go({ name: 'launcher' })}
-          onStart={({ params, mode, difficulty }) =>
-            go({ name: 'playing', gameId: screen.gameId, params, mode, difficulty })
-          }
+          onStart={({ params, seats }) => go({ name: 'playing', gameId: screen.gameId, params, seats })}
         />
       );
     } else {
       content = (
         <GamePlay
-          key={`${screen.gameId}-${JSON.stringify(screen.params)}-${screen.mode}-${screen.difficulty}`}
+          key={`${screen.gameId}-${JSON.stringify(screen.params)}-${encodeSeats(screen.seats)}`}
           wasm={wasm}
           def={def}
           params={screen.params}
-          mode={screen.mode}
-          difficulty={screen.difficulty}
+          seats={screen.seats}
           onQuit={() => go({ name: 'launcher' })}
           onChangeSetup={() => go({ name: 'setup', gameId: screen.gameId })}
         />

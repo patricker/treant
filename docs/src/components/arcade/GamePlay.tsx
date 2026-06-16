@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import type { Difficulty, GameDefinition, GameParams, Mode } from './gameTypes';
+import type { GameDefinition, GameParams, PlayerKind } from './gameTypes';
+import { PLAYER_LABEL } from './gameTypes';
 import { useGameSession } from './useGameSession';
 import { GameIcon } from './icons';
 import { gameRules } from './rules';
 import styles from './arcade.module.css';
-
-const PLAYER_LABEL = ['Red', 'Yellow', 'Green', 'Purple', 'Teal', 'Orange'];
 
 function winnerLabel(result: string, labels: string[]): string {
   if (result === 'Draw') return "It's a draw!";
@@ -18,20 +17,18 @@ export default function GamePlay({
   wasm,
   def,
   params,
-  mode,
-  difficulty,
+  seats,
   onQuit,
   onChangeSetup,
 }: {
   wasm: any;
   def: GameDefinition;
   params: GameParams;
-  mode: Mode;
-  difficulty: Difficulty;
+  seats: PlayerKind[];
   onQuit: () => void;
   onChangeSetup: () => void;
 }) {
-  const s = useGameSession(wasm, def, params, mode, difficulty);
+  const s = useGameSession(wasm, def, params, seats);
   const [hint, setHint] = useState('');
   const [showRules, setShowRules] = useState(false);
   const labels = def.playerLabels ?? PLAYER_LABEL;

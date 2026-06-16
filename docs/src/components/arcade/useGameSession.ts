@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Difficulty, GameDefinition, GameHandle, GameParams, Mode } from './gameTypes';
-import { pickAiMove, seatTypes } from './gameTypes';
+import type { GameDefinition, GameHandle, GameParams, PlayerKind } from './gameTypes';
+import { pickAiMove } from './gameTypes';
 import { sound } from './sound';
 
 type Phase = 'playing' | 'thinking' | 'over';
@@ -12,18 +12,16 @@ export function useGameSession(
   wasm: any,
   def: GameDefinition,
   params: GameParams,
-  mode: Mode,
-  difficulty: Difficulty,
+  seats: PlayerKind[],
 ) {
   const handleRef = useRef<GameHandle | null>(null);
   // Generation guard: bumped whenever a game (re)starts or the hook tears down,
   // so any AI turn still waiting in a setTimeout from a previous game aborts
-  // instead of mutating the new handle. `timerRef` lets us cancel the pending
-  // timer outright. Together they prevent two AI loops racing on one handle
-  // (e.g. double-clicking "Play again" in Watch mode).
+  // instead of mutating the new handle. `timerRef` lets us cancel it outright.
   const genRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const seats = seatTypes(mode, params.numPlayers);
+  // Per-seat config: 'human' or an AI difficulty. Kept in a ref so the AI loop
+  // always reads the latest seats without being re-created.
   const seatsRef = useRef(seats);
   seatsRef.current = seats;
 
@@ -35,7 +33,6 @@ export function useGameSession(
   const [endText, setEndText] = useState('');
   const [legalMoves, setLegalMoves] = useState<string[]>([]);
 
-  // Push board + solo status into state from the live handle.
   const syncBoard = useCallback((h: GameHandle) => {
     setBoard(h.getBoard());
     setCurrent(h.currentPlayer());
@@ -54,16 +51,15 @@ export function useGameSession(
       setResult(result);
       setEndText(h.endText?.() ?? '');
       setPhase('over');
-      // End sound. Solo: cheer only on a milestone (endText starts with 🎉),
-      // else a gentle neutral tone. Multiplayer: lose if an AI seat won.
       if (def.solo) {
         if ((h.endText?.() ?? '').startsWith('🎉')) sound.win();
         else sound.draw();
       } else if (result === 'Draw' || result === '') {
         sound.draw();
       } else {
+        // Lose tone only if an AI seat won (a human at the table didn't).
         const winnerSeat = Number(result) - 1;
-        if (seatsRef.current[winnerSeat] === 'ai') sound.lose();
+        if (seatsRef.current[winnerSeat] !== 'human') sound.lose();
         else sound.win();
       }
     },
@@ -77,7 +73,13 @@ export function useGameSession(
       if (gen !== genRef.current) return; // a newer game started; abort this turn
       const h = handleRef.current;
       if (!h || h.isTerminal()) return;
-      const mv = def.solo ? (h.playoutN(SOLO_AI_PLAYOUTS), h.bestMove()) : pickAiMove(h, difficulty);
+      const kind = seatsRef.current[h.currentPlayer()];
+      if (kind === 'human') {
+        setPhase('playing');
+        return;
+      }
+      // Solo "watch" uses a fixed budget; multiplayer uses this seat's strength.
+      const mv = def.solo ? (h.playoutN(SOLO_AI_PLAYOUTS), h.bestMove()) : pickAiMove(h, kind);
       if (mv != null) {
         h.applyMove(mv);
         playMoveSound();
@@ -88,13 +90,13 @@ export function useGameSession(
         finish(h);
         return;
       }
-      if (seatsRef.current[h.currentPlayer()] === 'ai') {
+      if (seatsRef.current[h.currentPlayer()] !== 'human') {
         runAiTurn();
       } else {
         setPhase('playing');
       }
     }, AI_DELAY_MS);
-  }, [def, difficulty, syncBoard, finish, playMoveSound]);
+  }, [def, syncBoard, finish, playMoveSound]);
 
   const start = useCallback(() => {
     genRef.current++; // invalidate any AI turn still pending from a prior game
@@ -109,7 +111,7 @@ export function useGameSession(
     setEndText('');
     setPhase('playing');
     syncBoard(h);
-    if (seatsRef.current[h.currentPlayer()] === 'ai') runAiTurn();
+    if (seatsRef.current[h.currentPlayer()] !== 'human') runAiTurn();
   }, [wasm, def, params, runAiTurn, syncBoard]);
 
   useEffect(() => {
@@ -141,7 +143,7 @@ export function useGameSession(
         return;
       }
       syncBoard(h);
-      if (seatsRef.current[h.currentPlayer()] === 'ai') runAiTurn();
+      if (seatsRef.current[h.currentPlayer()] !== 'human') runAiTurn();
     },
     [phase, runAiTurn, syncBoard, finish, playMoveSound],
   );

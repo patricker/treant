@@ -1,42 +1,77 @@
-import { useState } from 'react';
-import type { Difficulty, GameDefinition, GameParams, Mode } from './gameTypes';
-import { buildShareUrl } from './shareLink';
+import { useEffect, useState } from 'react';
+import type { Difficulty, GameDefinition, GameParams, PlayerKind } from './gameTypes';
+import { DIFFICULTY, PLAYER_LABEL, encodeSeats, seatsForMode } from './gameTypes';
 import { gameRules } from './rules';
 import { GameIcon } from './icons';
-import ModePicker from './controls/ModePicker';
-import DifficultyPicker from './controls/DifficultyPicker';
 import PresetChips from './controls/PresetChips';
 import CustomKnobs from './controls/CustomKnobs';
 import styles from './arcade.module.css';
+
+const SEAT_COLORS = ['var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)', 'var(--arc-p5)', 'var(--arc-p6)'];
+const SEAT_OPTS: { kind: PlayerKind; emoji: string; label: string }[] = [
+  { kind: 'human', emoji: '🧑', label: 'Human' },
+  { kind: 'easy', emoji: '😊', label: 'Easy' },
+  { kind: 'medium', emoji: '😎', label: 'Med' },
+  { kind: 'hard', emoji: '🔥', label: 'Hard' },
+];
+
+/** Which quick mode (if any) the current seat line-up matches. */
+function modeOf(seats: PlayerKind[]): 'pvp' | 'pvai' | 'aivai' | 'custom' {
+  const humans = seats.filter((s) => s === 'human').length;
+  if (humans === seats.length) return 'pvp';
+  if (humans === 0) return 'aivai';
+  if (humans === 1 && seats[0] === 'human') return 'pvai';
+  return 'custom';
+}
 
 export default function GameSetup({
   def,
   onStart,
   onBack,
-  initialMode,
-  initialDifficulty,
+  initialSeats,
 }: {
   def: GameDefinition;
-  onStart: (cfg: { params: GameParams; mode: Mode; difficulty: Difficulty }) => void;
+  onStart: (cfg: { params: GameParams; seats: PlayerKind[] }) => void;
   onBack: () => void;
-  initialMode?: Mode;
-  initialDifficulty?: Difficulty;
+  initialSeats?: PlayerKind[];
 }) {
-  const [mode, setMode] = useState<Mode>(initialMode ?? (def.solo ? 'solo' : 'pvai'));
-  const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty ?? 'medium');
   const [params, setParams] = useState<GameParams>(def.defaultParams);
+  const numPlayers = params.numPlayers ?? 2;
+  const [aiStrength, setAiStrength] = useState<Difficulty>('medium');
+  const [seats, setSeats] = useState<PlayerKind[]>(
+    () => initialSeats ?? seatsForMode(def.solo ? 'solo' : 'pvai', numPlayers, 'medium'),
+  );
+  const [showPlayers, setShowPlayers] = useState(false);
   const [showCustom, setShowCustom] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [shared, setShared] = useState('');
 
+  // Keep the seat list the same length as the player count as the knobs change.
+  useEffect(() => {
+    setSeats((prev) => {
+      if (prev.length === numPlayers) return prev;
+      const next = prev.slice(0, numPlayers);
+      while (next.length < numPlayers) next.push(prev[prev.length - 1] ?? aiStrength);
+      return next;
+    });
+  }, [numPlayers]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const labels = def.playerLabels ?? PLAYER_LABEL;
+  const mode = modeOf(seats);
+
+  const applyMode = (m: 'pvp' | 'pvai' | 'aivai') => setSeats(seatsForMode(m, numPlayers, aiStrength));
+  const applyStrength = (d: Difficulty) => {
+    setAiStrength(d);
+    setSeats((prev) => prev.map((s) => (s === 'human' ? 'human' : d)));
+  };
+  const setSeat = (i: number, kind: PlayerKind) => setSeats((prev) => prev.map((s, j) => (j === i ? kind : s)));
+
   const share = () => {
-    const url = buildShareUrl(def.id, mode, difficulty, !def.solo && mode !== 'pvp');
-    const clip = typeof navigator !== 'undefined' ? navigator.clipboard : undefined;
-    if (clip?.writeText) {
-      clip.writeText(url).then(() => setShared('Link copied!')).catch(() => setShared(url));
-    } else {
-      setShared(url);
-    }
+    if (typeof window === 'undefined') return;
+    const url = `${window.location.origin}${window.location.pathname}?game=${def.id}&s=${encodeSeats(seats)}`;
+    const clip = navigator?.clipboard;
+    if (clip?.writeText) clip.writeText(url).then(() => setShared('Link copied!')).catch(() => setShared(url));
+    else setShared(url);
   };
 
   return (
@@ -58,30 +93,85 @@ export default function GameSetup({
       </button>
       {showRules && <div className={styles.rulesPanel}>{gameRules(def.id, def.rules, def.blurb)}</div>}
 
-      <div className={styles.setupLabel}>{def.solo ? 'Mode' : "Who's playing?"}</div>
       {def.solo ? (
-        <div className={styles.seg}>
-          <button
-            className={`${styles.segBtn} ${mode === 'solo' ? styles.segOn : ''}`}
-            onClick={() => setMode('solo')}
-          >
-            🙂 You play
-          </button>
-          <button
-            className={`${styles.segBtn} ${mode === 'aivai' ? styles.segOn : ''}`}
-            onClick={() => setMode('aivai')}
-          >
-            🤖 Watch AI
-          </button>
-        </div>
+        <>
+          <div className={styles.setupLabel}>Mode</div>
+          <div className={styles.seg}>
+            <button
+              className={`${styles.segBtn} ${seats[0] === 'human' ? styles.segOn : ''}`}
+              onClick={() => setSeats(['human'])}
+            >
+              🙂 You play
+            </button>
+            <button
+              className={`${styles.segBtn} ${seats[0] !== 'human' ? styles.segOn : ''}`}
+              onClick={() => setSeats(['medium'])}
+            >
+              🤖 Watch AI
+            </button>
+          </div>
+        </>
       ) : (
         <>
-          <ModePicker value={mode} onChange={setMode} />
-          {mode !== 'pvp' && (
+          <div className={styles.setupLabel}>Who&apos;s playing?</div>
+          <div className={styles.seg}>
+            <button className={`${styles.segBtn} ${mode === 'pvp' ? styles.segOn : ''}`} onClick={() => applyMode('pvp')}>
+              👥 Pass &amp; play
+            </button>
+            <button className={`${styles.segBtn} ${mode === 'pvai' ? styles.segOn : ''}`} onClick={() => applyMode('pvai')}>
+              🤖 vs AI
+            </button>
+            <button className={`${styles.segBtn} ${mode === 'aivai' ? styles.segOn : ''}`} onClick={() => applyMode('aivai')}>
+              👀 Watch
+            </button>
+          </div>
+
+          {seats.some((s) => s !== 'human') && (
             <>
               <div className={styles.setupLabel}>AI strength</div>
-              <DifficultyPicker value={difficulty} onChange={setDifficulty} />
+              <div className={styles.seg}>
+                {(Object.keys(DIFFICULTY) as Difficulty[]).map((d) => (
+                  <button
+                    key={d}
+                    className={`${styles.segBtn} ${aiStrength === d ? styles.segOn : ''}`}
+                    onClick={() => applyStrength(d)}
+                  >
+                    {DIFFICULTY[d].emoji} {DIFFICULTY[d].label}
+                  </button>
+                ))}
+              </div>
             </>
+          )}
+
+          <button
+            className={styles.customToggle}
+            onClick={() => setShowPlayers((v) => !v)}
+          >
+            {showPlayers ? '▾' : '▸'} Customize players {mode === 'custom' ? '• custom' : ''}
+          </button>
+          {showPlayers && (
+            <div className={styles.playerList}>
+              {seats.map((kind, i) => (
+                <div key={i} className={styles.playerRow}>
+                  <span className={styles.playerTag}>
+                    <span className={styles.playerDot} style={{ background: SEAT_COLORS[i] }} />
+                    {labels[i] ?? `Player ${i + 1}`}
+                  </span>
+                  <div className={styles.seatSeg}>
+                    {SEAT_OPTS.map((o) => (
+                      <button
+                        key={o.kind}
+                        className={`${styles.seatBtn} ${kind === o.kind ? styles.seatOn : ''}`}
+                        onClick={() => setSeat(i, o.kind)}
+                        title={o.kind === 'human' ? 'Human' : `${DIFFICULTY[o.kind as Difficulty].label} AI`}
+                      >
+                        {o.emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </>
       )}
@@ -95,13 +185,13 @@ export default function GameSetup({
       {def.knobs.length > 0 && (
         <>
           <button className={styles.customToggle} onClick={() => setShowCustom((s) => !s)}>
-            {showCustom ? '▾' : '▸'} Customize
+            {showCustom ? '▾' : '▸'} Customize board
           </button>
           {showCustom && <CustomKnobs knobs={def.knobs} params={params} onChange={setParams} />}
         </>
       )}
 
-      <button className={styles.playBtn} onClick={() => onStart({ params, mode, difficulty })}>
+      <button className={styles.playBtn} onClick={() => onStart({ params, seats })}>
         ▶ Start game
       </button>
 

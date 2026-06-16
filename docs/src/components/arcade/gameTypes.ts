@@ -6,6 +6,11 @@ export type GameParams = { numPlayers: number } & Record<string, number>;
 export type Mode = 'pvp' | 'pvai' | 'aivai' | 'solo';
 export type Difficulty = 'easy' | 'medium' | 'hard';
 export type SeatType = 'human' | 'ai';
+/** What occupies one seat: a human, or an AI at a chosen strength. */
+export type PlayerKind = 'human' | Difficulty;
+
+/** Default per-seat display names/colours (seats 0..5). */
+export const PLAYER_LABEL = ['Red', 'Yellow', 'Green', 'Purple', 'Teal', 'Orange'];
 
 export interface Preset {
   label: string;
@@ -79,13 +84,28 @@ export const DIFFICULTY: Record<
   hard: { playouts: 10000, epsilon: 0.0, label: 'Hard', emoji: '🔥' },
 };
 
-/** Assign a human/ai type to each seat based on the chosen mode. */
-export function seatTypes(mode: Mode, numPlayers: number): SeatType[] {
-  if (mode === 'solo') return Array(numPlayers).fill('human');
-  if (mode === 'pvp') return Array(numPlayers).fill('human');
-  if (mode === 'aivai') return Array(numPlayers).fill('ai');
-  // pvai: seat 0 is human, the rest are AI
-  return ['human', ...Array(Math.max(0, numPlayers - 1)).fill('ai')] as SeatType[];
+/** Build a per-seat list from a quick mode + a default AI strength. */
+export function seatsForMode(mode: Mode, numPlayers: number, ai: Difficulty): PlayerKind[] {
+  if (mode === 'pvp' || mode === 'solo') return Array(numPlayers).fill('human');
+  if (mode === 'aivai') return Array(numPlayers).fill(ai);
+  // pvai: seat 0 is human, the rest are AI at strength `ai`
+  return ['human', ...Array(Math.max(0, numPlayers - 1)).fill(ai)] as PlayerKind[];
+}
+
+// Compact URL encoding for a seat list: one char per seat.
+const SEAT_CODE: Record<PlayerKind, string> = { human: 'h', easy: 'e', medium: 'm', hard: 'd' };
+const CODE_SEAT: Record<string, PlayerKind> = { h: 'human', e: 'easy', m: 'medium', d: 'hard' };
+
+export function encodeSeats(seats: PlayerKind[]): string {
+  return seats.map((s) => SEAT_CODE[s]).join('');
+}
+
+/** Decode a seat code, padding/trimming to `numPlayers`. */
+export function decodeSeats(code: string, numPlayers: number): PlayerKind[] {
+  const out = [...code].map((c) => CODE_SEAT[c]).filter(Boolean) as PlayerKind[];
+  if (out.length === 0) return seatsForMode('pvai', numPlayers, 'medium');
+  while (out.length < numPlayers) out.push(out[out.length - 1]);
+  return out.slice(0, numPlayers);
 }
 
 /**

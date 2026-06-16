@@ -235,6 +235,61 @@
   box-shadow: 0 3px 10px rgba(255, 59, 92, 0.35);
 }
 
+/* per-player line-up */
+.playerList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.playerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--arc-soft);
+  border-radius: 12px;
+  padding: 6px 8px 6px 12px;
+}
+.playerTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+.playerDot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.seatSeg {
+  display: flex;
+  gap: 4px;
+  background: var(--arc-card);
+  padding: 4px;
+  border-radius: 999px;
+}
+.seatBtn {
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  line-height: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: grayscale(0.55) opacity(0.6);
+}
+.seatOn {
+  background: var(--arc-accent);
+  filter: none;
+}
+
 /* preset chips */
 .chipRow {
   display: flex;
