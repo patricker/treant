@@ -22,39 +22,71 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
   };
 }
 
+const S = 10; // hex radius (centre → vertex) in SVG units; the SVG scales to fit
+const SQRT3 = Math.sqrt(3);
+
+function center(r: number, c: number) {
+  return { cx: S * SQRT3 * (c + r / 2), cy: S * 1.5 * r };
+}
+function hexPoints(cx: number, cy: number) {
+  return Array.from({ length: 6 }, (_, k) => {
+    const a = ((60 * k - 90) * Math.PI) / 180;
+    return `${(cx + S * Math.cos(a)).toFixed(2)},${(cy + S * Math.sin(a)).toFixed(2)}`;
+  }).join(' ');
+}
+
 function HexBoard({ board, params, interactive, onMove }: BoardProps) {
   const n = params.size;
-  const size = Math.max(16, Math.floor(300 / (n * 1.35)));
+  const tl = center(0, 0);
+  const tr = center(0, n - 1);
+  const bl = center(n - 1, 0);
+  const br = center(n - 1, n - 1);
+  const pad = S * 1.6;
+  const minX = tl.cx - S * SQRT3;
+  const maxX = br.cx + S * SQRT3;
+  const minY = -S - 2;
+  const maxY = bl.cy + S + 2;
+  const viewBox = `${minX - pad} ${minY - pad} ${maxX - minX + 2 * pad} ${maxY - minY + 2 * pad}`;
+
   return (
     <div>
       <div className={styles.shiftCaption}>
-        <span style={{ color: 'var(--arc-p1)' }}>X</span> links top↔bottom ·{' '}
-        <span style={{ color: 'var(--arc-p2)' }}>O</span> links left↔right
+        <span className={styles.hexSwatch} style={{ background: 'var(--arc-p1)' }} />
+        Red joins top ↕ bottom &nbsp;·&nbsp;
+        <span className={styles.hexSwatch} style={{ background: 'var(--arc-p2)' }} />
+        Gold joins left ↔ right
       </div>
-      <div className={styles.hexWrap}>
-        {Array.from({ length: n }, (_, r) => (
-          <div key={r} className={styles.hexRow} style={{ marginLeft: r * (size * 0.52), gap: size * 0.14 }}>
-            {Array.from({ length: n }, (_, c) => {
+      <div className={styles.hexBoardWrap}>
+        <svg viewBox={viewBox} className={styles.hexSvg}>
+          {/* coloured goal edges along the rhombus border */}
+          <g strokeLinecap="round" fill="none">
+            <line x1={tl.cx} y1={tl.cy} x2={tr.cx} y2={tr.cy} stroke="var(--arc-p1)" strokeWidth={S * 1.5} opacity="0.85" />
+            <line x1={bl.cx} y1={bl.cy} x2={br.cx} y2={br.cy} stroke="var(--arc-p1)" strokeWidth={S * 1.5} opacity="0.85" />
+            <line x1={tl.cx} y1={tl.cy} x2={bl.cx} y2={bl.cy} stroke="var(--arc-p2)" strokeWidth={S * 1.5} opacity="0.85" />
+            <line x1={tr.cx} y1={tr.cy} x2={br.cx} y2={br.cy} stroke="var(--arc-p2)" strokeWidth={S * 1.5} opacity="0.85" />
+          </g>
+          {Array.from({ length: n }, (_, r) =>
+            Array.from({ length: n }, (_, c) => {
               const i = r * n + c;
               const ch = board[i] ?? ' ';
+              const { cx, cy } = center(r, c);
+              const fill = ch === 'X' ? 'var(--arc-p1)' : ch === 'O' ? 'var(--arc-p2)' : 'var(--arc-card)';
+              const clickable = interactive && ch === ' ';
               return (
-                <button
-                  key={c}
-                  className={styles.hexCell}
-                  disabled={!interactive || ch !== ' '}
-                  onClick={() => onMove(String(i))}
-                  style={{
-                    width: size,
-                    height: size,
-                    background:
-                      ch === 'X' ? 'var(--arc-p1)' : ch === 'O' ? 'var(--arc-p2)' : 'var(--arc-soft)',
-                  }}
+                <polygon
+                  key={i}
+                  points={hexPoints(cx, cy)}
+                  fill={fill}
+                  stroke="rgba(0,0,0,0.16)"
+                  strokeWidth="0.6"
+                  style={{ cursor: clickable ? 'pointer' : 'default' }}
+                  onClick={clickable ? () => onMove(String(i)) : undefined}
                   aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
                 />
               );
-            })}
-          </div>
-        ))}
+            }),
+          )}
+        </svg>
       </div>
     </div>
   );
@@ -64,7 +96,9 @@ export const hex: GameDefinition = {
   id: 'hex',
   name: 'Hex',
   icon: '⬡',
-  blurb: 'Connect your two sides with one chain of stones. It can never be a draw.',
+  blurb: 'Connect your two sides with one unbroken chain of stones. It can never be a draw.',
+  rules:
+    'Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw.',
   defaultParams: { numPlayers: 2, size: 7 },
   presets: [
     { label: 'Classic 7×7', emoji: '⭐', params: { numPlayers: 2, size: 7 } },
@@ -74,5 +108,5 @@ export const hex: GameDefinition = {
   knobs: [{ key: 'size', label: 'Size', min: 5, max: 11, step: 1 }],
   create: makeHandle,
   Board: HexBoard,
-  playerLabels: ['X', 'O'],
+  playerLabels: ['Red', 'Gold'],
 };

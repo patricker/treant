@@ -53,6 +53,8 @@ export interface GameDefinition {
   name: string;
   icon: string;
   blurb: string;
+  /** Full how-to-play text shown in the rules panel. Falls back to blurb. */
+  rules?: string;
   defaultParams: GameParams;
   presets: Preset[];
   knobs: Knob[];

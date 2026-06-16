@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Difficulty, GameDefinition, GameParams, Mode } from './gameTypes';
 import { useGameSession } from './useGameSession';
 import { GameIcon } from './icons';
+import { gameRules } from './rules';
 import styles from './arcade.module.css';
 
 const PLAYER_LABEL = ['Red', 'Yellow', 'Green', 'Purple'];
@@ -32,6 +33,7 @@ export default function GamePlay({
 }) {
   const s = useGameSession(wasm, def, params, mode, difficulty);
   const [hint, setHint] = useState('');
+  const [showRules, setShowRules] = useState(false);
   const labels = def.playerLabels ?? PLAYER_LABEL;
   const interactive = s.phase === 'playing' && s.seats[s.current] === 'human';
   const status = def.solo
@@ -45,13 +47,32 @@ export default function GamePlay({
   return (
     <div className={styles.play}>
       <div className={styles.playTop}>
-        <span>
-          <GameIcon id={def.id} size={22} /> {def.name}
-        </span>
-        <button className={styles.quitBtn} onClick={onQuit} aria-label="Quit to arcade">
-          ✕
+        <button className={styles.navBtn} onClick={onQuit}>
+          ← Games
         </button>
+        <span className={styles.playTitle}>
+          <GameIcon id={def.id} size={20} /> {def.name}
+        </span>
+        <div className={styles.playTopRight}>
+          <button className={styles.navBtn} onClick={onChangeSetup} aria-label="New game / change setup">
+            ↻ New
+          </button>
+          <button
+            className={`${styles.navBtn} ${showRules ? styles.navBtnOn : ''}`}
+            onClick={() => setShowRules((v) => !v)}
+            aria-label="How to play"
+          >
+            ? Rules
+          </button>
+        </div>
       </div>
+
+      {showRules && (
+        <div className={styles.rulesPanel}>
+          <strong>How to play {def.name}</strong>
+          <p>{gameRules(def.id, def.rules, def.blurb)}</p>
+        </div>
+      )}
 
       {status && <div className={styles.turnBanner}>{status}</div>}
 

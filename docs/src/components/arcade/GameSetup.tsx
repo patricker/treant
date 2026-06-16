@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Difficulty, GameDefinition, GameParams, Mode } from './gameTypes';
 import { buildShareUrl } from './shareLink';
+import { gameRules } from './rules';
 import { GameIcon } from './icons';
 import ModePicker from './controls/ModePicker';
 import DifficultyPicker from './controls/DifficultyPicker';
@@ -25,6 +26,7 @@ export default function GameSetup({
   const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty ?? 'medium');
   const [params, setParams] = useState<GameParams>(def.defaultParams);
   const [showCustom, setShowCustom] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [shared, setShared] = useState('');
 
   const share = () => {
@@ -47,6 +49,14 @@ export default function GameSetup({
           <GameIcon id={def.id} size={26} /> {def.name}
         </h2>
       </div>
+
+      <button
+        className={`${styles.howToBtn} ${showRules ? styles.howToOn : ''}`}
+        onClick={() => setShowRules((v) => !v)}
+      >
+        📖 How to play {showRules ? '▾' : '▸'}
+      </button>
+      {showRules && <div className={styles.rulesPanel}>{gameRules(def.id, def.rules, def.blurb)}</div>}
 
       <div className={styles.setupLabel}>{def.solo ? 'Mode' : "Who's playing?"}</div>
       {def.solo ? (
