@@ -619,6 +619,19 @@
   cursor: pointer;
 }
 
+/* ---------- NoGo ---------- */
+.nogoLegal {
+  cursor: pointer;
+}
+.nogoLegal::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--arc-accent);
+  opacity: 0.4;
+}
+
 /* ---------- Mu Tōrere (star board) ---------- */
 .mtWrap {
   position: relative;

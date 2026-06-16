@@ -178,6 +178,13 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  nogo: (
+    <g>
+      <circle cx="12" cy="12" r="5" fill="currentColor" opacity="0.45" />
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M5.6 5.6l12.8 12.8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    </g>
+  ),
   konane: (
     <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
       {/* jump arc from left stone over the middle to the empty landing */}

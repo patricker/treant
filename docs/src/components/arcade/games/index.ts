@@ -19,6 +19,7 @@ import { gomoku } from './gomoku';
 import { muTorere } from './mutorere';
 import { domineering } from './domineering';
 import { konane } from './konane';
+import { nogo } from './nogo';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -42,6 +43,7 @@ export const GAMES: GameDefinition[] = [
   nim,
   chomp,
   wythoff,
+  nogo,
   mancala,
   muTorere,
   domineering,
