@@ -17,6 +17,7 @@ import { wythoff } from './wythoff';
 import { dotsBoxes } from './dotsboxes';
 import { gomoku } from './gomoku';
 import { muTorere } from './mutorere';
+import { domineering } from './domineering';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -41,6 +42,7 @@ export const GAMES: GameDefinition[] = [
   wythoff,
   mancala,
   muTorere,
+  domineering,
   pig,
   game2048,
 ];

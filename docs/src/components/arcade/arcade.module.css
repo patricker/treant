@@ -606,6 +606,19 @@
   color: var(--arc-p3) !important;
 }
 
+/* ---------- Domineering ---------- */
+.domHint {
+  text-align: center;
+  font-weight: 700;
+  color: var(--arc-ink, #4a4a5a);
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+.domLegal {
+  box-shadow: inset 0 0 0 2px var(--arc-accent);
+  cursor: pointer;
+}
+
 /* ---------- Mu Tōrere (star board) ---------- */
 .mtWrap {
   position: relative;

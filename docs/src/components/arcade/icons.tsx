@@ -178,6 +178,18 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  domineering: (
+    <g fill="currentColor">
+      {/* vertical domino */}
+      <rect x="4" y="3.5" width="7" height="14" rx="1.5" />
+      <circle cx="7.5" cy="7" r="1" fill="var(--arc-bg, #fff)" />
+      <circle cx="7.5" cy="14" r="1" fill="var(--arc-bg, #fff)" />
+      {/* horizontal domino */}
+      <rect x="6.5" y="13.5" width="14" height="7" rx="1.5" opacity="0.5" />
+      <circle cx="10" cy="17" r="1" fill="var(--arc-bg, #fff)" />
+      <circle cx="17" cy="17" r="1" fill="var(--arc-bg, #fff)" />
+    </g>
+  ),
   'mu-torere': (
     <g stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 4l5.66 2.34L20 12l-2.34 5.66L12 20l-5.66-2.34L4 12l2.34-5.66z" opacity="0.5" />

@@ -10,7 +10,7 @@ const CATEGORIES: { name: string; ids: string[] }[] = [
   { name: 'Connect & line', ids: ['hex', 'gomoku', 'connect-six', 'square-up', 'order-chaos'] },
   { name: 'Move & capture', ids: ['frontline', 'clobber', 'first-capture', 'trails', 'shift'] },
   { name: 'Dice & solo', ids: ['pig', '2048'] },
-  { name: 'Brain-teasers', ids: ['no-tac-toe', 'trap-three', 'chomp', 'wythoff', 'mu-torere'] },
+  { name: 'Brain-teasers', ids: ['no-tac-toe', 'trap-three', 'chomp', 'wythoff', 'mu-torere', 'domineering'] },
 ];
 
 // Hero gradient + a tiny decorative board motif per game.
