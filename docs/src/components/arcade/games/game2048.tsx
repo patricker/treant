@@ -30,6 +30,7 @@ function makeHandle(wasm: any, _p: GameParams): GameHandle {
     bestMove: () => g.best_move() ?? undefined,
     playoutN: (n) => g.playout_n(n),
     legalMoves: () => ['Up', 'Down', 'Left', 'Right'],
+    weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
     statusText: () => `Score ${g.score()} · Best ${g.max_tile()}`,
     endText: () =>
       g.max_tile() >= 2048

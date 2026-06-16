@@ -28,6 +28,7 @@ export function cellHandle(g: any, cols: number, rows: number): GameHandle {
       for (let i = 0; i < cols * rows; i++) if ((b[i] ?? ' ') === ' ') out.push(String(i));
       return out;
     },
+    weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
     free: () => g.free(),
   };
 }
@@ -162,6 +163,7 @@ function ocHandle(g: any, cols: number, rows: number): GameHandle {
       }
       return out;
     },
+    weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
     free: () => g.free(),
   };
 }

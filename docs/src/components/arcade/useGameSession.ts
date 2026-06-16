@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { GameDefinition, GameHandle, GameParams, PlayerKind } from './gameTypes';
-import { pickAiMove } from './gameTypes';
+import { aiConfig, pickAiMove } from './gameTypes';
 import { sound } from './sound';
 
 type Phase = 'playing' | 'thinking' | 'over';
@@ -79,7 +79,7 @@ export function useGameSession(
         return;
       }
       // Solo "watch" uses a fixed budget; multiplayer uses this seat's strength.
-      const mv = def.solo ? (h.playoutN(SOLO_AI_PLAYOUTS), h.bestMove()) : pickAiMove(h, kind);
+      const mv = def.solo ? (h.playoutN(SOLO_AI_PLAYOUTS), h.bestMove()) : pickAiMove(h, aiConfig(def, kind));
       if (mv != null) {
         h.applyMove(mv);
         playMoveSound();

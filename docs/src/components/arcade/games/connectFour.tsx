@@ -20,6 +20,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
       for (let c = 0; c < p.cols; c++) if ((board[c] ?? ' ') === ' ') out.push(String(c));
       return out;
     },
+    weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
     free: () => g.free(),
   };
 }

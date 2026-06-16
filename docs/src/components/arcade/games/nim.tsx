@@ -18,6 +18,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
       const s = g.current_stones();
       return s >= 2 ? ['Take1', 'Take2'] : s === 1 ? ['Take1'] : [];
     },
+    weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
     free: () => g.free(),
   };
 }

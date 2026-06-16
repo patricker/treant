@@ -35,6 +35,9 @@ export interface GameHandle {
   playoutN(n: number): void;
   /** The current player's legal move strings (used for epsilon-random AI). */
   legalMoves(): string[];
+  /** Difficulty-aware move (value-aware top-K visit temperature). Optional;
+   *  handles without it fall back in pickAiMove. */
+  weakMove?(playouts: number, topK: number, temp: number, seed: number): string | undefined;
   free(): void;
   /** Solo games: a live status line, e.g. "Score 1234 · Best 128". */
   statusText?(): string;
@@ -60,6 +63,8 @@ export interface GameDefinition {
   blurb: string;
   /** Full how-to-play text shown in the rules panel. Falls back to blurb. */
   rules?: string;
+  /** Per-game calibrated AI knobs per level (else DEFAULT_DIFFICULTY). */
+  difficulty?: Record<Difficulty, AiConfig>;
   defaultParams: GameParams;
   presets: Preset[];
   knobs: Knob[];
@@ -75,14 +80,32 @@ export interface GameDefinition {
   playerLabels?: string[];
 }
 
-export const DIFFICULTY: Record<
-  Difficulty,
-  { playouts: number; epsilon: number; label: string; emoji: string }
-> = {
-  easy: { playouts: 200, epsilon: 0.5, label: 'Easy', emoji: '😊' },
-  medium: { playouts: 2000, epsilon: 0.1, label: 'Medium', emoji: '😎' },
-  hard: { playouts: 10000, epsilon: 0.0, label: 'Hard', emoji: '🔥' },
+/** Concrete AI knobs for one difficulty level. */
+export interface AiConfig {
+  playouts: number;
+  topK: number;
+  temp: number;
+}
+
+/** Level metadata for the UI (labels/emoji). */
+export const DIFFICULTY: Record<Difficulty, { label: string; emoji: string }> = {
+  easy: { label: 'Easy', emoji: '😊' },
+  medium: { label: 'Medium', emoji: '😎' },
+  hard: { label: 'Hard', emoji: '🔥' },
 };
+
+/** Fallback ladder for games without a calibrated override. Placed LOW on the
+ *  simulation curve and weakened with top-K visit temperature, not epsilon. */
+export const DEFAULT_DIFFICULTY: Record<Difficulty, AiConfig> = {
+  easy: { playouts: 40, topK: 6, temp: 1.6 },
+  medium: { playouts: 500, topK: 3, temp: 0.5 },
+  hard: { playouts: 5000, topK: 1, temp: 0.0 },
+};
+
+/** Resolve the AiConfig for a game + level (per-game override wins). */
+export function aiConfig(def: GameDefinition, d: Difficulty): AiConfig {
+  return def.difficulty?.[d] ?? DEFAULT_DIFFICULTY[d];
+}
 
 /** Build a per-seat list from a quick mode + a default AI strength. */
 export function seatsForMode(mode: Mode, numPlayers: number, ai: Difficulty): PlayerKind[] {
@@ -109,19 +132,24 @@ export function decodeSeats(code: string, numPlayers: number): PlayerKind[] {
 }
 
 /**
- * Epsilon-greedy AI move. With probability `epsilon` plays a uniformly random
- * legal move (lets a kid beat "Easy"); otherwise searches `playouts` and plays
- * the best move. `rng` is injectable for deterministic tests.
+ * Choose an AI move under an AiConfig. Uses the engine's value-aware weakening
+ * (weakMove) when available; else a graceful fallback.
  */
 export function pickAiMove(
   handle: GameHandle,
-  diff: Difficulty,
+  cfg: AiConfig,
   rng: () => number = Math.random,
 ): string | undefined {
-  const { playouts, epsilon } = DIFFICULTY[diff];
   const legal = handle.legalMoves();
   if (legal.length === 0) return undefined;
-  if (rng() < epsilon) return legal[Math.floor(rng() * legal.length)];
-  handle.playoutN(playouts);
+  if (cfg.playouts > 0 && handle.weakMove) {
+    const seed = Math.floor(rng() * 0xffffffff) >>> 0;
+    const mv = handle.weakMove(cfg.playouts, cfg.topK, cfg.temp, seed);
+    if (mv != null) return mv;
+  }
+  if (cfg.playouts === 0 || !handle.weakMove) {
+    return legal[Math.floor(rng() * legal.length)];
+  }
+  handle.playoutN(cfg.playouts);
   return handle.bestMove() ?? legal[0];
 }

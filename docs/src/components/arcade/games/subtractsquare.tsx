@@ -17,6 +17,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
       const s = g.legal_moves();
       return s ? s.split(',') : [];
     },
+    weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
     free: () => g.free(),
   };
 }

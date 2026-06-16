@@ -38,6 +38,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
     bestMove: () => g.best_move() ?? undefined,
     playoutN: (n) => g.playout_n(n),
     legalMoves,
+    weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
     free: () => g.free(),
   };
 }

@@ -18,6 +18,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
       for (let i = 0; i < n * n; i++) if ((b[i] ?? ' ') === ' ') out.push(String(i));
       return out;
     },
+    weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
     free: () => g.free(),
   };
 }
