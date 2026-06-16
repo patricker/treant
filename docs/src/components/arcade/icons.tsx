@@ -178,6 +178,17 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  sim: (
+    <g stroke="currentColor" fill="none" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round">
+      <path d="M12 3l7.8 4.5v9L12 21l-7.8-4.5v-9z" opacity="0.4" />
+      <path d="M12 3l7.8 13.5H4.2z" strokeWidth="2" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="12" cy="3" r="1.6" />
+        <circle cx="19.8" cy="16.5" r="1.6" />
+        <circle cx="4.2" cy="16.5" r="1.6" />
+      </g>
+    </g>
+  ),
   col: (
     <g fill="currentColor">
       {/* two same-colour patches kept apart by a gap */}

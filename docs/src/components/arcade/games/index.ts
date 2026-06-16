@@ -22,6 +22,7 @@ import { konane } from './konane';
 import { nogo } from './nogo';
 import { amazons } from './amazons';
 import { col } from './col';
+import { sim } from './sim';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -48,6 +49,7 @@ export const GAMES: GameDefinition[] = [
   wythoff,
   nogo,
   col,
+  sim,
   mancala,
   muTorere,
   domineering,
