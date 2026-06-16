@@ -4,6 +4,15 @@ import { GAMES } from './games';
 import { GameIcon } from './icons';
 import styles from './arcade.module.css';
 
+// Game groupings for the launcher (any game not listed falls under "More").
+const CATEGORIES: { name: string; ids: string[] }[] = [
+  { name: 'Family classics', ids: ['connect-four', 'tic-tac-toe', 'reversi', 'dots-and-boxes', 'mancala', 'nim'] },
+  { name: 'Connect & line', ids: ['hex', 'connect-six', 'square-up', 'order-chaos'] },
+  { name: 'Move & capture', ids: ['frontline', 'clobber', 'first-capture', 'trails', 'shift'] },
+  { name: 'Dice & solo', ids: ['pig', '2048'] },
+  { name: 'Brain-teasers', ids: ['no-tac-toe', 'trap-three', 'chomp', 'wythoff'] },
+];
+
 // Hero gradient + a tiny decorative board motif per game.
 const HERO_BG: Record<string, string> = {
   'connect-four': 'linear-gradient(135deg,#ff5e7e,#ffb347)',
@@ -110,17 +119,25 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
       </div>
 
       <div className={styles.launcherGames}>
-        <div className={styles.moreLabel}>All games</div>
-        <div className={styles.gameStrip}>
-          {GAMES.map((g) => (
-            <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
-              <span className={styles.stripIcon}>
-                <GameIcon id={g.id} size={32} />
-              </span>
-              <span className={styles.stripName}>{g.name}</span>
-            </button>
-          ))}
-        </div>
+        {CATEGORIES.map((cat) => {
+          const games = cat.ids.map((id) => GAMES.find((g) => g.id === id)).filter(Boolean) as typeof GAMES;
+          if (games.length === 0) return null;
+          return (
+            <div key={cat.name}>
+              <div className={styles.moreLabel}>{cat.name}</div>
+              <div className={styles.gameStrip}>
+                {games.map((g) => (
+                  <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
+                    <span className={styles.stripIcon}>
+                      <GameIcon id={g.id} size={32} />
+                    </span>
+                    <span className={styles.stripName}>{g.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
       </div>
     </div>
