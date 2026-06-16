@@ -178,6 +178,13 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  'subtract-square': (
+    <g fill="currentColor">
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="11.5" y="9.5" width="5" height="5" rx="1" opacity="0.7" />
+      <rect x="18" y="6" width="3" height="3" rx="0.6" opacity="0.45" />
+    </g>
+  ),
   treblecross: (
     <g>
       <rect x="2.5" y="9" width="19" height="6" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" opacity="0.5" />

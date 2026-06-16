@@ -25,6 +25,7 @@ import { col } from './col';
 import { sim } from './sim';
 import { foxHounds } from './foxhounds';
 import { treblecross } from './treblecross';
+import { subtractSquare } from './subtractsquare';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -51,6 +52,7 @@ export const GAMES: GameDefinition[] = [
   nim,
   chomp,
   wythoff,
+  subtractSquare,
   nogo,
   col,
   sim,
