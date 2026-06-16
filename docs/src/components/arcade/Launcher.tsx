@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { GAMES } from './games';
+import { GameIcon } from './icons';
 import styles from './arcade.module.css';
 
 // Hero gradient + a tiny decorative board motif per game.
@@ -87,7 +88,7 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
       >
         <div className={styles.heroLabel}>✨ Featured</div>
         <div className={styles.heroName}>
-          {game.icon} {game.name}
+          <GameIcon id={game.id} size={30} /> {game.name}
         </div>
         <div className={styles.heroArt}>
           <HeroArt id={game.id} />
@@ -113,7 +114,9 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
         <div className={styles.gameStrip}>
           {GAMES.map((g) => (
             <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
-              <span className={styles.stripIcon}>{g.icon}</span>
+              <span className={styles.stripIcon}>
+                <GameIcon id={g.id} size={32} />
+              </span>
               <span className={styles.stripName}>{g.name}</span>
             </button>
           ))}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Difficulty, GameDefinition, GameParams, Mode } from './gameTypes';
 import { useGameSession } from './useGameSession';
+import { GameIcon } from './icons';
 import styles from './arcade.module.css';
 
 const PLAYER_LABEL = ['Red', 'Yellow', 'Green', 'Purple'];
@@ -45,7 +46,7 @@ export default function GamePlay({
     <div className={styles.play}>
       <div className={styles.playTop}>
         <span>
-          {def.icon} {def.name}
+          <GameIcon id={def.id} size={22} /> {def.name}
         </span>
         <button className={styles.quitBtn} onClick={onQuit} aria-label="Quit to arcade">
           ✕

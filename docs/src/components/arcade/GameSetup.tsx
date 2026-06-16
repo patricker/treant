@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Difficulty, GameDefinition, GameParams, Mode } from './gameTypes';
 import { buildShareUrl } from './shareLink';
+import { GameIcon } from './icons';
 import ModePicker from './controls/ModePicker';
 import DifficultyPicker from './controls/DifficultyPicker';
 import PresetChips from './controls/PresetChips';
@@ -43,7 +44,7 @@ export default function GameSetup({
           ←
         </button>
         <h2>
-          {def.icon} {def.name}
+          <GameIcon id={def.id} size={26} /> {def.name}
         </h2>
       </div>
 
