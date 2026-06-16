@@ -678,6 +678,30 @@
   color: var(--arc-accent);
 }
 
+/* ---------- Hex ---------- */
+.hexWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+.hexRow {
+  display: flex;
+  flex-shrink: 0;
+}
+.hexCell {
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.hexCell:disabled {
+  cursor: default;
+}
+
 /* ---------- Pig ---------- */
 .pigWrap {
   display: flex;

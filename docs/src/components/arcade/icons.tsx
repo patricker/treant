@@ -85,6 +85,12 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  hex: (
+    <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinejoin="round">
+      <path d="M12 3l7 4.5v9L12 21l-7-4.5v-9z" />
+      <circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none" />
+    </g>
+  ),
   frontline: (
     // two pawns advancing past a center line
     <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">

@@ -7,6 +7,7 @@ import { game2048 } from './game2048';
 import { orderChaos, noTacToe, trapThree, squareUp, connectSix } from './gridpack';
 import { pig } from './pig';
 import { frontline } from './frontline';
+import { hex } from './hex';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -14,6 +15,7 @@ export const GAMES: GameDefinition[] = [
   ticTacToe,
   shift,
   frontline,
+  hex,
   orderChaos,
   noTacToe,
   trapThree,
