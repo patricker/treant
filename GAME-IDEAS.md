@@ -37,7 +37,7 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 - This is a practical read, **not legal advice** — do a quick trademark search
   before committing to a public name.
 
-## 3. Already shipped — 31 games
+## 3. Already shipped — 32 games
 
 **Original 6:** Tic-Tac-Toe · Connect Four · Shift · Nim · Mancala (Kalah) · 2048.
 
@@ -64,6 +64,7 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 | NoGo | anti-Go: never capture or self-trap | 🏆 |
 | Chomp | eat-the-poison (impartial) | 🏆 |
 | Wythoff's Queen | two-heap subtraction (queen on a grid) | 🏆 |
+| Square Subtract | remove a perfect-square count (Sprague-Grundy) | 🏆 |
 | Mu Tōrere | slide on an 8-point star (kewai rule) | 🏆 |
 | Domineering | partisan domino placement (V vs H) | 🏆 |
 | Amazons | move a queen then shoot a blocking arrow | 💪 |
