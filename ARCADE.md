@@ -232,10 +232,15 @@ Principles, in priority order:
    15×15`). Power users open **Customize** for the raw knob sliders. The wild
    flexibility is a headline feature, not an afterthought — if a game *can* be
    cranked (size, win-length, players), expose it.
-4. **Three ways to play, always:** pass-and-play (`pvp`), vs AI with Easy/Medium/
-   Hard (`pvai`), and Watch-AI (`aivai`). Single-player games (2048) use the
-   `solo` flow (You-play + Hint, or Watch-AI). The AI is always treant; difficulty
-   = MCTS playout budget + ε-greedy noise (`gameTypes.DIFFICULTY`).
+4. **Per-seat line-ups.** Every seat is independently Human or an AI at its own
+   strength (`PlayerKind = 'human' | Difficulty`). Quick-mode buttons (Pass &
+   play / vs AI / Watch) and a bulk "AI strength" control are shortcuts that fill
+   the seat list; a "Customize players" panel sets each seat individually (so you
+   can pit an Easy AI against a Hard one, or 3 humans + 2 AIs). `useGameSession`
+   reads each AI seat's own difficulty when it moves. Single-player games (2048)
+   use the `solo` flow (You-play + Hint, or Watch-AI). The AI is always treant;
+   difficulty = MCTS playout budget + ε-greedy noise (`gameTypes.DIFFICULTY`).
+   The line-up encodes in the URL (`s=hd`, `s=emde`) for deep links.
 5. **It should look like the thing.** Pawns are pawns, hexes are hexagons, stones
    are stones, territory is filled colour. Pieces are coloured by player. We took
    the time to replace "X/O letters on a circle" with real shapes — that's the bar.
