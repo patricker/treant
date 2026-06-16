@@ -8,6 +8,7 @@ mod col;
 mod connectfour;
 mod counting;
 mod dice;
+mod difficulty;
 mod domineering;
 mod dotsboxes;
 mod euclid;

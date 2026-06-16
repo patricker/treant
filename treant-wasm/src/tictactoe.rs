@@ -133,6 +133,11 @@ impl TicTacToeWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    /// Difficulty-aware move: see `crate::difficulty::pick_weak`.
+    pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
+        crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
+    }
+
     pub fn apply_move(&mut self, mov: &str) -> bool {
         let idx: u8 = match mov.parse() {
             Ok(v) if (v as usize) < self.cfg.cols * self.cfg.rows => v,
@@ -154,6 +159,36 @@ impl TicTacToeWasm {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn empty_cells(g: &TicTacToeWasm) -> Vec<String> {
+        g.get_board()
+            .as_bytes()
+            .iter()
+            .enumerate()
+            .filter(|&(_, &c)| c == b' ')
+            .map(|(i, _)| i.to_string())
+            .collect()
+    }
+
+    #[test]
+    fn weak_move_temp0_equals_best_and_protects_a_win() {
+        let mut g = TicTacToeWasm::new(3, 3, 3, 2);
+        assert!(g.apply_move("0")); // X
+        assert!(g.apply_move("3")); // O
+        assert!(g.apply_move("1")); // X
+        assert!(g.apply_move("4")); // O
+        let strong = g.weak_move(2000, 1, 0.0, 1);
+        assert_eq!(strong.as_deref(), g.best_move().as_deref());
+        let weak = g.weak_move(2000, 9, 3.0, 1);
+        assert_eq!(weak.as_deref(), Some("2"));
+    }
+
+    #[test]
+    fn weak_move_returns_a_legal_move() {
+        let mut g = TicTacToeWasm::new(3, 3, 3, 2);
+        let mv = g.weak_move(50, 5, 1.5, 7).unwrap();
+        assert!(empty_cells(&g).contains(&mv));
+    }
 
     #[test]
     fn board_string_is_row_major_symbols() {
