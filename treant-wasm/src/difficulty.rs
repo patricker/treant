@@ -1,6 +1,6 @@
 //! Difficulty: a value-aware MCTS weakening dial shared by every game.
 //!
-//! `pick_weak` runs `playouts` MCTS iterations, then selects a move by a
+//! `pick_weak` adds `playouts` MCTS iterations to the current search, then selects a move by a
 //! temperature softmax over visit counts **restricted to the top-K most-visited
 //! children** (so it never samples a 1-visit blunder off the tail), while always
 //! taking a proven win. temp→0 = the engine's best move; larger temp = flatter
@@ -41,6 +41,11 @@ where
     let k = top_k.clamp(1, stats.len());
     let cand = &stats[..k];
 
+    // A child proven Loss (for the opponent) is an immediate winning move — take it.
+    if let Some(win) = cand.iter().find(|s| s.proven_value == ProvenValue::Loss) {
+        return Some(format!("{}", win.mov));
+    }
+
     if temp <= 0.0001 || cand.len() == 1 {
         return Some(format!("{}", cand[0].mov));
     }
@@ -51,6 +56,9 @@ where
         .map(|s| (s.visits as f64 / maxv).powf(1.0 / temp))
         .collect();
     let sum: f64 = weights.iter().sum();
+    if sum == 0.0 {
+        return Some(format!("{}", cand[0].mov));
+    }
     let mut rng = SmallRng::seed_from_u64(seed as u64);
     let mut r = rng.gen::<f64>() * sum;
     for (i, w) in weights.iter().enumerate() {
