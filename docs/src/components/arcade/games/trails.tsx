@@ -1,0 +1,65 @@
+import type { BoardProps, GameDefinition } from '../gameTypes';
+import { moveHandle } from './frontline';
+import styles from '../arcade.module.css';
+
+function TrailsBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
+  const { cols, rows } = params;
+  const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
+  // every legal move shares the same `from` (the current token); collect targets
+  let from = -1;
+  const tos = new Set<number>();
+  for (const m of legalMoves) {
+    const dash = m.indexOf('-');
+    if (dash < 0) continue;
+    from = Number(m.slice(0, dash));
+    tos.add(Number(m.slice(dash + 1)));
+  }
+  return (
+    <div className={styles.trailsGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      {cells.map((ch, i) => {
+        const isWall = ch === '#';
+        const isToken = ch === 'X' || ch === 'O';
+        const isTarget = interactive && tos.has(i);
+        return (
+          <button
+            key={i}
+            className={`${styles.trailsCell} ${isTarget ? styles.trailsTarget : ''}`}
+            disabled={!isTarget}
+            onClick={() => from >= 0 && onMove(`${from}-${i}`)}
+            style={{
+              background: isWall
+                ? 'var(--arc-ink)'
+                : isToken
+                  ? ch === 'X'
+                    ? 'var(--arc-p1)'
+                    : 'var(--arc-p2)'
+                  : 'var(--arc-soft)',
+            }}
+            aria-label={`Cell ${i + 1}: ${isWall ? 'wall' : isToken ? ch : 'empty'}`}
+          >
+            {isToken ? <span className={styles.trailsDot} /> : isTarget ? '•' : ''}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export const trails: GameDefinition = {
+  id: 'trails',
+  name: 'Trails',
+  icon: '🟥',
+  blurb: 'Move and leave a wall behind. Box in your opponent — last to move wins.',
+  defaultParams: { numPlayers: 2, cols: 6, rows: 6 },
+  presets: [
+    { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },
+    { label: 'Big 8×8', emoji: '🔲', params: { numPlayers: 2, cols: 8, rows: 8 } },
+  ],
+  knobs: [
+    { key: 'cols', label: 'Width', min: 4, max: 9, step: 1 },
+    { key: 'rows', label: 'Height', min: 4, max: 9, step: 1 },
+  ],
+  create: (wasm, p) => moveHandle(new wasm.TrailsWasm(p.cols, p.rows)),
+  Board: TrailsBoard,
+  playerLabels: ['Red', 'Yellow'],
+};

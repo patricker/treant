@@ -16,6 +16,7 @@ mod prior;
 mod reversi;
 mod shift;
 mod tictactoe;
+mod trails;
 mod types;
 
 pub use clobber::ClobberWasm;
@@ -33,6 +34,7 @@ pub use prior::{PriorGamePuctWasm, PriorGameUctWasm};
 pub use reversi::ReversiWasm;
 pub use shift::ShiftWasm;
 pub use tictactoe::TicTacToeWasm;
+pub use trails::TrailsWasm;
 
 #[wasm_bindgen(start)]
 pub fn init() {

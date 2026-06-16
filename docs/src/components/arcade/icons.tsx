@@ -85,6 +85,13 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  trails: (
+    <g stroke="currentColor" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 20v-6h6V8h6V4" />
+      <circle cx="4" cy="20" r="1.8" fill="currentColor" stroke="none" />
+      <circle cx="16" cy="4" r="1.8" fill="currentColor" stroke="none" />
+    </g>
+  ),
   reversi: (
     <g>
       <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" strokeWidth="2" />
