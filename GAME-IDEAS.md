@@ -37,16 +37,33 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 - This is a practical read, **not legal advice** — do a quick trademark search
   before committing to a public name.
 
-## 3. Already shipped (4 engines, 6 games)
+## 3. Already shipped — 19 games
 
-| Game | Engine | Notes |
+**Original 6:** Tic-Tac-Toe · Connect Four · Shift · Nim · Mancala (Kalah) · 2048.
+
+**Built since (overnight session, 2026-06-16) — covering every major mechanic:**
+
+| Game | Mechanic | AI |
 |---|---|---|
-| Tic-Tac-Toe | `treant-games::grid` (m,n,k place) | generalized cols/rows/k/players |
-| Connect Four | `treant-games::grid` (m,n,k gravity-drop) | same engine, gravity flag |
-| Shift | grid + place-then-slide | 3-piece sliding TTT variant |
-| Nim | subtraction | solver-perfect |
-| Mancala (Kalah) | sowing | bonus turns + captures |
-| 2048 | slide-merge (solo, chance spawns) | solo mode |
+| Order & Chaos | line-of-N, asymmetric (either symbol) | 💪 |
+| No-Tac-Toe | misère tic-tac-toe (shared mark) | 🏆 |
+| Trap-Three | line: 4 wins / 3 loses | 🏆 |
+| Square Up | win on a square of 4 marks | 💪 |
+| Connect Six | 2 stones/turn, six-in-a-row | 💪 |
+| Pig | press-your-luck dice (chance nodes) | 🎲 |
+| Frontline (Breakthrough) | pawn movement/capture race | 💪 |
+| Hex | connection (BFS shortest-completion) | 💪 |
+| Clobber | capture-by-replace (CGT) | 🏆 |
+| Reversi | disc-flipping (+ passes/draws) | 💪 |
+| Trails | light-cycles (move + leave a wall) | 💪 |
+| First Capture | groups & liberties (capture-Go) | 💪 |
+| Chomp | eat-the-poison (impartial) | 🏆 |
+
+Each has its own `treant-wasm` GameState + Rust unit tests, an arcade
+`GameDefinition`, a custom SVG icon, and was browser-verified. Reusable arcade
+infra added: `MarkGridBoard` (placement), `MoveBoard` (select-then-move with
+engine-authoritative legal-target highlights via `BoardProps.legalMoves`),
+`moveHandle`, per-game `playerLabels`.
 
 CF + TTT share the `treant-games` grid engine; **any "different size / k / players"
 game is already just a preset of that engine** (e.g. Gomoku = TTT 15×15, k=5).
