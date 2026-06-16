@@ -239,7 +239,11 @@ Principles, in priority order:
    can pit an Easy AI against a Hard one, or 3 humans + 2 AIs). `useGameSession`
    reads each AI seat's own difficulty when it moves. Single-player games (2048)
    use the `solo` flow (You-play + Hint, or Watch-AI). The AI is always treant;
-   difficulty = MCTS playout budget + ε-greedy noise (`gameTypes.DIFFICULTY`).
+   difficulty = MCTS playout budget + top-K visit-count temperature (value-aware
+   weakening in `treant-wasm/src/difficulty.rs`); levels are
+   `gameTypes.DEFAULT_DIFFICULTY`, overridable per game via `difficulty` on the
+   `GameDefinition` and measured by the self-play harness
+   `treant-wasm/examples/calibrate.rs` (results in `plans/ai-calibration-results.md`).
    The line-up encodes in the URL (`s=hd`, `s=emde`) for deep links.
 5. **It should look like the thing.** Pawns are pawns, hexes are hexagons, stones
    are stones, territory is filled colour. Pieces are coloured by player. We took

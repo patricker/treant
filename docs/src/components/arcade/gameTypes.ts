@@ -33,7 +33,7 @@ export interface GameHandle {
   result(): string;
   bestMove(): string | undefined;
   playoutN(n: number): void;
-  /** The current player's legal move strings (used for epsilon-random AI). */
+  /** The current player's legal move strings (random-move fallback when playouts===0, and movement-game target highlighting). */
   legalMoves(): string[];
   /** Difficulty-aware move (value-aware top-K visit temperature). Optional;
    *  handles without it fall back in pickAiMove. */
@@ -95,7 +95,7 @@ export const DIFFICULTY: Record<Difficulty, { label: string; emoji: string }> = 
 };
 
 /** Fallback ladder for games without a calibrated override. Placed LOW on the
- *  simulation curve and weakened with top-K visit temperature, not epsilon. */
+ *  simulation curve and weakened with top-K visit temperature. */
 export const DEFAULT_DIFFICULTY: Record<Difficulty, AiConfig> = {
   easy: { playouts: 40, topK: 6, temp: 1.6 },
   medium: { playouts: 500, topK: 3, temp: 0.5 },
@@ -142,14 +142,10 @@ export function pickAiMove(
 ): string | undefined {
   const legal = handle.legalMoves();
   if (legal.length === 0) return undefined;
-  if (cfg.playouts > 0 && handle.weakMove) {
-    const seed = Math.floor(rng() * 0xffffffff) >>> 0;
-    const mv = handle.weakMove(cfg.playouts, cfg.topK, cfg.temp, seed);
-    if (mv != null) return mv;
-  }
   if (cfg.playouts === 0 || !handle.weakMove) {
     return legal[Math.floor(rng() * legal.length)];
   }
-  handle.playoutN(cfg.playouts);
-  return handle.bestMove() ?? legal[0];
+  const seed = Math.floor(rng() * 0xffffffff) >>> 0;
+  // weakMove only returns null in degenerate cases; fall back to a full search.
+  return handle.weakMove(cfg.playouts, cfg.topK, cfg.temp, seed) ?? (handle.playoutN(cfg.playouts), handle.bestMove() ?? legal[0]);
 }
