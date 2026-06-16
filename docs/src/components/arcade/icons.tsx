@@ -85,6 +85,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  clobber: (
+    <g fill="currentColor">
+      <circle cx="8" cy="12" r="4" opacity="0.4" />
+      <circle cx="15" cy="12" r="5" />
+      <g stroke="var(--arc-bg, #fff)" strokeWidth="1.6" strokeLinecap="round">
+        <path d="M13 10l4 4M17 10l-4 4" />
+      </g>
+    </g>
+  ),
   hex: (
     <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinejoin="round">
       <path d="M12 3l7 4.5v9L12 21l-7-4.5v-9z" />

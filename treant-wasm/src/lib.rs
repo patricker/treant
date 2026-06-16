@@ -1,5 +1,6 @@
 use wasm_bindgen::prelude::*;
 
+mod clobber;
 mod connectfour;
 mod counting;
 mod dice;
@@ -16,6 +17,7 @@ mod shift;
 mod tictactoe;
 mod types;
 
+pub use clobber::ClobberWasm;
 pub use connectfour::ConnectFourWasm;
 pub use counting::CountingGameWasm;
 pub use dice::DiceGameWasm;
