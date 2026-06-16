@@ -678,6 +678,49 @@
   color: var(--arc-accent);
 }
 
+/* ---------- Reversi ---------- */
+.reversiScores {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-weight: 900;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+.reversiGrid {
+  display: grid;
+  gap: 3px;
+  background: #1f7a52;
+  padding: 6px;
+  border-radius: 10px;
+}
+.reversiCell {
+  aspect-ratio: 1;
+  border: none;
+  background: #2f9e6f;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+.reversiCell:disabled {
+  cursor: default;
+}
+.reversiDisc {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.reversiHint {
+  width: 26%;
+  height: 26%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
 /* ---------- Hex ---------- */
 .hexWrap {
   display: flex;

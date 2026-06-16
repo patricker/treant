@@ -13,6 +13,7 @@ pub mod mancala;
 mod nim;
 mod pig;
 mod prior;
+mod reversi;
 mod shift;
 mod tictactoe;
 mod types;
@@ -29,6 +30,7 @@ pub use mancala::MancalaWasm;
 pub use nim::NimWasm;
 pub use pig::PigWasm;
 pub use prior::{PriorGamePuctWasm, PriorGameUctWasm};
+pub use reversi::ReversiWasm;
 pub use shift::ShiftWasm;
 pub use tictactoe::TicTacToeWasm;
 

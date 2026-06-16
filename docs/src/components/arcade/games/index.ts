@@ -9,6 +9,7 @@ import { pig } from './pig';
 import { frontline } from './frontline';
 import { hex } from './hex';
 import { clobber } from './clobber';
+import { reversi } from './reversi';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -17,6 +18,7 @@ export const GAMES: GameDefinition[] = [
   shift,
   frontline,
   clobber,
+  reversi,
   hex,
   orderChaos,
   noTacToe,

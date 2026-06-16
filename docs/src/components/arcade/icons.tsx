@@ -85,6 +85,12 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  reversi: (
+    <g>
+      <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M12 2.5a9.5 9.5 0 0 1 0 19z" fill="currentColor" />
+    </g>
+  ),
   clobber: (
     <g fill="currentColor">
       <circle cx="8" cy="12" r="4" opacity="0.4" />
