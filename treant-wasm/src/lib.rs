@@ -1,5 +1,6 @@
 use wasm_bindgen::prelude::*;
 
+mod amazons;
 mod capturego;
 mod chomp;
 mod clobber;
@@ -27,6 +28,7 @@ mod trails;
 mod types;
 mod wythoff;
 
+pub use amazons::AmazonsWasm;
 pub use capturego::CaptureGoWasm;
 pub use chomp::ChompWasm;
 pub use clobber::ClobberWasm;

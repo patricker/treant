@@ -619,6 +619,12 @@
   cursor: pointer;
 }
 
+/* ---------- Amazons ---------- */
+.azArrow {
+  outline: 3px dashed var(--arc-accent);
+  color: var(--arc-accent) !important;
+}
+
 /* ---------- NoGo ---------- */
 .nogoLegal {
   cursor: pointer;

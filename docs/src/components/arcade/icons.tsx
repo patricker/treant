@@ -178,6 +178,14 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  amazons: (
+    <g stroke="currentColor" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      {/* a crown (amazon) with an arrow flying off it */}
+      <path d="M4 16l1-7 2.5 3L9.5 7l2 4.5L13.5 8l1 8z" fill="currentColor" stroke="none" />
+      <rect x="4" y="16.5" width="10.5" height="2.2" rx="0.6" fill="currentColor" stroke="none" />
+      <path d="M14 6l6 6M20 12v-4M20 12h-4" />
+    </g>
+  ),
   nogo: (
     <g>
       <circle cx="12" cy="12" r="5" fill="currentColor" opacity="0.45" />

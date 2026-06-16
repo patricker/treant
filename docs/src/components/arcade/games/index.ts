@@ -20,6 +20,7 @@ import { muTorere } from './mutorere';
 import { domineering } from './domineering';
 import { konane } from './konane';
 import { nogo } from './nogo';
+import { amazons } from './amazons';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -31,6 +32,7 @@ export const GAMES: GameDefinition[] = [
   trails,
   captureGo,
   konane,
+  amazons,
   reversi,
   hex,
   orderChaos,
