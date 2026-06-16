@@ -14,3 +14,6 @@ treant-wasm/target/
 # Playwright / screenshots
 .playwright-mcp/
 *.png
+
+# Visual-companion brainstorm mockups (local, not committed)
+.superpowers/
