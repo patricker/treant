@@ -37,7 +37,7 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 - This is a practical read, **not legal advice** — do a quick trademark search
   before committing to a public name.
 
-## 3. Already shipped — 30 games
+## 3. Already shipped — 31 games
 
 **Original 6:** Tic-Tac-Toe · Connect Four · Shift · Nim · Mancala (Kalah) · 2048.
 
@@ -51,6 +51,7 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 | Square Up | win on a square of 4 marks | 💪 |
 | Connect Six | 2 stones/turn, six-in-a-row | 💪 |
 | Gomoku | five-in-a-row (TTT engine preset) | 💪 |
+| Treblecross | 1-D shared-mark, complete three to win | 🏆 |
 | Dots & Boxes | edge-claiming, bonus turn on a box | 💪 |
 | Pig | press-your-luck dice (chance nodes) | 🎲 |
 | Frontline (Breakthrough) | pawn movement/capture race | 💪 |
