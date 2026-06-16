@@ -1,0 +1,13 @@
+[package]
+name = "treant-games"
+version = "0.1.0"
+edition = "2021"
+authors = ["Peter Wicks <patricker@gmail.com>"]
+description = "Reusable game implementations built on the treant MCTS library (shared m,n,k grid engine)."
+repository = "https://github.com/patricker/treant"
+homepage = "https://mcts.dev"
+license = "MIT"
+publish = false
+
+[dependencies]
+treant = { version = "0.4", path = ".." }

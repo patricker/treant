@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "treant-wasm", "treant-dynamic", "treant-gumbel"]
+members = [".", "treant-wasm", "treant-dynamic", "treant-gumbel", "treant-games"]
 
 [package]
 authors = [
