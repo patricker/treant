@@ -13,6 +13,7 @@ import { reversi } from './reversi';
 import { trails } from './trails';
 import { captureGo } from './capturego';
 import { chomp } from './chomp';
+import { wythoff } from './wythoff';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -32,6 +33,7 @@ export const GAMES: GameDefinition[] = [
   connectSix,
   nim,
   chomp,
+  wythoff,
   mancala,
   pig,
   game2048,

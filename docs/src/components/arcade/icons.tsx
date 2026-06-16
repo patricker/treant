@@ -85,6 +85,13 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  wythoff: (
+    <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 19L6 6" />
+      <path d="M6 11V6h5" />
+      <circle cx="19" cy="19" r="2" fill="currentColor" stroke="none" />
+    </g>
+  ),
   chomp: (
     <g fill="currentColor">
       <path d="M12 3a9 9 0 1 0 8.5 6.1 3 3 0 0 1-4.2-4.2A9 9 0 0 0 12 3z" />

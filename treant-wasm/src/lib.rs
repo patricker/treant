@@ -20,6 +20,7 @@ mod shift;
 mod tictactoe;
 mod trails;
 mod types;
+mod wythoff;
 
 pub use capturego::CaptureGoWasm;
 pub use chomp::ChompWasm;
@@ -39,6 +40,7 @@ pub use reversi::ReversiWasm;
 pub use shift::ShiftWasm;
 pub use tictactoe::TicTacToeWasm;
 pub use trails::TrailsWasm;
+pub use wythoff::WythoffWasm;
 
 #[wasm_bindgen(start)]
 pub fn init() {
