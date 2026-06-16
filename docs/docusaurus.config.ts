@@ -68,6 +68,11 @@ const config: Config = {
           position: 'left',
         },
         {
+          to: '/arcade',
+          label: 'Arcade',
+          position: 'left',
+        },
+        {
           href: 'https://docs.rs/treant',
           label: 'API',
           position: 'left',

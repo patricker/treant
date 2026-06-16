@@ -1,0 +1,382 @@
+/* Playful arcade skin — scoped to /arcade so the docs theme is untouched. */
+
+.arcade {
+  --arc-p1: #ff3b5c;
+  --arc-p2: #ffc01e;
+  --arc-p3: #2f9e6f;
+  --arc-p4: #7c5cff;
+  --arc-ink: #2b2440;
+  --arc-bg: #fff7f0;
+  --arc-card: #ffffff;
+  --arc-soft: #ffe7d6;
+  --arc-accent: #ff3b5c;
+
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 16px 14px 48px;
+  color: var(--arc-ink);
+  font-family: ui-rounded, 'Nunito', 'Segoe UI', system-ui, sans-serif;
+}
+
+[data-theme='dark'] .arcade {
+  --arc-ink: #f4eefb;
+  --arc-bg: #1c1830;
+  --arc-card: #272138;
+  --arc-soft: #3a2f4d;
+}
+
+/* ---------- Launcher ---------- */
+.launcher {
+  text-align: center;
+}
+.arcadeTitle {
+  font-size: 2rem;
+  font-weight: 900;
+  margin: 8px 0 4px;
+}
+.arcadeSub {
+  color: var(--arc-ink);
+  opacity: 0.75;
+  margin: 0 0 22px;
+  font-weight: 600;
+}
+.launcherGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.gameTile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 22px 14px;
+  border: none;
+  border-radius: 20px;
+  background: linear-gradient(150deg, #fff, var(--arc-soft));
+  box-shadow: 0 6px 18px rgba(255, 59, 92, 0.18);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.gameTile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(255, 59, 92, 0.26);
+}
+.tileIcon {
+  font-size: 2.6rem;
+}
+.tileName {
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+.tileBlurb {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.tileSoon {
+  opacity: 0.55;
+  cursor: default;
+  background: var(--arc-soft);
+  box-shadow: none;
+}
+.tileSoon:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---------- Setup ---------- */
+.setup {
+  display: flex;
+  flex-direction: column;
+}
+.setupHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.setupHeader h2 {
+  margin: 0;
+  font-weight: 900;
+}
+.backBtn,
+.quitBtn {
+  border: none;
+  background: var(--arc-soft);
+  color: var(--arc-ink);
+  font-size: 1.1rem;
+  font-weight: 900;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.setupLabel {
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+  opacity: 0.6;
+  margin: 16px 2px 8px;
+}
+
+/* segmented control (mode / difficulty) */
+.seg {
+  display: flex;
+  gap: 6px;
+  background: var(--arc-soft);
+  padding: 6px;
+  border-radius: 999px;
+}
+.segBtn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--arc-ink);
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 10px 6px;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: 44px;
+}
+.segOn {
+  background: var(--arc-accent);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(255, 59, 92, 0.35);
+}
+
+/* preset chips */
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  border: 2px solid var(--arc-soft);
+  background: var(--arc-card);
+  color: var(--arc-ink);
+  font-weight: 800;
+  font-size: 0.82rem;
+  padding: 9px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  min-height: 42px;
+}
+.chipOn {
+  border-color: var(--arc-accent);
+  background: var(--arc-accent);
+  color: #fff;
+}
+
+/* custom knobs */
+.customToggle {
+  align-self: flex-start;
+  margin-top: 12px;
+  border: none;
+  background: transparent;
+  color: var(--arc-accent);
+  font-weight: 800;
+  cursor: pointer;
+  padding: 6px 2px;
+}
+.knobs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 6px;
+}
+.knob {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--arc-soft);
+  border-radius: 14px;
+  padding: 10px;
+}
+.knobLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  opacity: 0.7;
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.stepper button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: var(--arc-card);
+  color: var(--arc-ink);
+  font-size: 1.2rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+.stepper button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.knobVal {
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+/* primary / secondary / ghost buttons */
+.playBtn {
+  margin-top: 22px;
+  border: none;
+  border-radius: 16px;
+  background: var(--arc-accent);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 900;
+  padding: 15px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(255, 59, 92, 0.35);
+}
+.secondaryBtn {
+  border: none;
+  border-radius: 14px;
+  background: var(--arc-card);
+  color: var(--arc-accent);
+  font-weight: 800;
+  padding: 12px;
+  cursor: pointer;
+}
+.ghostBtn {
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 14px;
+  background: transparent;
+  color: #fff;
+  font-weight: 800;
+  padding: 10px;
+  cursor: pointer;
+}
+
+/* ---------- Play ---------- */
+.play {
+  display: flex;
+  flex-direction: column;
+}
+.playTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 900;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+.turnBanner {
+  text-align: center;
+  font-weight: 800;
+  padding: 8px;
+  color: var(--arc-accent);
+}
+.boardWrap {
+  position: relative;
+}
+
+/* game-over overlay */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(28, 24, 48, 0.55);
+  border-radius: 18px;
+}
+.overlayCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+  width: 80%;
+  max-width: 260px;
+  text-align: center;
+}
+.overlayIcon {
+  font-size: 3rem;
+}
+.overlayText {
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.3rem;
+  margin-bottom: 4px;
+}
+
+/* ---------- Connect Four board ---------- */
+.cfBoard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cfColHeaders {
+  display: grid;
+  gap: 5px;
+}
+.cfColButton {
+  border: none;
+  background: var(--arc-soft);
+  color: var(--arc-accent);
+  font-size: 1.1rem;
+  font-weight: 900;
+  border-radius: 10px;
+  padding: 6px 0;
+  cursor: pointer;
+  min-height: 36px;
+}
+.cfColButton:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.cfGrid {
+  display: grid;
+  gap: 5px;
+  background: #2b6cff;
+  padding: 8px;
+  border-radius: 14px;
+}
+.cfCell {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cfDisc {
+  width: 84%;
+  height: 84%;
+  border-radius: 50%;
+  display: block;
+}
+
+/* ---------- Tic-Tac-Toe board ---------- */
+.tttGrid {
+  display: grid;
+  gap: 6px;
+  background: var(--arc-soft);
+  padding: 8px;
+  border-radius: 14px;
+}
+.tttCell {
+  aspect-ratio: 1;
+  border: none;
+  background: var(--arc-card);
+  border-radius: 12px;
+  font-size: clamp(1.2rem, 7vw, 2.4rem);
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tttCell:disabled {
+  cursor: default;
+}
