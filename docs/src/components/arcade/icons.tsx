@@ -85,6 +85,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  'dots-and-boxes': (
+    <g fill="currentColor">
+      <rect x="6" y="6" width="12" height="2" rx="1" />
+      <rect x="6" y="16" width="12" height="2" rx="1" opacity="0.4" />
+      <rect x="5" y="6" width="2" height="12" rx="1" />
+      <rect x="17" y="6" width="2" height="12" rx="1" opacity="0.4" />
+      {[5, 17].flatMap((x) => [6, 17].map((y) => <circle key={`${x}-${y}`} cx={x + 1} cy={y + 1} r="2" />))}
+    </g>
+  ),
   wythoff: (
     <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <path d="M19 19L6 6" />

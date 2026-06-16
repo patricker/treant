@@ -678,6 +678,35 @@
   color: var(--arc-accent);
 }
 
+/* ---------- Dots & Boxes ---------- */
+.dbGrid {
+  display: grid;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 360px;
+}
+.dbDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--arc-ink);
+  margin: auto;
+}
+.dbSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dbEdge {
+  border: none;
+  border-radius: 3px;
+  padding: 0;
+}
+.dbBox {
+  border-radius: 3px;
+  margin: 2px;
+}
+
 /* ---------- Chomp ---------- */
 .chompGrid {
   display: grid;
