@@ -1,6 +1,8 @@
-import type { JSX } from 'react';
+import type { ComponentType } from 'react';
 
-export type GameParams = { cols: number; rows: number; k: number; numPlayers: number };
+/** `numPlayers` is required (the seat/mode system needs it); every other knob
+ *  (cols, rows, k, pits, stones, pieces, …) is a game-specific numeric entry. */
+export type GameParams = { numPlayers: number } & Record<string, number>;
 export type Mode = 'pvp' | 'pvai' | 'aivai';
 export type Difficulty = 'easy' | 'medium' | 'hard';
 export type SeatType = 'human' | 'ai';
@@ -11,7 +13,7 @@ export interface Preset {
   params: GameParams;
 }
 export interface Knob {
-  key: keyof GameParams;
+  key: string;
   label: string;
   min: number;
   max: number;
@@ -26,6 +28,8 @@ export interface GameHandle {
   result(): string;
   bestMove(): string | undefined;
   playoutN(n: number): void;
+  /** The current player's legal move strings (used for epsilon-random AI). */
+  legalMoves(): string[];
   free(): void;
 }
 
@@ -47,8 +51,7 @@ export interface GameDefinition {
   presets: Preset[];
   knobs: Knob[];
   create(wasm: any, p: GameParams): GameHandle;
-  legalMoves(board: string, p: GameParams): string[];
-  renderBoard(props: BoardProps): JSX.Element;
+  Board: ComponentType<BoardProps>;
 }
 
 export const DIFFICULTY: Record<
@@ -75,13 +78,11 @@ export function seatTypes(mode: Mode, numPlayers: number): SeatType[] {
  */
 export function pickAiMove(
   handle: GameHandle,
-  def: GameDefinition,
-  params: GameParams,
   diff: Difficulty,
   rng: () => number = Math.random,
 ): string | undefined {
   const { playouts, epsilon } = DIFFICULTY[diff];
-  const legal = def.legalMoves(handle.getBoard(), params);
+  const legal = handle.legalMoves();
   if (legal.length === 0) return undefined;
   if (rng() < epsilon) return legal[Math.floor(rng() * legal.length)];
   handle.playoutN(playouts);

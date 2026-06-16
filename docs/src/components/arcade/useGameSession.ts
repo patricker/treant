@@ -27,7 +27,7 @@ export function useGameSession(
     setTimeout(() => {
       const h = handleRef.current;
       if (!h || h.isTerminal()) return;
-      const mv = pickAiMove(h, def, params, difficulty);
+      const mv = pickAiMove(h, difficulty);
       if (mv != null) h.applyMove(mv);
       const terminal = h.isTerminal();
       setBoard(h.getBoard());

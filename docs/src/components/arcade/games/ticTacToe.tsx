@@ -18,8 +18,37 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
     result: () => g.result(),
     bestMove: () => g.best_move() ?? undefined,
     playoutN: (n) => g.playout_n(n),
+    legalMoves: () => {
+      const board = g.get_board();
+      const out: string[] = [];
+      for (let i = 0; i < p.cols * p.rows; i++) if ((board[i] ?? ' ') === ' ') out.push(String(i));
+      return out;
+    },
     free: () => g.free(),
   };
+}
+
+function TicTacToeBoard({ board, params, interactive, onMove }: BoardProps) {
+  const { cols, rows } = params;
+  return (
+    <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      {Array.from({ length: cols * rows }, (_, i) => {
+        const ch = board[i] ?? ' ';
+        return (
+          <button
+            key={i}
+            className={styles.tttCell}
+            disabled={!interactive || ch !== ' '}
+            onClick={() => onMove(String(i))}
+            style={{ color: COLOR[ch] }}
+            aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+          >
+            {ch === ' ' ? '' : ch}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 export const ticTacToe: GameDefinition = {
@@ -41,31 +70,5 @@ export const ticTacToe: GameDefinition = {
     { key: 'numPlayers', label: 'Players', min: 2, max: 4, step: 1 },
   ],
   create: makeHandle,
-  legalMoves: (board, p) => {
-    const out: string[] = [];
-    for (let i = 0; i < p.cols * p.rows; i++) if ((board[i] ?? ' ') === ' ') out.push(String(i));
-    return out;
-  },
-  renderBoard: ({ board, params, interactive, onMove }: BoardProps) => {
-    const { cols, rows } = params;
-    return (
-      <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
-        {Array.from({ length: cols * rows }, (_, i) => {
-          const ch = board[i] ?? ' ';
-          return (
-            <button
-              key={i}
-              className={styles.tttCell}
-              disabled={!interactive || ch !== ' '}
-              onClick={() => onMove(String(i))}
-              style={{ color: COLOR[ch] }}
-              aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
-            >
-              {ch === ' ' ? '' : ch}
-            </button>
-          );
-        })}
-      </div>
-    );
-  },
+  Board: TicTacToeBoard,
 };

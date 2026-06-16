@@ -51,13 +51,13 @@ export default function GamePlay({
       {status && <div className={styles.turnBanner}>{status}</div>}
 
       <div className={styles.boardWrap}>
-        {def.renderBoard({
-          board: s.board,
-          params,
-          currentPlayer: s.current,
-          interactive,
-          onMove: s.onHumanMove,
-        })}
+        <def.Board
+          board={s.board}
+          params={params}
+          currentPlayer={s.current}
+          interactive={interactive}
+          onMove={s.onHumanMove}
+        />
 
         {s.phase === 'over' && (
           <div className={styles.overlay}>

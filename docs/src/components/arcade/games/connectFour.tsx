@@ -13,8 +13,48 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
     result: () => g.result(),
     bestMove: () => g.best_move() ?? undefined,
     playoutN: (n) => g.playout_n(n),
+    legalMoves: () => {
+      const board = g.get_board();
+      const out: string[] = [];
+      for (let c = 0; c < p.cols; c++) if ((board[c] ?? ' ') === ' ') out.push(String(c));
+      return out;
+    },
     free: () => g.free(),
   };
+}
+
+function ConnectFourBoard({ board, params, interactive, onMove }: BoardProps) {
+  const { cols, rows } = params;
+  const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
+  const legalCols = new Set<number>();
+  for (let c = 0; c < cols; c++) if ((board[c] ?? ' ') === ' ') legalCols.add(c);
+  return (
+    <div className={styles.cfBoard}>
+      <div className={styles.cfColHeaders} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+        {Array.from({ length: cols }, (_, c) => (
+          <button
+            key={c}
+            className={styles.cfColButton}
+            disabled={!interactive || !legalCols.has(c)}
+            onClick={() => onMove(String(c))}
+            aria-label={`Drop in column ${c + 1}`}
+          >
+            ▾
+          </button>
+        ))}
+      </div>
+      <div className={styles.cfGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+        {cells.map((ch, i) => {
+          const p = ch === ' ' ? 0 : Number(ch);
+          return (
+            <div key={i} className={styles.cfCell}>
+              <span className={styles.cfDisc} style={{ background: p ? DISC[p] : 'transparent' }} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 export const connectFour: GameDefinition = {
@@ -36,43 +76,5 @@ export const connectFour: GameDefinition = {
     { key: 'numPlayers', label: 'Players', min: 2, max: 4, step: 1 },
   ],
   create: makeHandle,
-  legalMoves: (board, p) => {
-    // board is top-row-first: a column is legal if its top cell is empty
-    const out: string[] = [];
-    for (let c = 0; c < p.cols; c++) if ((board[c] ?? ' ') === ' ') out.push(String(c));
-    return out;
-  },
-  renderBoard: ({ board, params, interactive, onMove }: BoardProps) => {
-    const { cols, rows } = params;
-    const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
-    const legalCols = new Set<number>();
-    for (let c = 0; c < cols; c++) if ((board[c] ?? ' ') === ' ') legalCols.add(c);
-    return (
-      <div className={styles.cfBoard}>
-        <div className={styles.cfColHeaders} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
-          {Array.from({ length: cols }, (_, c) => (
-            <button
-              key={c}
-              className={styles.cfColButton}
-              disabled={!interactive || !legalCols.has(c)}
-              onClick={() => onMove(String(c))}
-              aria-label={`Drop in column ${c + 1}`}
-            >
-              ▾
-            </button>
-          ))}
-        </div>
-        <div className={styles.cfGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
-          {cells.map((ch, i) => {
-            const p = ch === ' ' ? 0 : Number(ch);
-            return (
-              <div key={i} className={styles.cfCell}>
-                <span className={styles.cfDisc} style={{ background: p ? DISC[p] : 'transparent' }} />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  },
+  Board: ConnectFourBoard,
 };
