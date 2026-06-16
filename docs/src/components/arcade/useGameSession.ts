@@ -26,12 +26,14 @@ export function useGameSession(
   const [result, setResult] = useState('');
   const [statusText, setStatusText] = useState('');
   const [endText, setEndText] = useState('');
+  const [legalMoves, setLegalMoves] = useState<string[]>([]);
 
   // Push board + solo status into state from the live handle.
   const syncBoard = useCallback((h: GameHandle) => {
     setBoard(h.getBoard());
     setCurrent(h.currentPlayer());
     setStatusText(h.statusText?.() ?? '');
+    setLegalMoves(h.isTerminal() ? [] : h.legalMoves());
   }, []);
 
   const playMoveSound = useCallback(() => {
@@ -132,5 +134,5 @@ export function useGameSession(
     return h.bestMove();
   }, []);
 
-  return { board, current, phase, result, seats, statusText, endText, onHumanMove, getHint, replay: start };
+  return { board, current, phase, result, seats, statusText, endText, legalMoves, onHumanMove, getHint, replay: start };
 }

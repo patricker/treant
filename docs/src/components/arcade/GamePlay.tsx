@@ -61,6 +61,7 @@ export default function GamePlay({
           params={params}
           currentPlayer={s.current}
           interactive={interactive}
+          legalMoves={s.legalMoves}
           onMove={s.onHumanMove}
         />
 

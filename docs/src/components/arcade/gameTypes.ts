@@ -43,6 +43,8 @@ export interface BoardProps {
   currentPlayer: number;
   /** true only when it is a human seat's turn */
   interactive: boolean;
+  /** the current player's legal moves (for movement games to highlight targets) */
+  legalMoves: string[];
   onMove: (move: string) => void;
 }
 

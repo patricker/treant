@@ -601,6 +601,10 @@
   transform: scale(1.06);
   box-shadow: 0 4px 12px rgba(255, 59, 92, 0.35);
 }
+.moveTarget {
+  outline: 3px dashed var(--arc-p3);
+  color: var(--arc-p3) !important;
+}
 
 /* ---------- 2048 ---------- */
 .g2048Wrap {

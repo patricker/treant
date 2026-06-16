@@ -85,6 +85,17 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  frontline: (
+    // two pawns advancing past a center line
+    <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12h18" opacity="0.4" />
+      <path d="M8 16l-2 3h4z" fill="currentColor" />
+      <circle cx="6" cy="13.5" r="1.8" fill="currentColor" stroke="none" />
+      <path d="M16 8l-2-3h4z" fill="currentColor" transform="rotate(180 16 6.5)" />
+      <circle cx="18" cy="10.5" r="1.8" fill="currentColor" stroke="none" />
+      <path d="M6 19v-1M18 5v1" />
+    </g>
+  ),
   pig: (
     <g>
       <rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" strokeWidth="2" />
