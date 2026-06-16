@@ -619,6 +619,26 @@
   cursor: pointer;
 }
 
+/* ---------- Fox & Hounds (checkerboard) ---------- */
+.fhCell {
+  aspect-ratio: 1;
+  border: none;
+  background: var(--arc-card);
+  border-radius: 8px;
+  font-size: clamp(1rem, 5vw, 1.8rem);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--arc-accent);
+}
+.fhCell:disabled {
+  cursor: default;
+}
+.fhDark {
+  background: color-mix(in srgb, var(--arc-p2) 16%, var(--arc-card));
+}
+
 /* ---------- Sim (hexagon edge game) ---------- */
 .simWrap {
   width: 100%;

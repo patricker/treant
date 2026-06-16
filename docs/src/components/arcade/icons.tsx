@@ -178,6 +178,18 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  'fox-hounds': (
+    <g fill="currentColor">
+      {/* one fox chip pursued by a row of hound chips */}
+      <path d="M12 4l2.2 3.2L12 9.4 9.8 7.2z" />
+      <g opacity="0.5">
+        <circle cx="5" cy="18" r="2.2" />
+        <circle cx="11" cy="18" r="2.2" />
+        <circle cx="17" cy="18" r="2.2" />
+      </g>
+      <path d="M12 10v5" stroke="currentColor" strokeWidth="1.6" strokeDasharray="1.5 1.8" strokeLinecap="round" />
+    </g>
+  ),
   sim: (
     <g stroke="currentColor" fill="none" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round">
       <path d="M12 3l7.8 4.5v9L12 21l-7.8-4.5v-9z" opacity="0.4" />

@@ -23,6 +23,7 @@ import { nogo } from './nogo';
 import { amazons } from './amazons';
 import { col } from './col';
 import { sim } from './sim';
+import { foxHounds } from './foxhounds';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -35,6 +36,7 @@ export const GAMES: GameDefinition[] = [
   captureGo,
   konane,
   amazons,
+  foxHounds,
   reversi,
   hex,
   orderChaos,
