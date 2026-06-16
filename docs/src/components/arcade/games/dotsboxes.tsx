@@ -89,6 +89,11 @@ export const dotsBoxes: GameDefinition = {
   name: 'Dots & Boxes',
   icon: '⬛',
   blurb: 'Claim a line; complete a box to claim it and go again. Most boxes wins.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, cols: 3, rows: 3 },
   presets: [
     { label: 'Classic 3×3', emoji: '⭐', params: { numPlayers: 2, cols: 3, rows: 3 } },

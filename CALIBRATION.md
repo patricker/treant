@@ -122,12 +122,26 @@ column) should beat calibrated Easy Connect Four a fair share, and Hard should
 beat Easy decisively. If Easy is still too strong, lower its `playouts` or raise
 its `temp` in that game's `difficulty` block and re-verify.
 
-### Two games are hand-set
+### Hand-set and hand-adjusted games
 
 `nim` and `subtract-square` don't expose the uniform WASM result/seat API the
 harness needs, so they're set by analogy to the measured solver games (tiny,
 solver-dominated: low playouts, `temp` is the lever). 2048 is single-player and
 has no difficulty levels.
+
+Two measured games had **degenerate matrices** the auto-rule can't pick well, so
+their Medium/Hard are hand-adjusted (full reasoning in
+[`plans/ai-calibration-results.md`](plans/ai-calibration-results.md)):
+- **`sim`** — an avoidance game where pure-rollout MCTS shows ~no strength
+  gradient (every rung scores 42–58%). Auto-pick inverted Easy/Hard on noise, so
+  it's set to a sane monotonic ladder.
+- **`euclid`** — plateaus at p30, so the auto-rule emitted `easy == medium`;
+  Medium/Hard are split on `temp` instead.
+
+One harness bug surfaced during this pass: `mancala`'s WASM `result()` returns
+`"P1"`/`"P2"` while every other engine returns `"1"`/`"2"`, so the round-robin
+scored every Mancala game a draw (a flat 50% matrix). `play()` now strips a
+leading `P`, and Mancala calibrates normally.
 
 ---
 

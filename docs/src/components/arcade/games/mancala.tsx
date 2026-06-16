@@ -77,6 +77,11 @@ export const mancala: GameDefinition = {
   name: 'Mancala',
   icon: '🫘',
   blurb: 'Sow seeds, capture, and fill your store. Kalah rules.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, pits: 6, stones: 4 },
   presets: [
     { label: 'Kalah', emoji: '⭐', params: { numPlayers: 2, pits: 6, stones: 4 } },

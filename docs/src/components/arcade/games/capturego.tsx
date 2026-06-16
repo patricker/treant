@@ -7,6 +7,11 @@ export const captureGo: GameDefinition = {
   name: 'First Capture',
   icon: '⚫',
   blurb: 'Place stones and surround an enemy group to capture it. First capture wins!',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, cols: 6, rows: 6 },
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },

@@ -42,6 +42,11 @@ export const nogo: GameDefinition = {
   name: 'NoGo',
   icon: '⛔',
   blurb: 'The anti-Go: place stones, but never capture or self-trap. Run out of safe moves and you lose.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 5, temp: 2 },
+    hard: { playouts: 800, topK: 2, temp: 0.35 },
+  },
   defaultParams: { numPlayers: 2, cols: 5, rows: 5 },
   presets: [
     { label: 'Classic 5×5', emoji: '⭐', params: { numPlayers: 2, cols: 5, rows: 5 } },

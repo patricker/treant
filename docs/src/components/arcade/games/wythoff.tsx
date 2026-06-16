@@ -6,6 +6,11 @@ export const wythoff: GameDefinition = {
   name: "Wythoff's Queen",
   icon: '👑',
   blurb: 'Slide the queen up, left, or diagonally toward the corner. Land on it to win.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 5, temp: 2 },
+    hard: { playouts: 100, topK: 4, temp: 1 },
+  },
   defaultParams: { numPlayers: 2, cols: 8, rows: 8 },
   presets: [
     { label: 'Classic 8×8', emoji: '⭐', params: { numPlayers: 2, cols: 8, rows: 8 } },

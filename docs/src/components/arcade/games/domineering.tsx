@@ -63,6 +63,11 @@ export const domineering: GameDefinition = {
   name: 'Domineering',
   icon: '🁢',
   blurb: 'Place dominoes — you go vertical, the foe goes horizontal. Last to fit one in wins.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 5, temp: 2 },
+    hard: { playouts: 300, topK: 3, temp: 0.6 },
+  },
   defaultParams: { numPlayers: 2, cols: 6, rows: 6 },
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },

@@ -38,6 +38,11 @@ export const chomp: GameDefinition = {
   name: 'Chomp',
   icon: '🍪',
   blurb: 'Eat cookies (and everything right & below). Whoever eats the poison loses.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 800, topK: 2, temp: 0.35 },
+  },
   defaultParams: { numPlayers: 2, cols: 5, rows: 4 },
   presets: [
     { label: 'Classic 5×4', emoji: '⭐', params: { numPlayers: 2, cols: 5, rows: 4 } },

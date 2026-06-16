@@ -71,6 +71,11 @@ export const pig: GameDefinition = {
   name: 'Pig',
   icon: '🎲',
   blurb: 'Roll to build points — but a 1 wipes your turn. Bank before you bust!',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 5, temp: 2 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, target: 100 },
   presets: [
     { label: 'Classic (100)', emoji: '⭐', params: { numPlayers: 2, target: 100 } },

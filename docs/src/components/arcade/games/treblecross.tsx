@@ -8,6 +8,11 @@ export const treblecross: GameDefinition = {
   name: 'Treblecross',
   icon: '➕',
   blurb: 'One strip, and you BOTH play X. Whoever completes three X’s in a row wins.',
+  difficulty: {
+    easy: { playouts: 30, topK: 5, temp: 2 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, cols: 11, rows: 1 },
   presets: [
     { label: 'Classic (11)', emoji: '⭐', params: { numPlayers: 2, cols: 11, rows: 1 } },

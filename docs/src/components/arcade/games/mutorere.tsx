@@ -75,6 +75,11 @@ export const muTorere: GameDefinition = {
   name: 'Mu Tōrere',
   icon: '✴️',
   blurb: 'Slide your pieces around the star. Block your opponent so they can’t move.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 800, topK: 2, temp: 0.35 },
+  },
   defaultParams: { numPlayers: 2 },
   presets: [{ label: 'Classic', emoji: '⭐', params: { numPlayers: 2 } }],
   knobs: [],

@@ -106,6 +106,11 @@ export const shift: GameDefinition = {
   name: 'Shift',
   icon: '🔀',
   blurb: 'Place your pieces, then slide them. Line them up to win.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 300, topK: 3, temp: 0.6 },
+    hard: { playouts: 800, topK: 2, temp: 0.35 },
+  },
   defaultParams: { numPlayers: 2, cols: 3, rows: 3, k: 3, pieces: 3 },
   presets: [
     { label: 'Classic', emoji: '⭐', params: { numPlayers: 2, cols: 3, rows: 3, k: 3, pieces: 3 } },

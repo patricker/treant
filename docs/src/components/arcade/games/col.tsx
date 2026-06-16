@@ -37,6 +37,11 @@ export const col: GameDefinition = {
   name: 'Col',
   icon: '🎨',
   blurb: 'Colour the map — but no two of your own patches may touch. Run out of room and you lose.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, cols: 5, rows: 5 },
   presets: [
     { label: 'Classic 5×5', emoji: '⭐', params: { numPlayers: 2, cols: 5, rows: 5 } },

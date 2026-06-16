@@ -113,6 +113,11 @@ export const amazons: GameDefinition = {
   name: 'Amazons',
   icon: '♛',
   blurb: 'Move an amazon like a queen, then shoot an arrow to burn a square. Trap your foe with no moves left.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 5, temp: 2 },
+    hard: { playouts: 200, topK: 3, temp: 0.5 },
+  },
   defaultParams: { numPlayers: 2, cols: 6, rows: 6 },
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },

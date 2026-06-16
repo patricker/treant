@@ -58,6 +58,11 @@ export const nim: GameDefinition = {
   name: 'Nim',
   icon: '🪨',
   blurb: 'Take 1 or 2 stones. Take the last one to win.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 4, temp: 1 },
+    hard: { playouts: 100, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, stones: 15 },
   presets: [
     { label: 'Classic', emoji: '⭐', params: { numPlayers: 2, stones: 15 } },

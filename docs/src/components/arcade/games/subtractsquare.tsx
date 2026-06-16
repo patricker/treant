@@ -54,6 +54,11 @@ export const subtractSquare: GameDefinition = {
   name: 'Square Subtract',
   icon: '🟦',
   blurb: 'Remove a square number of stones — 1, 4, 9, 16… Take the last stone to win.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 4, temp: 1 },
+    hard: { playouts: 100, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, stones: 20 },
   presets: [
     { label: 'Classic', emoji: '⭐', params: { numPlayers: 2, stones: 20 } },

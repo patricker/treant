@@ -47,6 +47,11 @@ export const euclid: GameDefinition = {
   name: "Euclid's Game",
   icon: '➗',
   blurb: 'Two numbers. Subtract a multiple of the smaller from the larger. Make a zero to win.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 4, temp: 1 },
+    hard: { playouts: 100, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, a: 25, b: 16 },
   presets: [
     { label: 'Classic 25 & 16', emoji: '⭐', params: { numPlayers: 2, a: 25, b: 16 } },

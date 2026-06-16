@@ -116,9 +116,9 @@ export const frontline: GameDefinition = {
   rules:
     'Each turn, move one of your pawns one square straight forward into an empty cell, or one square diagonally forward to capture an enemy pawn sitting there. You win the instant one of your pawns reaches the far row, or if you capture all of the opponent’s pawns. There are no draws — someone always breaks through.',
   difficulty: {
-    easy: { playouts: 8, topK: 6, temp: 3.0 },
-    medium: { playouts: 100, topK: 4, temp: 1.0 },
-    hard: { playouts: 4000, topK: 1, temp: 0.0 },
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 800, topK: 2, temp: 0.35 },
   },
   defaultParams: { numPlayers: 2, cols: 6, rows: 6 },
   presets: [

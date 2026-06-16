@@ -8,10 +8,12 @@
 //!
 //! WHAT: For every game we round-robin a ladder of `weak_move` configs
 //! ({playouts, top_k, temp}) against each other, then auto-pick Easy/Medium/Hard:
-//!   * Easy   = the weakest rung (a casual human should win a fair share).
-//!   * Hard   = the CHEAPEST rung that reaches near-peak strength (so solver
-//!              games cap low and don't waste time; open games go high).
-//!   * Medium = the rung whose field score sits halfway between Easy and Hard.
+//!
+//! - Easy = the weakest rung (a casual human should win a fair share).
+//! - Hard = the CHEAPEST rung that reaches near-peak strength (so solver games
+//!   cap low and don't waste time; open games go high).
+//! - Medium = the rung whose field score sits halfway between Easy and Hard.
+//!
 //! It prints the win matrix + a ready-to-paste `difficulty:` block per game.
 //!
 //! HOW TO RUN:
@@ -136,7 +138,9 @@ fn play(make: fn() -> Box<dyn Eng>, a: &Cfg, b: &Cfg, rng: &mut SmallRng) -> u32
             None => break,
         }
     }
-    match g.result().as_str() {
+    // Most engines report the winner as "1"/"2"; Mancala uses "P1"/"P2". Strip
+    // any leading 'P' so both conventions land in the same buckets.
+    match g.result().trim_start_matches('P') {
         "1" => 0,
         "2" => 1,
         _ => 2,

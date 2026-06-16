@@ -65,6 +65,11 @@ export const connectSix: GameDefinition = {
   name: 'Connect Six',
   icon: '⬛',
   blurb: 'Place TWO stones per turn; first to six-in-a-row wins.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 80, topK: 4, temp: 1 },
+    hard: { playouts: 200, topK: 3, temp: 0.5 },
+  },
   defaultParams: { numPlayers: 2, cols: 9, rows: 9 },
   presets: [
     { label: 'Classic 9×9', emoji: '⭐', params: { numPlayers: 2, cols: 9, rows: 9 } },
@@ -85,6 +90,11 @@ export const trapThree: GameDefinition = {
   name: 'Trap-Three',
   icon: '⚠️',
   blurb: 'Four-in-a-row wins — but three-in-a-row LOSES. Watch your step.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, cols: 5, rows: 5 },
   presets: [
     { label: 'Classic 5×5', emoji: '⭐', params: { numPlayers: 2, cols: 5, rows: 5 } },
@@ -106,6 +116,11 @@ export const noTacToe: GameDefinition = {
   name: 'No-Tac-Toe',
   icon: '🚫',
   blurb: 'Everyone plays X. Make three-in-a-row and you LOSE.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, cols: 3, rows: 3 },
   presets: [
     { label: 'Classic 3×3', emoji: '⭐', params: { numPlayers: 2, cols: 3, rows: 3 } },
@@ -127,6 +142,11 @@ export const squareUp: GameDefinition = {
   name: 'Square Up',
   icon: '⬜',
   blurb: 'Win when four of your marks form a square — any size, even tilted.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, cols: 6, rows: 6 },
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },
@@ -217,6 +237,11 @@ export const orderChaos: GameDefinition = {
   name: 'Order & Chaos',
   icon: '☯️',
   blurb: 'Both players place X or O. Order wants five-in-a-row; Chaos wants to stop it.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 800, topK: 2, temp: 0.35 },
+  },
   defaultParams: { numPlayers: 2, cols: 6, rows: 6 },
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },

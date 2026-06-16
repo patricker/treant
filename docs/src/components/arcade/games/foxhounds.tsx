@@ -66,6 +66,11 @@ export const foxHounds: GameDefinition = {
   name: 'Fox & Hounds',
   icon: '🦊',
   blurb: 'You are the Fox — slip past four Hounds to the far side. They only move forward; can you break through?',
+  difficulty: {
+    easy: { playouts: 30, topK: 5, temp: 2 },
+    medium: { playouts: 300, topK: 3, temp: 0.6 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2, cols: 8, rows: 8 },
   presets: [
     { label: 'Classic 8×8', emoji: '⭐', params: { numPlayers: 2, cols: 8, rows: 8 } },

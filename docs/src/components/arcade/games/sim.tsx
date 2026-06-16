@@ -69,6 +69,11 @@ export const sim: GameDefinition = {
   name: 'Sim',
   icon: '🔺',
   blurb: 'Colour the lines of a hexagon. Make a triangle in YOUR colour and you lose — someone always must.',
+  difficulty: {
+    easy: { playouts: 30, topK: 5, temp: 2 },
+    medium: { playouts: 300, topK: 3, temp: 0.6 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
   defaultParams: { numPlayers: 2 },
   presets: [{ label: 'Classic', emoji: '⭐', params: { numPlayers: 2 } }],
   knobs: [],
