@@ -168,6 +168,16 @@ impl ChompWasm {
 }
 
 #[cfg(test)]
+impl Chomp {
+    fn result_for_test(&self) -> u8 {
+        match self.term() {
+            Some(ProvenValue::Win) => self.current + 1,
+            _ => 0,
+        }
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
@@ -196,15 +206,5 @@ mod tests {
         g.playout_n(800);
         let m = g.best_move().unwrap();
         assert_ne!(m, "0", "AI must not eat the poison on move 1");
-    }
-}
-
-#[cfg(test)]
-impl Chomp {
-    fn result_for_test(&self) -> u8 {
-        match self.term() {
-            Some(ProvenValue::Win) => self.current + 1,
-            _ => 0,
-        }
     }
 }

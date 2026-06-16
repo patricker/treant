@@ -83,7 +83,7 @@ export default function GamePlay({
           onMove={s.onHumanMove}
         />
 
-        {def.solo && mode === 'solo' && s.phase === 'playing' && (
+        {def.solo && s.phase === 'playing' && (
           <div className={styles.hintRow}>
             <button
               className={styles.hintBtn}

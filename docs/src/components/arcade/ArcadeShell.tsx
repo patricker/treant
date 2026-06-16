@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import { useHistory, useLocation } from '@docusaurus/router';
 import { gameById } from './games';
 import type { Difficulty, GameParams, Mode, PlayerKind } from './gameTypes';
