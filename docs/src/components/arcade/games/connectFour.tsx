@@ -1,5 +1,6 @@
 import type { GameDefinition, GameHandle, GameParams, BoardProps } from '../gameTypes';
 import styles from '../arcade.module.css';
+import { usePrevBoard, changedIndex } from '../boardDiff';
 
 const DISC = ['', 'var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)'];
 
@@ -26,6 +27,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 function ConnectFourBoard({ board, params, interactive, onMove }: BoardProps) {
   const { cols, rows } = params;
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
+  const dropped = changedIndex(usePrevBoard(board), board);
   const legalCols = new Set<number>();
   for (let c = 0; c < cols; c++) if ((board[c] ?? ' ') === ' ') legalCols.add(c);
   return (
@@ -48,7 +50,10 @@ function ConnectFourBoard({ board, params, interactive, onMove }: BoardProps) {
           const p = ch === ' ' ? 0 : Number(ch);
           return (
             <div key={i} className={styles.cfCell}>
-              <span className={styles.cfDisc} style={{ background: p ? DISC[p] : 'transparent' }} />
+              <span
+                className={`${styles.cfDisc} ${i === dropped ? styles.dropIn : ''}`}
+                style={{ background: p ? DISC[p] : 'transparent' }}
+              />
             </div>
           );
         })}
@@ -77,4 +82,5 @@ export const connectFour: GameDefinition = {
   ],
   create: makeHandle,
   Board: ConnectFourBoard,
+  moveSound: 'drop',
 };

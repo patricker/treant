@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
 import styles from '../arcade.module.css';
+import { usePrevBoard, changedIndex } from '../boardDiff';
 
 const SYM = ['X', 'O', 'A', 'B'];
 const SEAT_COLOR: Record<string, string> = {
@@ -43,6 +44,7 @@ function ShiftBoard({ board, params, currentPlayer, interactive, onMove }: Board
   const { cols, rows } = params;
   const me = SYM[currentPlayer];
   const [sel, setSel] = useState<number | null>(null);
+  const arrived = changedIndex(usePrevBoard(board), board);
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
   // The engine's placement phase is per-player; "can I still place?" is exactly
   // "I have fewer than my piece quota on the board".
@@ -81,7 +83,7 @@ function ShiftBoard({ board, params, currentPlayer, interactive, onMove }: Board
         {cells.map((ch, i) => (
           <button
             key={i}
-            className={`${styles.shiftCell} ${sel === i ? styles.shiftSel : ''}`}
+            className={`${styles.shiftCell} ${sel === i ? styles.shiftSel : ''} ${i === arrived ? styles.popIn : ''}`}
             disabled={!interactive}
             onClick={() => tap(i)}
             style={{ color: ch === ' ' ? 'var(--ifm-color-emphasis-300)' : SEAT_COLOR[ch] }}

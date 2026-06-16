@@ -60,6 +60,8 @@ export interface GameDefinition {
   solo?: boolean;
   /** Solo games: prettify a hint move for display, e.g. "Up" -> "⬆️ Up". */
   formatHint?(move: string): string;
+  /** Sound to play per move (default "move"; Connect Four uses "drop"). */
+  moveSound?: 'move' | 'drop';
 }
 
 export const DIFFICULTY: Record<

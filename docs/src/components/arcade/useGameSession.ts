@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Difficulty, GameDefinition, GameHandle, GameParams, Mode } from './gameTypes';
 import { pickAiMove, seatTypes } from './gameTypes';
+import { sound } from './sound';
 
 type Phase = 'playing' | 'thinking' | 'over';
 const AI_DELAY_MS = 400;
@@ -33,11 +34,32 @@ export function useGameSession(
     setStatusText(h.statusText?.() ?? '');
   }, []);
 
-  const finish = useCallback((h: GameHandle) => {
-    setResult(h.result());
-    setEndText(h.endText?.() ?? '');
-    setPhase('over');
-  }, []);
+  const playMoveSound = useCallback(() => {
+    if (def.moveSound === 'drop') sound.drop();
+    else sound.move();
+  }, [def]);
+
+  const finish = useCallback(
+    (h: GameHandle) => {
+      const result = h.result();
+      setResult(result);
+      setEndText(h.endText?.() ?? '');
+      setPhase('over');
+      // End sound. Solo: cheer only on a milestone (endText starts with 🎉),
+      // else a gentle neutral tone. Multiplayer: lose if an AI seat won.
+      if (def.solo) {
+        if ((h.endText?.() ?? '').startsWith('🎉')) sound.win();
+        else sound.draw();
+      } else if (result === 'Draw' || result === '') {
+        sound.draw();
+      } else {
+        const winnerSeat = Number(result) - 1;
+        if (seatsRef.current[winnerSeat] === 'ai') sound.lose();
+        else sound.win();
+      }
+    },
+    [def],
+  );
 
   const runAiTurn = useCallback(() => {
     setPhase('thinking');
@@ -45,7 +67,10 @@ export function useGameSession(
       const h = handleRef.current;
       if (!h || h.isTerminal()) return;
       const mv = def.solo ? (h.playoutN(SOLO_AI_PLAYOUTS), h.bestMove()) : pickAiMove(h, difficulty);
-      if (mv != null) h.applyMove(mv);
+      if (mv != null) {
+        h.applyMove(mv);
+        playMoveSound();
+      }
       const terminal = h.isTerminal();
       syncBoard(h);
       if (terminal) {
@@ -58,7 +83,7 @@ export function useGameSession(
         setPhase('playing');
       }
     }, AI_DELAY_MS);
-  }, [def, difficulty, syncBoard, finish]);
+  }, [def, difficulty, syncBoard, finish, playMoveSound]);
 
   const start = useCallback(() => {
     if (handleRef.current) handleRef.current.free();
@@ -88,6 +113,7 @@ export function useGameSession(
       if (!h || phase !== 'playing') return;
       if (seatsRef.current[h.currentPlayer()] !== 'human') return;
       if (!h.applyMove(move)) return;
+      playMoveSound();
       if (h.isTerminal()) {
         syncBoard(h);
         finish(h);
@@ -96,7 +122,7 @@ export function useGameSession(
       syncBoard(h);
       if (seatsRef.current[h.currentPlayer()] === 'ai') runAiTurn();
     },
-    [phase, runAiTurn, syncBoard, finish],
+    [phase, runAiTurn, syncBoard, finish, playMoveSound],
   );
 
   const getHint = useCallback((): string | undefined => {

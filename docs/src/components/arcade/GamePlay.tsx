@@ -79,8 +79,8 @@ export default function GamePlay({
 
         {s.phase === 'over' && (
           <div className={styles.overlay}>
-            <div className={styles.overlayCard}>
-              <div className={styles.overlayIcon}>
+            <div className={`${styles.overlayCard} ${styles.overlayPop}`}>
+              <div className={`${styles.overlayIcon} ${styles.celebrate}`}>
                 {def.solo ? '🎮' : s.result === 'Draw' ? '🤝' : '🏆'}
               </div>
               <div className={styles.overlayText}>

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
 import styles from '../arcade.module.css';
+import { usePrevBoard } from '../boardDiff';
 
 const TILE_BG: Record<number, string> = {
   0: 'rgba(238,228,218,0.35)',
@@ -40,6 +41,17 @@ function makeHandle(wasm: any, _p: GameParams): GameHandle {
 
 function Game2048Board({ board, interactive, onMove }: BoardProps) {
   const tiles = board.split(',').map(Number);
+  const prevBoard = usePrevBoard(board);
+  const prevTiles = prevBoard ? prevBoard.split(',').map(Number) : [];
+  // Per-tile animation: 0 -> n is a spawn (pop), an increased value is a merge (bump).
+  const tileAnim = (i: number): string => {
+    const before = prevTiles[i] ?? 0;
+    const now = tiles[i];
+    if (prevTiles.length !== tiles.length) return '';
+    if (before === 0 && now > 0) return styles.popIn;
+    if (now > before && before > 0) return styles.mergeBump;
+    return '';
+  };
   const startRef = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
@@ -83,7 +95,7 @@ function Game2048Board({ board, interactive, onMove }: BoardProps) {
         {tiles.map((v, i) => (
           <div
             key={i}
-            className={styles.g2048Tile}
+            className={`${styles.g2048Tile} ${tileAnim(i)}`}
             style={{
               background: TILE_BG[v] ?? '#3c3a32',
               color: tileColor(v),
