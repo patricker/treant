@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
 import styles from '../arcade.module.css';
 import { usePrevBoard, changedIndex } from '../boardDiff';
@@ -44,6 +44,7 @@ function ShiftBoard({ board, params, currentPlayer, interactive, onMove }: Board
   const { cols, rows } = params;
   const me = SYM[currentPlayer];
   const [sel, setSel] = useState<number | null>(null);
+  useEffect(() => setSel(null), [board]); // drop stale selection after any move
   const arrived = changedIndex(usePrevBoard(board), board);
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
   // The engine's placement phase is per-player; "can I still place?" is exactly

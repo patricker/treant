@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { BoardProps, GameDefinition, GameHandle } from '../gameTypes';
 import styles from '../arcade.module.css';
 
@@ -33,6 +33,9 @@ export function moveHandle(g: any): GameHandle {
 export function MoveBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
   const { cols, rows } = params;
   const [sel, setSel] = useState<number | null>(null);
+  // Clear any selection once the board actually changes (a move landed, or the
+  // opponent/AI moved) so a stale highlight never points at the wrong cell.
+  useEffect(() => setSel(null), [board]);
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
 
   const fromTo = new Map<number, Set<number>>();

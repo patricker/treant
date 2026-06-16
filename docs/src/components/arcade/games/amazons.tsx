@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
 import styles from '../arcade.module.css';
@@ -16,6 +16,12 @@ function AmazonsBoard({ board, params, currentPlayer, interactive, legalMoves, o
   const { cols, rows } = params;
   const [from, setFrom] = useState<number | null>(null);
   const [to, setTo] = useState<number | null>(null);
+  // Reset the multi-step selection whenever the board changes (our move landed,
+  // or the AI/opponent moved) so a stale pick/move can't carry into a new turn.
+  useEffect(() => {
+    setFrom(null);
+    setTo(null);
+  }, [board]);
 
   const { froms, tosByFrom, arrowsByFromTo } = useMemo(() => {
     const froms = new Set<number>();

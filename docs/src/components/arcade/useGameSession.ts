@@ -16,6 +16,13 @@ export function useGameSession(
   difficulty: Difficulty,
 ) {
   const handleRef = useRef<GameHandle | null>(null);
+  // Generation guard: bumped whenever a game (re)starts or the hook tears down,
+  // so any AI turn still waiting in a setTimeout from a previous game aborts
+  // instead of mutating the new handle. `timerRef` lets us cancel the pending
+  // timer outright. Together they prevent two AI loops racing on one handle
+  // (e.g. double-clicking "Play again" in Watch mode).
+  const genRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const seats = seatTypes(mode, params.numPlayers);
   const seatsRef = useRef(seats);
   seatsRef.current = seats;
@@ -65,7 +72,9 @@ export function useGameSession(
 
   const runAiTurn = useCallback(() => {
     setPhase('thinking');
-    setTimeout(() => {
+    const gen = genRef.current;
+    timerRef.current = setTimeout(() => {
+      if (gen !== genRef.current) return; // a newer game started; abort this turn
       const h = handleRef.current;
       if (!h || h.isTerminal()) return;
       const mv = def.solo ? (h.playoutN(SOLO_AI_PLAYOUTS), h.bestMove()) : pickAiMove(h, difficulty);
@@ -88,6 +97,11 @@ export function useGameSession(
   }, [def, difficulty, syncBoard, finish, playMoveSound]);
 
   const start = useCallback(() => {
+    genRef.current++; // invalidate any AI turn still pending from a prior game
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
     if (handleRef.current) handleRef.current.free();
     const h = def.create(wasm, params);
     handleRef.current = h;
@@ -101,6 +115,11 @@ export function useGameSession(
   useEffect(() => {
     start();
     return () => {
+      genRef.current++; // stop any pending AI turn from touching a freed handle
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
       if (handleRef.current) {
         handleRef.current.free();
         handleRef.current = null;

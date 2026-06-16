@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
 import styles from '../arcade.module.css';
@@ -11,6 +11,7 @@ function pos(i: number): { x: number; y: number } {
 
 function MuTorereBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
   const [sel, setSel] = useState<number | null>(null);
+  useEffect(() => setSel(null), [board]); // drop stale selection after any move
   const cells = Array.from({ length: 9 }, (_, i) => board[i] ?? ' ');
 
   const fromTo = new Map<number, Set<number>>();
