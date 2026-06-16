@@ -130,6 +130,10 @@ impl ConnectFourWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
+        crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
+    }
+
     pub fn apply_move(&mut self, col: &str) -> bool {
         let col_num: u8 = match col.parse() {
             Ok(n) if (n as usize) < self.cfg.cols => n,

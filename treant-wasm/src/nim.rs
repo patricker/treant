@@ -189,6 +189,10 @@ impl NimWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
+        crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
+    }
+
     /// Apply a move and advance the tree (preserving search).
     /// Apply a move and advance the tree.
     /// Runs a few playouts first if needed to ensure the child is expanded.

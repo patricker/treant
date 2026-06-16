@@ -487,6 +487,10 @@ impl MancalaWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
+        crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
+    }
+
     pub fn apply_move(&mut self, pit_local: &str) -> bool {
         let pit_num: u8 = match pit_local.parse() {
             Ok(n) if (n as usize) < self.pits => n,

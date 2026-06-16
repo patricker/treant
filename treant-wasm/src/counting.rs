@@ -133,6 +133,10 @@ impl CountingGameWasm {
         self.manager.playout_n(n as u64);
     }
 
+    pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
+        crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
+    }
+
     pub fn get_stats(&self) -> JsValue {
         let stats = types::build_stats(&self.manager, |_| None);
         serde_wasm_bindgen::to_value(&stats).unwrap()
