@@ -178,6 +178,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  konane: (
+    <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+      {/* jump arc from left stone over the middle to the empty landing */}
+      <path d="M5 14 Q12 2 19 14" opacity="0.7" />
+      <circle cx="5" cy="15" r="2.6" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="15" r="2.6" fill="currentColor" stroke="none" opacity="0.4" />
+      <circle cx="19" cy="15" r="2.6" />
+    </g>
+  ),
   domineering: (
     <g fill="currentColor">
       {/* vertical domino */}

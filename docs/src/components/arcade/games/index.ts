@@ -18,6 +18,7 @@ import { dotsBoxes } from './dotsboxes';
 import { gomoku } from './gomoku';
 import { muTorere } from './mutorere';
 import { domineering } from './domineering';
+import { konane } from './konane';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -28,6 +29,7 @@ export const GAMES: GameDefinition[] = [
   clobber,
   trails,
   captureGo,
+  konane,
   reversi,
   hex,
   orderChaos,
