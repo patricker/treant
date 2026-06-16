@@ -674,6 +674,89 @@
   color: var(--arc-accent);
 }
 
+/* ---------- Pig ---------- */
+.pigWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 6px 0;
+}
+.pigScores {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pigRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 12px;
+}
+.pigRowActive {
+  background: var(--arc-soft);
+}
+.pigName {
+  font-weight: 900;
+  width: 30px;
+}
+.pigBar {
+  flex: 1;
+  height: 14px;
+  background: var(--arc-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.pigBarFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+.pigVal {
+  font-weight: 900;
+  width: 34px;
+  text-align: right;
+}
+.pigCenter {
+  text-align: center;
+}
+.pigDie {
+  font-size: 4rem;
+  line-height: 1;
+}
+.pigTurn {
+  font-weight: 700;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+.pigButtons {
+  display: flex;
+  gap: 12px;
+}
+.pigRoll,
+.pigHold {
+  flex: 1;
+  border: none;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 1.1rem;
+  padding: 16px;
+  cursor: pointer;
+}
+.pigRoll {
+  background: var(--arc-accent);
+  color: #fff;
+}
+.pigHold {
+  background: var(--arc-p3);
+  color: #fff;
+}
+.pigRoll:disabled,
+.pigHold:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 /* ---------- Order & Chaos symbol toggle ---------- */
 .ocToggle {
   display: flex;

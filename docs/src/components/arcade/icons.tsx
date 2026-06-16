@@ -85,6 +85,18 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  pig: (
+    <g>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" strokeWidth="2" />
+      <g fill="currentColor">
+        <circle cx="8" cy="8" r="1.6" />
+        <circle cx="16" cy="8" r="1.6" />
+        <circle cx="12" cy="12" r="1.6" />
+        <circle cx="8" cy="16" r="1.6" />
+        <circle cx="16" cy="16" r="1.6" />
+      </g>
+    </g>
+  ),
   '2048': (
     <g>
       <rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" strokeWidth="2" />
