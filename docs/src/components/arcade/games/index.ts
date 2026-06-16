@@ -24,6 +24,7 @@ import { amazons } from './amazons';
 import { col } from './col';
 import { sim } from './sim';
 import { foxHounds } from './foxhounds';
+import { treblecross } from './treblecross';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -45,6 +46,7 @@ export const GAMES: GameDefinition[] = [
   squareUp,
   connectSix,
   gomoku,
+  treblecross,
   dotsBoxes,
   nim,
   chomp,

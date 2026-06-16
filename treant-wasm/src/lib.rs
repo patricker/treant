@@ -28,6 +28,7 @@ mod shift;
 mod sim;
 mod tictactoe;
 mod trails;
+mod treblecross;
 mod types;
 mod wythoff;
 
@@ -58,6 +59,7 @@ pub use shift::ShiftWasm;
 pub use sim::SimWasm;
 pub use tictactoe::TicTacToeWasm;
 pub use trails::TrailsWasm;
+pub use treblecross::TreblecrossWasm;
 pub use wythoff::WythoffWasm;
 
 #[wasm_bindgen(start)]

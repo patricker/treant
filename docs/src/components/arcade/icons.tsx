@@ -178,6 +178,16 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  treblecross: (
+    <g>
+      <rect x="2.5" y="9" width="19" height="6" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.6" opacity="0.5" />
+      <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d="M6 10.5l3 3M9 10.5l-3 3" />
+        <path d="M10.5 10.5l3 3M13.5 10.5l-3 3" />
+        <path d="M15 10.5l3 3M18 10.5l-3 3" />
+      </g>
+    </g>
+  ),
   'fox-hounds': (
     <g fill="currentColor">
       {/* one fox chip pursued by a row of hound chips */}
