@@ -37,7 +37,7 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 - This is a practical read, **not legal advice** — do a quick trademark search
   before committing to a public name.
 
-## 3. Already shipped — 19 games
+## 3. Already shipped — 26 games
 
 **Original 6:** Tic-Tac-Toe · Connect Four · Shift · Nim · Mancala (Kalah) · 2048.
 
@@ -50,14 +50,21 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 | Trap-Three | line: 4 wins / 3 loses | 🏆 |
 | Square Up | win on a square of 4 marks | 💪 |
 | Connect Six | 2 stones/turn, six-in-a-row | 💪 |
+| Gomoku | five-in-a-row (TTT engine preset) | 💪 |
+| Dots & Boxes | edge-claiming, bonus turn on a box | 💪 |
 | Pig | press-your-luck dice (chance nodes) | 🎲 |
 | Frontline (Breakthrough) | pawn movement/capture race | 💪 |
 | Hex | connection (BFS shortest-completion) | 💪 |
 | Clobber | capture-by-replace (CGT) | 🏆 |
+| Kōnane | jump-and-capture removal (last to move) | 🏆 |
 | Reversi | disc-flipping (+ passes/draws) | 💪 |
 | Trails | light-cycles (move + leave a wall) | 💪 |
 | First Capture | groups & liberties (capture-Go) | 💪 |
+| NoGo | anti-Go: never capture or self-trap | 🏆 |
 | Chomp | eat-the-poison (impartial) | 🏆 |
+| Wythoff's Queen | two-heap subtraction (queen on a grid) | 🏆 |
+| Mu Tōrere | slide on an 8-point star (kewai rule) | 🏆 |
+| Domineering | partisan domino placement (V vs H) | 🏆 |
 
 Each has its own `treant-wasm` GameState + Rust unit tests, an arcade
 `GameDefinition`, a custom SVG icon, and was browser-verified. Reusable arcade
