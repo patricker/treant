@@ -125,5 +125,5 @@ export const frontline: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.FrontlineWasm(p.cols, p.rows)),
   Board: makeMoveBoard('pawn'),
-  playerLabels: ['Red', 'Black'],
+  playerLabels: ['Red', 'Gold'],
 };
