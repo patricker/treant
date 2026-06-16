@@ -678,6 +678,25 @@
   color: var(--arc-accent);
 }
 
+/* ---------- Chomp ---------- */
+.chompGrid {
+  display: grid;
+  gap: 6px;
+  justify-content: start;
+}
+.chompCell {
+  aspect-ratio: 1;
+  min-width: 36px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.3rem;
+  box-shadow: inset 0 -3px 4px rgba(0, 0, 0, 0.15);
+}
+.chompCell:disabled {
+  cursor: default;
+}
+
 /* ---------- Trails ---------- */
 .trailsGrid {
   display: grid;

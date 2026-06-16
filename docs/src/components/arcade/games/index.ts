@@ -12,6 +12,7 @@ import { clobber } from './clobber';
 import { reversi } from './reversi';
 import { trails } from './trails';
 import { captureGo } from './capturego';
+import { chomp } from './chomp';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -30,6 +31,7 @@ export const GAMES: GameDefinition[] = [
   squareUp,
   connectSix,
   nim,
+  chomp,
   mancala,
   pig,
   game2048,

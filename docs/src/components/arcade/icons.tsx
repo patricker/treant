@@ -85,6 +85,14 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  chomp: (
+    <g fill="currentColor">
+      <path d="M12 3a9 9 0 1 0 8.5 6.1 3 3 0 0 1-4.2-4.2A9 9 0 0 0 12 3z" />
+      <circle cx="9" cy="11" r="1.1" fill="var(--arc-bg, #fff)" />
+      <circle cx="14" cy="14" r="1.1" fill="var(--arc-bg, #fff)" />
+      <circle cx="11" cy="15.5" r="1" fill="var(--arc-bg, #fff)" />
+    </g>
+  ),
   'first-capture': (
     <g fill="currentColor">
       <circle cx="12" cy="12" r="2.6" opacity="0.4" />
