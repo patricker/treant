@@ -15,6 +15,7 @@ import { captureGo } from './capturego';
 import { chomp } from './chomp';
 import { wythoff } from './wythoff';
 import { dotsBoxes } from './dotsboxes';
+import { gomoku } from './gomoku';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -32,6 +33,7 @@ export const GAMES: GameDefinition[] = [
   trapThree,
   squareUp,
   connectSix,
+  gomoku,
   dotsBoxes,
   nim,
   chomp,

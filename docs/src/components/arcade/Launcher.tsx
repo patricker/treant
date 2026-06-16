@@ -7,7 +7,7 @@ import styles from './arcade.module.css';
 // Game groupings for the launcher (any game not listed falls under "More").
 const CATEGORIES: { name: string; ids: string[] }[] = [
   { name: 'Family classics', ids: ['connect-four', 'tic-tac-toe', 'reversi', 'dots-and-boxes', 'mancala', 'nim'] },
-  { name: 'Connect & line', ids: ['hex', 'connect-six', 'square-up', 'order-chaos'] },
+  { name: 'Connect & line', ids: ['hex', 'gomoku', 'connect-six', 'square-up', 'order-chaos'] },
   { name: 'Move & capture', ids: ['frontline', 'clobber', 'first-capture', 'trails', 'shift'] },
   { name: 'Dice & solo', ids: ['pig', '2048'] },
   { name: 'Brain-teasers', ids: ['no-tac-toe', 'trap-three', 'chomp', 'wythoff'] },

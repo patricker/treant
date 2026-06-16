@@ -11,7 +11,7 @@ const COLOR: Record<string, string> = {
 };
 
 // A generic "place a mark on a grid cell" handle over a TTT-style WASM class.
-function cellHandle(g: any, cols: number, rows: number): GameHandle {
+export function cellHandle(g: any, cols: number, rows: number): GameHandle {
   return {
     applyMove: (m) => g.apply_move(m),
     getBoard: () => g.get_board(),

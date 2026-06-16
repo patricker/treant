@@ -85,6 +85,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  gomoku: (
+    <g fill="currentColor">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <circle key={i} cx={4 + i * 4} cy={20 - i * 4} r="1.9" />
+      ))}
+      <circle cx="16" cy="16" r="1.9" opacity="0.4" />
+      <circle cx="8" cy="8" r="1.9" opacity="0.4" />
+    </g>
+  ),
   'dots-and-boxes': (
     <g fill="currentColor">
       <rect x="6" y="6" width="12" height="2" rx="1" />
