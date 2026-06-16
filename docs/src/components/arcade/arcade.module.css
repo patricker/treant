@@ -674,6 +674,33 @@
   color: var(--arc-accent);
 }
 
+/* ---------- Order & Chaos symbol toggle ---------- */
+.ocToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.ocLabel {
+  font-weight: 800;
+  opacity: 0.7;
+}
+.ocSym {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--arc-soft);
+  border-radius: 12px;
+  background: var(--arc-card);
+  font-size: 1.3rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+.ocSymOn {
+  background: var(--arc-accent);
+  border-color: var(--arc-accent);
+}
+
 /* ---------- Animations (game feel) ---------- */
 @media (prefers-reduced-motion: no-preference) {
   @keyframes dropIn {

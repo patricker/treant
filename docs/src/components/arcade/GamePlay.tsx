@@ -5,10 +5,10 @@ import styles from './arcade.module.css';
 
 const PLAYER_LABEL = ['Red', 'Yellow', 'Green', 'Purple'];
 
-function winnerLabel(result: string): string {
+function winnerLabel(result: string, labels: string[]): string {
   if (result === 'Draw') return "It's a draw!";
   const n = Number(result);
-  const name = Number.isFinite(n) ? PLAYER_LABEL[n - 1] : undefined;
+  const name = Number.isFinite(n) ? labels[n - 1] : undefined;
   return `${name ?? `Player ${result}`} wins!`;
 }
 
@@ -31,6 +31,7 @@ export default function GamePlay({
 }) {
   const s = useGameSession(wasm, def, params, mode, difficulty);
   const [hint, setHint] = useState('');
+  const labels = def.playerLabels ?? PLAYER_LABEL;
   const interactive = s.phase === 'playing' && s.seats[s.current] === 'human';
   const status = def.solo
     ? s.statusText
@@ -38,7 +39,7 @@ export default function GamePlay({
       ? '🤖 Thinking…'
       : s.phase === 'over'
         ? ''
-        : `${PLAYER_LABEL[s.current] ?? `Player ${s.current + 1}`}'s turn`;
+        : `${labels[s.current] ?? `Player ${s.current + 1}`}'s turn`;
 
   return (
     <div className={styles.play}>
@@ -84,7 +85,7 @@ export default function GamePlay({
                 {def.solo ? '🎮' : s.result === 'Draw' ? '🤝' : '🏆'}
               </div>
               <div className={styles.overlayText}>
-                {def.solo ? s.endText : winnerLabel(s.result)}
+                {def.solo ? s.endText : winnerLabel(s.result, labels)}
               </div>
               <button className={styles.playBtn} onClick={s.replay}>
                 ↺ Play again

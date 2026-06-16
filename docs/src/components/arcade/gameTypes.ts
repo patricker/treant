@@ -62,6 +62,8 @@ export interface GameDefinition {
   formatHint?(move: string): string;
   /** Sound to play per move (default "move"; Connect Four uses "drop"). */
   moveSound?: 'move' | 'drop';
+  /** Display names per seat (default Red/Yellow/Green/Purple). */
+  playerLabels?: string[];
 }
 
 export const DIFFICULTY: Record<
