@@ -15,7 +15,7 @@ export default function GameSetup({
   onStart: (cfg: { params: GameParams; mode: Mode; difficulty: Difficulty }) => void;
   onBack: () => void;
 }) {
-  const [mode, setMode] = useState<Mode>('pvai');
+  const [mode, setMode] = useState<Mode>(def.solo ? 'solo' : 'pvai');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [params, setParams] = useState<GameParams>(def.defaultParams);
   const [showCustom, setShowCustom] = useState(false);
@@ -31,22 +31,48 @@ export default function GameSetup({
         </h2>
       </div>
 
-      <div className={styles.setupLabel}>Who&apos;s playing?</div>
-      <ModePicker value={mode} onChange={setMode} />
-
-      {mode !== 'pvp' && (
+      <div className={styles.setupLabel}>{def.solo ? 'Mode' : "Who's playing?"}</div>
+      {def.solo ? (
+        <div className={styles.seg}>
+          <button
+            className={`${styles.segBtn} ${mode === 'solo' ? styles.segOn : ''}`}
+            onClick={() => setMode('solo')}
+          >
+            🙂 You play
+          </button>
+          <button
+            className={`${styles.segBtn} ${mode === 'aivai' ? styles.segOn : ''}`}
+            onClick={() => setMode('aivai')}
+          >
+            🤖 Watch AI
+          </button>
+        </div>
+      ) : (
         <>
-          <div className={styles.setupLabel}>AI strength</div>
-          <DifficultyPicker value={difficulty} onChange={setDifficulty} />
+          <ModePicker value={mode} onChange={setMode} />
+          {mode !== 'pvp' && (
+            <>
+              <div className={styles.setupLabel}>AI strength</div>
+              <DifficultyPicker value={difficulty} onChange={setDifficulty} />
+            </>
+          )}
         </>
       )}
 
-      <div className={styles.setupLabel}>Board</div>
-      <PresetChips presets={def.presets} active={params} onPick={setParams} />
-      <button className={styles.customToggle} onClick={() => setShowCustom((s) => !s)}>
-        {showCustom ? '▾' : '▸'} Customize
-      </button>
-      {showCustom && <CustomKnobs knobs={def.knobs} params={params} onChange={setParams} />}
+      {def.presets.length > 0 && (
+        <>
+          <div className={styles.setupLabel}>Board</div>
+          <PresetChips presets={def.presets} active={params} onPick={setParams} />
+        </>
+      )}
+      {def.knobs.length > 0 && (
+        <>
+          <button className={styles.customToggle} onClick={() => setShowCustom((s) => !s)}>
+            {showCustom ? '▾' : '▸'} Customize
+          </button>
+          {showCustom && <CustomKnobs knobs={def.knobs} params={params} onChange={setParams} />}
+        </>
+      )}
 
       <button className={styles.playBtn} onClick={() => onStart({ params, mode, difficulty })}>
         ▶ Start game

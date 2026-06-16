@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Difficulty, GameDefinition, GameParams, Mode } from './gameTypes';
 import { useGameSession } from './useGameSession';
 import styles from './arcade.module.css';
@@ -29,9 +30,11 @@ export default function GamePlay({
   onChangeSetup: () => void;
 }) {
   const s = useGameSession(wasm, def, params, mode, difficulty);
+  const [hint, setHint] = useState('');
   const interactive = s.phase === 'playing' && s.seats[s.current] === 'human';
-  const status =
-    s.phase === 'thinking'
+  const status = def.solo
+    ? s.statusText
+    : s.phase === 'thinking'
       ? '🤖 Thinking…'
       : s.phase === 'over'
         ? ''
@@ -59,11 +62,30 @@ export default function GamePlay({
           onMove={s.onHumanMove}
         />
 
+        {def.solo && mode === 'solo' && s.phase === 'playing' && (
+          <div className={styles.hintRow}>
+            <button
+              className={styles.hintBtn}
+              onClick={() => {
+                const m = s.getHint?.();
+                setHint(m ? (def.formatHint ? def.formatHint(m) : m) : '');
+              }}
+            >
+              💡 Hint
+            </button>
+            {hint && <span className={styles.hintText}>Try {hint}</span>}
+          </div>
+        )}
+
         {s.phase === 'over' && (
           <div className={styles.overlay}>
             <div className={styles.overlayCard}>
-              <div className={styles.overlayIcon}>{s.result === 'Draw' ? '🤝' : '🏆'}</div>
-              <div className={styles.overlayText}>{winnerLabel(s.result)}</div>
+              <div className={styles.overlayIcon}>
+                {def.solo ? '🎮' : s.result === 'Draw' ? '🤝' : '🏆'}
+              </div>
+              <div className={styles.overlayText}>
+                {def.solo ? s.endText : winnerLabel(s.result)}
+              </div>
               <button className={styles.playBtn} onClick={s.replay}>
                 ↺ Play again
               </button>

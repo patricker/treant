@@ -3,7 +3,7 @@ import type { ComponentType } from 'react';
 /** `numPlayers` is required (the seat/mode system needs it); every other knob
  *  (cols, rows, k, pits, stones, pieces, …) is a game-specific numeric entry. */
 export type GameParams = { numPlayers: number } & Record<string, number>;
-export type Mode = 'pvp' | 'pvai' | 'aivai';
+export type Mode = 'pvp' | 'pvai' | 'aivai' | 'solo';
 export type Difficulty = 'easy' | 'medium' | 'hard';
 export type SeatType = 'human' | 'ai';
 
@@ -31,6 +31,10 @@ export interface GameHandle {
   /** The current player's legal move strings (used for epsilon-random AI). */
   legalMoves(): string[];
   free(): void;
+  /** Solo games: a live status line, e.g. "Score 1234 · Best 128". */
+  statusText?(): string;
+  /** Solo games: the game-over message, e.g. "Game over — score 1234". */
+  endText?(): string;
 }
 
 export interface BoardProps {
@@ -52,6 +56,10 @@ export interface GameDefinition {
   knobs: Knob[];
   create(wasm: any, p: GameParams): GameHandle;
   Board: ComponentType<BoardProps>;
+  /** Single-player game: uses the solo setup/flow (You-play + Hint / Watch-AI). */
+  solo?: boolean;
+  /** Solo games: prettify a hint move for display, e.g. "Up" -> "⬆️ Up". */
+  formatHint?(move: string): string;
 }
 
 export const DIFFICULTY: Record<
@@ -65,6 +73,7 @@ export const DIFFICULTY: Record<
 
 /** Assign a human/ai type to each seat based on the chosen mode. */
 export function seatTypes(mode: Mode, numPlayers: number): SeatType[] {
+  if (mode === 'solo') return Array(numPlayers).fill('human');
   if (mode === 'pvp') return Array(numPlayers).fill('human');
   if (mode === 'aivai') return Array(numPlayers).fill('ai');
   // pvai: seat 0 is human, the rest are AI

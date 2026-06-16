@@ -4,6 +4,8 @@ import { pickAiMove, seatTypes } from './gameTypes';
 
 type Phase = 'playing' | 'thinking' | 'over';
 const AI_DELAY_MS = 400;
+const SOLO_AI_PLAYOUTS = 800;
+const HINT_PLAYOUTS = 1500;
 
 export function useGameSession(
   wasm: any,
@@ -21,20 +23,33 @@ export function useGameSession(
   const [current, setCurrent] = useState(0);
   const [phase, setPhase] = useState<Phase>('playing');
   const [result, setResult] = useState('');
+  const [statusText, setStatusText] = useState('');
+  const [endText, setEndText] = useState('');
+
+  // Push board + solo status into state from the live handle.
+  const syncBoard = useCallback((h: GameHandle) => {
+    setBoard(h.getBoard());
+    setCurrent(h.currentPlayer());
+    setStatusText(h.statusText?.() ?? '');
+  }, []);
+
+  const finish = useCallback((h: GameHandle) => {
+    setResult(h.result());
+    setEndText(h.endText?.() ?? '');
+    setPhase('over');
+  }, []);
 
   const runAiTurn = useCallback(() => {
     setPhase('thinking');
     setTimeout(() => {
       const h = handleRef.current;
       if (!h || h.isTerminal()) return;
-      const mv = pickAiMove(h, difficulty);
+      const mv = def.solo ? (h.playoutN(SOLO_AI_PLAYOUTS), h.bestMove()) : pickAiMove(h, difficulty);
       if (mv != null) h.applyMove(mv);
       const terminal = h.isTerminal();
-      setBoard(h.getBoard());
-      setCurrent(h.currentPlayer());
+      syncBoard(h);
       if (terminal) {
-        setResult(h.result());
-        setPhase('over');
+        finish(h);
         return;
       }
       if (seatsRef.current[h.currentPlayer()] === 'ai') {
@@ -43,18 +58,18 @@ export function useGameSession(
         setPhase('playing');
       }
     }, AI_DELAY_MS);
-  }, [def, params, difficulty]);
+  }, [def, difficulty, syncBoard, finish]);
 
   const start = useCallback(() => {
     if (handleRef.current) handleRef.current.free();
     const h = def.create(wasm, params);
     handleRef.current = h;
     setResult('');
+    setEndText('');
     setPhase('playing');
-    setBoard(h.getBoard());
-    setCurrent(h.currentPlayer());
+    syncBoard(h);
     if (seatsRef.current[h.currentPlayer()] === 'ai') runAiTurn();
-  }, [wasm, def, params, runAiTurn]);
+  }, [wasm, def, params, runAiTurn, syncBoard]);
 
   useEffect(() => {
     start();
@@ -74,17 +89,22 @@ export function useGameSession(
       if (seatsRef.current[h.currentPlayer()] !== 'human') return;
       if (!h.applyMove(move)) return;
       if (h.isTerminal()) {
-        setBoard(h.getBoard());
-        setResult(h.result());
-        setPhase('over');
+        syncBoard(h);
+        finish(h);
         return;
       }
-      setBoard(h.getBoard());
-      setCurrent(h.currentPlayer());
+      syncBoard(h);
       if (seatsRef.current[h.currentPlayer()] === 'ai') runAiTurn();
     },
-    [phase, runAiTurn],
+    [phase, runAiTurn, syncBoard, finish],
   );
 
-  return { board, current, phase, result, seats, onHumanMove, replay: start };
+  const getHint = useCallback((): string | undefined => {
+    const h = handleRef.current;
+    if (!h) return undefined;
+    h.playoutN(HINT_PLAYOUTS);
+    return h.bestMove();
+  }, []);
+
+  return { board, current, phase, result, seats, statusText, endText, onHumanMove, getHint, replay: start };
 }
