@@ -62,6 +62,7 @@ export const nim: GameDefinition = {
     { label: 'Classic', emoji: '⭐', params: { numPlayers: 2, stones: 15 } },
     { label: 'Quick', emoji: '⚡', params: { numPlayers: 2, stones: 7 } },
     { label: 'Marathon', emoji: '🏃', params: { numPlayers: 2, stones: 25 } },
+    { label: 'Epic 30', emoji: '🤯', params: { numPlayers: 2, stones: 30 } },
   ],
   knobs: [{ key: 'stones', label: 'Stones', min: 3, max: 30, step: 1 }],
   create: makeHandle,

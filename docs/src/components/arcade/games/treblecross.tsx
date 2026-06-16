@@ -13,6 +13,7 @@ export const treblecross: GameDefinition = {
     { label: 'Classic (11)', emoji: '⭐', params: { numPlayers: 2, cols: 11, rows: 1 } },
     { label: 'Short (7)', emoji: '⚡', params: { numPlayers: 2, cols: 7, rows: 1 } },
     { label: 'Long (15)', emoji: '🔲', params: { numPlayers: 2, cols: 15, rows: 1 } },
+    { label: 'Epic (16)', emoji: '🤯', params: { numPlayers: 2, cols: 16, rows: 1 } },
   ],
   knobs: [{ key: 'cols', label: 'Length', min: 6, max: 16, step: 1 }],
   create: (wasm, p) => cellHandle(new wasm.TreblecrossWasm(p.cols), p.cols, 1),

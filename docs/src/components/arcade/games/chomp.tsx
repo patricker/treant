@@ -43,6 +43,7 @@ export const chomp: GameDefinition = {
     { label: 'Classic 5×4', emoji: '⭐', params: { numPlayers: 2, cols: 5, rows: 4 } },
     { label: 'Square 4×4', emoji: '🔳', params: { numPlayers: 2, cols: 4, rows: 4 } },
     { label: 'Big 6×5', emoji: '🔲', params: { numPlayers: 2, cols: 6, rows: 5 } },
+    { label: 'Mega 7×7', emoji: '🤯', params: { numPlayers: 2, cols: 7, rows: 7 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 2, max: 7, step: 1 },

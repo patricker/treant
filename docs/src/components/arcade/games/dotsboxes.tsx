@@ -93,7 +93,7 @@ export const dotsBoxes: GameDefinition = {
   presets: [
     { label: 'Classic 3×3', emoji: '⭐', params: { numPlayers: 2, cols: 3, rows: 3 } },
     { label: 'Tiny 2×2', emoji: '🔳', params: { numPlayers: 2, cols: 2, rows: 2 } },
-    { label: 'Big 5×5', emoji: '🔲', params: { numPlayers: 2, cols: 5, rows: 5 } },
+    { label: 'Mega 5×5', emoji: '🤯', params: { numPlayers: 2, cols: 5, rows: 5 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 2, max: 5, step: 1 },

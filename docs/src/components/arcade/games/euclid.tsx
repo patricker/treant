@@ -51,6 +51,7 @@ export const euclid: GameDefinition = {
     { label: 'Classic 25 & 16', emoji: '⭐', params: { numPlayers: 2, a: 25, b: 16 } },
     { label: 'Quick 12 & 7', emoji: '⚡', params: { numPlayers: 2, a: 12, b: 7 } },
     { label: 'Big 40 & 9', emoji: '🔲', params: { numPlayers: 2, a: 40, b: 9 } },
+    { label: 'Tangle 40 & 37', emoji: '🤯', params: { numPlayers: 2, a: 40, b: 37 } },
   ],
   knobs: [
     { key: 'a', label: 'First number', min: 4, max: 40, step: 1 },

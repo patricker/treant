@@ -58,6 +58,7 @@ export const subtractSquare: GameDefinition = {
     { label: 'Classic', emoji: '⭐', params: { numPlayers: 2, stones: 20 } },
     { label: 'Quick', emoji: '⚡', params: { numPlayers: 2, stones: 12 } },
     { label: 'Marathon', emoji: '🏃', params: { numPlayers: 2, stones: 35 } },
+    { label: 'Epic 40', emoji: '🤯', params: { numPlayers: 2, stones: 40 } },
   ],
   knobs: [{ key: 'stones', label: 'Stones', min: 5, max: 40, step: 1 }],
   create: makeHandle,

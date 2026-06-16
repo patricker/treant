@@ -11,6 +11,7 @@ export const clobber: GameDefinition = {
     { label: 'Classic 5×5', emoji: '⭐', params: { numPlayers: 2, cols: 5, rows: 5 } },
     { label: 'Small 4×4', emoji: '🔳', params: { numPlayers: 2, cols: 4, rows: 4 } },
     { label: 'Wide 6×5', emoji: '🔲', params: { numPlayers: 2, cols: 6, rows: 5 } },
+    { label: 'Mega 8×8', emoji: '🤯', params: { numPlayers: 2, cols: 8, rows: 8 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 3, max: 8, step: 1 },

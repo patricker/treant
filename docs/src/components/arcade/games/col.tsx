@@ -42,6 +42,7 @@ export const col: GameDefinition = {
     { label: 'Classic 5×5', emoji: '⭐', params: { numPlayers: 2, cols: 5, rows: 5 } },
     { label: 'Quick 4×4', emoji: '⚡', params: { numPlayers: 2, cols: 4, rows: 4 } },
     { label: 'Big 7×7', emoji: '🔲', params: { numPlayers: 2, cols: 7, rows: 7 } },
+    { label: 'Mega 8×8', emoji: '🤯', params: { numPlayers: 2, cols: 8, rows: 8 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 4, max: 8, step: 1 },

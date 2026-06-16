@@ -11,7 +11,7 @@ export const captureGo: GameDefinition = {
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },
     { label: 'Small 5×5', emoji: '🔳', params: { numPlayers: 2, cols: 5, rows: 5 } },
-    { label: 'Big 9×9', emoji: '🔲', params: { numPlayers: 2, cols: 9, rows: 9 } },
+    { label: 'Mega 9×9', emoji: '🤯', params: { numPlayers: 2, cols: 9, rows: 9 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 4, max: 9, step: 1 },

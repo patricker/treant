@@ -70,6 +70,7 @@ export const foxHounds: GameDefinition = {
   presets: [
     { label: 'Classic 8×8', emoji: '⭐', params: { numPlayers: 2, cols: 8, rows: 8 } },
     { label: 'Small 6×6', emoji: '🔳', params: { numPlayers: 2, cols: 6, rows: 6 } },
+    { label: 'Huge 10×10', emoji: '🤯', params: { numPlayers: 2, cols: 10, rows: 10 } },
   ],
   knobs: [],
   create: (wasm, p) => moveHandle(new wasm.FoxHoundsWasm(p.cols, p.rows)),

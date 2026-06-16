@@ -54,6 +54,7 @@ export const trails: GameDefinition = {
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },
     { label: 'Big 8×8', emoji: '🔲', params: { numPlayers: 2, cols: 8, rows: 8 } },
+    { label: 'Mega 9×9', emoji: '🤯', params: { numPlayers: 2, cols: 9, rows: 9 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 4, max: 9, step: 1 },

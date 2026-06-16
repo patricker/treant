@@ -117,7 +117,7 @@ export const amazons: GameDefinition = {
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },
     { label: 'Quick 5×5', emoji: '⚡', params: { numPlayers: 2, cols: 5, rows: 5 } },
-    { label: 'Big 7×7', emoji: '🔲', params: { numPlayers: 2, cols: 7, rows: 7 } },
+    { label: 'Mega 7×7', emoji: '🤯', params: { numPlayers: 2, cols: 7, rows: 7 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 5, max: 7, step: 1 },

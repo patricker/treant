@@ -104,6 +104,7 @@ export const hex: GameDefinition = {
     { label: 'Classic 7×7', emoji: '⭐', params: { numPlayers: 2, size: 7 } },
     { label: 'Small 5×5', emoji: '🔳', params: { numPlayers: 2, size: 5 } },
     { label: 'Big 9×9', emoji: '🔲', params: { numPlayers: 2, size: 9 } },
+    { label: 'Mega 11×11', emoji: '🤯', params: { numPlayers: 2, size: 11 } },
   ],
   knobs: [{ key: 'size', label: 'Size', min: 5, max: 11, step: 1 }],
   create: makeHandle,

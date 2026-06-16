@@ -75,6 +75,7 @@ export const pig: GameDefinition = {
     { label: 'Classic (100)', emoji: '⭐', params: { numPlayers: 2, target: 100 } },
     { label: 'Quick (50)', emoji: '⚡', params: { numPlayers: 2, target: 50 } },
     { label: '4-Player', emoji: '🎉', params: { numPlayers: 4, target: 100 } },
+    { label: '6-Player Frenzy', emoji: '🤯', params: { numPlayers: 6, target: 100 } },
   ],
   knobs: [
     { key: 'numPlayers', label: 'Players', min: 2, max: 6, step: 1 },
