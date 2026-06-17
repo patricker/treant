@@ -28,3 +28,18 @@
   --ifm-color-primary-lightest: #b0cbe4;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Arcade route: collapse the site footer to just the copyright line. The full
+   footer (Learn / Reference / More columns) eats a screenful under an
+   interactive game, especially on mobile. ArcadeShell tags <body> on mount. */
+body.arcade-route .footer__links {
+  display: none;
+}
+body.arcade-route .footer {
+  padding: 0.75rem 0;
+  --ifm-footer-background-color: transparent;
+}
+body.arcade-route .footer__copyright {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}

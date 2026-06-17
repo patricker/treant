@@ -1,4 +1,5 @@
 import type { JSX } from 'react';
+import { useEffect } from 'react';
 import { useHistory, useLocation } from '@docusaurus/router';
 import { gameById } from './games';
 import type { Difficulty, GameParams, Mode, PlayerKind } from './gameTypes';
@@ -77,6 +78,14 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
   if (typeof window !== 'undefined' && typeof (window as any).gtag !== 'function') {
     (window as any).gtag = () => {};
   }
+
+  // The full Docusaurus footer (link columns) eats a screenful on mobile under
+  // an interactive game. Tag <body> while the arcade is mounted so global CSS can
+  // collapse the footer to just the copyright line on this route.
+  useEffect(() => {
+    document.body.classList.add('arcade-route');
+    return () => document.body.classList.remove('arcade-route');
+  }, []);
 
   const screen = screenFromSearch(location.search);
   const go = (next: Screen) => history.push('/arcade' + screenToSearch(next));
