@@ -430,14 +430,24 @@ fn try_tighten_bounds<Spec: MCTS>(node: &SearchNode<Spec>) -> ScoreBounds {
     }
 }
 
-/// Prove a chance node: all children must be proven.
-/// WIN only if all outcomes WIN, LOSS only if all LOSS. No negation (same player).
+/// Prove a chance node: all children must be proven, and only a *unanimous*
+/// outcome can prove the node. No negation (same player through a chance event).
+///
+/// A chance node's value is the probability-weighted expectation of its
+/// outcomes, not a min/max. So it is provably WIN only if every outcome is WIN,
+/// provably LOSS only if every outcome is LOSS, and provably DRAW only if every
+/// outcome is DRAW. A *mixed* set of proven children (e.g. one WIN and one LOSS)
+/// is a genuine lottery whose exact game-theoretic value is none of WIN/LOSS/DRAW
+/// — marking it DRAW would falsely assert the expectation is exactly 0. Such a
+/// node stays `Unknown` here; `try_tighten_bounds_chance` still captures its
+/// expected value via the score bounds.
 fn try_prove_chance_node<Spec: MCTS>(node: &SearchNode<Spec>) -> ProvenValue {
     if node.moves.is_empty() {
         return node.proven_value();
     }
     let mut all_win = true;
     let mut all_loss = true;
+    let mut all_draw = true;
     for mi in &node.moves {
         let ptr = mi.child.load(Ordering::Acquire);
         if ptr.is_null() {
@@ -448,9 +458,11 @@ fn try_prove_chance_node<Spec: MCTS>(node: &SearchNode<Spec>) -> ProvenValue {
             ProvenValue::Unknown => return ProvenValue::Unknown,
             ProvenValue::Win => {
                 all_loss = false;
+                all_draw = false;
             }
             ProvenValue::Loss => {
                 all_win = false;
+                all_draw = false;
             }
             ProvenValue::Draw => {
                 all_win = false;
@@ -462,8 +474,11 @@ fn try_prove_chance_node<Spec: MCTS>(node: &SearchNode<Spec>) -> ProvenValue {
         ProvenValue::Win
     } else if all_loss {
         ProvenValue::Loss
-    } else {
+    } else if all_draw {
         ProvenValue::Draw
+    } else {
+        // Mixed proven outcomes — a lottery, not a proven result.
+        ProvenValue::Unknown
     }
 }
 

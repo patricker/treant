@@ -3472,3 +3472,158 @@ fn test_negate_bound_involution() {
     assert_eq!(negate_bound(100), -100);
     assert_eq!(negate_bound(-100), 100);
 }
+
+// CoinFlip: single-player one-step stochastic game for testing chance-node
+// solver propagation. The root is a chance node with two equiprobable outcomes
+// (Left, Right); each outcome leads immediately to a terminal whose proven value
+// is fixed by the game's `left`/`right` config. This lets a test construct a
+// chance node with any combination of proven children.
+#[derive(Clone, Debug, PartialEq)]
+struct CoinFlip {
+    left: ProvenValue,    // terminal value reached via the Left outcome
+    right: ProvenValue,   // terminal value reached via the Right outcome
+    landed: Option<bool>, // None = root chance node; Some(true)=Left, Some(false)=Right terminal
+}
+
+#[derive(Clone, Debug, PartialEq)]
+enum Flip {
+    Left,
+    Right,
+}
+
+impl GameState for CoinFlip {
+    type Move = Flip;
+    type Player = ();
+    type MoveList = Vec<Flip>;
+
+    fn current_player(&self) {}
+
+    fn available_moves(&self) -> Vec<Flip> {
+        // Both the root (a chance node, resolved via chance_outcomes) and the
+        // terminals have no decision moves.
+        vec![]
+    }
+
+    fn make_move(&mut self, mov: &Flip) {
+        self.landed = Some(matches!(mov, Flip::Left));
+    }
+
+    fn chance_outcomes(&self) -> Option<Vec<(Flip, f64)>> {
+        if self.landed.is_none() {
+            Some(vec![(Flip::Left, 0.5), (Flip::Right, 0.5)])
+        } else {
+            None
+        }
+    }
+
+    fn terminal_value(&self) -> Option<ProvenValue> {
+        match self.landed {
+            Some(true) => Some(self.left),
+            Some(false) => Some(self.right),
+            None => None, // root chance node is not terminal
+        }
+    }
+}
+
+struct CoinFlipEvaluator;
+
+impl<Spec: MCTS<State = CoinFlip, TreePolicy = UCTPolicy>> Evaluator<Spec> for CoinFlipEvaluator {
+    type StateEvaluation = i64;
+
+    fn evaluate_new_state(
+        &self,
+        _state: &CoinFlip,
+        moves: &Vec<Flip>,
+        _: Option<SearchHandle<Spec>>,
+    ) -> (Vec<()>, i64) {
+        // Proven values come from terminal_value(); the heuristic value is unused
+        // by the solver, so 0 is fine.
+        (vec![(); moves.len()], 0)
+    }
+
+    fn interpret_evaluation_for_player(&self, evaln: &i64, _: &()) -> i64 {
+        *evaln
+    }
+
+    fn evaluate_existing_state(&self, _: &CoinFlip, evaln: &i64, _: SearchHandle<Spec>) -> i64 {
+        *evaln
+    }
+}
+
+#[derive(Default)]
+struct CoinFlipMCTS;
+
+impl MCTS for CoinFlipMCTS {
+    type State = CoinFlip;
+    type Eval = CoinFlipEvaluator;
+    type NodeData = ();
+    type ExtraThreadData = ();
+    type TreePolicy = UCTPolicy;
+    type TranspositionTable = ();
+
+    fn solver_enabled(&self) -> bool {
+        true
+    }
+    fn closed_loop_chance(&self) -> bool {
+        true
+    }
+    fn rng_seed(&self) -> Option<u64> {
+        Some(7)
+    }
+}
+
+fn make_coinflip(left: ProvenValue, right: ProvenValue) -> MCTSManager<CoinFlipMCTS> {
+    MCTSManager::new(
+        CoinFlip { left, right, landed: None },
+        CoinFlipMCTS,
+        CoinFlipEvaluator,
+        UCTPolicy::new(0.5),
+        (),
+    )
+}
+
+#[test]
+fn test_chance_node_unanimous_win_proves_win() {
+    let mut mcts = make_coinflip(ProvenValue::Win, ProvenValue::Win);
+    mcts.playout_n(50);
+    assert_eq!(mcts.root_proven_value(), ProvenValue::Win);
+}
+
+#[test]
+fn test_chance_node_unanimous_loss_proves_loss() {
+    let mut mcts = make_coinflip(ProvenValue::Loss, ProvenValue::Loss);
+    mcts.playout_n(50);
+    assert_eq!(mcts.root_proven_value(), ProvenValue::Loss);
+}
+
+#[test]
+fn test_chance_node_unanimous_draw_proves_draw() {
+    let mut mcts = make_coinflip(ProvenValue::Draw, ProvenValue::Draw);
+    mcts.playout_n(50);
+    assert_eq!(mcts.root_proven_value(), ProvenValue::Draw);
+}
+
+#[test]
+fn test_chance_node_mixed_win_loss_is_not_proven_draw() {
+    // Regression for the chance-node proof bug: a 50/50 lottery between a proven
+    // WIN and a proven LOSS must NOT be reported as a proven DRAW. Its expectation
+    // is 0 only by coincidence of the equal probabilities; the node is a genuine
+    // lottery whose discrete game-theoretic value is none of Win/Loss/Draw, so it
+    // must stay Unknown (the score-bounds pass still captures its expected value).
+    let mut mcts = make_coinflip(ProvenValue::Win, ProvenValue::Loss);
+    mcts.playout_n(50);
+    assert_eq!(
+        mcts.root_proven_value(),
+        ProvenValue::Unknown,
+        "mixed Win/Loss chance node must not be proven Draw"
+    );
+}
+
+#[test]
+fn test_chance_node_mixed_win_draw_is_not_proven() {
+    // Win (p=0.5) and Draw (p=0.5) has expectation +0.5 — favorable but not a
+    // guaranteed win, and not a proven Draw. Stays Unknown.
+    let mut mcts = make_coinflip(ProvenValue::Win, ProvenValue::Draw);
+    mcts.playout_n(50);
+    assert_eq!(mcts.root_proven_value(), ProvenValue::Unknown);
+}
