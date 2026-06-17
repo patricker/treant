@@ -87,12 +87,15 @@ export const mancala: GameDefinition = {
     { label: 'Kalah', emoji: '⭐', params: { numPlayers: 2, pits: 6, stones: 4 } },
     { label: 'Quick', emoji: '⚡', params: { numPlayers: 2, pits: 3, stones: 3 } },
     { label: '4-Player Ring', emoji: '🎉', params: { numPlayers: 4, pits: 4, stones: 3 } },
-    { label: '6-Player Sow', emoji: '🤯', params: { numPlayers: 6, pits: 6, stones: 4 } },
+    { label: 'Big 4-Player', emoji: '🤯', params: { numPlayers: 4, pits: 8, stones: 6 } },
   ],
+  // The engine only supports 2 or 4 players (the sow/capture ring geometry is
+  // defined for those alone — Mancala::new asserts it), so the Players knob is
+  // capped to {2, 4} via step 2. Offering 3/5/6 would trap the WASM module.
   knobs: [
     { key: 'pits', label: 'Pits', min: 3, max: 8, step: 1 },
     { key: 'stones', label: 'Stones', min: 2, max: 6, step: 1 },
-    { key: 'numPlayers', label: 'Players', min: 2, max: 6, step: 1 },
+    { key: 'numPlayers', label: 'Players', min: 2, max: 4, step: 2 },
   ],
   create: makeHandle,
   Board: MancalaBoard,
