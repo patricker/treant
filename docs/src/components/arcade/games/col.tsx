@@ -12,7 +12,7 @@ function ColBoard({ board, params, currentPlayer, interactive, legalMoves, onMov
   const placed = changedIndex(usePrevBoard(board), board);
   const myColor = currentPlayer === 0 ? 'var(--arc-p1)' : 'var(--arc-p2)';
   return (
-    <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+    <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
       {Array.from({ length: cols * rows }, (_, i) => {
         const ch = board[i] ?? ' ';
         const isLegal = interactive && legal.has(i);

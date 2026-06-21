@@ -83,7 +83,7 @@ function ShiftBoard({ board, params, currentPlayer, interactive, onMove }: Board
             ? 'Tap a piece to pick it up'
             : 'Tap an empty square to slide'}
       </div>
-      <div className={styles.shiftGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      <div className={styles.shiftGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {cells.map((ch, i) => (
           <button
             key={i}

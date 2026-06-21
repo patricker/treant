@@ -8,7 +8,7 @@ function ChompBoard({ board, params, interactive, onMove }: BoardProps) {
   return (
     <div>
       <div className={styles.shiftCaption}>Eat a cookie + everything right & below. Don&apos;t eat the 💀!</div>
-      <div className={styles.chompGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      <div className={styles.chompGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {cells.map((ch, i) => {
           const present = ch === '#';
           const poison = i === 0;

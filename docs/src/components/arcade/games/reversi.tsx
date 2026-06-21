@@ -16,7 +16,7 @@ function ReversiBoard({ board, params, interactive, legalMoves, onMove }: BoardP
         <span style={{ color: 'var(--arc-p1)' }}>● {x}</span>
         <span style={{ color: 'var(--arc-p2)' }}>● {o}</span>
       </div>
-      <div className={styles.reversiGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      <div className={styles.reversiGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {cells.map((ch, i) => {
           const isLegal = interactive && legalSet.has(String(i));
           return (

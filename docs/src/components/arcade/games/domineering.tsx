@@ -27,7 +27,7 @@ function DomineeringBoard({ board, params, currentPlayer, interactive, legalMove
       <div className={styles.domHint}>
         {vertical ? '↕ Vertical — place a domino downward' : '↔ Horizontal — place a domino rightward'}
       </div>
-      <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, maxWidth: cols * 46 }}>
+      <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, maxWidth: cols * 46 }}>
         {Array.from({ length: cols * rows }, (_, i) => {
           const ch = board[i] ?? ' ';
           const isLegal = interactive && legal.has(i);

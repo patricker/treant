@@ -16,7 +16,7 @@ function NoGoBoard({ board, params, interactive, legalMoves, onMove }: BoardProp
   const legal = new Set(legalMoves.map(Number).filter((n) => !Number.isNaN(n)));
   const placed = changedIndex(usePrevBoard(board), board);
   return (
-    <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+    <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
       {Array.from({ length: cols * rows }, (_, i) => {
         const ch = board[i] ?? ' ';
         const isLegal = interactive && legal.has(i);
@@ -60,5 +60,5 @@ export const nogo: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.NoGoWasm(p.cols, p.rows)),
   Board: NoGoBoard,
-  playerLabels: ['X', 'O'],
+  playerLabels: ['Red', 'Yellow'],
 };

@@ -71,7 +71,7 @@ function AmazonsBoard({ board, params, currentPlayer, interactive, legalMoves, o
   return (
     <div>
       <div className={styles.shiftCaption}>{caption}</div>
-      <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {Array.from({ length: cols * rows }, (_, i) => {
           let ch = board[i] ?? ' ';
           if (phase === 'shoot') {

@@ -83,7 +83,7 @@ export function makeMoveBoard(pieceKind: 'pawn' | 'disc') {
     return (
       <div>
         <div className={styles.shiftCaption}>{sel == null ? 'Tap a piece' : 'Tap where to move'}</div>
-        <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+        <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
           {cells.map((ch, i) => {
             const isSel = i === sel;
             const isTarget = targets.has(i);

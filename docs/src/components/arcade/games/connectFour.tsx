@@ -33,7 +33,7 @@ function ConnectFourBoard({ board, params, interactive, onMove }: BoardProps) {
   for (let c = 0; c < cols; c++) if ((board[c] ?? ' ') === ' ') legalCols.add(c);
   return (
     <div className={styles.cfBoard}>
-      <div className={styles.cfColHeaders} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      <div className={styles.cfColHeaders} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {Array.from({ length: cols }, (_, c) => (
           <button
             key={c}
@@ -46,7 +46,7 @@ function ConnectFourBoard({ board, params, interactive, onMove }: BoardProps) {
           </button>
         ))}
       </div>
-      <div className={styles.cfGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      <div className={styles.cfGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {cells.map((ch, i) => {
           const p = ch === ' ' ? 0 : Number(ch);
           return (

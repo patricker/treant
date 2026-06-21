@@ -15,7 +15,7 @@ function TrailsBoard({ board, params, interactive, legalMoves, onMove }: BoardPr
     tos.add(Number(m.slice(dash + 1)));
   }
   return (
-    <div className={styles.trailsGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+    <div className={styles.trailsGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
       {cells.map((ch, i) => {
         const isWall = ch === '#';
         const isToken = ch === 'X' || ch === 'O';
