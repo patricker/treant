@@ -231,8 +231,141 @@ fn run(game: &Game, n: u32) {
     }
 }
 
+// ============================================================ Audit mode =====
+// `cargo run --release --example calibrate -- audit`
+//
+// Autonomous bug-sweep. Two passes, no human in the loop:
+//   1. Self-play invariant fuzzer over every registered game: play semi-random
+//      legal moves (engine-supplied) to a terminal, asserting the game actually
+//      terminates, the engine never offers a move its own apply_move rejects, the
+//      result string is well-formed, the player index stays in range, and nothing
+//      panics. Catches broken win/terminal detection, illegal-move generation,
+//      and crashes.
+//   2. Grid placement/clamp check: for the free-placement grid games, build at
+//      the *largest board the UI offers* and assert (a) the engine board has
+//      cols*rows cells (no silent clamp vs the React layer — the Gomoku bug) and
+//      (b) every cell is placeable on a fresh board (no apply_move rejection of
+//      un-searched cells).
+
+fn audit_one(make: fn() -> Box<dyn Eng>, trial: u32) -> Option<String> {
+    let mut g = make();
+    let mut rng = SmallRng::seed_from_u64(0xA0D17 + trial as u64);
+    let cap = 4000u32;
+    let mut plies = 0u32;
+    while !g.terminal() {
+        if plies >= cap {
+            return Some(format!("did not terminate within {cap} plies (win/terminal detection?)"));
+        }
+        let cur = g.current();
+        if cur >= 8 {
+            return Some(format!("current_player out of range: {cur}"));
+        }
+        let seed = rng.gen::<u32>();
+        match g.weak(60, 12, 4.0, seed) {
+            Some(m) => {
+                if !g.apply(&m) {
+                    return Some(format!("engine offered move '{m}' but apply_move rejected it"));
+                }
+            }
+            None => return Some("weak_move returned None on a non-terminal position".into()),
+        }
+        plies += 1;
+    }
+    let r = g.result();
+    if r.is_empty() {
+        return Some("result() is empty at a terminal position".into());
+    }
+    let body = r.strip_prefix('P').unwrap_or(&r);
+    if r != "Draw" && !body.chars().all(|c| c.is_ascii_digit()) {
+        return Some(format!("result() format unexpected: '{r}'"));
+    }
+    None
+}
+
+/// First-move placeability + clamp check for one free-placement grid board.
+fn grid_check(name: &str, cols: usize, rows: usize, make: &dyn Fn() -> (String, Vec<bool>)) {
+    let (board, placeable) = make();
+    let cells = board.chars().count();
+    if cells != cols * rows {
+        println!("  FLAG  {name}: board has {cells} cells, expected {cols}×{rows}={} (silent clamp?)", cols * rows);
+    }
+    let bad: Vec<usize> = placeable.iter().enumerate().filter(|(_, &ok)| !ok).map(|(i, _)| i).collect();
+    if !bad.is_empty() {
+        let show: Vec<usize> = bad.iter().take(6).copied().collect();
+        println!("  FLAG  {name}: {}/{} cells unplaceable on a fresh board, e.g. {show:?}", bad.len(), cols * rows);
+    }
+    if cells == cols * rows && bad.is_empty() {
+        println!("  ok    {name} ({cols}×{rows})");
+    }
+}
+
+fn audit() {
+    println!("=== Pass 1: self-play invariant fuzzer (all games) ===");
+    let mut flags = 0;
+    for game in games() {
+        let mut issues: Vec<String> = Vec::new();
+        for trial in 0..6u32 {
+            match std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| audit_one(game.make, trial))) {
+                Ok(Some(issue)) => issues.push(issue),
+                Ok(None) => {}
+                Err(_) => issues.push(format!("PANIC during self-play (trial {trial})")),
+            }
+        }
+        issues.sort();
+        issues.dedup();
+        if issues.is_empty() {
+            println!("  ok    {}", game.name);
+        } else {
+            for i in &issues {
+                flags += 1;
+                println!("  FLAG  {}: {i}", game.name);
+            }
+        }
+    }
+
+    println!("\n=== Pass 2: grid placement / clamp check (largest UI board) ===");
+    // (name, cols, rows, builder) — dims are each game's biggest UI preset/knob.
+    // Build at those dims, return (board string, per-cell first-move placeability).
+    fn ttt(cols: usize, rows: usize, k: u32) -> (String, Vec<bool>) {
+        let g = TicTacToeWasm::new(cols as u32, rows as u32, k, 2);
+        let board = g.get_board();
+        let placeable = (0..cols * rows)
+            .map(|i| TicTacToeWasm::new(cols as u32, rows as u32, k, 2).apply_move(&i.to_string()))
+            .collect();
+        (board, placeable)
+    }
+    fn c6(cols: usize, rows: usize) -> (String, Vec<bool>) {
+        let g = Connect6Wasm::new(cols as u32, rows as u32);
+        let board = g.get_board();
+        let placeable = (0..cols * rows)
+            .map(|i| Connect6Wasm::new(cols as u32, rows as u32).apply_move(&i.to_string()))
+            .collect();
+        (board, placeable)
+    }
+    fn cap(cols: usize, rows: usize) -> (String, Vec<bool>) {
+        let g = CaptureGoWasm::new(cols as u32, rows as u32);
+        let board = g.get_board();
+        let placeable = (0..cols * rows)
+            .map(|i| CaptureGoWasm::new(cols as u32, rows as u32).apply_move(&i.to_string()))
+            .collect();
+        (board, placeable)
+    }
+    grid_check("tic-tac-toe", 10, 10, &|| ttt(10, 10, 4));
+    grid_check("gomoku", 15, 15, &|| ttt(15, 15, 5));
+    grid_check("connect-six", 12, 12, &|| c6(12, 12));
+    grid_check("first-capture", 9, 9, &|| cap(9, 9));
+
+    println!("\n{flags} self-play flag(s). Review any FLAG lines above.");
+}
+
 fn main() {
-    let filter = std::env::args().nth(1);
+    let mut args = std::env::args();
+    let first = args.nth(1);
+    if first.as_deref() == Some("audit") {
+        audit();
+        return;
+    }
+    let filter = first;
     let n: u32 = std::env::args().nth(2).and_then(|s| s.parse().ok()).unwrap_or(20);
     for game in games() {
         if let Some(f) = &filter {
