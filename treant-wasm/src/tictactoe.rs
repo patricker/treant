@@ -5,7 +5,12 @@ use wasm_bindgen::prelude::*;
 
 use crate::types;
 
-const MAX_DIM: usize = 10;
+// Must cover the largest board any UI offers on this engine (Gomoku goes to
+// 15×15). The engine itself is Vec-backed with no dimension limit; the only hard
+// cap is the u8 move index, so cols*rows must stay ≤ 256 (15×15 = 225 ✓).
+// Keeping this below the UI's max silently clamps the engine to a smaller board
+// than React renders, which desyncs coordinates (wrong win detection, dead cells).
+const MAX_DIM: usize = 15;
 const MAX_PLAYERS: usize = 6;
 const PLAYER_SYMBOLS: [char; MAX_PLAYERS] = ['X', 'O', 'A', 'B', 'C', 'D'];
 
@@ -144,11 +149,21 @@ impl TicTacToeWasm {
             _ => return false,
         };
         let m = GridMove(idx);
-        if self.manager.advance(&m).is_ok() {
-            return true;
+        // Apply against the actual game state and rebuild the manager, rather than
+        // relying on MCTSManager::advance. advance only succeeds for a move the
+        // search has already expanded as an owned root child; on large boards
+        // (Gomoku is up to 15×15 = 225 moves) most legal moves are never expanded
+        // within a turn's playouts, so a human tapping an "unsearched" cell — very
+        // common in the lower rows — was silently rejected. Cloning the state and
+        // rebuilding always works, and matches how the gridpack macro games apply
+        // moves.
+        let mut state = self.manager.tree().root_state().clone();
+        if !state.available_moves().contains(&m) {
+            return false;
         }
-        self.manager.playout_n(100);
-        self.manager.advance(&m).is_ok()
+        state.make_move(&m);
+        self.manager = MCTSManager::new(state, GridMcts { solver: true }, GridEval, UCTPolicy::new(1.4), ());
+        true
     }
 
     pub fn reset(&mut self) {
@@ -200,5 +215,40 @@ mod tests {
         assert!(g.apply_move("4")); // center, player 1 = 'O'
         assert_eq!(g.get_board().chars().nth(4), Some('O'));
         assert!(!g.apply_move("9")); // out of range
+    }
+
+    // Regression: Gomoku renders up to 15×15 in the UI. The engine must not clamp
+    // below that, or React and the engine disagree on board dimensions — which
+    // makes the lower rows unplaceable (apply_move rejects indices past the
+    // clamped size) and desyncs win detection (stride mismatch).
+    #[test]
+    fn large_board_is_not_clamped() {
+        let g = TicTacToeWasm::new(15, 15, 5, 2);
+        assert_eq!(g.cols(), 15);
+        assert_eq!(g.rows(), 15);
+        assert_eq!(g.get_board().chars().count(), 225);
+    }
+
+    #[test]
+    fn large_board_lower_section_is_placeable() {
+        let mut g = TicTacToeWasm::new(15, 15, 5, 2);
+        // Bottom-right cell (row 14, col 14) — index 224. Under the old MAX_DIM=10
+        // clamp the engine was 10×10=100 cells and this move was silently refused.
+        assert!(g.apply_move("224"));
+        assert_eq!(g.get_board().chars().nth(224), Some('X'));
+    }
+
+    #[test]
+    fn five_in_a_row_wins_on_a_gomoku_board() {
+        let mut g = TicTacToeWasm::new(15, 15, 5, 2);
+        // X builds 0,1,2,3,4 across the top row; O plays harmlessly on row 1.
+        for (x, o) in [("0", "15"), ("1", "16"), ("2", "17"), ("3", "18")] {
+            assert!(g.apply_move(x));
+            assert!(g.apply_move(o));
+        }
+        assert!(!g.is_terminal()); // only 4 in a row so far
+        assert!(g.apply_move("4")); // 5th in a row
+        assert!(g.is_terminal());
+        assert_eq!(g.result(), "1"); // player 0 (1-indexed) wins
     }
 }
