@@ -36,7 +36,7 @@ function TicTacToeBoard({ board, params, interactive, onMove }: BoardProps) {
   const { cols, rows } = params;
   const placed = changedIndex(usePrevBoard(board), board);
   return (
-    <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+    <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
       {Array.from({ length: cols * rows }, (_, i) => {
         const ch = board[i] ?? ' ';
         return (

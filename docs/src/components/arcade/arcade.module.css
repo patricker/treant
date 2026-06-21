@@ -585,6 +585,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Keep cells square regardless of content: without these, an empty cell has
+     ~0 intrinsic size but the first placed glyph's line-box exceeds the
+     aspect-ratio square and grows its row, so the whole board jumps on the
+     first move. min-*: 0 lets the track/aspect-ratio win over content; line
+     clipping keeps an oversized glyph from forcing height. */
+  min-width: 0;
+  min-height: 0;
+  line-height: 1;
+  overflow: hidden;
 }
 .tttCell:disabled {
   cursor: default;
@@ -800,6 +809,12 @@
   align-items: center;
   justify-content: center;
   color: var(--arc-accent);
+  /* Keep cells square so a wide glyph (🦊/🐕) can't grow its row and push the
+     last row past the board background on big boards. */
+  min-width: 0;
+  min-height: 0;
+  line-height: 1;
+  overflow: hidden;
 }
 .fhCell:disabled {
   cursor: default;
