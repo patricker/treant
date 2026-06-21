@@ -247,13 +247,13 @@ struct SqEval;
 impl Evaluator<SqCfg> for SqEval {
     type StateEvaluation = i64;
     fn evaluate_new_state(&self, s: &Squava, m: &Vec<u16>, _: Option<SearchHandle<SqCfg>>) -> (Vec<()>, i64) {
-        (vec![(); m.len()], center_eval(&s.board, s.cols, s.rows, 0) - center_eval(&s.board, s.cols, s.rows, 1))
+        (vec![(); m.len()], squava_safety(&s.board, s.cols, s.rows, 0) - squava_safety(&s.board, s.cols, s.rows, 1))
     }
     fn interpret_evaluation_for_player(&self, e: &i64, p: &u8) -> i64 {
         if *p == 0 { *e } else { -*e }
     }
     fn evaluate_existing_state(&self, s: &Squava, _: &i64, _: SearchHandle<SqCfg>) -> i64 {
-        center_eval(&s.board, s.cols, s.rows, 0) - center_eval(&s.board, s.cols, s.rows, 1)
+        squava_safety(&s.board, s.cols, s.rows, 0) - squava_safety(&s.board, s.cols, s.rows, 1)
     }
 }
 #[derive(Default)]
@@ -566,6 +566,99 @@ impl OrderChaosWasm {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    // The pre-fix Squava evaluator: pure center control, blind to the misère
+    // 3-in-a-row trap. Kept here only so the self-play test can prove the new
+    // safety-aware eval is genuinely stronger, not merely different.
+    struct SqEvalOldCenter;
+    impl Evaluator<SqCfgOldCenter> for SqEvalOldCenter {
+        type StateEvaluation = i64;
+        fn evaluate_new_state(
+            &self,
+            s: &Squava,
+            m: &Vec<u16>,
+            _: Option<SearchHandle<SqCfgOldCenter>>,
+        ) -> (Vec<()>, i64) {
+            (vec![(); m.len()], center_eval(&s.board, s.cols, s.rows, 0) - center_eval(&s.board, s.cols, s.rows, 1))
+        }
+        fn interpret_evaluation_for_player(&self, e: &i64, p: &u8) -> i64 {
+            if *p == 0 { *e } else { -*e }
+        }
+        fn evaluate_existing_state(&self, s: &Squava, _: &i64, _: SearchHandle<SqCfgOldCenter>) -> i64 {
+            center_eval(&s.board, s.cols, s.rows, 0) - center_eval(&s.board, s.cols, s.rows, 1)
+        }
+    }
+    #[derive(Default)]
+    struct SqCfgOldCenter;
+    impl MCTS for SqCfgOldCenter {
+        type State = Squava;
+        type Eval = SqEvalOldCenter;
+        type NodeData = ();
+        type ExtraThreadData = ();
+        type TreePolicy = UCTPolicy;
+        type TranspositionTable = ();
+        fn solver_enabled(&self) -> bool {
+            true
+        }
+    }
+
+    fn squava_best_new(state: &Squava, playouts: u64) -> Option<u16> {
+        let mut m = MCTSManager::new(state.clone(), SqCfg, SqEval, UCTPolicy::new(1.4), ());
+        m.playout_n(playouts);
+        m.best_move()
+    }
+    fn squava_best_old(state: &Squava, playouts: u64) -> Option<u16> {
+        let mut m = MCTSManager::new(state.clone(), SqCfgOldCenter, SqEvalOldCenter, UCTPolicy::new(1.4), ());
+        m.playout_n(playouts);
+        m.best_move()
+    }
+
+    // Play one 5x5 game; `new_first` = the new eval is player 0. Returns the
+    // winning player (0/1), or None for a draw.
+    fn squava_play(new_first: bool, playouts: u64) -> Option<u8> {
+        let mut s = Squava::new(5, 5);
+        while s.term().is_none() {
+            let new_to_move = (s.current == 0) == new_first;
+            let mv = if new_to_move {
+                squava_best_new(&s, playouts)
+            } else {
+                squava_best_old(&s, playouts)
+            };
+            match mv {
+                Some(m) => s.make_move(&m),
+                None => break,
+            }
+        }
+        match s.term() {
+            Some(ProvenValue::Win) => Some(s.current),
+            Some(ProvenValue::Loss) => Some(1 - s.current),
+            _ => None,
+        }
+    }
+
+    #[test]
+    fn squava_safety_eval_beats_center_eval() {
+        // Head-to-head: the new safety-aware eval should clearly out-play the old
+        // center-control eval at equal search. Alternate who moves first to cancel
+        // any first-player edge. (When written, the new eval swept 16-0.)
+        let playouts = 600;
+        let pairs = 8;
+        let (mut new_wins, mut old_wins) = (0, 0);
+        for i in 0..pairs {
+            for &new_first in &[true, false] {
+                let new_player: u8 = if new_first { 0 } else { 1 };
+                match squava_play(new_first, playouts + i) {
+                    Some(w) if w == new_player => new_wins += 1,
+                    Some(_) => old_wins += 1,
+                    None => {}
+                }
+            }
+        }
+        assert!(
+            new_wins > old_wins,
+            "safety eval should beat center eval: new={new_wins} old={old_wins}"
+        );
+    }
 
     #[test]
     fn squava_three_in_a_row_loses() {

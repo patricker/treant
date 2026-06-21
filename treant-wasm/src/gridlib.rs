@@ -41,6 +41,40 @@ pub fn max_run(board: &[i8], cols: usize, rows: usize, r: usize, c: usize, sym: 
     best
 }
 
+/// Squava-style safety/mobility score for `me`.
+///
+/// In Squava a 3-in-a-row **loses** and a 4-in-a-row **wins**, so the real danger
+/// is being squeezed until every remaining move completes a losing 3 (zugzwang).
+/// A center-control heuristic is blind to this — it happily builds lines straight
+/// into the trap. This instead counts the cells `me` can play *safely* (placing
+/// there does not create a run of exactly 3), plus a bonus for any cell that
+/// completes a winning 4. High score = freedom + winning threats; low score =
+/// close to being forced into a self-loss.
+pub fn squava_safety(board: &[i8], cols: usize, rows: usize, me: i8) -> i64 {
+    let mut tmp = board.to_vec();
+    let mut mobility = 0i64;
+    let mut winning = 0i64;
+    for r in 0..rows {
+        for c in 0..cols {
+            let i = idx(r, c, cols);
+            if board[i] != -1 {
+                continue;
+            }
+            tmp[i] = me;
+            let run = max_run(&tmp, cols, rows, r, c, me);
+            tmp[i] = -1;
+            if run >= 4 {
+                winning += 1; // completes a 4 — an immediate win
+                mobility += 1;
+            } else if run != 3 {
+                mobility += 1; // neutral, safe to play
+            }
+            // run == 3 → "poison": playing here loses, so not counted as mobility
+        }
+    }
+    mobility + 8 * winning
+}
+
 /// The symbol of the first cell whose run reaches `len` (a "line of len"), if any.
 pub fn line_symbol(board: &[i8], cols: usize, rows: usize, len: usize) -> Option<i8> {
     for r in 0..rows {
