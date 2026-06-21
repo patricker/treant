@@ -130,5 +130,5 @@ export const amazons: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.AmazonsWasm(p.cols, p.rows)),
   Board: AmazonsBoard,
-  playerLabels: ['White', 'Black'],
+  playerLabels: ['Red', 'Yellow'],
 };

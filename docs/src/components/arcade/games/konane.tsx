@@ -24,5 +24,5 @@ export const konane: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.KonaneWasm(p.cols, p.rows)),
   Board: MoveBoard,
-  playerLabels: ['X', 'O'],
+  playerLabels: ['Red', 'Yellow'],
 };

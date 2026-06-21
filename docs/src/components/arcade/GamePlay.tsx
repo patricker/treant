@@ -6,11 +6,19 @@ import { GameIcon } from './icons';
 import { gameRules } from './rules';
 import styles from './arcade.module.css';
 
-function winnerLabel(result: string, labels: string[]): string {
+function winnerLabel(result: string, labels: string[], seats: PlayerKind[]): string {
   if (result === 'Draw') return "It's a draw!";
   const n = Number(result);
-  const name = Number.isFinite(n) ? labels[n - 1] : undefined;
-  return `${name ?? `Player ${result}`} wins!`;
+  if (!Number.isFinite(n)) return `Player ${result} wins!`;
+  const winnerSeat = n - 1;
+  const name = labels[winnerSeat] ?? `Player ${n}`;
+  // In a single-human game (vs AI), speak to the player directly so a loss is
+  // unmistakable — "Hounds wins!" reads as a neutral status, not "you lost".
+  const humanSeats = seats.map((s, i) => (s === 'human' ? i : -1)).filter((i) => i >= 0);
+  if (humanSeats.length === 1) {
+    return humanSeats[0] === winnerSeat ? 'You win! 🎉' : `You lost — ${name} wins.`;
+  }
+  return `${name} wins!`;
 }
 
 export default function GamePlay({
@@ -105,7 +113,7 @@ export default function GamePlay({
                 {def.solo ? '🎮' : s.result === 'Draw' ? '🤝' : '🏆'}
               </div>
               <div className={styles.overlayText}>
-                {def.solo ? s.endText : winnerLabel(s.result, labels)}
+                {def.solo ? s.endText : winnerLabel(s.result, labels, s.seats)}
               </div>
               <button className={styles.playBtn} onClick={s.replay}>
                 ↺ Play again

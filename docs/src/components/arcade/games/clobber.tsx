@@ -24,5 +24,5 @@ export const clobber: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.ClobberWasm(p.cols, p.rows)),
   Board: MoveBoard,
-  playerLabels: ['X', 'O'],
+  playerLabels: ['Red', 'Yellow'],
 };

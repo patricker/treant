@@ -36,7 +36,7 @@ function FoxHoundsBoard({ board, params, interactive, legalMoves, onMove }: Boar
   return (
     <div>
       <div className={styles.shiftCaption}>{sel == null ? 'Tap a piece' : 'Tap where to move'}</div>
-      <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+      <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {Array.from({ length: cols * rows }, (_, i) => {
           const ch = board[i] ?? ' ';
           const r = Math.floor(i / cols);
@@ -65,7 +65,7 @@ export const foxHounds: GameDefinition = {
   id: 'fox-hounds',
   name: 'Fox & Hounds',
   icon: '🦊',
-  blurb: 'You are the Fox — slip past four Hounds to the far side. They only move forward; can you break through?',
+  blurb: "You are the Fox, starting at the bottom. Reach the top row — the Hounds' home edge — to win. The four Hounds only move forward (down) and win by boxing you in so you can't move.",
   difficulty: {
     easy: { playouts: 30, topK: 5, temp: 2 },
     medium: { playouts: 300, topK: 3, temp: 0.6 },
