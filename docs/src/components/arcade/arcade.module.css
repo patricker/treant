@@ -1347,3 +1347,260 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ============================================================================
+   CRT-NEON SKIN  (launcher + shell chrome only; board renderers keep --arc-*)
+   Applied always via the `neon` class on .arcade; the accent hue is chosen by
+   `data-accent` and persisted per browser. Five near-black themes, one hue each.
+   ========================================================================== */
+.neon[data-accent='green'] {
+  --neon-ac: #39ff7a; --neon-tx: #d8ffe6; --neon-dim: #6fae84; --neon-line: #114e2a; --neon-card: #07190d;
+}
+.neon[data-accent='amber'] {
+  --neon-ac: #ffb000; --neon-tx: #ffe9c2; --neon-dim: #b08a4e; --neon-line: #5a3e00; --neon-card: #19110a;
+}
+.neon[data-accent='cyan'] {
+  --neon-ac: #2fd4ff; --neon-tx: #dff3fb; --neon-dim: #74aec2; --neon-line: #0c4257; --neon-card: #06222f;
+}
+.neon[data-accent='magenta'] {
+  --neon-ac: #ff2e88; --neon-tx: #ededf3; --neon-dim: #83838f; --neon-line: #2c2c36; --neon-card: #141419;
+}
+.neon[data-accent='stark'] {
+  --neon-ac: #ffffff; --neon-tx: #ffffff; --neon-dim: #8a8a8a; --neon-line: #2e2e2e; --neon-card: #0c0c0c;
+}
+/* sensible fallback if the attribute is ever missing */
+.neon {
+  --neon-ac: #39ff7a; --neon-tx: #d8ffe6; --neon-dim: #6fae84; --neon-line: #114e2a; --neon-card: #07190d;
+  color: var(--neon-tx);
+  font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  max-width: 600px;
+}
+/* faint scanline overlay over the column (clicks pass through) */
+.neon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 2px, transparent 2px 4px);
+}
+
+/* ---- corner controls ---- */
+.neon .muteBtn {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  color: var(--neon-ac);
+  z-index: 5;
+}
+.themeSwitch {
+  position: absolute;
+  top: 14px;
+  left: 12px;
+  z-index: 5;
+  display: flex;
+  gap: 7px;
+}
+.themeSwatch {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  background: var(--sw);
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.themeSwatch:hover {
+  transform: scale(1.18);
+}
+.themeSwatchOn {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 10px var(--sw);
+}
+
+/* ---- launcher: title + katakana throwback ---- */
+.neon .launcher {
+  position: relative;
+  z-index: 2;
+}
+.neon .arcadeTitle {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(17px, 4.6vw, 23px);
+  line-height: 1.4;
+  margin: 30px 0 8px;
+  color: var(--neon-tx);
+  text-shadow: 0 0 4px var(--neon-ac), 0 0 22px color-mix(in srgb, var(--neon-ac) 45%, transparent);
+}
+.neon .arcadeTitle::before {
+  content: 'アーケード';
+  display: block;
+  font-family: 'DotGothic16', monospace;
+  font-size: 13px;
+  letter-spacing: 0.34em;
+  color: var(--neon-ac);
+  opacity: 0.85;
+  margin-bottom: 12px;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--neon-ac) 60%, transparent);
+}
+.neon .arcadeSub {
+  color: var(--neon-dim);
+  font-weight: 400;
+  font-size: 0.82rem;
+}
+
+/* ---- launcher: featured hero ---- */
+.neon .heroCard {
+  /* override the per-game inline gradient with a neon panel */
+  background: var(--neon-card) !important;
+  border: 1px solid var(--neon-line);
+  color: var(--neon-tx);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--neon-ac) 18%, transparent), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+.neon .heroLabel {
+  color: var(--neon-ac);
+}
+.neon .heroName {
+  color: var(--neon-tx);
+}
+.neon .heroArt {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--neon-line);
+}
+.neon .heroBlurb {
+  color: var(--neon-dim);
+  font-weight: 400;
+}
+.neon .heroPlay {
+  background: var(--neon-ac);
+  color: #05060a;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--neon-ac) 45%, transparent);
+}
+.neon[data-accent='stark'] .heroPlay {
+  color: #000;
+}
+.neon .heroDot {
+  background: var(--neon-line);
+}
+.neon .heroDotOn {
+  background: var(--neon-ac);
+  box-shadow: 0 0 8px var(--neon-ac);
+}
+
+/* ---- launcher: game tiles ---- */
+.neon .moreLabel {
+  color: var(--neon-ac);
+  opacity: 0.85;
+  letter-spacing: 0.16em;
+}
+.neon .stripTile {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  box-shadow: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+.neon .stripTile:hover {
+  transform: translateY(-3px);
+  border-color: var(--neon-ac);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--neon-ac) 35%, transparent);
+}
+.neon .stripName {
+  color: var(--neon-tx);
+  font-weight: 500;
+}
+
+/* ---- shared chrome: titles, nav, buttons ---- */
+.neon .setupHeader h2,
+.neon .playTitle {
+  color: var(--neon-tx);
+}
+.neon .setupLabel,
+.neon .knobLabel,
+.neon .pigName {
+  color: var(--neon-dim);
+}
+.neon .backBtn,
+.neon .navBtn,
+.neon .quitBtn,
+.neon .secondaryBtn,
+.neon .ghostBtn,
+.neon .customToggle,
+.neon .howToBtn,
+.neon .shareBtn,
+.neon .hintBtn,
+.neon .stepper {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  color: var(--neon-tx);
+}
+.neon .navBtnOn,
+.neon .howToOn {
+  border-color: var(--neon-ac);
+  color: var(--neon-ac);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--neon-ac) 30%, transparent);
+}
+.neon .playBtn,
+.neon .heroPlay {
+  background: var(--neon-ac);
+  color: #05060a;
+}
+.neon[data-accent='stark'] .playBtn {
+  color: #000;
+}
+
+/* segmented controls + chips + seats */
+.neon .seg,
+.neon .seatSeg,
+.neon .chipRow {
+  background: transparent;
+}
+.neon .segBtn,
+.neon .seatBtn,
+.neon .chip,
+.neon .knob {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  color: var(--neon-tx);
+}
+.neon .segOn,
+.neon .seatOn,
+.neon .chipOn {
+  background: var(--neon-ac);
+  border-color: var(--neon-ac);
+  color: #05060a;
+}
+.neon[data-accent='stark'] .segOn,
+.neon[data-accent='stark'] .seatOn,
+.neon[data-accent='stark'] .chipOn {
+  color: #000;
+}
+.neon .knobVal {
+  color: var(--neon-ac);
+}
+
+/* in-game banner, overlay, rules, player list */
+.neon .turnBanner {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  color: var(--neon-tx);
+}
+.neon .overlayCard {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  color: var(--neon-tx);
+}
+.neon .overlayText {
+  color: var(--neon-tx);
+}
+.neon .rulesPanel {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  color: var(--neon-dim);
+}
+.neon .playerTag {
+  color: var(--neon-dim);
+}
+.neon .hintText {
+  color: var(--neon-ac);
+}

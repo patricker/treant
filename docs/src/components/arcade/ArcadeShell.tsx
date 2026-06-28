@@ -1,13 +1,16 @@
 import type { JSX } from 'react';
 import { useEffect } from 'react';
+import Head from '@docusaurus/Head';
 import { useHistory, useLocation } from '@docusaurus/router';
 import { gameById } from './games';
 import type { Difficulty, GameParams, Mode, PlayerKind } from './gameTypes';
 import { decodeSeats, encodeSeats, seatsForMode } from './gameTypes';
+import { useArcadeAccent } from './arcadeAccent';
 import Launcher from './Launcher';
 import GameSetup from './GameSetup';
 import GamePlay from './GamePlay';
 import MuteToggle from './controls/MuteToggle';
+import ThemeSwitcher from './controls/ThemeSwitcher';
 import styles from './arcade.module.css';
 
 type Screen =
@@ -71,6 +74,7 @@ function screenFromSearch(search: string): Screen {
 export default function ArcadeShell({ wasm }: { wasm: any }) {
   const history = useHistory();
   const location = useLocation();
+  const [accent, setAccent] = useArcadeAccent();
   // The GA4 (gtag) plugin's pageview hook runs on every client route change but
   // its script isn't injected in dev, so calls would throw "gtag is not a
   // function" on each in-arcade navigation. Production loads gtag, so this only
@@ -120,9 +124,20 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
   }
 
   return (
-    <div className={styles.arcade}>
-      <MuteToggle />
-      {content}
-    </div>
+    <>
+      <Head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&family=JetBrains+Mono:wght@400;500;700;800&display=swap"
+        />
+      </Head>
+      <div className={`${styles.arcade} ${styles.neon}`} data-accent={accent}>
+        <ThemeSwitcher accent={accent} onChange={setAccent} />
+        <MuteToggle />
+        {content}
+      </div>
+    </>
   );
 }

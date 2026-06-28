@@ -43,3 +43,31 @@ body.arcade-route .footer__copyright {
   font-size: 0.8rem;
   opacity: 0.7;
 }
+
+/* Arcade CRT-neon backdrop. The arcade column carries the skin; this paints a
+   full-viewport near-black field (with a faint accent glow from the top) behind
+   it so the neon look reads edge-to-edge. Keyed on the body attribute the
+   arcade sets per accent; <body> background always shows behind page content,
+   so this needs no z-index juggling. */
+body.arcade-route {
+  background: #05060a;
+}
+body.arcade-route .main-wrapper,
+body.arcade-route .footer {
+  background: transparent;
+}
+body.arcade-route[data-arcade-accent='green'] {
+  background: radial-gradient(85% 55% at 50% 0, #0c2e1a, #05060a 62%);
+}
+body.arcade-route[data-arcade-accent='amber'] {
+  background: radial-gradient(85% 55% at 50% 0, #2a1d05, #08060a 62%);
+}
+body.arcade-route[data-arcade-accent='cyan'] {
+  background: radial-gradient(85% 55% at 50% 0, #06283b, #03060c 62%);
+}
+body.arcade-route[data-arcade-accent='magenta'] {
+  background: radial-gradient(85% 55% at 50% 0, #1c1322, #08070b 62%);
+}
+body.arcade-route[data-arcade-accent='stark'] {
+  background: radial-gradient(85% 55% at 50% 0, #161618, #000 62%);
+}
