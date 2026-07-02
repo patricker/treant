@@ -1,6 +1,5 @@
 import type { JSX } from 'react';
 import { useEffect } from 'react';
-import Head from '@docusaurus/Head';
 import { useHistory, useLocation } from '@docusaurus/router';
 import { gameById } from './games';
 import type { Difficulty, GameParams, Mode, PlayerKind } from './gameTypes';
@@ -127,14 +126,6 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
 
   return (
     <>
-      <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&family=JetBrains+Mono:wght@400;500;700;800&display=swap"
-        />
-      </Head>
       <LocaleProvider>
         <div className={`${styles.arcade} ${styles.neon}`} data-accent={accent}>
           <ThemeSwitcher accent={accent} onChange={setAccent} />

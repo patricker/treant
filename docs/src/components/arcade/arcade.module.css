@@ -1424,7 +1424,7 @@
   z-index: 2;
 }
 .neon .arcadeTitle {
-  font-family: 'Press Start 2P', monospace;
+  font-family: 'Press Start 2P', ui-monospace, monospace, sans-serif;
   font-size: clamp(17px, 4.6vw, 23px);
   line-height: 1.4;
   margin: 30px 0 8px;
@@ -1434,7 +1434,7 @@
 .neon .arcadeTitle::before {
   content: 'アーケード';
   display: block;
-  font-family: 'DotGothic16', monospace;
+  font-family: 'DotGothic16', sans-serif;
   font-size: 13px;
   letter-spacing: 0.34em;
   color: var(--neon-ac);
