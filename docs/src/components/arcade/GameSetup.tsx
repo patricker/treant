@@ -3,6 +3,7 @@ import type { Difficulty, GameDefinition, GameParams, PlayerKind } from './gameT
 import { DIFFICULTY, PLAYER_LABEL, encodeSeats, seatsForMode } from './gameTypes';
 import { gameRules } from './rules';
 import { GameIcon } from './icons';
+import { useT } from './i18n';
 import PresetChips from './controls/PresetChips';
 import CustomKnobs from './controls/CustomKnobs';
 import styles from './arcade.module.css';
@@ -35,6 +36,7 @@ export default function GameSetup({
   onBack: () => void;
   initialSeats?: PlayerKind[];
 }) {
+  const { t } = useT();
   const [params, setParams] = useState<GameParams>(def.defaultParams);
   const numPlayers = params.numPlayers ?? 2;
   const [aiStrength, setAiStrength] = useState<Difficulty>('medium');
@@ -70,18 +72,18 @@ export default function GameSetup({
     if (typeof window === 'undefined') return;
     const url = `${window.location.origin}${window.location.pathname}?game=${def.id}&s=${encodeSeats(seats)}`;
     const clip = navigator?.clipboard;
-    if (clip?.writeText) clip.writeText(url).then(() => setShared('Link copied!')).catch(() => setShared(url));
+    if (clip?.writeText) clip.writeText(url).then(() => setShared(t('Link copied!'))).catch(() => setShared(url));
     else setShared(url);
   };
 
   return (
     <div className={styles.setup}>
       <div className={styles.setupHeader}>
-        <button className={styles.backBtn} onClick={onBack} aria-label="Back to arcade">
+        <button className={styles.backBtn} onClick={onBack} aria-label={t('Back to arcade')}>
           ←
         </button>
         <h2>
-          <GameIcon id={def.id} size={26} /> {def.name}
+          <GameIcon id={def.id} size={26} /> {t(def.name)}
         </h2>
       </div>
 
@@ -89,46 +91,46 @@ export default function GameSetup({
         className={`${styles.howToBtn} ${showRules ? styles.howToOn : ''}`}
         onClick={() => setShowRules((v) => !v)}
       >
-        📖 How to play {showRules ? '▾' : '▸'}
+        {t('📖 How to play')} {showRules ? '▾' : '▸'}
       </button>
-      {showRules && <div className={styles.rulesPanel}>{gameRules(def.id, def.rules, def.blurb)}</div>}
+      {showRules && <div className={styles.rulesPanel}>{t(gameRules(def.id, def.rules, def.blurb))}</div>}
 
       {def.solo ? (
         <>
-          <div className={styles.setupLabel}>Mode</div>
+          <div className={styles.setupLabel}>{t('Mode')}</div>
           <div className={styles.seg}>
             <button
               className={`${styles.segBtn} ${seats[0] === 'human' ? styles.segOn : ''}`}
               onClick={() => setSeats(['human'])}
             >
-              🙂 You play
+              {t('🙂 You play')}
             </button>
             <button
               className={`${styles.segBtn} ${seats[0] !== 'human' ? styles.segOn : ''}`}
               onClick={() => setSeats(['medium'])}
             >
-              🤖 Watch AI
+              {t('🤖 Watch AI')}
             </button>
           </div>
         </>
       ) : (
         <>
-          <div className={styles.setupLabel}>Who&apos;s playing?</div>
+          <div className={styles.setupLabel}>{t("Who's playing?")}</div>
           <div className={styles.seg}>
             <button className={`${styles.segBtn} ${mode === 'pvp' ? styles.segOn : ''}`} onClick={() => applyMode('pvp')}>
-              👥 Pass &amp; play
+              {t('👥 Pass & play')}
             </button>
             <button className={`${styles.segBtn} ${mode === 'pvai' ? styles.segOn : ''}`} onClick={() => applyMode('pvai')}>
-              🤖 vs AI
+              {t('🤖 vs AI')}
             </button>
             <button className={`${styles.segBtn} ${mode === 'aivai' ? styles.segOn : ''}`} onClick={() => applyMode('aivai')}>
-              👀 Watch
+              {t('👀 Watch')}
             </button>
           </div>
 
           {seats.some((s) => s !== 'human') && (
             <>
-              <div className={styles.setupLabel}>AI strength</div>
+              <div className={styles.setupLabel}>{t('AI strength')}</div>
               <div className={styles.seg}>
                 {(Object.keys(DIFFICULTY) as Difficulty[]).map((d) => (
                   <button
@@ -136,7 +138,7 @@ export default function GameSetup({
                     className={`${styles.segBtn} ${aiStrength === d ? styles.segOn : ''}`}
                     onClick={() => applyStrength(d)}
                   >
-                    {DIFFICULTY[d].emoji} {DIFFICULTY[d].label}
+                    {DIFFICULTY[d].emoji} {t(DIFFICULTY[d].label)}
                   </button>
                 ))}
               </div>
@@ -147,7 +149,7 @@ export default function GameSetup({
             className={styles.customToggle}
             onClick={() => setShowPlayers((v) => !v)}
           >
-            {showPlayers ? '▾' : '▸'} Customize players {mode === 'custom' ? '• custom' : ''}
+            {showPlayers ? '▾' : '▸'} {t('Customize players')} {mode === 'custom' ? t('• custom') : ''}
           </button>
           {showPlayers && (
             <div className={styles.playerList}>
@@ -155,7 +157,7 @@ export default function GameSetup({
                 <div key={i} className={styles.playerRow}>
                   <span className={styles.playerTag}>
                     <span className={styles.playerDot} style={{ background: SEAT_COLORS[i] }} />
-                    {labels[i] ?? `Player ${i + 1}`}
+                    {labels[i] ? t(labels[i]) : t('Player {n}', { n: i + 1 })}
                   </span>
                   <div className={styles.seatSeg}>
                     {SEAT_OPTS.map((o) => (
@@ -163,7 +165,7 @@ export default function GameSetup({
                         key={o.kind}
                         className={`${styles.seatBtn} ${kind === o.kind ? styles.seatOn : ''}`}
                         onClick={() => setSeat(i, o.kind)}
-                        title={o.kind === 'human' ? 'Human' : `${DIFFICULTY[o.kind as Difficulty].label} AI`}
+                        title={o.kind === 'human' ? t('Human') : t('{level} AI', { level: t(DIFFICULTY[o.kind as Difficulty].label) })}
                       >
                         {o.emoji}
                       </button>
@@ -178,25 +180,25 @@ export default function GameSetup({
 
       {def.presets.length > 0 && (
         <>
-          <div className={styles.setupLabel}>Board</div>
+          <div className={styles.setupLabel}>{t('Board')}</div>
           <PresetChips presets={def.presets} active={params} onPick={setParams} />
         </>
       )}
       {def.knobs.length > 0 && (
         <>
           <button className={styles.customToggle} onClick={() => setShowCustom((s) => !s)}>
-            {showCustom ? '▾' : '▸'} Customize board
+            {showCustom ? '▾' : '▸'} {t('Customize board')}
           </button>
           {showCustom && <CustomKnobs knobs={def.knobs} params={params} onChange={setParams} />}
         </>
       )}
 
       <button className={styles.playBtn} onClick={() => onStart({ params, seats })}>
-        ▶ Start game
+        {t('▶ Start game')}
       </button>
 
       <button className={styles.shareBtn} onClick={share}>
-        🔗 Share this game
+        {t('🔗 Share this game')}
       </button>
       {shared && <div className={styles.sharedText}>{shared}</div>}
     </div>

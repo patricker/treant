@@ -1,4 +1,5 @@
 import type { GameParams, Knob } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 export default function CustomKnobs({
@@ -10,6 +11,7 @@ export default function CustomKnobs({
   params: GameParams;
   onChange: (p: GameParams) => void;
 }) {
+  const { t } = useT();
   return (
     <div className={styles.knobs}>
       {knobs.map((kn) => {
@@ -18,13 +20,13 @@ export default function CustomKnobs({
           onChange({ ...params, [kn.key]: Math.max(kn.min, Math.min(kn.max, nv)) });
         return (
           <div key={kn.key} className={styles.knob}>
-            <span className={styles.knobLabel}>{kn.label}</span>
+            <span className={styles.knobLabel}>{t(kn.label)}</span>
             <div className={styles.stepper}>
-              <button onClick={() => set(v - kn.step)} disabled={v <= kn.min} aria-label={`Decrease ${kn.label}`}>
+              <button onClick={() => set(v - kn.step)} disabled={v <= kn.min} aria-label={t('Decrease {label}', { label: t(kn.label) })}>
                 −
               </button>
               <span className={styles.knobVal}>{v}</span>
-              <button onClick={() => set(v + kn.step)} disabled={v >= kn.max} aria-label={`Increase ${kn.label}`}>
+              <button onClick={() => set(v + kn.step)} disabled={v >= kn.max} aria-label={t('Increase {label}', { label: t(kn.label) })}>
                 +
               </button>
             </div>

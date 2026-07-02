@@ -11,6 +11,8 @@ import GameSetup from './GameSetup';
 import GamePlay from './GamePlay';
 import MuteToggle from './controls/MuteToggle';
 import ThemeSwitcher from './controls/ThemeSwitcher';
+import LanguagePicker from './controls/LanguagePicker';
+import { LocaleProvider } from './i18n';
 import styles from './arcade.module.css';
 
 type Screen =
@@ -133,11 +135,14 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
           href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&family=JetBrains+Mono:wght@400;500;700;800&display=swap"
         />
       </Head>
-      <div className={`${styles.arcade} ${styles.neon}`} data-accent={accent}>
-        <ThemeSwitcher accent={accent} onChange={setAccent} />
-        <MuteToggle />
-        {content}
-      </div>
+      <LocaleProvider>
+        <div className={`${styles.arcade} ${styles.neon}`} data-accent={accent}>
+          <ThemeSwitcher accent={accent} onChange={setAccent} />
+          <LanguagePicker />
+          <MuteToggle />
+          {content}
+        </div>
+      </LocaleProvider>
     </>
   );
 }

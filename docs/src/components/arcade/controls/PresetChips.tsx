@@ -1,4 +1,5 @@
 import type { GameParams, Preset } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 function same(a: GameParams, b: GameParams) {
@@ -14,6 +15,7 @@ export default function PresetChips({
   active: GameParams;
   onPick: (p: GameParams) => void;
 }) {
+  const { t } = useT();
   return (
     <div className={styles.chipRow}>
       {presets.map((p) => (
@@ -22,7 +24,7 @@ export default function PresetChips({
           className={`${styles.chip} ${same(active, p.params) ? styles.chipOn : ''}`}
           onClick={() => onPick(p.params)}
         >
-          {p.emoji} {p.label}
+          {p.emoji} {t(p.label)}
         </button>
       ))}
     </div>

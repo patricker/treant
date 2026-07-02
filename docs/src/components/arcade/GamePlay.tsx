@@ -4,21 +4,22 @@ import { PLAYER_LABEL } from './gameTypes';
 import { useGameSession } from './useGameSession';
 import { GameIcon } from './icons';
 import { gameRules } from './rules';
+import { useT, type I18n } from './i18n';
 import styles from './arcade.module.css';
 
-function winnerLabel(result: string, labels: string[], seats: PlayerKind[]): string {
-  if (result === 'Draw') return "It's a draw!";
+function winnerLabel(t: I18n['t'], result: string, labels: string[], seats: PlayerKind[]): string {
+  if (result === 'Draw') return t("It's a draw!");
   const n = Number(result);
-  if (!Number.isFinite(n)) return `Player ${result} wins!`;
+  if (!Number.isFinite(n)) return t('Player {n} wins!', { n: result });
   const winnerSeat = n - 1;
-  const name = labels[winnerSeat] ?? `Player ${n}`;
+  const name = labels[winnerSeat] ? t(labels[winnerSeat]) : t('Player {n}', { n });
   // In a single-human game (vs AI), speak to the player directly so a loss is
   // unmistakable — "Hounds wins!" reads as a neutral status, not "you lost".
   const humanSeats = seats.map((s, i) => (s === 'human' ? i : -1)).filter((i) => i >= 0);
   if (humanSeats.length === 1) {
-    return humanSeats[0] === winnerSeat ? 'You win! 🎉' : `You lost — ${name} wins.`;
+    return humanSeats[0] === winnerSeat ? t('You win! 🎉') : t('You lost — {name} wins.', { name });
   }
-  return `${name} wins!`;
+  return t('{name} wins!', { name });
 }
 
 export default function GamePlay({
@@ -36,6 +37,7 @@ export default function GamePlay({
   onQuit: () => void;
   onChangeSetup: () => void;
 }) {
+  const { t } = useT();
   const s = useGameSession(wasm, def, params, seats);
   const [hint, setHint] = useState('');
   const [showRules, setShowRules] = useState(false);
@@ -44,38 +46,40 @@ export default function GamePlay({
   const status = def.solo
     ? s.statusText
     : s.phase === 'thinking'
-      ? '🤖 Thinking…'
+      ? t('🤖 Thinking…')
       : s.phase === 'over'
         ? ''
-        : `${labels[s.current] ?? `Player ${s.current + 1}`}'s turn`;
+        : t("{name}'s turn", {
+            name: labels[s.current] ? t(labels[s.current]) : t('Player {n}', { n: s.current + 1 }),
+          });
 
   return (
     <div className={styles.play}>
       <div className={styles.playTop}>
         <button className={styles.navBtn} onClick={onQuit}>
-          ← Games
+          {t('← Games')}
         </button>
         <span className={styles.playTitle}>
-          <GameIcon id={def.id} size={20} /> {def.name}
+          <GameIcon id={def.id} size={20} /> {t(def.name)}
         </span>
         <div className={styles.playTopRight}>
-          <button className={styles.navBtn} onClick={onChangeSetup} aria-label="New game / change setup">
-            ↻ New
+          <button className={styles.navBtn} onClick={onChangeSetup} aria-label={t('New game / change setup')}>
+            {t('↻ New')}
           </button>
           <button
             className={`${styles.navBtn} ${showRules ? styles.navBtnOn : ''}`}
             onClick={() => setShowRules((v) => !v)}
-            aria-label="How to play"
+            aria-label={t('How to play')}
           >
-            ? Rules
+            {t('? Rules')}
           </button>
         </div>
       </div>
 
       {showRules && (
         <div className={styles.rulesPanel}>
-          <strong>How to play {def.name}</strong>
-          <p>{gameRules(def.id, def.rules, def.blurb)}</p>
+          <strong>{t('How to play {name}', { name: t(def.name) })}</strong>
+          <p>{t(gameRules(def.id, def.rules, def.blurb))}</p>
         </div>
       )}
 
@@ -100,9 +104,9 @@ export default function GamePlay({
                 setHint(m ? (def.formatHint ? def.formatHint(m) : m) : '');
               }}
             >
-              💡 Hint
+              {t('💡 Hint')}
             </button>
-            {hint && <span className={styles.hintText}>Try {hint}</span>}
+            {hint && <span className={styles.hintText}>{t('Try {hint}', { hint })}</span>}
           </div>
         )}
 
@@ -113,16 +117,16 @@ export default function GamePlay({
                 {def.solo ? '🎮' : s.result === 'Draw' ? '🤝' : '🏆'}
               </div>
               <div className={styles.overlayText}>
-                {def.solo ? s.endText : winnerLabel(s.result, labels, s.seats)}
+                {def.solo ? s.endText : winnerLabel(t, s.result, labels, s.seats)}
               </div>
               <button className={styles.playBtn} onClick={s.replay}>
-                ↺ Play again
+                {t('↺ Play again')}
               </button>
               <button className={styles.secondaryBtn} onClick={onChangeSetup}>
-                ⚙ Change setup
+                {t('⚙ Change setup')}
               </button>
               <button className={styles.ghostBtn} onClick={onQuit}>
-                🏠 Arcade
+                {t('🏠 Arcade')}
               </button>
             </div>
           </div>

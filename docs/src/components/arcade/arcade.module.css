@@ -1604,3 +1604,39 @@
 .neon .hintText {
   color: var(--neon-ac);
 }
+
+/* ---- language picker (top-right, beside the mute button) ---- */
+.langPicker {
+  position: absolute;
+  top: 12px;
+  right: 58px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 38px;
+  padding: 0 8px;
+  border-radius: 19px;
+  background: var(--arc-soft);
+  cursor: pointer;
+  font-size: 1rem;
+}
+.langPicker select {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.8rem;
+  max-width: 92px;
+  cursor: pointer;
+  outline: none;
+}
+.neon .langPicker {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  color: var(--neon-ac);
+}
+.neon .langPicker select option {
+  background: var(--neon-card, #1c1830);
+  color: inherit;
+}

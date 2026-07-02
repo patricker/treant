@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { GAMES } from './games';
 import { GameIcon } from './icons';
+import { useT } from './i18n';
 import styles from './arcade.module.css';
 
 // Game groupings for the launcher (any game not listed falls under "More").
@@ -69,6 +70,7 @@ function HeroArt({ id }: { id: string }) {
 }
 
 export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
+  const { t } = useT();
   const [featured, setFeatured] = useState(0);
   const pausedRef = useRef(false);
 
@@ -85,7 +87,7 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
     <div className={styles.launcher}>
       <h1 className={styles.arcadeTitle}>🌳 Treant Arcade</h1>
       <p className={styles.arcadeSub}>
-        Pass-and-play or take on the AI. Crank the knobs and make it weird.
+        {t('Pass-and-play or take on the AI. Crank the knobs and make it weird.')}
       </p>
 
       <div className={styles.launcherBody}>
@@ -95,16 +97,16 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
         onMouseEnter={() => (pausedRef.current = true)}
         onMouseLeave={() => (pausedRef.current = false)}
       >
-        <div className={styles.heroLabel}>✨ Featured</div>
+        <div className={styles.heroLabel}>{t('✨ Featured')}</div>
         <div className={styles.heroName}>
-          <GameIcon id={game.id} size={30} /> {game.name}
+          <GameIcon id={game.id} size={30} /> {t(game.name)}
         </div>
         <div className={styles.heroArt}>
           <HeroArt id={game.id} />
         </div>
-        <div className={styles.heroBlurb}>{game.blurb}</div>
+        <div className={styles.heroBlurb}>{t(game.blurb)}</div>
         <button className={styles.heroPlay} onClick={() => onPick(game.id)}>
-          ▶ Play
+          {t('▶ Play')}
         </button>
         <div className={styles.heroDots}>
           {GAMES.map((g, i) => (
@@ -112,7 +114,7 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
               key={g.id}
               className={`${styles.heroDot} ${i === featured ? styles.heroDotOn : ''}`}
               onClick={() => setFeatured(i)}
-              aria-label={`Feature ${g.name}`}
+              aria-label={t('Feature {name}', { name: t(g.name) })}
             />
           ))}
         </div>
@@ -124,14 +126,14 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
           if (games.length === 0) return null;
           return (
             <div key={cat.name}>
-              <div className={styles.moreLabel}>{cat.name}</div>
+              <div className={styles.moreLabel}>{t(cat.name)}</div>
               <div className={styles.gameStrip}>
                 {games.map((g) => (
                   <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
                     <span className={styles.stripIcon}>
                       <GameIcon id={g.id} size={32} />
                     </span>
-                    <span className={styles.stripName}>{g.name}</span>
+                    <span className={styles.stripName}>{t(g.name)}</span>
                   </button>
                 ))}
               </div>
