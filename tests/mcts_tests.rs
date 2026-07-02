@@ -1268,6 +1268,51 @@ fn test_temperature_does_not_affect_pv() {
     assert_eq!(mcts.principal_variation(1), vec![Move::Add]);
 }
 
+#[derive(Default)]
+struct SmallTemperatureMCTS;
+
+impl MCTS for SmallTemperatureMCTS {
+    type State = CountingGame;
+    type Eval = MyEvaluator;
+    type NodeData = ();
+    type ExtraThreadData = ();
+    type TreePolicy = UCTPolicy;
+    type TranspositionTable = ();
+
+    // Small but above the 1e-8 argmax short-circuit in best_move(), so
+    // selection goes through select_move_by_temperature().
+    fn selection_temperature(&self) -> f64 {
+        1e-6
+    }
+    fn rng_seed(&self) -> Option<u64> {
+        Some(42)
+    }
+}
+
+#[test]
+fn test_small_temperature_picks_argmax() {
+    // Regression for the temperature-overflow bug: at a tiny temperature,
+    // `visits^(1/T)` overflows to +INFINITY, which used to make the sampling
+    // loop deterministically return the LAST child in iteration order instead
+    // of the most-visited one. With max-normalization, a tiny temperature must
+    // reliably select the argmax-by-visits child (Add, which dominates visits).
+    let mut mcts = MCTSManager::new(
+        CountingGame(0),
+        SmallTemperatureMCTS,
+        MyEvaluator,
+        UCTPolicy::new(0.5),
+        (),
+    );
+    mcts.playout_n(10000);
+    let pv_best = mcts.principal_variation(1);
+    assert_eq!(pv_best, vec![Move::Add]);
+    // At T=1e-6 the argmax weight is 1.0 and every other weight is ~0, so
+    // temperature selection must agree with the argmax on every draw.
+    for _ in 0..100 {
+        assert_eq!(mcts.best_move().unwrap(), Move::Add);
+    }
+}
+
 #[test]
 fn test_temperature_deterministic_with_seed() {
     let run = || {
@@ -3626,4 +3671,114 @@ fn test_chance_node_mixed_win_draw_is_not_proven() {
     let mut mcts = make_coinflip(ProvenValue::Win, ProvenValue::Draw);
     mcts.playout_n(50);
     assert_eq!(mcts.root_proven_value(), ProvenValue::Unknown);
+}
+
+// ScoreLottery: a root chance node with two equiprobable outcomes, each leading
+// to a terminal with a fixed `terminal_score`. Used to test that
+// score-bounded propagation through a chance node computes the
+// probability-weighted expectation of its outcomes' scores.
+#[derive(Clone, Debug, PartialEq)]
+struct ScoreLottery {
+    hi: i32,               // terminal_score reached via the Hi outcome
+    lo: i32,               // terminal_score reached via the Lo outcome
+    landed: Option<bool>,  // None = root chance node; Some(true)=Hi, Some(false)=Lo
+}
+
+impl GameState for ScoreLottery {
+    type Move = Flip;
+    type Player = ();
+    type MoveList = Vec<Flip>;
+
+    fn current_player(&self) {}
+
+    fn available_moves(&self) -> Vec<Flip> {
+        vec![]
+    }
+
+    fn make_move(&mut self, mov: &Flip) {
+        self.landed = Some(matches!(mov, Flip::Left));
+    }
+
+    fn chance_outcomes(&self) -> Option<Vec<(Flip, f64)>> {
+        if self.landed.is_none() {
+            Some(vec![(Flip::Left, 0.5), (Flip::Right, 0.5)])
+        } else {
+            None
+        }
+    }
+
+    fn terminal_score(&self) -> Option<i32> {
+        match self.landed {
+            Some(true) => Some(self.hi),
+            Some(false) => Some(self.lo),
+            None => None, // root chance node is not terminal
+        }
+    }
+}
+
+struct ScoreLotteryEvaluator;
+
+impl<Spec: MCTS<State = ScoreLottery, TreePolicy = UCTPolicy>> Evaluator<Spec>
+    for ScoreLotteryEvaluator
+{
+    type StateEvaluation = i64;
+
+    fn evaluate_new_state(
+        &self,
+        _state: &ScoreLottery,
+        moves: &Vec<Flip>,
+        _: Option<SearchHandle<Spec>>,
+    ) -> (Vec<()>, i64) {
+        (vec![(); moves.len()], 0)
+    }
+
+    fn interpret_evaluation_for_player(&self, evaln: &i64, _: &()) -> i64 {
+        *evaln
+    }
+
+    fn evaluate_existing_state(&self, _: &ScoreLottery, evaln: &i64, _: SearchHandle<Spec>) -> i64 {
+        *evaln
+    }
+}
+
+#[derive(Default)]
+struct ScoreLotteryMCTS;
+
+impl MCTS for ScoreLotteryMCTS {
+    type State = ScoreLottery;
+    type Eval = ScoreLotteryEvaluator;
+    type NodeData = ();
+    type ExtraThreadData = ();
+    type TreePolicy = UCTPolicy;
+    type TranspositionTable = ();
+
+    fn score_bounded_enabled(&self) -> bool {
+        true
+    }
+    fn closed_loop_chance(&self) -> bool {
+        true
+    }
+    fn rng_seed(&self) -> Option<u64> {
+        Some(7)
+    }
+}
+
+#[test]
+fn test_chance_node_score_bounds_are_weighted_expectation() {
+    // A 50/50 lottery over terminal scores +10 and -4 has expected score
+    // 0.5*10 + 0.5*(-4) = 3. Once both outcomes are expanded, the chance node's
+    // score bounds must converge to the weighted expectation [3, 3], not a
+    // min/max over the outcomes.
+    let mut mcts = MCTSManager::new(
+        ScoreLottery { hi: 10, lo: -4, landed: None },
+        ScoreLotteryMCTS,
+        ScoreLotteryEvaluator,
+        UCTPolicy::new(0.5),
+        (),
+    );
+    mcts.playout_n(50);
+    let bounds = mcts.root_score_bounds();
+    assert_eq!(bounds.lower, 3, "weighted lower bound");
+    assert_eq!(bounds.upper, 3, "weighted upper bound");
+    assert!(bounds.is_proven(), "converged bounds should be proven");
 }
