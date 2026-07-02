@@ -50,9 +50,13 @@ export default function GamePlay({
       : s.phase === 'over'
         ? ''
         : (() => {
+            const en = labels[s.current] ?? `Player ${s.current + 1}`;
             const name = labels[s.current] ? t(labels[s.current]) : t('Player {n}', { n: s.current + 1 });
-            // English possessive: "Goats' turn", not "Goats's turn".
-            return name.endsWith('s') ? t("{name}' turn", { name }) : t("{name}'s turn", { name });
+            // Pick the key by the ENGLISH label so the branch is stable across
+            // locales (non-English dicts translate both keys identically); the
+            // apostrophe variant only matters for the English possessive:
+            // "Goats' turn", not "Goats's turn".
+            return en.endsWith('s') ? t("{name}' turn", { name }) : t("{name}'s turn", { name });
           })();
 
   return (
