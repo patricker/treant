@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
-import { useT } from '../i18n';
+import { translate, useT } from '../i18n';
 import styles from '../arcade.module.css';
 import { usePrevBoard } from '../boardDiff';
 
@@ -32,11 +32,12 @@ function makeHandle(wasm: any, _p: GameParams): GameHandle {
     playoutN: (n) => g.playout_n(n),
     legalMoves: () => ['Up', 'Down', 'Left', 'Right'],
     weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
-    statusText: () => `Score ${g.score()} · Best ${g.max_tile()}`,
+    statusText: () => translate('Score {score} · Best {best}', { score: g.score(), best: g.max_tile() }),
+    // Translations must keep the leading 🎉 — useGameSession sniffs it for the win sound.
     endText: () =>
       g.max_tile() >= 2048
-        ? `🎉 You made ${g.max_tile()}!  Score ${g.score()}`
-        : `Game over — score ${g.score()}, best tile ${g.max_tile()}`,
+        ? translate('🎉 You made {best}!  Score {score}', { best: g.max_tile(), score: g.score() })
+        : translate('Game over — score {score}, best tile {best}', { score: g.score(), best: g.max_tile() }),
     free: () => g.free(),
   };
 }
@@ -160,6 +161,8 @@ export const game2048: GameDefinition = {
   knobs: [],
   create: makeHandle,
   Board: Game2048Board,
-  formatHint: (m) =>
-    ({ Up: '⬆️ Up', Down: '⬇️ Down', Left: '⬅️ Left', Right: '➡️ Right' })[m] ?? m,
+  formatHint: (m) => {
+    const arrow = { Up: '⬆️', Down: '⬇️', Left: '⬅️', Right: '➡️' }[m];
+    return arrow ? `${arrow} ${translate(m)}` : m;
+  },
 };

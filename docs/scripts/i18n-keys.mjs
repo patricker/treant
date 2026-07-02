@@ -47,9 +47,9 @@ function addMatches(src, re, groups = [1]) {
 for (const file of walk(ARCADE)) {
   const src = readFileSync(file, 'utf8');
 
-  // 1. Literal t('...') / t("...") call sites (first argument only).
-  addMatches(src, /\bt\(\s*'((?:[^'\\]|\\.)*)'/g);
-  addMatches(src, /\bt\(\s*"((?:[^"\\]|\\.)*)"/g);
+  // 1. Literal t('...') / t("...") / translate('...') call sites (first argument only).
+  addMatches(src, /\b(?:t|translate)\(\s*'((?:[^'\\]|\\.)*)'/g);
+  addMatches(src, /\b(?:t|translate)\(\s*"((?:[^"\\]|\\.)*)"/g);
   // tn(n, 'singular', 'plural')
   addMatches(
     src,

@@ -1,4 +1,5 @@
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 const SEAT_COLOR = ['var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)', 'var(--arc-p5)', 'var(--arc-p6)'];
@@ -24,6 +25,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 
 // Ring layout (per WASM get_board doc): P0 pit0..pits-1, P0 store, P1 pits, P1 store, …
 function MancalaBoard({ board, params, currentPlayer, interactive, onMove }: BoardProps) {
+  const { t } = useT();
   const pits = params.pits;
   const np = params.numPlayers;
   const counts = board.split(',').map(Number);
@@ -53,7 +55,7 @@ function MancalaBoard({ board, params, currentPlayer, interactive, onMove }: Boa
                     disabled={!interactive || !mine || v === 0}
                     onClick={() => onMove(String(i))}
                     style={{ borderColor: SEAT_COLOR[pl] }}
-                    aria-label={`Player ${pl + 1} pit ${i + 1}: ${v} stones`}
+                    aria-label={t('Player {p} pit {i}: {v} stones', { p: pl + 1, i: i + 1, v })}
                   >
                     {v}
                   </button>

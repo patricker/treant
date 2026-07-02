@@ -66,6 +66,16 @@ function interpolate(template: string, params?: Record<string, string | number>)
   );
 }
 
+// Module-level mirror of the active dictionary so non-React code (game handles
+// like 2048's statusText/endText) can translate too. The provider keeps it in
+// sync; before the provider mounts it behaves as English passthrough.
+let currentDict: Dict | null = null;
+
+/** Non-hook translate for code outside the React tree (game handles). */
+export function translate(key: string, params?: Record<string, string | number>): string {
+  return interpolate(currentDict?.[key] ?? key, params);
+}
+
 export interface I18n {
   locale: LocaleId;
   setLocale: (l: LocaleId) => void;
@@ -118,15 +128,22 @@ export function LocaleProvider({ children }: { children: ReactNode }): JSX.Eleme
   useEffect(() => {
     if (locale === 'en') {
       setDict(null);
+      currentDict = null;
       return;
     }
     let cancelled = false;
     LOADERS[locale]()
       .then((mod) => {
-        if (!cancelled) setDict(mod.default);
+        if (!cancelled) {
+          setDict(mod.default);
+          currentDict = mod.default;
+        }
       })
       .catch(() => {
-        if (!cancelled) setDict(null); // missing/broken dict → English fallback
+        if (!cancelled) {
+          setDict(null); // missing/broken dict → English fallback
+          currentDict = null;
+        }
       });
     return () => {
       cancelled = true;
