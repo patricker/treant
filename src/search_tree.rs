@@ -82,6 +82,17 @@ impl<Spec: MCTS> SearchNode<Spec> {
     }
 
     /// The proven score bounds of this node (for Score-Bounded MCTS).
+    ///
+    /// The two `Relaxed` loads are not a single atomic snapshot, so under
+    /// concurrent [`propagate_score_bounds`](SearchTree::propagate_score_bounds)
+    /// a caller can observe `lower` from one instant and `upper` from another.
+    /// This is safe: `lower` is monotone non-decreasing and `upper` is monotone
+    /// non-increasing, so any torn read pairs an older (lower) `lower` with an
+    /// older (higher) `upper` — i.e. a *wider* interval than either consistent
+    /// snapshot. A wider interval is conservative for
+    /// [`ScoreBounds::is_proven`](crate::ScoreBounds::is_proven) (`lower == upper`):
+    /// it can only delay declaring a node proven, never declare it proven
+    /// early, so search is never stopped prematurely.
     pub fn score_bounds(&self) -> ScoreBounds {
         ScoreBounds {
             lower: self.score_lower.load(Ordering::Relaxed),
@@ -269,7 +280,12 @@ fn create_node<Spec: MCTS>(
         .zip(move_eval)
         .map(|(m, e)| MoveInfo::new(m, e))
         .collect();
-    moves.sort_by(|a, b| policy.compare_move_evaluations(&a.move_evaluation, &b.move_evaluation));
+    // Skip the sort for policies whose comparator is the no-op default (e.g.
+    // UCT): sorting with a constant-`Equal` comparator is an O(n log n) no-op on
+    // the hot node-creation path, wasteful for high-branching games.
+    if policy.needs_move_ordering() {
+        moves.sort_by(|a, b| policy.compare_move_evaluations(&a.move_evaluation, &b.move_evaluation));
+    }
     let node = SearchNode::new(moves, state_eval);
     if node.moves.is_empty() {
         let tv = state.terminal_value();
@@ -730,6 +746,17 @@ impl<Spec: MCTS> SearchTree<Spec> {
                 }
                 CycleBehaviour::UseThisEvalWhenCycleDetected(e) => {
                     if is_cycle(node_path, node) {
+                        // `node` (the cycle target) has NOT been pushed to
+                        // node_path yet, so path/players are one longer than
+                        // node_path. finish_playout zips against the shortest
+                        // (node_path), so the last edge — already given a
+                        // virtual-loss `down` above — would never get its
+                        // compensating `up`/`replace` and would leak a permanent
+                        // virtual loss. Pop that edge and reverse its `down` so
+                        // all three slices stay equal length.
+                        if let (Some(edge), Some(_)) = (path.pop(), players.pop()) {
+                            edge.stats.undo_down(&self.manager);
+                        }
                         self.finish_playout(path, node_path, players, tld, &e);
                         return true;
                     }
@@ -820,9 +847,12 @@ impl<Spec: MCTS> SearchTree<Spec> {
                 .fetch_add(1, Ordering::Relaxed);
             let existing_ptr = existing as *const _ as *mut _;
             choice.child.store(existing_ptr, Ordering::Release);
+            // Recover from a poisoned lock rather than cascading the panic: the
+            // orphaned-node list is best-effort deferred-free bookkeeping, so a
+            // partially-updated Vec from a panicked thread is still safe to use.
             self.orphaned
                 .lock()
-                .unwrap()
+                .unwrap_or_else(|e| e.into_inner())
                 .push(unsafe { Box::from_raw(created) });
             return (existing, false);
         }
@@ -927,28 +957,20 @@ impl<Spec: MCTS> SearchTree<Spec> {
                 try_tighten_bounds(parent)
             };
 
-            let old_lower = parent.score_lower.load(Ordering::Relaxed);
-            let old_upper = parent.score_upper.load(Ordering::Relaxed);
-
-            // Monotonically tighten lower (only increases)
-            if new_bounds.lower > old_lower {
-                let _ = parent.score_lower.compare_exchange_weak(
-                    old_lower,
-                    new_bounds.lower,
-                    Ordering::Relaxed,
-                    Ordering::Relaxed,
-                );
-            }
-
-            // Monotonically tighten upper (only decreases)
-            if new_bounds.upper < old_upper {
-                let _ = parent.score_upper.compare_exchange_weak(
-                    old_upper,
-                    new_bounds.upper,
-                    Ordering::Relaxed,
-                    Ordering::Relaxed,
-                );
-            }
+            // Monotone bounds (lower only rises, upper only falls) mean fetch_max
+            // / fetch_min apply the tightening losslessly: unlike the previous
+            // compare_exchange_weak, they never drop an update to a spurious CAS
+            // failure or to contention, and need no retry loop. The returned
+            // previous value tells us whether this pass actually tightened
+            // anything.
+            let prev_lower = parent
+                .score_lower
+                .fetch_max(new_bounds.lower, Ordering::Relaxed);
+            let prev_upper = parent
+                .score_upper
+                .fetch_min(new_bounds.upper, Ordering::Relaxed);
+            let lower_changed = new_bounds.lower > prev_lower;
+            let upper_changed = new_bounds.upper < prev_upper;
 
             // Cross-system: converged bounds set proven value when solver is active
             if self.manager.solver_enabled() && new_bounds.lower == new_bounds.upper {
@@ -968,7 +990,7 @@ impl<Spec: MCTS> SearchTree<Spec> {
             }
 
             // If bounds didn't change, stop propagating
-            if new_bounds.lower <= old_lower && new_bounds.upper >= old_upper {
+            if !lower_changed && !upper_changed {
                 break;
             }
         }
@@ -1057,7 +1079,9 @@ impl<Spec: MCTS> SearchTree<Spec> {
         ));
         s.push_str(&format!(
             "{} orphaned nodes\n",
-            self.orphaned.lock().unwrap().len()
+            // Recover from poisoning: this is a diagnostic read of best-effort
+            // bookkeeping, safe to observe even after a thread panicked.
+            self.orphaned.lock().unwrap_or_else(|e| e.into_inner()).len()
         ));
         s
     }
@@ -1201,6 +1225,26 @@ where
     /// **Note:** `num_nodes` is reset to 1, not to the actual size of the preserved subtree
     /// (a full tree walk would be expensive). This means the node limit is effectively
     /// unchecked until the counter catches up via new expansions.
+    ///
+    /// # Safety with transposition tables
+    ///
+    /// This method is **unsound when a real (pointer-storing) transposition
+    /// table can create transpositions that alias *across sibling subtrees*.**
+    /// It validates only that the kept root edge is owned; it does not walk the
+    /// preserved subtree. If a node inside the kept subtree is a transposition
+    /// alias (`owned == false`) whose sole owner lives in one of the discarded
+    /// sibling subtrees, dropping the old root frees that owner and leaves a
+    /// dangling pointer inside the kept subtree — a subsequent playout that
+    /// descends through it is a use-after-free. Clearing the table does not
+    /// rewrite alias pointers already stored inside kept nodes.
+    ///
+    /// This is safe with the no-op `()` transposition table (which stores
+    /// nothing), and safe in practice for real tables when game states cannot
+    /// transpose across sibling subtrees within the search horizon. If your
+    /// states *can* transpose across siblings and you re-root with
+    /// `advance_root`, either drop the transposition table for that search or do
+    /// not re-root. A cheap runtime guard is not possible because detecting a
+    /// cross-subtree alias requires walking the whole kept subtree.
     pub fn advance_root(&mut self, mov: &Move<Spec>) -> Result<(), AdvanceError> {
         // Find the MoveInfo matching the chosen move
         let idx = self
@@ -1257,8 +1301,13 @@ where
         // Drop old root — MoveInfo Drop impls cascade-free sibling subtrees
         drop(old_root);
 
-        // Clear any previously deferred orphaned nodes
-        self.orphaned.lock().unwrap().clear();
+        // Clear any previously deferred orphaned nodes. Recover from poisoning:
+        // clearing best-effort bookkeeping is safe even if a thread panicked
+        // while holding the lock.
+        self.orphaned
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .clear();
 
         // Reset counters
         self.num_nodes.store(1, Ordering::SeqCst);
@@ -1362,6 +1411,16 @@ impl NodeStats {
         self.sum_evaluations
             .fetch_sub(manager.virtual_loss(), Ordering::Relaxed);
         self.visits.fetch_add(1, Ordering::Relaxed);
+    }
+    /// Reverse a [`down`](Self::down) that will never receive a matching
+    /// `up`/`replace`. Used when a playout aborts on the edge that caused a
+    /// cycle: the edge already took a visit + virtual-loss debit, but its target
+    /// node is dropped from the backprop path, so the debit must be undone here
+    /// to avoid a permanent virtual-loss leak on that edge.
+    fn undo_down<Spec: MCTS>(&self, manager: &Spec) {
+        self.sum_evaluations
+            .fetch_add(manager.virtual_loss(), Ordering::Relaxed);
+        self.visits.fetch_sub(1, Ordering::Relaxed);
     }
     fn up<Spec: MCTS>(&self, manager: &Spec, evaln: i64) {
         let delta = evaln + manager.virtual_loss();

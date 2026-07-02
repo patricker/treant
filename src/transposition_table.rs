@@ -200,8 +200,15 @@ where
                     .k
                     .compare_exchange(0, my_hash, Ordering::Relaxed, Ordering::Relaxed)
                     .unwrap_or_else(|x| x);
-                if key_here == 0 || key_here == my_hash {
+                if key_here == 0 {
+                    // We claimed this empty slot; count it exactly once.
                     self.size.fetch_add(1, Ordering::Relaxed);
+                    return get_or_write(&entry.v, value);
+                }
+                if key_here == my_hash {
+                    // Another thread claimed this slot for the *same* hash and
+                    // already incremented `size`; join the slot without
+                    // double-counting it.
                     return get_or_write(&entry.v, value);
                 }
             }

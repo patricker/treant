@@ -18,9 +18,23 @@ pub trait BatchEvaluator<Spec: MCTS>: Send + Sync + 'static {
     /// Evaluate a batch of newly expanded leaf nodes.
     ///
     /// Each entry is a `(state, moves)` pair for a leaf that needs evaluation.
-    /// Returns a `Vec` of the same length, where each element is
+    ///
+    /// # Contract (fatal if violated)
+    ///
+    /// This method **MUST** return a `Vec` of exactly the same length as
+    /// `states`, in the same order, where each element is
     /// `(move_evaluations, state_evaluation)` — the same shape as
-    /// `Evaluator::evaluate_new_state`.
+    /// [`Evaluator::evaluate_new_state`](crate::Evaluator::evaluate_new_state).
+    /// Returning the wrong number of results is a fatal contract violation: the
+    /// collector thread asserts on the length and panics.
+    ///
+    /// Because this runs on the single shared collector thread, **any panic here
+    /// (including a wrong-length return, or a panic thrown by your NN/GPU code)
+    /// unwinds the collector and closes the request channel, which in turn
+    /// panics *every* search worker thread** waiting on a result (see
+    /// [`BatchedEvaluatorBridge`]). There is no per-request error path — one
+    /// failure aborts the whole search. Handle recoverable errors inside your
+    /// implementation (e.g. return a neutral evaluation) rather than panicking.
     fn evaluate_batch(
         &self,
         states: &[(Spec::State, MoveList<Spec>)],
@@ -151,6 +165,13 @@ where
             moves: moves.clone(),
             response: response_tx,
         };
+        // These three panics are deliberate and documented on
+        // BatchEvaluator::evaluate_batch: if the collector thread has died
+        // (because the user's evaluate_batch panicked or returned the wrong
+        // length) or the sender mutex was poisoned, every search worker that
+        // reaches this hot path panics too. A collector failure is not
+        // recoverable per-request, so we surface it loudly rather than silently
+        // returning a bogus evaluation.
         let sender = self.sender.as_ref().expect("bridge already shut down");
         sender
             .lock()
