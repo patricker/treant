@@ -30,6 +30,19 @@ pub trait TreePolicy<Spec: MCTS<TreePolicy = Self>>: Sync + Sized {
     /// Called when the MCTS config provides an `rng_seed()`.
     fn seed_thread_data(&self, _tld: &mut Self::ThreadLocalData, _seed: u64) {}
 
+    /// Whether newly created nodes need their moves sorted by
+    /// [`compare_move_evaluations`](Self::compare_move_evaluations).
+    ///
+    /// Progressive widening exposes children in sorted order, so a policy whose
+    /// comparator imposes a real ordering (e.g. [`AlphaGoPolicy`], which sorts by
+    /// descending prior) must return `true`. Policies that leave
+    /// `compare_move_evaluations` at its default `Equal` (e.g. [`UCTPolicy`])
+    /// gain nothing from the sort and should return `false` (the default), so
+    /// node creation can skip an O(n log n) no-op sort on the hot expansion path.
+    fn needs_move_ordering(&self) -> bool {
+        false
+    }
+
     /// Compare two move evaluations for ordering during progressive widening.
     /// Higher-priority moves should sort first (return `Greater` for higher priority `a`).
     /// Default: `Equal` (no reordering).
@@ -88,11 +101,42 @@ const RECIPROCAL_TABLE_LEN: usize = 128;
 
 /// PUCT tree policy used by AlphaGo and AlphaZero.
 ///
-/// Selects children using: `(Q(a) + C * P(a) * sqrt(N)) / (1 + n(a))`,
-/// where `P(a)` is the prior probability from the neural network.
+/// # Selection formula
 ///
-/// Move evaluations are `f64` prior probabilities that must be non-negative
-/// and sum to approximately 1.
+/// For each child the selection score is
+///
+/// ```text
+/// score = (sum_rewards + C * P(a) * sqrt(N)) * recip(n(a))
+/// ```
+///
+/// where `sum_rewards` is the *sum* (not mean) of backed-up rewards for the
+/// child, `P(a)` is the prior probability, `N` is the parent's total visit
+/// count (plus one), `n(a)` is the child's visit count, and
+///
+/// ```text
+/// recip(0) = 2.0        (an intentional exploration boost for unvisited children)
+/// recip(n) = 1 / n      (for n >= 1)
+/// ```
+///
+/// Because `sum_rewards = mean_Q * n`, dividing by `n` recovers the usual
+/// `mean_Q + C * P * sqrt(N) / n` shape for visited children. For an unvisited
+/// child (`n == 0`) the `recip(0) = 2.0` factor is a deliberate boost rather
+/// than the standard AlphaZero `1 / (1 + n)` denominator; see the comment on
+/// the reciprocal table in [`AlphaGoPolicy::new`]. Note the unvisited-child
+/// branch is only reached when [`MCTS::fpu_value`](crate::MCTS::fpu_value) is
+/// finite; with the default infinite FPU, unvisited children are selected via
+/// the FPU value instead.
+///
+/// # Prior contract (panics)
+///
+/// Move evaluations are `f64` prior probabilities. They **MUST** be
+/// non-negative (each `>= -1e-6`) and **MUST** sum to within `0.1` of `1.0`.
+/// [`validate_evaluations`](TreePolicy::validate_evaluations) enforces this
+/// with `assert!` on **every** node expansion, in both debug and release
+/// builds — priors that are negative or whose sum drifts outside
+/// `[0.9, 1.1]` will **panic the entire search**, not just the offending
+/// playout. Callers that generate priors from external/host data (e.g.
+/// language bindings) must normalize them before search.
 #[derive(Clone, Debug)]
 pub struct AlphaGoPolicy {
     exploration_constant: f64,
@@ -108,6 +152,13 @@ impl AlphaGoPolicy {
             "exploration constant is {} (must be positive)",
             exploration_constant
         );
+        // Precomputed 1/n for the PUCT denominator. Index 0 is special-cased to
+        // 2.0 rather than the mathematically-infinite 1/0: an unvisited child's
+        // score is (0 + C*P*sqrt(N)) * recip(0), so recip(0)=2.0 doubles the
+        // prior-driven exploration term for never-tried moves. This is an
+        // intentional exploration boost, distinct from the standard AlphaZero
+        // 1/(1+n) denominator (which would give recip(0)=1.0). See the type-level
+        // rustdoc for how this interacts with fpu_value().
         let reciprocals = (0..RECIPROCAL_TABLE_LEN)
             .map(|x| if x == 0 { 2.0 } else { 1.0 / x as f64 })
             .collect();
@@ -196,7 +247,7 @@ impl<Spec: MCTS<TreePolicy = Self>> TreePolicy<Spec> for UCTPolicy {
                     self.exploration_constant * explore_term + mean_action_value
                 }
             })
-            .unwrap()
+            .expect("choose_child called on a node with no moves")
     }
 
     fn seed_thread_data(&self, tld: &mut PolicyRng, seed: u64) {
@@ -266,7 +317,7 @@ impl<Spec: MCTS<TreePolicy = Self>> TreePolicy<Spec> for AlphaGoPolicy {
                         * self.reciprocal(child_visits as usize)
                 }
             })
-            .unwrap()
+            .expect("choose_child called on a node with no moves")
     }
 
     fn validate_evaluations(&self, evalns: &[f64]) {
@@ -285,6 +336,10 @@ impl<Spec: MCTS<TreePolicy = Self>> TreePolicy<Spec> for AlphaGoPolicy {
                 evaln_sum
             );
         }
+    }
+
+    fn needs_move_ordering(&self) -> bool {
+        true
     }
 
     fn compare_move_evaluations(&self, a: &f64, b: &f64) -> std::cmp::Ordering {
@@ -394,6 +449,13 @@ impl PolicyRng {
         KeyFn: FnMut(&T) -> f64,
     {
         let mut choice = None;
+        // First element seen, kept as a graceful fallback. If every candidate
+        // scores NaN (e.g. a misconfigured Dirichlet noise produced NaN priors),
+        // no `score > best` / `score == best` comparison ever fires — NaN fails
+        // both — so `choice` would stay None and the caller's `.expect()` would
+        // panic. Returning an arbitrary (first) candidate instead treats all-NaN
+        // as an unordered tie rather than crashing mid-search.
+        let mut fallback = None;
         let mut num_optimal: u32 = 0;
         let mut best_so_far: f64 = f64::NEG_INFINITY;
         for elt in elts {
@@ -407,14 +469,40 @@ impl PolicyRng {
                 if self.rng.gen_ratio(1, num_optimal) {
                     choice = Some(elt);
                 }
+            } else if fallback.is_none() {
+                fallback = Some(elt);
             }
         }
-        choice
+        choice.or(fallback)
     }
 }
 
 impl Default for PolicyRng {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn reciprocal_table_pins_formula() {
+        let policy = AlphaGoPolicy::new(1.0);
+        // recip(0) is the intentional 2.0 exploration boost for unvisited
+        // children, NOT 1/0 or the standard AlphaZero 1/(1+0)=1.0.
+        assert_eq!(policy.reciprocal(0), 2.0);
+        assert_eq!(policy.reciprocal(1), 1.0);
+        assert_eq!(policy.reciprocal(2), 0.5);
+        assert_eq!(policy.reciprocal(3), 1.0 / 3.0);
+    }
+
+    #[test]
+    fn reciprocal_matches_table_past_the_end() {
+        let policy = AlphaGoPolicy::new(1.0);
+        // Indices >= RECIPROCAL_TABLE_LEN fall back to 1/x directly.
+        let n = RECIPROCAL_TABLE_LEN + 5;
+        assert_eq!(policy.reciprocal(n), 1.0 / n as f64);
     }
 }

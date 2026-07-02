@@ -151,10 +151,21 @@ pub trait MCTS: Sized + Send + Sync + 'static {
     fn virtual_loss(&self) -> i64 {
         0
     }
-    /// Default value for unvisited children during selection.
-    /// `f64::INFINITY` (default) forces all children to be tried before any revisit.
-    /// Set to a finite value (e.g. `0.0`) for neural-network-guided search where
-    /// the prior should control which children are explored first.
+    /// Default value ("first-play urgency") for unvisited children during selection.
+    ///
+    /// The default `f64::INFINITY` is interpreted differently by the two
+    /// built-in policies:
+    /// - [`UCTPolicy`](crate::tree_policy::UCTPolicy) honors it literally: an
+    ///   unvisited child scores `+INFINITY`, so **every** child is tried once
+    ///   before any is revisited.
+    /// - [`AlphaGoPolicy`](crate::tree_policy::AlphaGoPolicy) (PUCT) treats an
+    ///   infinite FPU as "no FPU override": unvisited children fall through to
+    ///   the PUCT formula (a finite prior-guided score), so expansion order is
+    ///   guided by the priors rather than forced to be exhaustive.
+    ///
+    /// Set to a finite value (e.g. `0.0`) to give unvisited children an explicit
+    /// first-visit score under either policy — useful for neural-network-guided
+    /// search where the prior should control which children are explored first.
     fn fpu_value(&self) -> f64 {
         f64::INFINITY
     }
@@ -683,16 +694,34 @@ where
 
     fn select_move_by_temperature(&self, temperature: f64) -> Option<Move<Spec>> {
         let inv_temp = 1.0 / temperature;
-        let weighted: Vec<_> = self
+        // Collect (move, visits) for every visited child.
+        let candidates: Vec<_> = self
             .search_tree
             .root_node()
             .moves()
             .filter(|c| c.visits() > 0)
-            .map(|c| (c.get_move().clone(), (c.visits() as f64).powf(inv_temp)))
+            .map(|c| (c.get_move().clone(), c.visits() as f64))
             .collect();
-        if weighted.is_empty() {
+        if candidates.is_empty() {
             return None;
         }
+        // Max-normalize before exponentiating. Naively computing `visits^inv_temp`
+        // overflows to +INFINITY for small temperatures (inv_temp huge), which
+        // makes `total` INFINITY/NaN and degenerates the sampling loop into
+        // "always pick the last move". Instead weight each move by
+        // `exp(inv_temp * (ln visits - ln max_visits))`, so the argmax child has
+        // weight exactly 1.0 and the rest fall in (0, 1] — numerically stable for
+        // any temperature, and equal to the intended `visits^inv_temp` up to the
+        // shared 1/max_visits^inv_temp factor that cancels in normalization.
+        let max_visits = candidates
+            .iter()
+            .map(|(_, v)| *v)
+            .fold(f64::NEG_INFINITY, f64::max);
+        let ln_max = max_visits.ln();
+        let weighted: Vec<_> = candidates
+            .into_iter()
+            .map(|(mov, v)| (mov, (inv_temp * (v.ln() - ln_max)).exp()))
+            .collect();
         let total: f64 = weighted.iter().map(|(_, w)| w).sum();
         let mut roll: f64 = self.selection_rng.borrow_mut().gen::<f64>() * total;
         for (mov, weight) in &weighted {
