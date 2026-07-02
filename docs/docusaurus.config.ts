@@ -5,6 +5,13 @@ import remarkCodeRegion from 'remark-code-region';
 import fs from 'node:fs';
 import path from 'node:path';
 
+// When packaging the site inside the native Capacitor app (`ARCADE_APP_BUILD=1`)
+// we strip anything that has no business in an offline app store binary:
+// Google Analytics (no network telemetry — the store listing declares "no data
+// collected") and the PWA service worker (the app ships its own bundled assets;
+// a second SW cache layer would only fight Capacitor's WebView).
+const isAppBuild = process.env.ARCADE_APP_BUILD === '1';
+
 const config: Config = {
   title: 'Treant',
   tagline: 'High-performance, lock-free Monte Carlo Tree Search for Rust',
@@ -33,10 +40,15 @@ const config: Config = {
           remarkPlugins: [[remarkCodeRegion, { rootDir: '..' }]],
         },
         blog: false,
-        gtag: {
-          trackingID: 'G-GP4CNHKDF0',
-          anonymizeIP: true,
-        },
+        // No analytics in the native app build (offline, "no data collected").
+        ...(isAppBuild
+          ? {}
+          : {
+              gtag: {
+                trackingID: 'G-GP4CNHKDF0',
+                anonymizeIP: true,
+              },
+            }),
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -46,6 +58,12 @@ const config: Config = {
 
   plugins: [
     './plugins/wasm-plugin.js',
+    // The PWA service worker is omitted from the native app build: Capacitor
+    // serves the bundled assets straight from the WebView, so a second SW cache
+    // layer adds nothing and can shadow updates shipped in the binary.
+    ...(isAppBuild
+      ? []
+      : [
     [
       '@docusaurus/plugin-pwa',
       {
@@ -82,6 +100,7 @@ const config: Config = {
         ],
       },
     ],
+      ]),
   ],
 
   themeConfig: {

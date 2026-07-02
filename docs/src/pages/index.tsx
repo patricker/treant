@@ -1,6 +1,8 @@
 import type { JSX } from 'react';
+import { useEffect } from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
+import { useHistory } from '@docusaurus/router';
 import styles from './index.module.css';
 
 const features = [
@@ -39,6 +41,16 @@ const capabilities = [
 ];
 
 export default function Home(): JSX.Element {
+  const history = useHistory();
+  // Inside the native app the marketing homepage is irrelevant — the product is
+  // the arcade. Redirect straight there when the Capacitor bridge is present.
+  // Guarded to the client (the bridge only exists in the WebView) so the web
+  // build renders and pre-renders the real homepage untouched.
+  useEffect(() => {
+    const cap = (window as any).Capacitor;
+    if (cap?.isNativePlatform?.()) history.replace('/arcade');
+  }, [history]);
+
   return (
     <Layout
       title="Treant"

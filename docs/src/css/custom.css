@@ -74,3 +74,20 @@ body.arcade-route[data-arcade-accent='magenta'] {
 body.arcade-route[data-arcade-accent='stark'] {
   background: radial-gradient(85% 55% at 50% 0, #161618, #000 62%);
 }
+
+/* Native app (Capacitor) chrome. ArcadeShell tags <body class="capacitor-app">
+   only when running inside the packaged Android/iOS binary — never on the web.
+   The app opens straight into the arcade, so the Docusaurus navbar and footer
+   are dead weight: hide them so the arcade fills the screen like a native app.
+   The safe-area insets keep the arcade clear of the notch / status bar / home
+   indicator on modern phones (they evaluate to 0 on hardware without them). */
+body.capacitor-app .navbar,
+body.capacitor-app .footer {
+  display: none;
+}
+body.capacitor-app .main-wrapper {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}

@@ -59,11 +59,33 @@ function blip(
   });
 }
 
+// Haptic feedback to pair with the sound effects. Uses the standard Vibration
+// API (navigator.vibrate), which Android's WebView and the packaged Capacitor
+// app both honour on a user gesture; iOS/Safari ignore it silently, which is
+// acceptable. Gated on the same mute switch as sound so a muted game is fully
+// silent and still. The optional-chaining call is a no-op where unsupported.
+function buzz(pattern: number | number[]): void {
+  if (isMuted()) return;
+  if (typeof navigator !== 'undefined') navigator.vibrate?.(pattern);
+}
+
 export const sound = {
-  move: () => blip([330], 0.07, 'square', 0.04),
-  drop: () => blip([200, 120], 0.13, 'sine', 0.07),
-  merge: () => blip([520, 700], 0.1, 'triangle', 0.05),
-  win: () => blip([523, 659, 784, 1047], 0.13, 'square', 0.05),
+  move: () => {
+    blip([330], 0.07, 'square', 0.04);
+    buzz(15);
+  },
+  drop: () => {
+    blip([200, 120], 0.13, 'sine', 0.07);
+    buzz(15);
+  },
+  merge: () => {
+    blip([520, 700], 0.1, 'triangle', 0.05);
+    buzz(15);
+  },
+  win: () => {
+    blip([523, 659, 784, 1047], 0.13, 'square', 0.05);
+    buzz([15, 40, 15, 40, 15]);
+  },
   lose: () => blip([330, 247, 165], 0.18, 'sawtooth', 0.04),
   draw: () => blip([392, 392], 0.12, 'sine', 0.045),
 };

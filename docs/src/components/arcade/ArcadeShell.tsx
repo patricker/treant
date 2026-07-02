@@ -92,6 +92,46 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
     return () => document.body.classList.remove('arcade-route');
   }, []);
 
+  // Native-app (Capacitor) integration. Everything here is feature-detected off
+  // the injected `window.Capacitor` bridge — it's inert in the web build (the
+  // bridge is absent) and pulls in no Capacitor imports, so the docs bundle is
+  // unchanged. Tags <body> so CSS can hide the Docusaurus chrome, tints the
+  // status bar to the arcade backdrop, and wires the Android hardware back
+  // button to walk the arcade's history (exiting the app only at the launcher).
+  useEffect(() => {
+    const cap = (typeof window !== 'undefined' && (window as any).Capacitor) || null;
+    if (!cap?.isNativePlatform?.()) return;
+    document.body.classList.add('capacitor-app');
+
+    const StatusBar = cap.Plugins?.StatusBar;
+    if (StatusBar) {
+      // `Style.Dark` = dark backdrop, light (readable) content.
+      StatusBar.setStyle?.({ style: 'DARK' });
+      StatusBar.setBackgroundColor?.({ color: '#1c1830' });
+    }
+
+    let remove: (() => void) | undefined;
+    const App = cap.Plugins?.App;
+    if (App?.addListener) {
+      const handle = App.addListener('backButton', () => {
+        // At the launcher there's nowhere left to go back to, so honour the
+        // Android convention of backing out to the home screen; otherwise step
+        // back through launcher → setup → play history.
+        if (window.location.search === '') App.exitApp?.();
+        else history.goBack();
+      });
+      remove = () => {
+        // addListener may return a handle or a promise of one.
+        Promise.resolve(handle).then((h: any) => h?.remove?.());
+      };
+    }
+
+    return () => {
+      document.body.classList.remove('capacitor-app');
+      remove?.();
+    };
+  }, []);
+
   const screen = screenFromSearch(location.search);
   const go = (next: Screen) => history.push('/arcade' + screenToSearch(next));
 
