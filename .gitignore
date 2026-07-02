@@ -30,3 +30,4 @@ app/www/
 !app/resources/*.png
 !app/android/**/*.png
 !app/ios/**/*.png
+!app/store-assets/*.png
