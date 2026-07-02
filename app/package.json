@@ -1,0 +1,26 @@
+{
+  "name": "treant-arcade-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Capacitor wrapper that packages the Treant Arcade static site as an offline Android/iOS app.",
+  "scripts": {
+    "build:www": "./build-www.sh",
+    "sync": "cap sync",
+    "sync:android": "cap sync android",
+    "open:android": "cap open android",
+    "open:ios": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.0.0"
+  }
+}

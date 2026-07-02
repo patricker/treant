@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 64 64">
+  <!-- Treant Arcade app icon. Neon treant-face (a round head on a stalk with two
+       root-legs, two bright eyes) in arcade pink #ff3b5c on the arcade backdrop
+       #1c1830, matching docs/static/img/icon-512.png. Geometry is the favicon
+       shapes scaled ~0.82 around centre for app-icon safe padding. -->
+  <rect width="64" height="64" fill="#1c1830"/>
+  <g transform="translate(32 32) scale(0.82) translate(-32 -32)"
+     stroke="#ff3b5c" fill="#ff3b5c">
+    <circle cx="32" cy="24" r="20" fill="none" stroke-width="3.5"/>
+    <rect x="27" y="42" width="10" height="14" stroke="none"/>
+    <line x1="32" y1="56" x2="20" y2="60" stroke-width="3" stroke-linecap="round"/>
+    <line x1="32" y1="56" x2="44" y2="60" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="25" cy="22" r="3" stroke="none" fill="#ffeede"/>
+    <circle cx="39" cy="22" r="3" stroke="none" fill="#ffeede"/>
+  </g>
+</svg>

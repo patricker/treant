@@ -19,3 +19,14 @@ treant-wasm/target/
 
 # Visual-companion brainstorm mockups (local, not committed)
 .superpowers/
+
+# Capacitor app (app/). node_modules and the built web root are artifacts;
+# the android/ and ios/ project skeletons ARE committed (Capacitor convention),
+# with their own .gitignores excluding build outputs (.gradle, build/, Pods, …).
+app/node_modules/
+app/www/
+# The global *.png rule above would swallow the app icons/splashes and the
+# generated launcher assets — re-include the ones we intend to commit.
+!app/resources/*.png
+!app/android/**/*.png
+!app/ios/**/*.png
