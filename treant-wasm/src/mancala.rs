@@ -422,7 +422,7 @@ impl MancalaWasm {
 
     pub fn get_stats(&self) -> JsValue {
         let stats = types::build_stats(&self.manager, |_| None);
-        serde_wasm_bindgen::to_value(&stats).unwrap()
+        serde_wasm_bindgen::to_value(&stats).unwrap_or(JsValue::NULL)
     }
 
     pub fn get_tree(&self, max_depth: u32) -> JsValue {
@@ -431,7 +431,7 @@ impl MancalaWasm {
             max_depth,
             &|_| None,
         );
-        serde_wasm_bindgen::to_value(&tree).unwrap()
+        serde_wasm_bindgen::to_value(&tree).unwrap_or(JsValue::NULL)
     }
 
     /// Comma-separated stone count per ring cell, in ring order.
@@ -452,14 +452,15 @@ impl MancalaWasm {
         self.manager.tree().root_state().is_terminal()
     }
 
-    /// Returns "P{N}" (winner, 1-indexed), "Draw", or "" (game in progress).
+    /// Canonical arcade result contract: a bare 1-indexed winner seat digit
+    /// ("1".."6"), "Draw", or "" while the game is in progress.
     pub fn result(&self) -> String {
         let state = self.manager.tree().root_state();
         if !state.is_terminal() {
             return String::new();
         }
         match state.winner() {
-            Some(p) => format!("P{}", p + 1),
+            Some(p) => format!("{}", p + 1),
             None => "Draw".into(),
         }
     }

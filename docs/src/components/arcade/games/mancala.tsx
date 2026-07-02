@@ -10,11 +10,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
     getBoard: () => g.get_board(),
     currentPlayer: () => g.current_player(),
     isTerminal: () => g.is_terminal(),
-    // WASM returns "P{N}" / "Draw" / "" — normalize the winner to a bare number.
-    result: () => {
-      const r = g.result();
-      return r.startsWith('P') ? r.slice(1) : r;
-    },
+    result: () => g.result(),
     bestMove: () => g.best_move() ?? undefined,
     playoutN: (n) => g.playout_n(n),
     legalMoves: () => {
