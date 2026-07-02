@@ -49,9 +49,11 @@ export default function GamePlay({
       ? t('🤖 Thinking…')
       : s.phase === 'over'
         ? ''
-        : t("{name}'s turn", {
-            name: labels[s.current] ? t(labels[s.current]) : t('Player {n}', { n: s.current + 1 }),
-          });
+        : (() => {
+            const name = labels[s.current] ? t(labels[s.current]) : t('Player {n}', { n: s.current + 1 });
+            // English possessive: "Goats' turn", not "Goats's turn".
+            return name.endsWith('s') ? t("{name}' turn", { name }) : t("{name}'s turn", { name });
+          })();
 
   return (
     <div className={styles.play}>
