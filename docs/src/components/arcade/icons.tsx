@@ -27,6 +27,19 @@ const GLYPHS: Record<string, JSX.Element> = {
       <circle cx="9" cy="17" r="2.4" opacity="0.4" fill="currentColor" stroke="none" />
     </g>
   ),
+  quadline: (
+    // a line of four dots morphing into a 2×2 square
+    <g fill="currentColor">
+      <circle cx="4" cy="5" r="1.9" />
+      <circle cx="9.3" cy="5" r="1.9" />
+      <circle cx="14.6" cy="5" r="1.9" />
+      <circle cx="20" cy="5" r="1.9" />
+      <circle cx="9" cy="14" r="1.9" opacity="0.5" />
+      <circle cx="15" cy="14" r="1.9" opacity="0.5" />
+      <circle cx="9" cy="20" r="1.9" />
+      <circle cx="15" cy="20" r="1.9" />
+    </g>
+  ),
   'order-chaos': (
     <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round">
       <path d="M3.5 4l5 5M8.5 4l-5 5" />
@@ -85,6 +98,20 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  oware: (
+    // a row of three houses, seeds inside, evoking counter-clockwise sowing
+    <g stroke="currentColor" strokeWidth="1.8" fill="none">
+      <rect x="2.5" y="8" width="19" height="8" rx="4" />
+      <path d="M8.5 8v8M15.5 8v8" opacity="0.5" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="5.5" cy="12" r="1.2" />
+        <circle cx="11" cy="10.7" r="1.2" />
+        <circle cx="12" cy="13.4" r="1.2" />
+        <circle cx="17.2" cy="11" r="1.2" />
+        <circle cx="18.6" cy="13.6" r="1.2" />
+      </g>
+    </g>
+  ),
   gomoku: (
     <g fill="currentColor">
       {[0, 1, 2, 3, 4].map((i) => (
@@ -92,6 +119,21 @@ const GLYPHS: Record<string, JSX.Element> = {
       ))}
       <circle cx="16" cy="16" r="1.9" opacity="0.4" />
       <circle cx="8" cy="8" r="1.9" opacity="0.4" />
+    </g>
+  ),
+  'pinch-five': (
+    <g fill="currentColor">
+      {/* a pair being pinched between two brackets */}
+      <circle cx="10.5" cy="8" r="2.1" opacity="0.4" />
+      <circle cx="13.5" cy="8" r="2.1" opacity="0.4" />
+      <g stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 5l2.5 3L5 11" />
+        <path d="M19 5l-2.5 3L19 11" />
+      </g>
+      {/* five-in-a-row goal */}
+      {[4, 8, 12, 16, 20].map((x, i) => (
+        <circle key={i} cx={x} cy="18" r="1.7" />
+      ))}
     </g>
   ),
   'dots-and-boxes': (

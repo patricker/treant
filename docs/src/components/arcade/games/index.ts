@@ -2,10 +2,13 @@ import { connectFour } from './connectFour';
 import { ticTacToe } from './ticTacToe';
 import { nim } from './nim';
 import { mancala } from './mancala';
+import { oware } from './oware';
 import { shift } from './shift';
+import { quadline } from './quadline';
 import { game2048 } from './game2048';
 import { orderChaos, noTacToe, trapThree, squareUp, connectSix } from './gridpack';
 import { pig } from './pig';
+import { pinchFive } from './pinchfive';
 import { frontline } from './frontline';
 import { hex } from './hex';
 import { clobber } from './clobber';
@@ -19,6 +22,7 @@ import { gomoku } from './gomoku';
 import { muTorere } from './mutorere';
 import { domineering } from './domineering';
 import { konane } from './konane';
+import { nineMorris } from './ninemorris';
 import { nogo } from './nogo';
 import { amazons } from './amazons';
 import { col } from './col';
@@ -33,11 +37,13 @@ export const GAMES: GameDefinition[] = [
   connectFour,
   ticTacToe,
   shift,
+  quadline,
   frontline,
   clobber,
   trails,
   captureGo,
   konane,
+  nineMorris,
   amazons,
   foxHounds,
   reversi,
@@ -47,6 +53,7 @@ export const GAMES: GameDefinition[] = [
   trapThree,
   squareUp,
   connectSix,
+  pinchFive,
   gomoku,
   treblecross,
   dotsBoxes,
@@ -59,6 +66,7 @@ export const GAMES: GameDefinition[] = [
   col,
   sim,
   mancala,
+  oware,
   muTorere,
   domineering,
   pig,
