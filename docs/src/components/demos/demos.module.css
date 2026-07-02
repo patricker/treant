@@ -158,8 +158,67 @@
   border-bottom: none;
 }
 
+.explainer {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--ifm-color-emphasis-800);
+  background: var(--ifm-color-emphasis-100);
+  border-left: 3px solid var(--ifm-color-primary);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+}
+
+.explainer p {
+  margin: 0 0 0.5rem 0;
+}
+
+.explainer p:last-child {
+  margin-bottom: 0;
+}
+
+.explainer code {
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+  background: var(--ifm-color-emphasis-200);
+  border-radius: 3px;
+}
+
+.explainer details {
+  margin-top: 0.5rem;
+}
+
+.explainer summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  padding: 0.25rem 0;
+  user-select: none;
+}
+
+.explainer details[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+.explainer ul {
+  margin: 0.25rem 0 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.explainer ul li {
+  margin-bottom: 0.35rem;
+}
+
 [data-theme='dark'] .demo {
   border-color: var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] .explainer {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-900);
+}
+
+[data-theme='dark'] .explainer code {
+  background: var(--ifm-color-emphasis-300);
 }
 
 [data-theme='dark'] .speedSlider {

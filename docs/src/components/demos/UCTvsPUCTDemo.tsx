@@ -132,6 +132,63 @@ function UCTvsPUCTDemoInner() {
   return (
     <div className={styles.demo}>
       <div className={styles.section}>
+        <div className={styles.explainer}>
+          <p>
+            <strong>The setup.</strong> 3 moves over 3 turns: <code>A</code> (+10),
+            {' '}<code>B</code> (+5), <code>C</code> (+1). Optimal play is
+            {' '}<code>A,A,A = 30</code>. PUCT has been given{' '}
+            <strong>deliberately misleading priors</strong>{' '}
+            <code>(A=0.1, B=0.2, C=0.7)</code> &mdash; a "policy network"
+            that thinks <code>C</code> is best when really <code>A</code> is.
+          </p>
+          <details>
+            <summary>Why does UCT pick A(+10) but PUCT pick B(+5)?</summary>
+            <p>
+              <strong>UCT</strong> selects with{' '}
+              <code>Q + c·√(ln N / n)</code> &mdash; exploration is a pure
+              function of visit counts, no priors involved. Every move gets
+              explored fairly, so UCT discovers the true ordering and picks{' '}
+              <code>A</code>.
+            </p>
+            <p>
+              <strong>PUCT</strong> selects with{' '}
+              <code>Q + c·P·√N / (1+n)</code> &mdash; the prior{' '}
+              <em>multiplies</em> the exploration bonus, which warps the search:
+            </p>
+            <ul>
+              <li>
+                <strong><code>A</code> is starved.</strong> P=0.1 makes A's
+                exploration bonus 7× smaller than C's. Even though every visit
+                returns a huge reward, A barely gets sampled, so its high Q
+                never accumulates enough visit count to win.
+              </li>
+              <li>
+                <strong><code>C</code> is over-explored, then collapses.</strong>{' '}
+                P=0.7 pulls early visits to C, but C's subtree only yields ~3
+                (1+1+1). As <code>n<sub>C</sub></code> grows, the exploration
+                term shrinks and the low Q starts to dominate.
+              </li>
+              <li>
+                <strong><code>B</code> wins by default.</strong> P=0.2 gives B
+                enough exploration to find Q ≈ 7-15 (genuinely better than C),
+                and its prior is 2× A's, so B ends up the most-visited child.
+              </li>
+            </ul>
+            <p>
+              <strong>The lesson:</strong> PUCT is only as good as its priors.
+              Good priors → much faster convergence than UCT (the AlphaZero
+              superpower). Bad priors → biased search that under-explores
+              actually-good moves. Crank playouts to 10k+ and PUCT eventually
+              finds <code>A</code> &mdash; the bad prior slows convergence
+              rather than preventing it. <code>best_move</code> reports the
+              most-visited child, which is why the visit-count race is what
+              matters here.
+            </p>
+          </details>
+        </div>
+      </div>
+
+      <div className={styles.section}>
         <ParameterControls
           params={{
             uctC: { label: 'UCT C', value: uctC, min: 0.1, max: 5.0, step: 0.1 },
