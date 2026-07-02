@@ -4,6 +4,13 @@ use std::sync::Mutex;
 
 use crate::callbacks::{EvalCallbacks, GameCallbacks};
 
+/// Maximum number of plies a single random rollout plays before giving up.
+///
+/// A rollout that reaches this cap without hitting a terminal state is scored
+/// as a neutral `0.0` (see the note on `RandomRollout`). Games whose random
+/// playouts routinely exceed this length are a poor fit for `RandomRollout`.
+const MAX_ROLLOUT_PLIES: usize = 1000;
+
 /// Random rollout evaluator.
 ///
 /// Clones the game state and plays random moves until a terminal state,
@@ -11,12 +18,27 @@ use crate::callbacks::{EvalCallbacks, GameCallbacks};
 /// in Rust with no cross-language callback overhead during the rollout
 /// (only uses `GameCallbacks` methods on the cloned state).
 ///
-/// Requires that games have terminal states (i.e., `available_moves()`
-/// eventually returns an empty vec).
+/// # `terminal_value()` is REQUIRED for signal
+///
+/// This evaluator derives its entire signal from
+/// [`GameCallbacks::terminal_value`](crate::GameCallbacks::terminal_value). A
+/// game that does not override it (the default is `None`) makes **every**
+/// rollout return a neutral `0.0` — indistinguishable from a draw — so search
+/// receives no win/loss signal and drifts toward unclassified lines. Any game
+/// used with `RandomRollout` MUST implement `terminal_value()`. The same
+/// neutral `0.0` also results when a rollout is truncated at
+/// `MAX_ROLLOUT_PLIES` without reaching a terminal state, or when
+/// `terminal_value()` returns `ProvenValue::Unknown`.
+///
+/// # RNG and determinism
 ///
 /// When created with `new()`, uses `thread_rng()` for lock-free parallel search.
-/// When created with `with_seed()`, uses a shared seeded RNG for deterministic
-/// single-threaded replay (Mutex serializes parallel access).
+/// When created with `with_seed()`, uses a single shared seeded RNG behind a
+/// `Mutex`. This gives deterministic replay **only under single-threaded
+/// search**: under `playout_n_parallel` the `Mutex` serializes every rollout's
+/// RNG (a performance trap for rollout-heavy games) and thread scheduling over
+/// the shared RNG makes results non-reproducible anyway. Use `with_seed()` only
+/// for single-threaded runs.
 pub struct RandomRollout {
     rng: Option<Mutex<Rng64>>,
 }
@@ -49,13 +71,14 @@ impl EvalCallbacks for RandomRollout {
             return (priors, 0.0);
         }
 
-        // Clone the state and play random moves until terminal
+        // Clone the state and play random moves until terminal (or the cap).
         let mut sim = state.clone_box();
-        let max_depth = 1000;
+        let mut reached_terminal = false;
 
-        for _ in 0..max_depth {
+        for _ in 0..MAX_ROLLOUT_PLIES {
             let available = sim.available_moves();
             if available.is_empty() {
+                reached_terminal = true;
                 break;
             }
             let idx = match &self.rng {
@@ -89,6 +112,16 @@ impl EvalCallbacks for RandomRollout {
                 (priors, -value)
             }
         } else {
+            // No terminal value -> neutral 0.0. This is the rollout truncated at
+            // MAX_ROLLOUT_PLIES (still non-terminal), OR a terminal state whose
+            // host did not implement terminal_value(). The latter means this
+            // evaluator produces no signal at all; flag it loudly in debug.
+            debug_assert!(
+                !reached_terminal,
+                "RandomRollout reached a terminal state but terminal_value() \
+                 returned None: implement GameCallbacks::terminal_value(), else \
+                 every rollout yields a neutral 0.0 (draw) with no win/loss signal"
+            );
             (priors, 0.0)
         }
     }
