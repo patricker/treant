@@ -37,7 +37,13 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 - This is a practical read, **not legal advice** — do a quick trademark search
   before committing to a public name.
 
-## 3. Already shipped — 33 games
+## 3. Already shipped — 37 games
+
+**Wave of 2026-07-02:** Pinch-Five (Ninuki-renju: five-in-a-row or capture five
+pairs, 2-4p) · Nine Men's Morris (place/slide/mill, men + flying knobs) ·
+Quadline (Teeko: drop four then slide, line or square) · Oware (2s-and-3s
+capture sowing, grand-slam + starvation rules).
+
 
 **Original 6:** Tic-Tac-Toe · Connect Four · Shift · Nim · Mancala (Kalah) · 2048.
 
