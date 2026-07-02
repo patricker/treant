@@ -36,29 +36,37 @@ TREANT_ARCADE_KEY_PASSWORD=…
 
 ## Building a signed release AAB
 
-**Blocked until the Android SDK is installed** (this box has JDK 21 but no SDK —
-see [`README.md`](README.md)). Once it is:
+**A signed release AAB has been built locally on this box** — the Android SDK is
+installed at `~/Android/Sdk` and `android/app/build.gradle` is already wired for
+release signing (see step 1). The only remaining step is uploading to the Play
+Console. To rebuild:
 
-### 1. Point Gradle at the keystore
+### 1. Point Gradle at the keystore — DONE
 
-The generated `android/app/build.gradle` has no `signingConfigs` block yet. Add
-one that reads the credentials from the environment (so nothing secret is
-written into the repo):
+`android/app/build.gradle` now carries a `signingConfigs` block that reads the
+credentials from the environment (so nothing secret is written into the repo).
+It is guarded: if the env vars are absent the release config is simply not
+wired, so debug builds still work with no keystore present.
 
 ```gradle
 android {
+    def keystorePath = System.getenv("TREANT_ARCADE_KEYSTORE")
     signingConfigs {
-        release {
-            storeFile file(System.getenv("TREANT_ARCADE_KEYSTORE"))
-            storePassword System.getenv("TREANT_ARCADE_STORE_PASSWORD")
-            keyAlias System.getenv("TREANT_ARCADE_KEY_ALIAS")
-            keyPassword System.getenv("TREANT_ARCADE_KEY_PASSWORD")
+        if (keystorePath != null && !keystorePath.isEmpty() && file(keystorePath).exists()) {
+            release {
+                storeFile file(keystorePath)
+                storePassword System.getenv("TREANT_ARCADE_STORE_PASSWORD")
+                keyAlias System.getenv("TREANT_ARCADE_KEY_ALIAS")
+                keyPassword System.getenv("TREANT_ARCADE_KEY_PASSWORD")
+            }
         }
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.release
             minifyEnabled false
+            if (signingConfigs.findByName("release") != null) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
@@ -76,11 +84,17 @@ npx cap sync android
 
 ```bash
 cd app
+export ANDROID_HOME=~/Android/Sdk
 set -a; source ~/.config/homenet/treant-arcade-keystore.env; set +a
 cd android
 ./gradlew bundleRelease
-# → android/app/build/outputs/bundle/release/app-release.aab
+# → android/app/build/outputs/bundle/release/app-release.aab  (~4.3 MB, signed)
 ```
+
+The last build produced a `4.3 MB` signed `app-release.aab` whose upload-key
+cert is `CN=Treant Arcade, O=Peter Wicks, C=US` (self-signed, as an upload key
+should be; `jarsigner -verify` reports **jar verified**). A copy lives outside
+the repo at `~/treant-arcade-artifacts/app-release.aab`.
 
 Upload that `.aab` to the Play Console. For a quick sideload/test build instead
 of a store bundle, use `./gradlew assembleRelease` (produces an APK).
@@ -96,8 +110,11 @@ human string (e.g. `1.0.0`).
 ## Verifying a signed artifact
 
 ```bash
-# Confirm the AAB/APK is signed with the arcade key
-$ANDROID_HOME/build-tools/<ver>/apksigner verify --print-certs app-release.apk
+# Confirm the signed AAB carries the arcade upload key
+keytool -printcert -jarfile app-release.aab      # → Owner: CN=Treant Arcade, …
+jarsigner -verify app-release.aab                # → "jar verified."
+# (apksigner verifies APKs, not AABs, e.g. the debug APK:)
+$ANDROID_HOME/build-tools/35.0.0/apksigner verify --print-certs app-debug.apk
 # or inspect the keystore entry
 source ~/.config/homenet/treant-arcade-keystore.env
 keytool -list -v -keystore "$TREANT_ARCADE_KEYSTORE" \

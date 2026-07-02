@@ -3,6 +3,20 @@ apply plugin: 'com.android.application'
 android {
     namespace "dev.mcts.arcade"
     compileSdk rootProject.ext.compileSdkVersion
+    // Release signing reads the upload keystore + passwords from the environment
+    // (see ../../SIGNING.md). Nothing secret is committed; if the env vars are
+    // absent the release config is simply not wired, so debug builds still work.
+    def keystorePath = System.getenv("TREANT_ARCADE_KEYSTORE")
+    signingConfigs {
+        if (keystorePath != null && !keystorePath.isEmpty() && file(keystorePath).exists()) {
+            release {
+                storeFile file(keystorePath)
+                storePassword System.getenv("TREANT_ARCADE_STORE_PASSWORD")
+                keyAlias System.getenv("TREANT_ARCADE_KEY_ALIAS")
+                keyPassword System.getenv("TREANT_ARCADE_KEY_PASSWORD")
+            }
+        }
+    }
     defaultConfig {
         applicationId "dev.mcts.arcade"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -20,6 +34,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (signingConfigs.findByName("release") != null) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }

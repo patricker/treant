@@ -75,32 +75,43 @@ Play updates.
 
 ---
 
-## What's blocked on Peter (can't be done from this box)
+## Android build status — DONE (only Play upload remains)
+
+The Android SDK is installed on this box (`~/Android/Sdk`) and a **signed release
+AAB has been built locally**. Artifacts live outside the repo in
+`~/treant-arcade-artifacts/`:
+
+| Artifact | Size | Signing | Purpose |
+| --- | --- | --- | --- |
+| `app-release.aab` | 4.3 MB | arcade upload key (`CN=Treant Arcade`, self-signed) | Play Console upload |
+| `app-debug.apk` | 5.8 MB | Android debug key | sideload / test |
+
+The only Android step left is uploading `app-release.aab` to the Play Console
+(needs the $25 account below). Rebuild instructions are in [`SIGNING.md`](SIGNING.md).
+
+### Still blocked on Peter (can't be done from this box)
 
 | Blocker | Needed for | Cost / notes |
 | --- | --- | --- |
-| **Android SDK** (`sdkmanager` / Android Studio) | Building a local release AAB | Free. `sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"`, then set `ANDROID_HOME` and add `signingConfigs` (see SIGNING.md) |
 | **Google Play Console account** | Publishing to Play | One-time **$25** |
 | **Apple Developer Program** | Building/publishing iOS | **$99/yr** |
 | **A Mac with Xcode** | iOS `pod install`, build, archive, upload | macOS-only; this box is Linux |
 
-Everything up to "generate the native projects and bundle the web assets" is
-done. The remaining work is account signup + running the platform toolchains.
-
-### Installing the Android SDK (to build an AAB locally)
+### How the Android SDK was installed (for reference / a fresh box)
 
 ```bash
 # command-line tools only (no full Android Studio) is enough for CI-style builds
-mkdir -p ~/android-sdk/cmdline-tools
+mkdir -p ~/Android/Sdk/cmdline-tools
 # download commandlinetools-linux-*.zip from developer.android.com, unzip to latest/
-export ANDROID_HOME=~/android-sdk
+export ANDROID_HOME=~/Android/Sdk
 export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 yes | sdkmanager --licenses
-sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-# Capacitor 7 targets these; adjust if android/variables.gradle differs
+# match android/variables.gradle (compileSdkVersion 35):
+sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+# then write android/local.properties with: sdk.dir=/home/peter/Android/Sdk  (gitignored)
 ```
 
-Then follow [`SIGNING.md`](SIGNING.md) step 1–3 to produce a signed AAB.
+Then follow [`SIGNING.md`](SIGNING.md) to produce a signed AAB.
 
 ---
 
