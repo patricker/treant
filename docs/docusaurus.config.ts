@@ -2,6 +2,8 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import remarkCodeRegion from 'remark-code-region';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const config: Config = {
   title: 'Treant',
@@ -49,6 +51,26 @@ const config: Config = {
       {
         debug: false,
         offlineModeActivationStrategies: ['appInstalled', 'standalone', 'queryString'],
+        // plugin-pwa hard-codes globPatterns (no .wasm) AFTER spreading this
+        // config, so the treant engine would never be precached and offline
+        // play would be dead. manifestTransforms runs at inject time, when the
+        // hashed .wasm file exists in build/, so we append it there.
+        injectManifestConfig: {
+          manifestTransforms: [
+            async (entries: {url: string; revision: string | null; size: number}[]) => {
+              const buildDir = path.join(__dirname, 'build');
+              const wasm = fs
+                .readdirSync(buildDir)
+                .filter((f) => f.endsWith('.wasm'))
+                .map((f) => ({
+                  url: f,
+                  revision: null, // content-hashed filename is its own revision
+                  size: fs.statSync(path.join(buildDir, f)).size,
+                }));
+              return {manifest: [...entries, ...wasm], warnings: []};
+            },
+          ],
+        },
         pwaHead: [
           { tagName: 'link', rel: 'icon', href: '/img/icon-192.png' },
           { tagName: 'link', rel: 'manifest', href: '/manifest.json' },
