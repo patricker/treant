@@ -1,6 +1,7 @@
 use wasm_bindgen::prelude::*;
 
 mod amazons;
+mod baghchal;
 mod capturego;
 mod chomp;
 mod clobber;
@@ -40,6 +41,7 @@ mod types;
 mod wythoff;
 
 pub use amazons::AmazonsWasm;
+pub use baghchal::BaghchalWasm;
 pub use capturego::CaptureGoWasm;
 pub use chomp::ChompWasm;
 pub use clobber::ClobberWasm;

@@ -31,6 +31,7 @@ import { foxHounds } from './foxhounds';
 import { treblecross } from './treblecross';
 import { subtractSquare } from './subtractsquare';
 import { euclid } from './euclid';
+import { baghchal } from './baghchal';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -46,6 +47,7 @@ export const GAMES: GameDefinition[] = [
   nineMorris,
   amazons,
   foxHounds,
+  baghchal,
   reversi,
   hex,
   orderChaos,

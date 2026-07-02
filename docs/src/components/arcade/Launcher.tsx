@@ -9,7 +9,7 @@ import styles from './arcade.module.css';
 const CATEGORIES: { name: string; ids: string[] }[] = [
   { name: 'Family classics', ids: ['connect-four', 'tic-tac-toe', 'reversi', 'dots-and-boxes', 'mancala', 'oware', 'nim', 'quadline'] },
   { name: 'Connect & line', ids: ['hex', 'gomoku', 'pinch-five', 'connect-six', 'square-up', 'order-chaos', 'treblecross'] },
-  { name: 'Move & capture', ids: ['frontline', 'clobber', 'konane', 'nine-morris', 'amazons', 'fox-hounds', 'first-capture', 'trails', 'shift'] },
+  { name: 'Move & capture', ids: ['frontline', 'clobber', 'konane', 'nine-morris', 'amazons', 'fox-hounds', 'bagh-chal', 'first-capture', 'trails', 'shift'] },
   { name: 'Dice & solo', ids: ['pig', '2048'] },
   { name: 'Brain-teasers', ids: ['no-tac-toe', 'trap-three', 'chomp', 'wythoff', 'subtract-square', 'euclid', 'mu-torere', 'domineering', 'nogo', 'col', 'sim'] },
 ];

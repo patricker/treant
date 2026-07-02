@@ -36,6 +36,7 @@ export const RULES: Record<string, string> = {
   domineering: 'You and your opponent place dominoes on the grid, but you place yours vertically and they place theirs horizontally. The first player who cannot fit a domino loses.',
   amazons: 'Move one of your amazons like a chess queen (any distance in a straight line), then from its new square shoot an arrow the same way. The arrow burns its square forever. Trap your opponent to win.',
   'fox-hounds': 'You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.',
+  'bagh-chal': 'Goats move first. While goats remain in hand, place one goat on any empty point; once all are placed, step a goat one point along a line to an empty neighbour. Tigers step along a line too, or jump an adjacent goat — landing just beyond — to capture it. Tigers win by eating enough goats; goats win by blocking every tiger so none can move.',
   pig: 'Roll the die to build up a running total, then choose to bank it — but roll a 1 and you lose the whole turn’s points. First to reach the target score wins. Press your luck!',
   '2048': 'Swipe to slide all tiles one way; equal tiles that bump merge into one of double the value. A new tile appears after each move. Make a 2048 tile to win — but don’t fill the board.',
 };
