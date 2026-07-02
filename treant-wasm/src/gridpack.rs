@@ -416,8 +416,29 @@ impl MCTS for SuCfg {
 }
 
 // ================================================================ WASM API ====
+
+/// Parse a plain cell-index move ("12"), validating it against the board size.
+fn parse_cell(mov: &str, cols: usize, rows: usize) -> Option<u16> {
+    mov.parse::<u16>().ok().filter(|&v| (v as usize) < cols * rows)
+}
+
+/// Parse an Order & Chaos "cell,sym" move (sym is 0 = X or 1 = O).
+fn parse_oc_move(mov: &str, cols: usize, rows: usize) -> Option<OcMove> {
+    let (c, s) = mov.split_once(',')?;
+    let cell: u16 = c.parse().ok()?;
+    let sym: u8 = s.parse().ok()?;
+    if (cell as usize) < cols * rows && sym < 2 {
+        Some(OcMove { cell, sym })
+    } else {
+        None
+    }
+}
+
+// One WASM surface for every grid-pack game. `$movety` + `$parse` (a
+// `fn(&str, cols, rows) -> Option<$movety>`) are the only things that vary:
+// most games take a plain cell index, Order & Chaos takes a (cell, symbol) pair.
 macro_rules! cell_game_wasm {
-    ($wasm:ident, $game:ident, $cfg:ident, $eval:ident, $c:expr) => {
+    ($wasm:ident, $game:ident, $cfg:ident, $eval:ident, $c:expr, $movety:ty, $parse:expr) => {
         #[wasm_bindgen]
         pub struct $wasm {
             manager: MCTSManager<$cfg>,
@@ -447,7 +468,7 @@ macro_rules! cell_game_wasm {
             }
             pub fn get_stats(&self) -> JsValue {
                 let stats = types::build_stats(&self.manager, |_| None);
-                serde_wasm_bindgen::to_value(&stats).unwrap()
+                serde_wasm_bindgen::to_value(&stats).unwrap_or(JsValue::NULL)
             }
             pub fn get_board(&self) -> String {
                 board_string(&self.manager.tree().root_state().board)
@@ -469,9 +490,10 @@ macro_rules! cell_game_wasm {
                 crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
             }
             pub fn apply_move(&mut self, mov: &str) -> bool {
-                let m: u16 = match mov.parse() {
-                    Ok(v) if (v as usize) < self.cols * self.rows => v,
-                    _ => return false,
+                let parse: fn(&str, usize, usize) -> Option<$movety> = $parse;
+                let m: $movety = match parse(mov, self.cols, self.rows) {
+                    Some(v) => v,
+                    None => return false,
                 };
                 let mut s = self.manager.tree().root_state().clone();
                 if !s.available_moves().contains(&m) {
@@ -488,80 +510,12 @@ macro_rules! cell_game_wasm {
     };
 }
 
-cell_game_wasm!(Connect6Wasm, Connect6, C6Cfg, C6Eval, 1.6);
-cell_game_wasm!(SquavaWasm, Squava, SqCfg, SqEval, 1.4);
-cell_game_wasm!(NotaktoWasm, Notakto, NkCfg, NkEval, 1.4);
-cell_game_wasm!(SquareUpWasm, SquareUp, SuCfg, SuEval, 1.4);
-
-// Order & Chaos has a (cell, symbol) move, so its own thin wrapper.
-#[wasm_bindgen]
-pub struct OrderChaosWasm {
-    manager: MCTSManager<OcCfg>,
-    cols: usize,
-    rows: usize,
-}
-#[wasm_bindgen]
-impl OrderChaosWasm {
-    #[wasm_bindgen(constructor)]
-    pub fn new(cols: u32, rows: u32) -> Self {
-        let cols = (cols as usize).clamp(3, MAX_DIM);
-        let rows = (rows as usize).clamp(3, MAX_DIM);
-        Self { manager: MCTSManager::new(OrderChaos::new(cols, rows), OcCfg, OcEval, UCTPolicy::new(1.5), ()), cols, rows }
-    }
-    pub fn cols(&self) -> u32 {
-        self.cols as u32
-    }
-    pub fn rows(&self) -> u32 {
-        self.rows as u32
-    }
-    pub fn playout_n(&mut self, n: u32) {
-        self.manager.playout_n(n as u64);
-    }
-    pub fn get_stats(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap()
-    }
-    pub fn get_board(&self) -> String {
-        board_string(&self.manager.tree().root_state().board)
-    }
-    pub fn current_player(&self) -> u32 {
-        self.manager.tree().root_state().current as u32
-    }
-    pub fn is_terminal(&self) -> bool {
-        self.manager.tree().root_state().term().is_some()
-    }
-    pub fn result(&self) -> String {
-        let s = self.manager.tree().root_state();
-        result_str(s.term(), s.current)
-    }
-    pub fn best_move(&self) -> Option<String> {
-        self.manager.best_move().map(|m| format!("{m}"))
-    }
-    pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
-        crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
-    }
-    /// Move format: "cell,sym" where sym is 0 (X) or 1 (O).
-    pub fn apply_move(&mut self, mov: &str) -> bool {
-        let parts: Vec<&str> = mov.split(',').collect();
-        if parts.len() != 2 {
-            return false;
-        }
-        let (cell, sym): (u16, u8) = match (parts[0].parse(), parts[1].parse()) {
-            (Ok(c), Ok(s)) if (c as usize) < self.cols * self.rows && s < 2 => (c, s),
-            _ => return false,
-        };
-        let m = OcMove { cell, sym };
-        let mut st = self.manager.tree().root_state().clone();
-        if !st.available_moves().contains(&m) {
-            return false;
-        }
-        st.make_move(&m);
-        self.manager = MCTSManager::new(st, OcCfg, OcEval, UCTPolicy::new(1.5), ());
-        true
-    }
-    pub fn reset(&mut self) {
-        self.manager = MCTSManager::new(OrderChaos::new(self.cols, self.rows), OcCfg, OcEval, UCTPolicy::new(1.5), ());
-    }
-}
+cell_game_wasm!(Connect6Wasm, Connect6, C6Cfg, C6Eval, 1.6, u16, parse_cell);
+cell_game_wasm!(SquavaWasm, Squava, SqCfg, SqEval, 1.4, u16, parse_cell);
+cell_game_wasm!(NotaktoWasm, Notakto, NkCfg, NkEval, 1.4, u16, parse_cell);
+cell_game_wasm!(SquareUpWasm, SquareUp, SuCfg, SuEval, 1.4, u16, parse_cell);
+// Order & Chaos differs only in its (cell, symbol) move — "cell,sym", sym 0/1.
+cell_game_wasm!(OrderChaosWasm, OrderChaos, OcCfg, OcEval, 1.5, OcMove, parse_oc_move);
 
 #[cfg(test)]
 mod tests {
@@ -705,6 +659,34 @@ mod tests {
         }
         assert!(g.is_terminal());
         assert_eq!(g.result(), "1");
+    }
+
+    #[test]
+    fn result_is_empty_while_in_progress() {
+        // The canonical contract: result() is "" until a terminal position. Pin it
+        // for a macro-generated game both fresh and mid-game (never asserted before).
+        let mut g = NotaktoWasm::new(3, 3);
+        assert_eq!(g.result(), "", "fresh board");
+        assert!(!g.is_terminal());
+        assert!(g.apply_move("0"));
+        assert_eq!(g.result(), "", "after one move");
+        assert!(!g.is_terminal());
+    }
+
+    #[test]
+    fn connect6_result_maps_to_bare_winner_digit() {
+        // Connect6's 2-stones-per-turn `current` toggling makes the terminal
+        // mapping non-obvious, so assert it directly. Black (seat 0) builds a
+        // 6-in-a-row across the top row on a 9×9; white dumps stones in row 4
+        // (max run 5, no line). result() must be the bare digit "1", never "P1".
+        let mut g = Connect6Wasm::new(9, 9);
+        let moves = ["0", "40", "41", "1", "2", "42", "43", "3", "4", "44", "45", "5"];
+        for m in moves {
+            assert_eq!(g.result(), "", "still in progress before {m}");
+            assert!(g.apply_move(m), "move {m}");
+        }
+        assert!(g.is_terminal());
+        assert_eq!(g.result(), "1"); // black (seat 0) completed the line
     }
 
     #[test]
