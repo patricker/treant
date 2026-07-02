@@ -1,9 +1,11 @@
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 function TrailsBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
   const { cols, rows } = params;
+  const { t } = useT();
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
   // every legal move shares the same `from` (the current token); collect targets
   let from = -1;
@@ -35,7 +37,7 @@ function TrailsBoard({ board, params, interactive, legalMoves, onMove }: BoardPr
                     : 'var(--arc-p2)'
                   : 'var(--arc-soft)',
             }}
-            aria-label={`Cell ${i + 1}: ${isWall ? 'wall' : isToken ? ch : 'empty'}`}
+            aria-label={t('Cell {n}: {state}', { n: i + 1, state: isWall ? t('wall') : isToken ? ch : t('empty') })}
           >
             {isToken ? <span className={styles.trailsDot} /> : isTarget ? '•' : ''}
           </button>

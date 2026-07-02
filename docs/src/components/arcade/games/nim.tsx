@@ -1,4 +1,5 @@
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
@@ -24,6 +25,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 }
 
 function NimBoard({ board, interactive, onMove }: BoardProps) {
+  const { t, tn } = useT();
   const stones = Number(board) || 0;
   return (
     <div className={styles.nimWrap}>
@@ -32,21 +34,21 @@ function NimBoard({ board, interactive, onMove }: BoardProps) {
           <span key={i} className={styles.nimStone} />
         ))}
       </div>
-      <div className={styles.nimCount}>{stones} stones left</div>
+      <div className={styles.nimCount}>{tn(stones, '{n} stone left', '{n} stones left')}</div>
       <div className={styles.nimButtons}>
         <button
           className={styles.nimTake}
           disabled={!interactive || stones < 1}
           onClick={() => onMove('Take1')}
         >
-          Take 1
+          {t('Take 1')}
         </button>
         <button
           className={styles.nimTake}
           disabled={!interactive || stones < 2}
           onClick={() => onMove('Take2')}
         >
-          Take 2
+          {t('Take 2')}
         </button>
       </div>
     </div>

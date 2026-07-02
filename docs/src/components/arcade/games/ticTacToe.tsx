@@ -1,6 +1,7 @@
 import type { GameDefinition, GameHandle, GameParams, BoardProps } from '../gameTypes';
 import styles from '../arcade.module.css';
 import { usePrevBoard, changedIndex } from '../boardDiff';
+import { useT } from '../i18n';
 
 const COLOR: Record<string, string> = {
   X: 'var(--arc-p1)',
@@ -34,6 +35,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 
 function TicTacToeBoard({ board, params, interactive, onMove }: BoardProps) {
   const { cols, rows } = params;
+  const { t } = useT();
   const placed = changedIndex(usePrevBoard(board), board);
   return (
     <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
@@ -46,7 +48,7 @@ function TicTacToeBoard({ board, params, interactive, onMove }: BoardProps) {
             disabled={!interactive || ch !== ' '}
             onClick={() => onMove(String(i))}
             style={{ color: COLOR[ch] }}
-            aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+            aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
           >
             {ch === ' ' ? '' : ch}
           </button>

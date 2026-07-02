@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 import { usePrevBoard, changedIndex } from '../boardDiff';
 
@@ -36,6 +37,7 @@ export function cellHandle(g: any, cols: number, rows: number): GameHandle {
 // A generic grid board: tap an empty cell to place. Reused by Connect Six,
 // Trap-Three, No-Tac-Toe and Square Up.
 export function MarkGridBoard({ board, params, interactive, onMove }: BoardProps) {
+  const { t } = useT();
   const { cols, rows } = params;
   const placed = changedIndex(usePrevBoard(board), board);
   return (
@@ -49,7 +51,7 @@ export function MarkGridBoard({ board, params, interactive, onMove }: BoardProps
             disabled={!interactive || ch !== ' '}
             onClick={() => onMove(String(i))}
             style={{ color: COLOR[ch], fontSize: cols > 7 ? '0.9rem' : undefined }}
-            aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+            aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
           >
             {ch === ' ' ? '' : ch}
           </button>
@@ -189,13 +191,14 @@ function ocHandle(g: any, cols: number, rows: number): GameHandle {
 }
 
 function OrderChaosBoard({ board, params, interactive, onMove }: BoardProps) {
+  const { t } = useT();
   const { cols, rows } = params;
   const [sym, setSym] = useState(0); // 0 = X, 1 = O
   const placed = changedIndex(usePrevBoard(board), board);
   return (
     <div>
       <div className={styles.ocToggle}>
-        <span className={styles.ocLabel}>Place:</span>
+        <span className={styles.ocLabel}>{t('Place:')}</span>
         <button
           className={`${styles.ocSym} ${sym === 0 ? styles.ocSymOn : ''}`}
           style={{ color: sym === 0 ? '#fff' : COLOR.X }}
@@ -221,7 +224,7 @@ function OrderChaosBoard({ board, params, interactive, onMove }: BoardProps) {
               disabled={!interactive || ch !== ' '}
               onClick={() => onMove(`${i},${sym}`)}
               style={{ color: COLOR[ch], fontSize: cols > 7 ? '0.9rem' : undefined }}
-              aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+              aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
             >
               {ch === ' ' ? '' : ch}
             </button>

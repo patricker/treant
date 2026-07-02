@@ -1,9 +1,11 @@
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 function ReversiBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
   const { cols, rows } = params;
+  const { t } = useT();
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
   const mustPass = legalMoves.length === 1 && legalMoves[0] === 'pass';
   const legalSet = new Set(legalMoves.filter((m) => m !== 'pass'));
@@ -25,7 +27,7 @@ function ReversiBoard({ board, params, interactive, legalMoves, onMove }: BoardP
               className={styles.reversiCell}
               disabled={!isLegal}
               onClick={() => onMove(String(i))}
-              aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+              aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
             >
               {ch !== ' ' ? (
                 <span
@@ -41,7 +43,7 @@ function ReversiBoard({ board, params, interactive, legalMoves, onMove }: BoardP
       </div>
       {mustPass && interactive && (
         <button className={styles.playBtn} style={{ marginTop: 12 }} onClick={() => onMove('pass')}>
-          No moves — Pass ⤳
+          {t('No moves — Pass ⤳')}
         </button>
       )}
     </div>

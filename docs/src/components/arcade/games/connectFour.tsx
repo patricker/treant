@@ -1,6 +1,7 @@
 import type { GameDefinition, GameHandle, GameParams, BoardProps } from '../gameTypes';
 import styles from '../arcade.module.css';
 import { usePrevBoard, changedIndex } from '../boardDiff';
+import { useT } from '../i18n';
 
 const DISC = ['', 'var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)', 'var(--arc-p5)', 'var(--arc-p6)'];
 
@@ -26,6 +27,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 }
 
 function ConnectFourBoard({ board, params, interactive, onMove }: BoardProps) {
+  const { t } = useT();
   const { cols, rows } = params;
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
   const dropped = changedIndex(usePrevBoard(board), board);
@@ -40,7 +42,7 @@ function ConnectFourBoard({ board, params, interactive, onMove }: BoardProps) {
             className={styles.cfColButton}
             disabled={!interactive || !legalCols.has(c)}
             onClick={() => onMove(String(c))}
-            aria-label={`Drop in column ${c + 1}`}
+            aria-label={t('Drop in column {n}', { n: c + 1 })}
           >
             ▾
           </button>

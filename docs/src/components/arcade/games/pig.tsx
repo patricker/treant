@@ -1,4 +1,5 @@
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 const SEAT = ['var(--arc-p1)', 'var(--arc-p2)', 'var(--arc-p3)', 'var(--arc-p4)', 'var(--arc-p5)', 'var(--arc-p6)'];
@@ -21,6 +22,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 }
 
 function PigBoard({ board, currentPlayer, interactive, onMove }: BoardProps) {
+  const { t } = useT();
   // "s0,s1,...|turn|roll|target"
   const [scoresStr, turnStr, rollStr, targetStr] = board.split('|');
   const scores = (scoresStr ?? '0').split(',').map(Number);
@@ -50,16 +52,16 @@ function PigBoard({ board, currentPlayer, interactive, onMove }: BoardProps) {
       <div className={styles.pigCenter}>
         <div className={styles.pigDie}>{roll ? PIPS[roll] : '🎲'}</div>
         <div className={styles.pigTurn}>
-          Turn total <strong>{turn}</strong> · first to {target}
+          {t('Turn total {turn} · first to {target}', { turn, target })}
         </div>
       </div>
 
       <div className={styles.pigButtons}>
         <button className={styles.pigRoll} disabled={!interactive} onClick={() => onMove('Roll')}>
-          🎲 Roll
+          {t('🎲 Roll')}
         </button>
         <button className={styles.pigHold} disabled={!interactive || turn === 0} onClick={() => onMove('Hold')}>
-          ✋ Hold ({turn})
+          {t('✋ Hold ({turn})', { turn })}
         </button>
       </div>
     </div>

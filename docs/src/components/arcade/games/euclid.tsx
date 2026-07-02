@@ -1,5 +1,6 @@
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
 import styles from '../arcade.module.css';
+import { useT } from '../i18n';
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
   const g = new wasm.EuclidWasm(p.a, p.b);
@@ -21,6 +22,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 }
 
 function EuclidBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
+  const { t } = useT();
   const [a, b] = board.split(',').map(Number);
   const hi = Math.max(a, b);
   const targets = legalMoves.map(Number).filter((n) => !Number.isNaN(n)).sort((x, y) => y - x);
@@ -30,11 +32,11 @@ function EuclidBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
         <span className={`${styles.euclidTile} ${a >= b ? styles.euclidBig : ''}`}>{a}</span>
         <span className={styles.euclidTile + ' ' + (b > a ? styles.euclidBig : '')}>{b}</span>
       </div>
-      <div className={styles.nimCount}>Reduce the larger number ({hi}) toward zero</div>
+      <div className={styles.nimCount}>{t('Reduce the larger number ({hi}) toward zero', { hi })}</div>
       <div className={styles.euclidButtons}>
-        {targets.map((t) => (
-          <button key={t} className={styles.nimTake} disabled={!interactive} onClick={() => onMove(String(t))}>
-            {hi} → {t}
+        {targets.map((tgt) => (
+          <button key={tgt} className={styles.nimTake} disabled={!interactive} onClick={() => onMove(String(tgt))}>
+            {hi} → {tgt}
           </button>
         ))}
       </div>

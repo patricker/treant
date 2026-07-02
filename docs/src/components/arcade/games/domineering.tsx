@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
 import styles from '../arcade.module.css';
+import { useT } from '../i18n';
 
 // Domineering: each player places a domino, but player 0 (Vertical) places it
 // downward and player 1 (Horizontal) places it rightward. A move is the anchor
@@ -9,6 +10,7 @@ import styles from '../arcade.module.css';
 // whoever is to move, so the board just renders them and previews the partner
 // cell on hover.
 function DomineeringBoard({ board, params, currentPlayer, interactive, legalMoves, onMove }: BoardProps) {
+  const { t } = useT();
   const { cols, rows } = params;
   const [hover, setHover] = useState<number | null>(null);
   const legal = new Set(legalMoves.map(Number).filter((n) => !Number.isNaN(n)));
@@ -25,7 +27,7 @@ function DomineeringBoard({ board, params, currentPlayer, interactive, legalMove
   return (
     <div>
       <div className={styles.domHint}>
-        {vertical ? '↕ Vertical — place a domino downward' : '↔ Horizontal — place a domino rightward'}
+        {vertical ? t('↕ Vertical — place a domino downward') : t('↔ Horizontal — place a domino rightward')}
       </div>
       <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, maxWidth: cols * 46 }}>
         {Array.from({ length: cols * rows }, (_, i) => {
@@ -49,7 +51,7 @@ function DomineeringBoard({ board, params, currentPlayer, interactive, legalMove
               onMouseEnter={() => setHover(i)}
               onMouseLeave={() => setHover((h) => (h === i ? null : h))}
               style={{ background: bg }}
-              aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+              aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
             />
           );
         })}

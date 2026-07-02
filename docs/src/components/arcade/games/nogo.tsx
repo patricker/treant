@@ -1,6 +1,7 @@
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
 import { usePrevBoard, changedIndex } from '../boardDiff';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 const COLOR: Record<string, string> = {
@@ -13,6 +14,7 @@ const COLOR: Record<string, string> = {
 // is driven by the engine's legalMoves rather than "any empty cell".
 function NoGoBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
   const { cols, rows } = params;
+  const { t } = useT();
   const legal = new Set(legalMoves.map(Number).filter((n) => !Number.isNaN(n)));
   const placed = changedIndex(usePrevBoard(board), board);
   return (
@@ -27,7 +29,7 @@ function NoGoBoard({ board, params, interactive, legalMoves, onMove }: BoardProp
             disabled={!isLegal}
             onClick={() => onMove(String(i))}
             style={{ color: COLOR[ch] }}
-            aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+            aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
           >
             {ch === ' ' ? '' : '●'}
           </button>

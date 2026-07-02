@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { BoardProps, GameDefinition, GameHandle } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 // Reusable handle for movement games whose WASM exposes `legal_moves()` as
@@ -51,6 +52,7 @@ export function Piece({ ch, kind }: { ch: string; kind: 'pawn' | 'disc' }) {
 // the movement/race games).
 export function makeMoveBoard(pieceKind: 'pawn' | 'disc') {
   return function MoveBoardInner({ board, params, interactive, legalMoves, onMove }: BoardProps) {
+    const { t } = useT();
     const { cols, rows } = params;
     const [sel, setSel] = useState<number | null>(null);
     // Clear any selection once the board actually changes (a move landed, or the
@@ -82,7 +84,7 @@ export function makeMoveBoard(pieceKind: 'pawn' | 'disc') {
 
     return (
       <div>
-        <div className={styles.shiftCaption}>{sel == null ? 'Tap a piece' : 'Tap where to move'}</div>
+        <div className={styles.shiftCaption}>{sel == null ? t('Tap a piece') : t('Tap where to move')}</div>
         <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
           {cells.map((ch, i) => {
             const isSel = i === sel;
@@ -93,7 +95,7 @@ export function makeMoveBoard(pieceKind: 'pawn' | 'disc') {
                 className={`${styles.tttCell} ${isSel ? styles.shiftSel : ''} ${isTarget ? styles.moveTarget : ''}`}
                 disabled={!interactive || (!fromTo.has(i) && !isTarget)}
                 onClick={() => tap(i)}
-                aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+                aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
               >
                 {ch === 'X' || ch === 'O' ? <Piece ch={ch} kind={pieceKind} /> : isTarget ? <span className={styles.moveDot} /> : ''}
               </button>

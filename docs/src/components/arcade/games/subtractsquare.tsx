@@ -1,4 +1,5 @@
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
@@ -23,6 +24,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 }
 
 function SubtractSquareBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
+  const { t, tn } = useT();
   const stones = Number(board) || 0;
   const squares = legalMoves.map(Number).filter((n) => !Number.isNaN(n)).sort((a, b) => a - b);
   return (
@@ -32,7 +34,7 @@ function SubtractSquareBoard({ board, interactive, legalMoves, onMove }: BoardPr
           <span key={i} className={styles.nimStone} />
         ))}
       </div>
-      <div className={styles.nimCount}>{stones} stones left</div>
+      <div className={styles.nimCount}>{tn(stones, '{n} stone left', '{n} stones left')}</div>
       <div className={styles.nimButtons}>
         {squares.map((k) => (
           <button
@@ -41,7 +43,7 @@ function SubtractSquareBoard({ board, interactive, legalMoves, onMove }: BoardPr
             disabled={!interactive}
             onClick={() => onMove(String(k))}
           >
-            Take {k}
+            {t('Take {k}', { k })}
           </button>
         ))}
       </div>

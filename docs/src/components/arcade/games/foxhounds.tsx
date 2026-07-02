@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 // Select-then-move on the dark squares of a checkerboard. Fox (X) and Hounds
 // (O) get distinct glyphs; the light/dark tint makes the diagonal-only movement
 // legible. Legal targets come straight from the engine's "from-to" moves.
 function FoxHoundsBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
+  const { t } = useT();
   const { cols, rows } = params;
   const [sel, setSel] = useState<number | null>(null);
   useEffect(() => setSel(null), [board]); // drop stale selection after any move
@@ -35,7 +37,7 @@ function FoxHoundsBoard({ board, params, interactive, legalMoves, onMove }: Boar
 
   return (
     <div>
-      <div className={styles.shiftCaption}>{sel == null ? 'Tap a piece' : 'Tap where to move'}</div>
+      <div className={styles.shiftCaption}>{sel == null ? t('Tap a piece') : t('Tap where to move')}</div>
       <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {Array.from({ length: cols * rows }, (_, i) => {
           const ch = board[i] ?? ' ';
@@ -50,7 +52,10 @@ function FoxHoundsBoard({ board, params, interactive, legalMoves, onMove }: Boar
               className={`${styles.fhCell} ${dark ? styles.fhDark : ''} ${isSel ? styles.shiftSel : ''} ${isTarget ? styles.moveTarget : ''}`}
               disabled={!interactive || (!fromTo.has(i) && !isTarget)}
               onClick={() => tap(i)}
-              aria-label={`Cell ${i + 1}: ${ch === 'X' ? 'fox' : ch === 'O' ? 'hound' : 'empty'}`}
+              aria-label={t('Cell {n}: {state}', {
+                n: i + 1,
+                state: ch === 'X' ? t('fox') : ch === 'O' ? t('hound') : t('empty'),
+              })}
             >
               {ch === 'X' ? '🦊' : ch === 'O' ? '🐕' : isTarget ? '•' : ''}
             </button>

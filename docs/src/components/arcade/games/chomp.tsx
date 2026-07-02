@@ -1,13 +1,15 @@
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
 import styles from '../arcade.module.css';
+import { useT } from '../i18n';
 
 function ChompBoard({ board, params, interactive, onMove }: BoardProps) {
+  const { t } = useT();
   const { cols, rows } = params;
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
   return (
     <div>
-      <div className={styles.shiftCaption}>Eat a cookie + everything right & below. Don&apos;t eat the 💀!</div>
+      <div className={styles.shiftCaption}>{t("Eat a cookie + everything right & below. Don't eat the 💀!")}</div>
       <div className={styles.chompGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {cells.map((ch, i) => {
           const present = ch === '#';
@@ -22,7 +24,7 @@ function ChompBoard({ board, params, interactive, onMove }: BoardProps) {
                 visibility: present ? 'visible' : 'hidden',
                 background: poison ? 'var(--arc-ink)' : 'var(--arc-p2)',
               }}
-              aria-label={`Cell ${i + 1}: ${present ? (poison ? 'poison' : 'cookie') : 'eaten'}`}
+              aria-label={t('Cell {n}: {state}', { n: i + 1, state: present ? (poison ? t('poison') : t('cookie')) : t('eaten') })}
             >
               {poison && present ? '💀' : ''}
             </button>

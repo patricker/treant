@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
 import styles from '../arcade.module.css';
+import { useT } from '../i18n';
 
 const COLOR: Record<string, string> = {
   X: 'var(--arc-p1)',
@@ -13,6 +14,7 @@ const COLOR: Record<string, string> = {
 // engine's legal_moves() are "from-to-arrow" triples, so the board just indexes
 // into them by the choices made so far.
 function AmazonsBoard({ board, params, currentPlayer, interactive, legalMoves, onMove }: BoardProps) {
+  const { t } = useT();
   const { cols, rows } = params;
   const [from, setFrom] = useState<number | null>(null);
   const [to, setTo] = useState<number | null>(null);
@@ -65,7 +67,7 @@ function AmazonsBoard({ board, params, currentPlayer, interactive, legalMoves, o
   };
 
   const caption =
-    phase === 'pick' ? 'Tap one of your amazons' : phase === 'move' ? 'Tap where to move' : 'Tap where to shoot the arrow';
+    phase === 'pick' ? t('Tap one of your amazons') : phase === 'move' ? t('Tap where to move') : t('Tap where to shoot the arrow');
   const myGlyph = currentPlayer === 0 ? 'X' : 'O';
 
   return (
@@ -97,7 +99,7 @@ function AmazonsBoard({ board, params, currentPlayer, interactive, legalMoves, o
                 background: ch === '#' ? 'var(--arc-burnt, #4a3f5c)' : undefined,
                 fontSize: cols > 6 ? '1rem' : undefined,
               }}
-              aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch === '#' ? 'burnt' : ch}`}
+              aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch === '#' ? t('burnt') : ch })}
             >
               {ch === 'X' || ch === 'O' ? '♛' : ch === ' ' && isMoveTarget ? '•' : ''}
             </button>

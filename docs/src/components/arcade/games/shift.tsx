@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
 import styles from '../arcade.module.css';
 import { usePrevBoard, changedIndex } from '../boardDiff';
+import { useT } from '../i18n';
 
 const SYM = ['X', 'O', 'A', 'B', 'C', 'D'];
 const SEAT_COLOR: Record<string, string> = {
@@ -45,6 +46,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 
 function ShiftBoard({ board, params, currentPlayer, interactive, onMove }: BoardProps) {
   const { cols, rows } = params;
+  const { t } = useT();
   const me = SYM[currentPlayer];
   const [sel, setSel] = useState<number | null>(null);
   useEffect(() => setSel(null), [board]); // drop stale selection after any move
@@ -78,10 +80,10 @@ function ShiftBoard({ board, params, currentPlayer, interactive, onMove }: Board
     <div>
       <div className={styles.shiftCaption}>
         {placement
-          ? 'Place your pieces'
+          ? t('Place your pieces')
           : sel === null
-            ? 'Tap a piece to pick it up'
-            : 'Tap an empty square to slide'}
+            ? t('Tap a piece to pick it up')
+            : t('Tap an empty square to slide')}
       </div>
       <div className={styles.shiftGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {cells.map((ch, i) => (
@@ -91,7 +93,7 @@ function ShiftBoard({ board, params, currentPlayer, interactive, onMove }: Board
             disabled={!interactive}
             onClick={() => tap(i)}
             style={{ color: ch === ' ' ? 'var(--ifm-color-emphasis-300)' : SEAT_COLOR[ch] }}
-            aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+            aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
           >
             {ch === ' ' ? '·' : ch}
           </button>

@@ -2,11 +2,13 @@ import type { JSX } from 'react';
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
 import styles from '../arcade.module.css';
+import { useT } from '../i18n';
 
 const P0 = 'var(--arc-p1)';
 const P1 = 'var(--arc-p2)';
 
 function DotsBoxesBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
+  const { t } = useT();
   const C = params.cols;
   const R = params.rows;
   const [edgesStr = '', boxesStr = '', scoresStr = '0,0'] = board.split('|');
@@ -28,7 +30,7 @@ function DotsBoxesBoard({ board, params, interactive, legalMoves, onMove }: Boar
         className={styles.dbEdge}
         disabled={!isLegal}
         onClick={() => onMove(String(e))}
-        aria-label={`Edge ${e}${claimed ? ' claimed' : ''}`}
+        aria-label={claimed ? t('Edge {e} claimed', { e }) : t('Edge {e}', { e })}
         style={{
           width: horizontal ? '70%' : '5px',
           height: horizontal ? '5px' : '70%',

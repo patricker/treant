@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 function pos(i: number): { x: number; y: number } {
@@ -10,6 +11,7 @@ function pos(i: number): { x: number; y: number } {
 }
 
 function MuTorereBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
+  const { t } = useT();
   const [sel, setSel] = useState<number | null>(null);
   useEffect(() => setSel(null), [board]); // drop stale selection after any move
   const cells = Array.from({ length: 9 }, (_, i) => board[i] ?? ' ');
@@ -62,7 +64,7 @@ function MuTorereBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
               top: `${p.y}%`,
               background: ch === 'X' ? 'var(--arc-p1)' : ch === 'O' ? 'var(--arc-p2)' : 'var(--arc-soft)',
             }}
-            aria-label={`Point ${i}: ${ch === ' ' ? 'empty' : ch}`}
+            aria-label={t('Point {n}: {state}', { n: i, state: ch === ' ' ? t('empty') : ch })}
           />
         );
       })}

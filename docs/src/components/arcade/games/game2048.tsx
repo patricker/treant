@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 import { usePrevBoard } from '../boardDiff';
 
@@ -41,6 +42,7 @@ function makeHandle(wasm: any, _p: GameParams): GameHandle {
 }
 
 function Game2048Board({ board, interactive, onMove }: BoardProps) {
+  const { t } = useT();
   const tiles = board.split(',').map(Number);
   const prevBoard = usePrevBoard(board);
   const prevTiles = prevBoard ? prevBoard.split(',').map(Number) : [];
@@ -112,7 +114,7 @@ function Game2048Board({ board, interactive, onMove }: BoardProps) {
           className={styles.g2048Arrow}
           disabled={!interactive}
           onClick={() => onMove('Up')}
-          aria-label="Up"
+          aria-label={t('Up')}
         >
           ⬆️
         </button>
@@ -121,7 +123,7 @@ function Game2048Board({ board, interactive, onMove }: BoardProps) {
             className={styles.g2048Arrow}
             disabled={!interactive}
             onClick={() => onMove('Left')}
-            aria-label="Left"
+            aria-label={t('Left')}
           >
             ⬅️
           </button>
@@ -129,7 +131,7 @@ function Game2048Board({ board, interactive, onMove }: BoardProps) {
             className={styles.g2048Arrow}
             disabled={!interactive}
             onClick={() => onMove('Down')}
-            aria-label="Down"
+            aria-label={t('Down')}
           >
             ⬇️
           </button>
@@ -137,7 +139,7 @@ function Game2048Board({ board, interactive, onMove }: BoardProps) {
             className={styles.g2048Arrow}
             disabled={!interactive}
             onClick={() => onMove('Right')}
-            aria-label="Right"
+            aria-label={t('Right')}
           >
             ➡️
           </button>

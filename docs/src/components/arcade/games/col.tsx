@@ -2,11 +2,13 @@ import type { BoardProps, GameDefinition } from '../gameTypes';
 import { moveHandle } from './frontline';
 import { usePrevBoard, changedIndex } from '../boardDiff';
 import styles from '../arcade.module.css';
+import { useT } from '../i18n';
 
 // Col fills cells with solid colour "territory". Legal cells are a subset of
 // the empties (those not touching your own colour), so the board is driven by
 // the engine's legalMoves.
 function ColBoard({ board, params, currentPlayer, interactive, legalMoves, onMove }: BoardProps) {
+  const { t } = useT();
   const { cols, rows } = params;
   const legal = new Set(legalMoves.map(Number).filter((n) => !Number.isNaN(n)));
   const placed = changedIndex(usePrevBoard(board), board);
@@ -24,7 +26,7 @@ function ColBoard({ board, params, currentPlayer, interactive, legalMoves, onMov
             disabled={!isLegal}
             onClick={() => onMove(String(i))}
             style={{ background: fill, ['--col-hint' as string]: myColor }}
-            aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+            aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
           />
         );
       })}

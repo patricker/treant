@@ -1,4 +1,5 @@
 import type { BoardProps, GameDefinition, GameHandle, GameParams } from '../gameTypes';
+import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
@@ -37,6 +38,7 @@ function hexPoints(cx: number, cy: number) {
 }
 
 function HexBoard({ board, params, interactive, onMove }: BoardProps) {
+  const { t } = useT();
   const n = params.size;
   const tl = center(0, 0);
   const tr = center(0, n - 1);
@@ -53,9 +55,9 @@ function HexBoard({ board, params, interactive, onMove }: BoardProps) {
     <div>
       <div className={styles.shiftCaption}>
         <span className={styles.hexSwatch} style={{ background: 'var(--arc-p1)' }} />
-        Red joins top ↕ bottom &nbsp;·&nbsp;
+        {t('Red joins top ↕ bottom')} &nbsp;·&nbsp;
         <span className={styles.hexSwatch} style={{ background: 'var(--arc-p2)' }} />
-        Gold joins left ↔ right
+        {t('Gold joins left ↔ right')}
       </div>
       <div className={styles.hexBoardWrap}>
         <svg viewBox={viewBox} className={styles.hexSvg}>
@@ -82,7 +84,7 @@ function HexBoard({ board, params, interactive, onMove }: BoardProps) {
                   strokeWidth="0.6"
                   style={{ cursor: clickable ? 'pointer' : 'default' }}
                   onClick={clickable ? () => onMove(String(i)) : undefined}
-                  aria-label={`Cell ${i + 1}: ${ch === ' ' ? 'empty' : ch}`}
+                  aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
                 />
               );
             }),
