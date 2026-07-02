@@ -42,7 +42,25 @@ const config: Config = {
     ],
   ],
 
-  plugins: ['./plugins/wasm-plugin.js'],
+  plugins: [
+    './plugins/wasm-plugin.js',
+    [
+      '@docusaurus/plugin-pwa',
+      {
+        debug: false,
+        offlineModeActivationStrategies: ['appInstalled', 'standalone', 'queryString'],
+        pwaHead: [
+          { tagName: 'link', rel: 'icon', href: '/img/icon-192.png' },
+          { tagName: 'link', rel: 'manifest', href: '/manifest.json' },
+          { tagName: 'meta', name: 'theme-color', content: '#1c1830' },
+          { tagName: 'meta', name: 'apple-mobile-web-app-capable', content: 'yes' },
+          { tagName: 'meta', name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+          { tagName: 'link', rel: 'apple-touch-icon', href: '/img/icon-180.png' },
+          { tagName: 'link', rel: 'mask-icon', href: '/img/favicon.svg', color: '#1c1830' },
+        ],
+      },
+    ],
+  ],
 
   themeConfig: {
     colorMode: {

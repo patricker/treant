@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@docusaurus/core": "3.9.2",
+    "@docusaurus/plugin-pwa": "^3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
     "@mdx-js/react": "^3.0.0",
     "@types/d3-hierarchy": "^3.1.7",
@@ -24,8 +25,8 @@
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "treant-wasm": "file:../treant-wasm/pkg",
-    "remark-code-region": "^0.2.0"
+    "remark-code-region": "^0.2.0",
+    "treant-wasm": "file:../treant-wasm/pkg"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.9.2",
