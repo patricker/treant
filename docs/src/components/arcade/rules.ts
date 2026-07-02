@@ -39,6 +39,7 @@ export const RULES: Record<string, string> = {
   'fox-hounds': 'You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.',
   'bagh-chal': 'Goats move first. While goats remain in hand, place one goat on any empty point; once all are placed, step a goat one point along a line to an empty neighbour. Tigers step along a line too, or jump an adjacent goat — landing just beyond — to capture it. Tigers win by eating enough goats; goats win by blocking every tiger so none can move.',
   pig: 'Roll the die to build up a running total, then choose to bank it — but roll a 1 and you lose the whole turn’s points. First to reach the target score wins. Press your luck!',
+  climb: 'Roll four dice and split them into two column sums; move your climbers up those columns (at most three columns per turn). Keep rolling to climb higher — but a roll with no legal pairing busts and wipes this turn’s progress. Stop to bank your climbers; reach the top of a column to claim it. First to claim the target number of columns wins.',
   '2048': 'Swipe to slide all tiles one way; equal tiles that bump merge into one of double the value. A new tile appears after each move. Make a 2048 tile to win — but don’t fill the board.',
 };
 

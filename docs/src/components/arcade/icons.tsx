@@ -4,6 +4,15 @@ import { gameById } from './games';
 // Consistent flat icon set. All use `currentColor`, so they pick up the
 // surrounding text color (white on the hero, dark on tiles/headers).
 const GLYPHS: Record<string, JSX.Element> = {
+  climb: (
+    // a stepped mountain with a flag planted on the summit
+    <g stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinejoin="round" strokeLinecap="round">
+      <path d="M3 20h4v-4h4v-4h4v-4h2" />
+      <path d="M17 8V3l4 2-4 2" fill="currentColor" stroke="none" />
+      <path d="M17 3v9" />
+      <path d="M3 20l4-4 4-4 4-4" opacity="0.4" />
+    </g>
+  ),
   'bagh-chal': (
     // three tiger claw-slashes raked across the board
     <g stroke="currentColor" fill="none" strokeWidth="2.4" strokeLinecap="round">

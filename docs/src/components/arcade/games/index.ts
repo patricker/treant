@@ -8,6 +8,7 @@ import { quadline } from './quadline';
 import { game2048 } from './game2048';
 import { orderChaos, noTacToe, trapThree, squareUp, connectSix } from './gridpack';
 import { pig } from './pig';
+import { climb } from './climb';
 import { pinchFive } from './pinchfive';
 import { frontline } from './frontline';
 import { hex } from './hex';
@@ -74,6 +75,7 @@ export const GAMES: GameDefinition[] = [
   muTorere,
   domineering,
   pig,
+  climb,
   game2048,
 ];
 
