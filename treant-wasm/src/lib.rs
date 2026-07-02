@@ -39,6 +39,7 @@ mod trails;
 mod treblecross;
 mod types;
 mod wythoff;
+mod y;
 
 pub use amazons::AmazonsWasm;
 pub use baghchal::BaghchalWasm;
@@ -76,6 +77,7 @@ pub use tictactoe::TicTacToeWasm;
 pub use trails::TrailsWasm;
 pub use treblecross::TreblecrossWasm;
 pub use wythoff::WythoffWasm;
+pub use y::YGameWasm;
 
 #[wasm_bindgen(start)]
 pub fn init() {

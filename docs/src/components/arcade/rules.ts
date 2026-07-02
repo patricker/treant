@@ -13,6 +13,7 @@ export const RULES: Record<string, string> = {
   'first-capture': 'Place a stone on any empty point. A group of stones with no empty neighbours (no "liberties") is captured. The first player to capture any enemy stone wins.',
   reversi: 'Place a disc so it flanks a straight line of enemy discs between your new disc and another of yours — all flanked discs flip to your colour. Most discs when the board fills wins.',
   hex: 'Place one stone on any empty hexagon each turn. Red wins by linking the top and bottom edges with a connected chain; Gold links left and right. Hex can never be a draw.',
+  y: 'Take turns placing one stone on any empty cell of the triangular board. Win by joining all THREE sides of the triangle with a single connected group of your stones — the three corners each count for both of their sides. Like Hex, Y can never be a draw.',
   'order-chaos': 'Both players may place either an X or an O. "Order" wins by making five-in-a-row of a single symbol; "Chaos" wins if the board fills with no such line.',
   'no-tac-toe': 'Everyone plays the same mark (X). Completing any three-in-a-row LOSES — so force your opponent to make the line they’re trying to avoid.',
   'trap-three': 'Four-in-a-row WINS, but three-in-a-row LOSES — and both are live at once. Build toward four while carefully avoiding an accidental three.',

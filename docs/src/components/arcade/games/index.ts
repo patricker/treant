@@ -11,6 +11,7 @@ import { pig } from './pig';
 import { pinchFive } from './pinchfive';
 import { frontline } from './frontline';
 import { hex } from './hex';
+import { ygame } from './ygame';
 import { clobber } from './clobber';
 import { reversi } from './reversi';
 import { trails } from './trails';
@@ -50,6 +51,7 @@ export const GAMES: GameDefinition[] = [
   baghchal,
   reversi,
   hex,
+  ygame,
   orderChaos,
   noTacToe,
   trapThree,

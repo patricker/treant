@@ -219,6 +219,18 @@ const GLYPHS: Record<string, JSX.Element> = {
       <circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none" />
     </g>
   ),
+  y: (
+    // a triangle of dots — connect the three corners
+    <g fill="currentColor">
+      <path d="M12 3.5L20 20H4z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" opacity="0.5" />
+      <circle cx="12" cy="4.5" r="2" />
+      <circle cx="5.5" cy="19" r="2" />
+      <circle cx="18.5" cy="19" r="2" />
+      <circle cx="8.6" cy="12" r="1.5" opacity="0.7" />
+      <circle cx="15.4" cy="12" r="1.5" opacity="0.7" />
+      <circle cx="12" cy="19" r="1.5" opacity="0.7" />
+    </g>
+  ),
   frontline: (
     // two pawns advancing past a center line
     <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
