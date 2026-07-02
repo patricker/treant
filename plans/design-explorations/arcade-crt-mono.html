@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Treant Arcade — Mobile App Entry ×5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+  body{background:#000;color:#fff;overflow-x:hidden;font-family:'JetBrains Mono',monospace}
+  /* showroom backdrop — the device carries the theme */
+  section{min-height:100vh;scroll-snap-align:start;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:5vh 4vw;
+    background:radial-gradient(80% 60% at 50% 18%,var(--glow,#1a1a22),#050507 70%)}
+  .tag{position:fixed;left:14px;top:12px;z-index:50;font:500 10px/1 'JetBrains Mono';letter-spacing:.16em;color:#fff;mix-blend-mode:difference}
+  .vlabel{position:absolute;top:5vh;font:500 11px/1 'JetBrains Mono';letter-spacing:.28em;text-transform:uppercase;color:var(--ac);opacity:.85}
+  .nav{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:50;display:flex;flex-direction:column;gap:11px}
+  .nav a{width:10px;height:10px;border-radius:50%;border:1.5px solid #fff;mix-blend-mode:difference;transition:.2s}
+  .nav a:hover{transform:scale(1.5)}.nav a.on{background:#fff}
+
+  /* phone device */
+  .phone{position:relative;width:min(360px,86vw);height:min(740px,82vh);border-radius:42px;
+    border:11px solid #15151b;background:var(--bg);box-shadow:0 36px 90px rgba(0,0,0,.7),inset 0 0 0 2px rgba(255,255,255,.04);overflow:hidden;
+    transform:scaleY(.004);opacity:.4;filter:brightness(6)}
+  .live .phone{animation:crton .62s cubic-bezier(.2,.8,.2,1) forwards}
+  @keyframes crton{0%{transform:scaleY(.004);filter:brightness(8);opacity:.4}45%{transform:scaleY(.03);filter:brightness(5)}65%{transform:scaleY(1) scaleX(1.03);filter:brightness(2.2)}100%{transform:scaleY(1) scaleX(1);filter:brightness(1);opacity:1}}
+  .scr{position:relative;height:100%;display:flex;flex-direction:column;color:var(--tx);overflow:hidden}
+  .scr::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:9;background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 2px,transparent 2px 4px)}
+  .live .pad>*{animation:rise .5s both}.pad>*{opacity:0}
+  .live .pad>*:nth-child(1){animation-delay:.55s}.live .pad>*:nth-child(2){animation-delay:.64s}.live .pad>*:nth-child(3){animation-delay:.73s}.live .pad>*:nth-child(4){animation-delay:.82s}.live .pad>*:nth-child(5){animation-delay:.91s}.live .pad>*:nth-child(6){animation-delay:1s}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  /* status bar */
+  .status{display:flex;justify-content:space-between;align-items:center;padding:11px 20px 4px;font:700 13px/1 'JetBrains Mono';color:var(--tx)}
+  .status .r{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.05em}
+  .bat{width:20px;height:11px;border:1.5px solid var(--tx);border-radius:3px;position:relative;display:inline-block}
+  .bat::before{content:'';position:absolute;inset:1.5px;right:5px;background:var(--ac);border-radius:1px}
+  .bat::after{content:'';position:absolute;right:-3px;top:3px;width:2px;height:5px;background:var(--tx);border-radius:0 1px 1px 0}
+
+  /* app body */
+  .pad{flex:1;display:flex;flex-direction:column;gap:13px;padding:6px 20px 0;overflow-y:auto}
+  .pad::-webkit-scrollbar{display:none}
+  .apphead{display:flex;justify-content:space-between;align-items:center}
+  .brand{display:flex;flex-direction:column;gap:3px}
+  .brand .kana{font:400 11px/1 'DotGothic16';letter-spacing:.34em;color:var(--ac);opacity:.85}
+  .brand b{font:700 13px/1 'JetBrains Mono';letter-spacing:.14em;color:var(--tx)}
+  .avatar{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;color:var(--ac)}
+  /* unified line-icon system (stroke = currentColor → inherits each theme accent) */
+  .icn{stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:middle}
+  .avatar .icn{width:18px;height:18px}
+
+  .hero{margin-top:6px}
+  .hero .badge{display:inline-block;font:500 10px/1 'JetBrains Mono';letter-spacing:.1em;padding:5px 9px;border:1px solid var(--line);border-radius:20px;color:var(--ac);margin-bottom:12px}
+  .hero h1{font:400 clamp(18px,5.4vw,21px)/1.32 'Press Start 2P';color:var(--tx);text-shadow:var(--glowtx)}
+  .hero p{font:400 12.5px/1.55 'JetBrains Mono';color:var(--dim);margin-top:11px}
+
+  /* resume card */
+  .resume{display:flex;align-items:center;gap:13px;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:12px}
+  .mini{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;width:62px;height:62px;flex:none}
+  .mini i{border-radius:2px;background:var(--cell);display:grid;place-items:center}
+  .mini .a{box-shadow:inset 0 0 0 2px var(--ac)} .mini .b{box-shadow:inset 0 0 0 2px var(--dim)}
+  .mini .l{background:var(--ac)}
+  .resume .meta{flex:1}
+  .resume .meta b{font:700 13px/1.2 'JetBrains Mono';color:var(--tx)}
+  .resume .meta span{display:block;font:400 11px/1.4 'JetBrains Mono';color:var(--dim);margin-top:3px}
+  .resume .go{width:32px;height:32px;border-radius:50%;background:var(--ac);color:var(--bg);display:grid;place-items:center;flex:none}
+  .resume .go .icn{width:12px;height:12px;margin-left:1px}
+
+  /* primary CTA */
+  .cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:16px;
+    background:var(--ac);color:var(--bg);font:700 15px/1 'JetBrains Mono';letter-spacing:.08em;box-shadow:var(--ctaglow)}
+  .cta .icn{width:15px;height:15px}
+
+  /* mode cards */
+  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .mode{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:13px 6px;text-align:center}
+  .mode .icn{width:23px;height:23px;display:block;margin:0 auto 8px;color:var(--tx)}
+  .mode small{font:500 10px/1.2 'JetBrains Mono';color:var(--dim);letter-spacing:.02em}
+
+  /* daily */
+  .daily{display:flex;align-items:center;justify-content:space-between;border:1px dashed var(--line);border-radius:14px;padding:12px 14px}
+  .daily .l{display:flex;align-items:center;gap:9px;font:500 11.5px/1.3 'JetBrains Mono';color:var(--tx)}
+  .daily .l .s{color:var(--ac);display:inline-flex}
+  .daily .l .s .icn{width:14px;height:14px}
+  .daily .arr{color:var(--ac);font-weight:700}
+
+  /* tab bar */
+  .tabs{display:flex;justify-content:space-around;align-items:center;padding:11px 8px calc(11px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--card)}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:4px;font:500 9px/1 'JetBrains Mono';letter-spacing:.04em;color:var(--dim)}
+  .tab .icn{width:19px;height:19px;display:block}
+  .tab.on{color:var(--ac)} .tab.on .icn{filter:drop-shadow(0 0 6px var(--ac))}
+
+  /* ===== per-variation themes ===== */
+  #m1{--ac:#39ff7a;--glow:#062b14}
+  #m1 .phone{--bg:#020a04;--tx:#d8ffe6;--dim:#6fae84;--line:#0e5228;--card:#06190d;--cell:#041a0c;--glowtx:0 0 4px rgba(57,255,122,.7),0 0 18px rgba(57,255,122,.3);--ctaglow:0 0 22px rgba(57,255,122,.4)}
+  #m1 .vlabel{--ac:#39ff7a;color:#39ff7a}
+
+  #m2{--ac:#ffb000;--glow:#2e1d00}
+  #m2 .phone{--bg:#0a0600;--tx:#ffe9c2;--dim:#b08a4e;--line:#5a3e00;--card:#1a1100;--cell:#1c1200;--glowtx:0 0 4px rgba(255,176,0,.6),0 0 16px rgba(255,176,0,.28);--ctaglow:0 0 22px rgba(255,176,0,.35)}
+  #m2 .vlabel{color:#ffb000}
+
+  #m3{--ac:#2fd4ff;--glow:#04293f}
+  #m3 .phone{--bg:#02101b;--tx:#dff3fb;--dim:#74aec2;--line:#0c4257;--card:#06222f;--cell:#06243a;--glowtx:0 0 4px rgba(47,212,255,.6),0 0 18px rgba(47,212,255,.3);--ctaglow:0 0 22px rgba(47,212,255,.4)}
+  #m3 .vlabel{color:#2fd4ff}
+
+  #m4{--ac:#ff2e88;--glow:#1a1a22}
+  #m4 .phone{--bg:#0a0a0d;--tx:#ededf3;--dim:#83838f;--line:#2c2c36;--card:#141419;--cell:#16161c;--glowtx:0 0 3px rgba(255,255,255,.4),0 0 16px rgba(255,255,255,.14);--ctaglow:0 0 24px rgba(255,46,136,.5)}
+  #m4 .vlabel{color:#ff2e88}
+  #m4 .hero h1{color:#f6f6fb}
+
+  #m5{--ac:#ffffff;--glow:#16161a}
+  #m5 .phone{--bg:#000;--tx:#fff;--dim:#8a8a8a;--line:#2e2e2e;--card:#0c0c0c;--cell:#0b0b0b;--glowtx:0 0 1px #fff,0 0 12px rgba(255,255,255,.25);--ctaglow:0 0 20px rgba(255,255,255,.25)}
+  #m5 .phone{--bg:#000}
+  #m5 .cta{color:#000}
+  #m5 .resume .go{color:#000}
+  #m5 .vlabel{color:#fff}
+
+  @media(max-width:560px){.nav{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.6"/><rect x="9.5" y="9.5" width="5" height="5" rx=".6"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="8.5" cy="8" r="3"/><path d="M2.5 19c0-3.1 2.7-5 6-5s6 1.9 6 5"/><path d="M16 5.8a3 3 0 0 1 0 5.8"/><path d="M17.2 14c2.5.4 4.3 2.3 4.3 5"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.3 10-6.3S22 12 22 12s-3.6 6.3-10 6.3S2 12 2 12Z"/><circle cx="12" cy="12" r="2.6"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M8 5.4v13.2l11-6.6L8 5.4Z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.6" height="6.6" rx="1.2"/><rect x="13.4" y="4" width="6.6" height="6.6" rx="1.2"/><rect x="4" y="13.4" width="6.6" height="6.6" rx="1.2"/><rect x="13.4" y="13.4" width="6.6" height="6.6" rx="1.2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 3.6l2.5 5.1 5.6.8-4.05 3.95.96 5.55L12 16.4l-5.06 2.6.96-5.55L3.85 9.5l5.6-.8L12 3.6Z"/></symbol>
+</defs></svg>
+<div class="tag">TREANT ARCADE · MOBILE APP ENTRY ×5</div>
+<nav class="nav"><a href="#m1" class="on" title="Phosphor Green"></a><a href="#m2" title="Amber"></a><a href="#m3" title="Cyan HUD"></a><a href="#m4" title="Mono + Magenta"></a><a href="#m5" title="Stark"></a></nav>
+
+<section id="m1"><div class="vlabel">01 · Phosphor Green</div><div class="phone"><div class="scr" data-app data-badge="&gt; ready_" data-cta="PLAY" data-tag="Solo or pass-and-play. Every opponent is a live search tree, thinking in real time."></div></div></section>
+<section id="m2"><div class="vlabel">02 · Amber</div><div class="phone"><div class="scr" data-app data-badge="treant.arcade" data-cta="PLAY" data-tag="A pocket arcade of 30 board games. Tune the AI from gentle to merciless."></div></div></section>
+<section id="m3"><div class="vlabel">03 · Cyan HUD</div><div class="phone"><div class="scr" data-app data-badge="● ONLINE" data-cta="QUICK MATCH" data-tag="Thirty games. One Monte-Carlo opponent. Tune the search, break the bot."></div></div></section>
+<section id="m4"><div class="vlabel">04 · Mono + Magenta</div><div class="phone"><div class="scr" data-app data-badge="アーケード" data-cta="PLAY" data-tag="Monochrome calm, one bright move. 30 games in your pocket."></div></div></section>
+<section id="m5"><div class="vlabel">05 · Stark</div><div class="phone"><div class="scr" data-app data-badge="アーケード" data-cta="PLAY" data-tag="No color. No coins. Just thirty games and one tree that never blinks."></div></div></section>
+
+<script>
+  // mini resume board (4×4): A, B, last(l), empty
+  const MINI=[1,0,2,0, 0,1,0,0, 2,0,3,0, 0,2,1,0];
+  const miniCell=v=>v===1?'<i class="a"></i>':v===2?'<i class="b"></i>':v===3?'<i class="l"></i>':'<i></i>';
+  const ic=id=>`<svg class="icn" viewBox="0 0 24 24" fill="none" stroke="currentColor"><use href="#i-${id}"/></svg>`;
+  const app=(badge,cta,tag)=>`
+    <div class="status"><span>9:41</span><span class="r">5G&nbsp; <span class="bat"></span></span></div>
+    <div class="pad">
+      <div class="apphead">
+        <div class="brand"><span class="kana">アーケード</span><b>TREANT ARCADE</b></div>
+        <div class="avatar">${ic('user')}</div>
+      </div>
+      <div class="hero">
+        <span class="badge">${badge}</span>
+        <h1>TREANT<br>ARCADE</h1>
+        <p>${tag}</p>
+      </div>
+      <div class="resume">
+        <div class="mini">${MINI.map(miniCell).join('')}</div>
+        <div class="meta"><b>Resume — Reversi</b><span>vs AI · Medium · your move</span></div>
+        <div class="go">${ic('play')}</div>
+      </div>
+      <button class="cta">${ic('play')} ${cta}</button>
+      <div class="modes">
+        <div class="mode">${ic('cpu')}<small>vs AI</small></div>
+        <div class="mode">${ic('users')}<small>Pass &amp; Play</small></div>
+        <div class="mode">${ic('eye')}<small>Watch</small></div>
+      </div>
+      <div class="daily"><div class="l"><span class="s">${ic('star')}</span> Daily Challenge · Hex 9×9</div><span class="arr">→</span></div>
+    </div>
+    <div class="tabs">
+      <div class="tab on">${ic('play')}Play</div>
+      <div class="tab">${ic('grid')}Games</div>
+      <div class="tab">${ic('eye')}Watch</div>
+      <div class="tab">${ic('user')}You</div>
+    </div>`;
+  document.querySelectorAll('[data-app]').forEach(s=>{
+    s.innerHTML=app(s.dataset.badge,s.dataset.cta,s.dataset.tag);
+  });
+  const links=[...document.querySelectorAll('.nav a')];
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('live');links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id));}
+    else e.target.classList.remove('live');
+  }),{threshold:.4});
+  document.querySelectorAll('section').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>

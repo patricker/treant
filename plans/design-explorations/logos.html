@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Treant Logo Concepts</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --fg: #1a1a1a;
+    --card: #fff;
+    --border: #e5e7eb;
+    --muted: #6b7280;
+    --accent: #16a34a;
+  }
+  [data-theme="dark"] {
+    --bg: #0f1216;
+    --fg: #e5e7eb;
+    --card: #1a1f26;
+    --border: #2a313a;
+    --muted: #9ca3af;
+    --accent: #4ade80;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 0.2s, color 0.2s;
+  }
+  header {
+    padding: 2rem 2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { margin: 0; font-size: 1.6rem; }
+  header p { margin: 0.5rem 0 0; color: var(--muted); font-size: 0.9rem; }
+  .toggle {
+    display: inline-flex;
+    gap: 0.25rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.25rem;
+  }
+  .toggle button {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .toggle button.active {
+    background: var(--accent);
+    color: #fff;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+  }
+  .card-head h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .card-head .num {
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.8rem;
+  }
+  .card-desc {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin: 0 0 1rem;
+    line-height: 1.4;
+  }
+  .previews {
+    display: grid;
+    grid-template-columns: 128px 64px 32px 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .previews svg { display: block; }
+  .preview-label {
+    font-family: ui-monospace, monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.25rem;
+  }
+  .preview-cell { display: flex; flex-direction: column; align-items: center; }
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .wordmark svg { flex-shrink: 0; }
+  footer {
+    padding: 1.5rem 2rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div>
+    <h1>Treant logo concepts</h1>
+    <p>Ten directions. All monochromatic — they inherit <code>currentColor</code>, so the same SVG works on any background.</p>
+  </div>
+  <div class="toggle" role="tablist" aria-label="Theme">
+    <button id="t-light" class="active">Light</button>
+    <button id="t-dark">Dark</button>
+  </div>
+</header>
+
+<div class="grid">
+
+  <!-- 1. MCTS search tree -->
+  <div class="card">
+    <div class="card-head"><h2>MCTS search tree</h2><span class="num">01</span></div>
+    <p class="card-desc">A literal MCTS search tree — root, children, grandchildren. On-the-nose for the library's purpose.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64" aria-label="Logo 01">
+          <line x1="32" y1="12" x2="20" y2="32" stroke="currentColor" stroke-width="2"/>
+          <line x1="32" y1="12" x2="44" y2="32" stroke="currentColor" stroke-width="2"/>
+          <line x1="20" y1="32" x2="12" y2="52" stroke="currentColor" stroke-width="2"/>
+          <line x1="20" y1="32" x2="28" y2="52" stroke="currentColor" stroke-width="2"/>
+          <line x1="44" y1="32" x2="36" y2="52" stroke="currentColor" stroke-width="2"/>
+          <line x1="44" y1="32" x2="52" y2="52" stroke="currentColor" stroke-width="2"/>
+          <circle cx="32" cy="12" r="5" fill="currentColor"/>
+          <circle cx="20" cy="32" r="4" fill="currentColor"/>
+          <circle cx="44" cy="32" r="4" fill="currentColor"/>
+          <circle cx="12" cy="52" r="3" fill="currentColor"/>
+          <circle cx="28" cy="52" r="3" fill="currentColor"/>
+          <circle cx="36" cy="52" r="3" fill="currentColor"/>
+          <circle cx="52" cy="52" r="3" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <line x1="32" y1="12" x2="20" y2="32" stroke="currentColor" stroke-width="2"/><line x1="32" y1="12" x2="44" y2="32" stroke="currentColor" stroke-width="2"/><line x1="20" y1="32" x2="12" y2="52" stroke="currentColor" stroke-width="2"/><line x1="20" y1="32" x2="28" y2="52" stroke="currentColor" stroke-width="2"/><line x1="44" y1="32" x2="36" y2="52" stroke="currentColor" stroke-width="2"/><line x1="44" y1="32" x2="52" y2="52" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="12" r="5" fill="currentColor"/><circle cx="20" cy="32" r="4" fill="currentColor"/><circle cx="44" cy="32" r="4" fill="currentColor"/><circle cx="12" cy="52" r="3" fill="currentColor"/><circle cx="28" cy="52" r="3" fill="currentColor"/><circle cx="36" cy="52" r="3" fill="currentColor"/><circle cx="52" cy="52" r="3" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <line x1="32" y1="12" x2="20" y2="32" stroke="currentColor" stroke-width="3"/><line x1="32" y1="12" x2="44" y2="32" stroke="currentColor" stroke-width="3"/><line x1="20" y1="32" x2="12" y2="52" stroke="currentColor" stroke-width="3"/><line x1="20" y1="32" x2="28" y2="52" stroke="currentColor" stroke-width="3"/><line x1="44" y1="32" x2="36" y2="52" stroke="currentColor" stroke-width="3"/><line x1="44" y1="32" x2="52" y2="52" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="12" r="6" fill="currentColor"/><circle cx="20" cy="32" r="5" fill="currentColor"/><circle cx="44" cy="32" r="5" fill="currentColor"/><circle cx="12" cy="52" r="4" fill="currentColor"/><circle cx="28" cy="52" r="4" fill="currentColor"/><circle cx="36" cy="52" r="4" fill="currentColor"/><circle cx="52" cy="52" r="4" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <line x1="32" y1="12" x2="20" y2="32" stroke="currentColor" stroke-width="3"/><line x1="32" y1="12" x2="44" y2="32" stroke="currentColor" stroke-width="3"/><line x1="20" y1="32" x2="12" y2="52" stroke="currentColor" stroke-width="3"/><line x1="20" y1="32" x2="28" y2="52" stroke="currentColor" stroke-width="3"/><line x1="44" y1="32" x2="36" y2="52" stroke="currentColor" stroke-width="3"/><line x1="44" y1="32" x2="52" y2="52" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="12" r="6" fill="currentColor"/><circle cx="20" cy="32" r="5" fill="currentColor"/><circle cx="44" cy="32" r="5" fill="currentColor"/><circle cx="12" cy="52" r="4" fill="currentColor"/><circle cx="28" cy="52" r="4" fill="currentColor"/><circle cx="36" cy="52" r="4" fill="currentColor"/><circle cx="52" cy="52" r="4" fill="currentColor"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Treant face -->
+  <div class="card">
+    <div class="card-head"><h2>Treant face</h2><span class="num">02</span></div>
+    <p class="card-desc">A stylized tree with eyes peering out of the canopy. Plays the fantasy-creature angle.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <rect x="28" y="42" width="8" height="14" fill="currentColor"/>
+          <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="32" y1="56" x2="32" y2="62" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="25" cy="22" r="2.5" fill="currentColor"/>
+          <circle cx="39" cy="22" r="2.5" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="2.5"/><rect x="28" y="42" width="8" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="56" x2="32" y2="62" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="25" cy="22" r="2.5" fill="currentColor"/><circle cx="39" cy="22" r="2.5" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Recursive / fractal tree -->
+  <div class="card">
+    <div class="card-head"><h2>Recursive branching</h2><span class="num">03</span></div>
+    <p class="card-desc">Self-similar tree, evoking recursion and exploration depth.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <line x1="32" y1="60" x2="32" y2="40" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="32" y1="40" x2="20" y2="28" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+          <line x1="32" y1="40" x2="44" y2="28" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+          <line x1="20" y1="28" x2="13" y2="20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="20" y1="28" x2="22" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="44" y1="28" x2="42" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="44" y1="28" x2="51" y2="20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="13" y1="20" x2="9" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="13" y1="20" x2="14" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="22" y1="18" x2="20" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="22" y1="18" x2="27" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="42" y1="18" x2="37" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="42" y1="18" x2="44" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="51" y1="20" x2="55" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="51" y1="20" x2="50" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <line x1="32" y1="60" x2="32" y2="40" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="40" x2="20" y2="28" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><line x1="32" y1="40" x2="44" y2="28" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><line x1="20" y1="28" x2="13" y2="20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="20" y1="28" x2="22" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="44" y1="28" x2="42" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="44" y1="28" x2="51" y2="20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="13" y1="20" x2="9" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="20" x2="14" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="22" y1="18" x2="20" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="22" y1="18" x2="27" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="42" y1="18" x2="37" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="42" y1="18" x2="44" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="51" y1="20" x2="55" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="51" y1="20" x2="50" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <line x1="32" y1="60" x2="32" y2="40" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><line x1="32" y1="40" x2="18" y2="26" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="40" x2="46" y2="26" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><line x1="18" y1="26" x2="10" y2="14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="18" y1="26" x2="22" y2="12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="46" y1="26" x2="42" y2="12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="46" y1="26" x2="54" y2="14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <line x1="32" y1="60" x2="32" y2="40" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="40" x2="18" y2="26" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><line x1="32" y1="40" x2="46" y2="26" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><line x1="18" y1="26" x2="10" y2="14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="18" y1="26" x2="22" y2="12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="46" y1="26" x2="42" y2="12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line x1="46" y1="26" x2="54" y2="14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Letter T as tree -->
+  <div class="card">
+    <div class="card-head"><h2>The "T" tree</h2><span class="num">04</span></div>
+    <p class="card-desc">The letter T grown into a tree — branches sprout from the crossbar, roots from the base.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <rect x="28" y="20" width="8" height="40" fill="currentColor"/>
+          <rect x="14" y="17" width="36" height="6" fill="currentColor"/>
+          <line x1="20" y1="20" x2="14" y2="6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="32" y1="17" x2="32" y2="3" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="44" y1="20" x2="50" y2="6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="32" y1="60" x2="22" y2="62" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="32" y1="60" x2="42" y2="62" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <rect x="28" y="20" width="8" height="40" fill="currentColor"/><rect x="14" y="17" width="36" height="6" fill="currentColor"/><line x1="20" y1="20" x2="14" y2="6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="17" x2="32" y2="3" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="44" y1="20" x2="50" y2="6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="60" x2="22" y2="62" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="32" y1="60" x2="42" y2="62" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <rect x="27" y="20" width="10" height="40" fill="currentColor"/><rect x="14" y="17" width="36" height="8" fill="currentColor"/><line x1="20" y1="20" x2="12" y2="4" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="17" x2="32" y2="2" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><line x1="44" y1="20" x2="52" y2="4" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <rect x="27" y="20" width="10" height="40" fill="currentColor"/><rect x="14" y="17" width="36" height="8" fill="currentColor"/><line x1="20" y1="20" x2="12" y2="4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="17" x2="32" y2="2" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="44" y1="20" x2="52" y2="4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Decision tree (binary) -->
+  <div class="card">
+    <div class="card-head"><h2>Decision tree</h2><span class="num">05</span></div>
+    <p class="card-desc">Pure CS-textbook decision tree. The filled-in node hints at the "best move" found by search.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <line x1="28" y1="14" x2="20" y2="28" stroke="currentColor" stroke-width="1.6"/>
+          <line x1="36" y1="14" x2="44" y2="28" stroke="currentColor" stroke-width="1.6"/>
+          <line x1="13" y1="36" x2="9" y2="50" stroke="currentColor" stroke-width="1.6"/>
+          <line x1="19" y1="36" x2="23" y2="50" stroke="currentColor" stroke-width="1.6"/>
+          <line x1="45" y1="36" x2="41" y2="50" stroke="currentColor" stroke-width="1.6"/>
+          <line x1="51" y1="36" x2="55" y2="50" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="32" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/>
+          <circle cx="16" cy="32" r="5" fill="none" stroke="currentColor" stroke-width="2.2"/>
+          <circle cx="48" cy="32" r="5" fill="currentColor"/>
+          <circle cx="8" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="24" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="40" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+          <circle cx="56" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <line x1="28" y1="14" x2="20" y2="28" stroke="currentColor" stroke-width="1.6"/><line x1="36" y1="14" x2="44" y2="28" stroke="currentColor" stroke-width="1.6"/><line x1="13" y1="36" x2="9" y2="50" stroke="currentColor" stroke-width="1.6"/><line x1="19" y1="36" x2="23" y2="50" stroke="currentColor" stroke-width="1.6"/><line x1="45" y1="36" x2="41" y2="50" stroke="currentColor" stroke-width="1.6"/><line x1="51" y1="36" x2="55" y2="50" stroke="currentColor" stroke-width="1.6"/><circle cx="32" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="16" cy="32" r="5" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="48" cy="32" r="5" fill="currentColor"/><circle cx="8" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="40" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="56" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <line x1="28" y1="14" x2="20" y2="28" stroke="currentColor" stroke-width="3"/><line x1="36" y1="14" x2="44" y2="28" stroke="currentColor" stroke-width="3"/><line x1="14" y1="38" x2="14" y2="48" stroke="currentColor" stroke-width="3"/><line x1="50" y1="38" x2="50" y2="48" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="32" r="6" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="48" cy="32" r="6" fill="currentColor"/><circle cx="14" cy="54" r="5" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="50" cy="54" r="5" fill="none" stroke="currentColor" stroke-width="3"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <line x1="28" y1="14" x2="20" y2="28" stroke="currentColor" stroke-width="2.5"/><line x1="36" y1="14" x2="44" y2="28" stroke="currentColor" stroke-width="2.5"/><line x1="14" y1="38" x2="14" y2="48" stroke="currentColor" stroke-width="2.5"/><line x1="50" y1="38" x2="50" y2="48" stroke="currentColor" stroke-width="2.5"/><circle cx="32" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="16" cy="32" r="5" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="48" cy="32" r="5" fill="currentColor"/><circle cx="14" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="50" cy="54" r="4" fill="none" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Yggdrasil — branches + mirrored roots -->
+  <div class="card">
+    <div class="card-head"><h2>Yggdrasil</h2><span class="num">06</span></div>
+    <p class="card-desc">A world-tree. Mirrored canopy and roots — both look like search trees, just reflected.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <line x1="32" y1="20" x2="32" y2="44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          <line x1="32" y1="20" x2="20" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="32" y1="20" x2="44" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="32" y1="20" x2="32" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="20" y1="10" x2="14" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="20" y1="10" x2="22" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="44" y1="10" x2="50" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="44" y1="10" x2="42" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="32" y1="44" x2="20" y2="54" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="32" y1="44" x2="44" y2="54" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="32" y1="44" x2="32" y2="58" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <line x1="20" y1="54" x2="14" y2="60" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="20" y1="54" x2="22" y2="62" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="44" y1="54" x2="50" y2="60" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="44" y1="54" x2="42" y2="62" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <line x1="32" y1="20" x2="32" y2="44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="20" x2="20" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="20" x2="44" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="20" x2="32" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="10" x2="14" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="10" x2="22" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="44" y1="10" x2="50" y2="4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="44" y1="10" x2="42" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="32" y1="44" x2="20" y2="54" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="44" x2="44" y2="54" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="44" x2="32" y2="58" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="54" x2="14" y2="60" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="20" y1="54" x2="22" y2="62" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="44" y1="54" x2="50" y2="60" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="44" y1="54" x2="42" y2="62" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <line x1="32" y1="22" x2="32" y2="42" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/><line x1="32" y1="22" x2="18" y2="10" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="22" x2="46" y2="10" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="22" x2="32" y2="4" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="42" x2="18" y2="54" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="42" x2="46" y2="54" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="42" x2="32" y2="60" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <line x1="32" y1="22" x2="32" y2="42" stroke="currentColor" stroke-width="3.8" stroke-linecap="round"/><line x1="32" y1="22" x2="18" y2="10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="22" x2="46" y2="10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="22" x2="32" y2="4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="42" x2="18" y2="54" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="42" x2="46" y2="54" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="42" x2="32" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Weighted MCTS edges -->
+  <div class="card">
+    <div class="card-head"><h2>Weighted edges</h2><span class="num">07</span></div>
+    <p class="card-desc">Branch thickness encodes visit count — the principal variation jumps out. Tells the MCTS story directly.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <line x1="32" y1="14" x2="20" y2="32" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+          <line x1="20" y1="32" x2="14" y2="52" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <line x1="32" y1="14" x2="44" y2="32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="20" y1="32" x2="28" y2="52" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="44" y1="32" x2="38" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="44" y1="32" x2="52" y2="52" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="32" cy="14" r="4" fill="currentColor"/>
+          <circle cx="20" cy="32" r="4" fill="currentColor"/>
+          <circle cx="44" cy="32" r="3" fill="currentColor"/>
+          <circle cx="14" cy="52" r="3.5" fill="currentColor"/>
+          <circle cx="28" cy="52" r="2" fill="currentColor"/>
+          <circle cx="38" cy="52" r="2.5" fill="currentColor"/>
+          <circle cx="52" cy="52" r="2" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <line x1="32" y1="14" x2="20" y2="32" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><line x1="20" y1="32" x2="14" y2="52" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><line x1="32" y1="14" x2="44" y2="32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="20" y1="32" x2="28" y2="52" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="44" y1="32" x2="38" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="44" y1="32" x2="52" y2="52" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="32" cy="14" r="4" fill="currentColor"/><circle cx="20" cy="32" r="4" fill="currentColor"/><circle cx="44" cy="32" r="3" fill="currentColor"/><circle cx="14" cy="52" r="3.5" fill="currentColor"/><circle cx="28" cy="52" r="2" fill="currentColor"/><circle cx="38" cy="52" r="2.5" fill="currentColor"/><circle cx="52" cy="52" r="2" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <line x1="32" y1="14" x2="20" y2="32" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><line x1="20" y1="32" x2="14" y2="52" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><line x1="32" y1="14" x2="44" y2="32" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="44" y1="32" x2="38" y2="52" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="44" y1="32" x2="52" y2="52" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="32" cy="14" r="5" fill="currentColor"/><circle cx="20" cy="32" r="5" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <line x1="32" y1="14" x2="20" y2="32" stroke="currentColor" stroke-width="6.5" stroke-linecap="round"/><line x1="20" y1="32" x2="14" y2="52" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><line x1="32" y1="14" x2="44" y2="32" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><line x1="44" y1="32" x2="38" y2="52" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="44" y1="32" x2="52" y2="52" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="32" cy="14" r="4" fill="currentColor"/><circle cx="20" cy="32" r="4" fill="currentColor"/><circle cx="44" cy="32" r="3" fill="currentColor"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Acorn / seedling -->
+  <div class="card">
+    <div class="card-head"><h2>Seedling</h2><span class="num">08</span></div>
+    <p class="card-desc">An acorn with a sprout — search starts from a seed and grows. Friendlier, less technical.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <ellipse cx="32" cy="44" rx="14" ry="16" fill="currentColor"/>
+          <path d="M 18 30 Q 32 22 46 30 L 46 36 Q 32 30 18 36 Z" fill="currentColor"/>
+          <line x1="32" y1="22" x2="32" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="26" cy="11" rx="5" ry="3" fill="currentColor" transform="rotate(-30 26 11)"/>
+          <ellipse cx="38" cy="11" rx="5" ry="3" fill="currentColor" transform="rotate(30 38 11)"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <ellipse cx="32" cy="44" rx="14" ry="16" fill="currentColor"/><path d="M 18 30 Q 32 22 46 30 L 46 36 Q 32 30 18 36 Z" fill="currentColor"/><line x1="32" y1="22" x2="32" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><ellipse cx="26" cy="11" rx="5" ry="3" fill="currentColor" transform="rotate(-30 26 11)"/><ellipse cx="38" cy="11" rx="5" ry="3" fill="currentColor" transform="rotate(30 38 11)"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <ellipse cx="32" cy="44" rx="16" ry="18" fill="currentColor"/><path d="M 16 30 Q 32 22 48 30 L 48 38 Q 32 30 16 38 Z" fill="currentColor"/><line x1="32" y1="22" x2="32" y2="6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><ellipse cx="25" cy="10" rx="6" ry="3.5" fill="currentColor" transform="rotate(-30 25 10)"/><ellipse cx="39" cy="10" rx="6" ry="3.5" fill="currentColor" transform="rotate(30 39 10)"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <ellipse cx="32" cy="44" rx="15" ry="17" fill="currentColor"/><path d="M 17 30 Q 32 22 47 30 L 47 37 Q 32 30 17 37 Z" fill="currentColor"/><line x1="32" y1="22" x2="32" y2="7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="26" cy="10" rx="5.5" ry="3" fill="currentColor" transform="rotate(-30 26 10)"/><ellipse cx="38" cy="10" rx="5.5" ry="3" fill="currentColor" transform="rotate(30 38 10)"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. Tree in circle (badge) -->
+  <div class="card">
+    <div class="card-head"><h2>Pine badge</h2><span class="num">09</span></div>
+    <p class="card-desc">A pine-tree silhouette inside a circle — the badge/seal style. Ages well, looks good shrunk to a favicon.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <polygon points="32,10 18,28 26,28 14,42 24,42 16,52 48,52 40,42 50,42 38,28 46,28" fill="currentColor"/>
+          <rect x="29" y="50" width="6" height="6" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="2.5"/><polygon points="32,10 18,28 26,28 14,42 24,42 16,52 48,52 40,42 50,42 38,28 46,28" fill="currentColor"/><rect x="29" y="50" width="6" height="6" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="3.5"/><polygon points="32,10 18,28 26,28 14,42 24,42 16,52 48,52 40,42 50,42 38,28 46,28" fill="currentColor"/><rect x="29" y="50" width="6" height="6" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="29" fill="none" stroke="currentColor" stroke-width="3"/><polygon points="32,10 18,28 26,28 14,42 24,42 16,52 48,52 40,42 50,42 38,28 46,28" fill="currentColor"/><rect x="29" y="50" width="6" height="6" fill="currentColor"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Pixel tree -->
+  <div class="card">
+    <div class="card-head"><h2>Pixel tree</h2><span class="num">10</span></div>
+    <p class="card-desc">8x8 pixel-art tree. Retro/game-AI vibe, hard to mistake at any size.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64" shape-rendering="crispEdges">
+          <rect x="24" y="8"  width="8" height="8" fill="currentColor"/>
+          <rect x="32" y="8"  width="8" height="8" fill="currentColor"/>
+          <rect x="16" y="16" width="8" height="8" fill="currentColor"/>
+          <rect x="24" y="16" width="8" height="8" fill="currentColor"/>
+          <rect x="32" y="16" width="8" height="8" fill="currentColor"/>
+          <rect x="40" y="16" width="8" height="8" fill="currentColor"/>
+          <rect x="8"  y="24" width="8" height="8" fill="currentColor"/>
+          <rect x="16" y="24" width="8" height="8" fill="currentColor"/>
+          <rect x="24" y="24" width="8" height="8" fill="currentColor"/>
+          <rect x="32" y="24" width="8" height="8" fill="currentColor"/>
+          <rect x="40" y="24" width="8" height="8" fill="currentColor"/>
+          <rect x="48" y="24" width="8" height="8" fill="currentColor"/>
+          <rect x="16" y="32" width="8" height="8" fill="currentColor"/>
+          <rect x="24" y="32" width="8" height="8" fill="currentColor"/>
+          <rect x="32" y="32" width="8" height="8" fill="currentColor"/>
+          <rect x="40" y="32" width="8" height="8" fill="currentColor"/>
+          <rect x="28" y="40" width="8" height="8" fill="currentColor"/>
+          <rect x="28" y="48" width="8" height="8" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64" shape-rendering="crispEdges">
+          <rect x="24" y="8"  width="8" height="8" fill="currentColor"/><rect x="32" y="8"  width="8" height="8" fill="currentColor"/><rect x="16" y="16" width="8" height="8" fill="currentColor"/><rect x="24" y="16" width="8" height="8" fill="currentColor"/><rect x="32" y="16" width="8" height="8" fill="currentColor"/><rect x="40" y="16" width="8" height="8" fill="currentColor"/><rect x="8"  y="24" width="8" height="8" fill="currentColor"/><rect x="16" y="24" width="8" height="8" fill="currentColor"/><rect x="24" y="24" width="8" height="8" fill="currentColor"/><rect x="32" y="24" width="8" height="8" fill="currentColor"/><rect x="40" y="24" width="8" height="8" fill="currentColor"/><rect x="48" y="24" width="8" height="8" fill="currentColor"/><rect x="16" y="32" width="8" height="8" fill="currentColor"/><rect x="24" y="32" width="8" height="8" fill="currentColor"/><rect x="32" y="32" width="8" height="8" fill="currentColor"/><rect x="40" y="32" width="8" height="8" fill="currentColor"/><rect x="28" y="40" width="8" height="8" fill="currentColor"/><rect x="28" y="48" width="8" height="8" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64" shape-rendering="crispEdges">
+          <rect x="24" y="8"  width="8" height="8" fill="currentColor"/><rect x="32" y="8"  width="8" height="8" fill="currentColor"/><rect x="16" y="16" width="8" height="8" fill="currentColor"/><rect x="24" y="16" width="8" height="8" fill="currentColor"/><rect x="32" y="16" width="8" height="8" fill="currentColor"/><rect x="40" y="16" width="8" height="8" fill="currentColor"/><rect x="8"  y="24" width="8" height="8" fill="currentColor"/><rect x="16" y="24" width="8" height="8" fill="currentColor"/><rect x="24" y="24" width="8" height="8" fill="currentColor"/><rect x="32" y="24" width="8" height="8" fill="currentColor"/><rect x="40" y="24" width="8" height="8" fill="currentColor"/><rect x="48" y="24" width="8" height="8" fill="currentColor"/><rect x="16" y="32" width="8" height="8" fill="currentColor"/><rect x="24" y="32" width="8" height="8" fill="currentColor"/><rect x="32" y="32" width="8" height="8" fill="currentColor"/><rect x="40" y="32" width="8" height="8" fill="currentColor"/><rect x="28" y="40" width="8" height="8" fill="currentColor"/><rect x="28" y="48" width="8" height="8" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64" shape-rendering="crispEdges">
+          <rect x="24" y="8"  width="8" height="8" fill="currentColor"/><rect x="32" y="8"  width="8" height="8" fill="currentColor"/><rect x="16" y="16" width="8" height="8" fill="currentColor"/><rect x="24" y="16" width="8" height="8" fill="currentColor"/><rect x="32" y="16" width="8" height="8" fill="currentColor"/><rect x="40" y="16" width="8" height="8" fill="currentColor"/><rect x="8"  y="24" width="8" height="8" fill="currentColor"/><rect x="16" y="24" width="8" height="8" fill="currentColor"/><rect x="24" y="24" width="8" height="8" fill="currentColor"/><rect x="32" y="24" width="8" height="8" fill="currentColor"/><rect x="40" y="24" width="8" height="8" fill="currentColor"/><rect x="48" y="24" width="8" height="8" fill="currentColor"/><rect x="16" y="32" width="8" height="8" fill="currentColor"/><rect x="24" y="32" width="8" height="8" fill="currentColor"/><rect x="32" y="32" width="8" height="8" fill="currentColor"/><rect x="40" y="32" width="8" height="8" fill="currentColor"/><rect x="28" y="40" width="8" height="8" fill="currentColor"/><rect x="28" y="48" width="8" height="8" fill="currentColor"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  All SVGs use <code>currentColor</code> — drop them into a page and they pick up the surrounding text color automatically. The light/dark toggle just flips the page's CSS variables to demonstrate.
+</footer>
+
+<script>
+  const body = document.body;
+  document.getElementById('t-light').onclick = () => {
+    body.dataset.theme = 'light';
+    document.getElementById('t-light').classList.add('active');
+    document.getElementById('t-dark').classList.remove('active');
+  };
+  document.getElementById('t-dark').onclick = () => {
+    body.dataset.theme = 'dark';
+    document.getElementById('t-dark').classList.add('active');
+    document.getElementById('t-light').classList.remove('active');
+  };
+  // Respect OS preference initially.
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.getElementById('t-dark').click();
+  }
+</script>
+
+</body>
+</html>

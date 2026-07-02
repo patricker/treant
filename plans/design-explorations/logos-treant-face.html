@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Treant face — refined</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --fg: #1a1a1a;
+    --card: #fff;
+    --border: #e5e7eb;
+    --muted: #6b7280;
+    --accent: #16a34a;
+    --leaf: #22c55e;
+  }
+  [data-theme="dark"] {
+    --bg: #0f1216;
+    --fg: #e5e7eb;
+    --card: #1a1f26;
+    --border: #2a313a;
+    --muted: #9ca3af;
+    --accent: #4ade80;
+    --leaf: #4ade80;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 0.2s, color 0.2s;
+  }
+  header {
+    padding: 2rem 2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { margin: 0; font-size: 1.6rem; }
+  header p { margin: 0.5rem 0 0; color: var(--muted); font-size: 0.9rem; max-width: 60ch; }
+  .toggle {
+    display: inline-flex;
+    gap: 0.25rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.25rem;
+  }
+  .toggle button {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .toggle button.active { background: var(--accent); color: #fff; }
+  .container { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+  section { margin-bottom: 2.5rem; }
+  section h2 {
+    font-size: 1.05rem;
+    margin: 0 0 0.25rem;
+    font-weight: 700;
+  }
+  section p {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .size-row {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .size-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .size-cell .label {
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .wordmark-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  .wordmark.l1 { font-size: 1rem; }
+  .wordmark.l2 { font-size: 1.5rem; }
+  .wordmark.l3 { font-size: 2.5rem; }
+  .wordmark.l4 { font-size: 4rem; }
+  .variations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+  }
+  .variation {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .variation .vlabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--fg);
+  }
+  .variation .vdesc {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .favicon-strip {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .favicon-strip .label {
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .favicon-strip svg { display: block; }
+  footer {
+    padding: 1.5rem 2rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div>
+    <h1>Treant face — chunky version</h1>
+    <p>Locking in the 32-px aesthetic from the original set: thicker strokes (3.5), wider trunk (10×14), two roots, bigger eyes (r=3). Confirmed at every size; small variations below for refinement.</p>
+  </div>
+  <div class="toggle">
+    <button id="t-light" class="active">Light</button>
+    <button id="t-dark">Dark</button>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- 1. Hero: scaling -->
+  <section>
+    <h2>Scales clean from 256 down to 16</h2>
+    <p>The chunky version uses bolder strokes that hold up as the icon shrinks, where the thinner 64-version started to feel wispy.</p>
+    <div class="panel">
+      <div class="size-row">
+        <div class="size-cell">
+          <svg width="256" height="256" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="25" cy="22" r="3" fill="currentColor"/>
+            <circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="label">256</span>
+        </div>
+        <div class="size-cell">
+          <svg width="128" height="128" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="label">128</span>
+        </div>
+        <div class="size-cell">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="label">64</span>
+        </div>
+        <div class="size-cell">
+          <svg width="32" height="32" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="label">32</span>
+        </div>
+        <div class="size-cell">
+          <svg width="24" height="24" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="label">24</span>
+        </div>
+        <div class="size-cell">
+          <svg width="16" height="16" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="label">16</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Wordmark -->
+  <section>
+    <h2>Wordmark pairings</h2>
+    <p>Eye spacing matches lowercase letter height — the icon and the "treant" wordmark sit on the same baseline visually.</p>
+    <div class="panel">
+      <div class="wordmark-row">
+        <div class="wordmark l1">
+          <svg width="22" height="22" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span>treant</span>
+        </div>
+        <div class="wordmark l2">
+          <svg width="32" height="32" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span>treant</span>
+        </div>
+        <div class="wordmark l3">
+          <svg width="56" height="56" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span>treant</span>
+        </div>
+        <div class="wordmark l4">
+          <svg width="92" height="92" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span>treant</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Favicon test -->
+  <section>
+    <h2>Favicon test</h2>
+    <p>Sizes browsers actually use. Tab-bar icons typically render at 16 px — make sure the eyes still read.</p>
+    <div class="panel">
+      <div class="favicon-strip">
+        <svg width="16" height="16" viewBox="0 0 64 64">
+          <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+        </svg>
+        <span class="label">16 — favicon</span>
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+        </svg>
+        <span class="label">32 — taskbar / large favicon</span>
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="27" y="42" width="10" height="14" fill="currentColor"/><line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="25" cy="22" r="3" fill="currentColor"/><circle cx="39" cy="22" r="3" fill="currentColor"/>
+        </svg>
+        <span class="label">64 — apple-touch-icon</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Refinement variations -->
+  <section>
+    <h2>Small variations to refine</h2>
+    <p>Same chunky aesthetic, single tweak each. All shown at 64 — the size where differences read most clearly.</p>
+    <div class="panel">
+      <div class="variations-grid">
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="25" cy="22" r="3" fill="currentColor"/>
+            <circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">A · baseline</span>
+          <span class="vdesc">The 32-version, locked in.</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="var(--leaf)" opacity="0.18"/>
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="25" cy="22" r="3" fill="currentColor"/>
+            <circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">B · green tint</span>
+          <span class="vdesc">Faint leaf-color wash inside the canopy.</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="currentColor"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="25" cy="22" r="3" fill="var(--card)"/>
+            <circle cx="39" cy="22" r="3" fill="var(--card)"/>
+          </svg>
+          <span class="vlabel">C · solid canopy</span>
+          <span class="vdesc">Inverted: filled head, knockout eyes.</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="32" y2="61" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="25" cy="22" r="3" fill="currentColor"/>
+            <circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">D · 3 roots</span>
+          <span class="vdesc">More grounded; slightly busier at small sizes.</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <circle cx="25" cy="22" r="3" fill="currentColor"/>
+            <circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">E · no roots</span>
+          <span class="vdesc">Cleaner silhouette, slightly less character.</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="22" r="22" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="28" y="44" width="8" height="12" fill="currentColor"/>
+            <line x1="32" y1="56" x2="22" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="42" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="24" cy="20" r="3" fill="currentColor"/>
+            <circle cx="40" cy="20" r="3" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">F · bigger head</span>
+          <span class="vdesc">Larger canopy, slimmer trunk; reads more "head."</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="22" r="16" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="38" width="10" height="18" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="26" cy="20" r="2.5" fill="currentColor"/>
+            <circle cx="38" cy="20" r="2.5" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">G · taller body</span>
+          <span class="vdesc">Smaller canopy + longer trunk; more "tree" than "creature."</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="4"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="25" cy="22" r="3.2" fill="currentColor"/>
+            <circle cx="39" cy="22" r="3.2" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">H · chunkier still</span>
+          <span class="vdesc">Stroke 4, slightly larger eyes — extra-bold variant.</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="42" width="10" height="14" rx="2" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="25" cy="22" r="3" fill="currentColor"/>
+            <circle cx="39" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">I · rounded trunk</span>
+          <span class="vdesc">Trunk with rx=2 — softer feet on the body.</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="25" cy="20" r="3" fill="currentColor"/>
+            <circle cx="39" cy="20" r="3" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">J · eyes higher</span>
+          <span class="vdesc">Eyes 2 px up — a more curious / alert look.</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="23" cy="22" r="3" fill="currentColor"/>
+            <circle cx="41" cy="22" r="3" fill="currentColor"/>
+          </svg>
+          <span class="vlabel">K · eyes wider</span>
+          <span class="vdesc">Eyes set further apart, deeper in canopy.</span>
+        </div>
+
+        <div class="variation">
+          <svg width="64" height="64" viewBox="0 0 64 64">
+            <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+            <rect x="27" y="42" width="10" height="14" fill="currentColor"/>
+            <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="22" y1="22" x2="28" y2="22" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <line x1="36" y1="22" x2="42" y2="22" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <span class="vlabel">L · sleepy eyes</span>
+          <span class="vdesc">Closed-eye dashes — calmer, more meditative.</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <a href="/logos.html">Geometric set</a> · <a href="/logos-cute.html">Cute set</a> · <a href="/logos-restrained.html">Restrained set</a>
+</footer>
+
+<script>
+  const body = document.body;
+  document.getElementById('t-light').onclick = () => {
+    body.dataset.theme = 'light';
+    document.getElementById('t-light').classList.add('active');
+    document.getElementById('t-dark').classList.remove('active');
+  };
+  document.getElementById('t-dark').onclick = () => {
+    body.dataset.theme = 'dark';
+    document.getElementById('t-dark').classList.add('active');
+    document.getElementById('t-light').classList.remove('active');
+  };
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.getElementById('t-dark').click();
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Treant Arcade — 5 Game Visual Themes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500..800&family=Orbitron:wght@500..800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Archivo:wght@600;800;900&family=JetBrains+Mono:wght@500;700&family=Hanken+Grotesk:wght@500..800&display=swap" rel="stylesheet" />
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{ background:#15151a; color:#eee; font-family:'Hanken Grotesk',sans-serif; padding:clamp(18px,4vw,48px); }
+  .pagehead{ max-width:1200px; margin:0 auto 30px; }
+  .pagehead h1{ font:800 clamp(26px,4vw,44px)/1 'Archivo',sans-serif; letter-spacing:-.02em; }
+  .pagehead p{ color:#9a9aa8; margin-top:10px; max-width:60ch; font-size:15px; line-height:1.5; }
+  .gallery{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:26px; }
+
+  /* shared card shell — each theme overrides the inner look */
+  .theme{ border-radius:20px; overflow:hidden; position:relative; min-height:430px; display:flex; flex-direction:column; }
+  .theme .bar{ display:flex; align-items:center; justify-content:space-between; padding:16px 18px; }
+  .theme .title{ display:flex; align-items:center; gap:10px; }
+  .theme .ico{ font-size:24px; }
+  .theme .name{ font-weight:800; }
+  .theme .tname{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; opacity:.7; }
+  .theme .body{ flex:1; padding:0 18px 18px; display:flex; flex-direction:column; gap:16px; }
+  .board{ display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+  .cell{ aspect-ratio:1; display:grid; place-items:center; position:relative; }
+  .piece{ width:62%; height:62%; border-radius:50%; }
+  .footer{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .tokens{ display:flex; gap:14px; align-items:center; font-size:13px; }
+  .tok{ display:flex; align-items:center; gap:7px; }
+  .dot{ width:16px; height:16px; border-radius:50%; }
+  .chips{ display:flex; gap:7px; }
+  .chip{ font-size:11px; font-weight:700; padding:6px 10px; border-radius:20px; }
+  .badge{ font-weight:800; font-size:12px; padding:6px 12px; border-radius:20px; }
+
+  /* ====================================================== 1. CANDY POP (light) */
+  #t1{ background:#fff6fb; color:#5b3a52; font-family:'Baloo 2',sans-serif; box-shadow:0 14px 40px rgba(255,138,193,.18); }
+  #t1 .tname{ color:#f48fb1 }
+  #t1 .board{ background:#ffe6f2; padding:10px; border-radius:18px; gap:7px; }
+  #t1 .cell{ background:#fff; border-radius:12px; box-shadow:inset 0 -2px 0 #ffd6e8; }
+  #t1 .a{ background:radial-gradient(circle at 35% 30%,#ff9ec4,#ff5fa2); box-shadow:0 3px 0 #e23e87; }
+  #t1 .b{ background:radial-gradient(circle at 35% 30%,#9ad8ff,#54b6f7); box-shadow:0 3px 0 #2d8fd8; }
+  #t1 .last{ outline:3px solid #ffd166; outline-offset:2px; }
+  #t1 .hint{ width:26%;height:26%;border-radius:50%; background:#ffc2dd; }
+  #t1 .chip{ background:#ffe0ef; color:#d8447f } #t1 .chip.on{ background:#ff5fa2; color:#fff }
+  #t1 .badge{ background:#ffd166; color:#6b4b12 }
+
+  /* ===================================================== 2. NEON ARCADE (dark) */
+  #t2{ background:radial-gradient(120% 100% at 50% 0,#1a1140,#0a0816); color:#d9d4ff; font-family:'Orbitron',sans-serif; border:1px solid #2a2150; }
+  #t2 .name{ text-shadow:0 0 10px #36f9c7 } #t2 .tname{ color:#36f9c7 }
+  #t2 .board{ background:#0c0a1c; padding:10px; border-radius:14px; border:1px solid #241c46; }
+  #t2 .cell{ background:#120e26; border-radius:8px; box-shadow:inset 0 0 8px rgba(123,44,255,.2); }
+  #t2 .a{ background:#ff2e88; box-shadow:0 0 12px #ff2e88,0 0 22px rgba(255,46,136,.6) }
+  #t2 .b{ background:#00e0ff; box-shadow:0 0 12px #00e0ff,0 0 22px rgba(0,224,255,.6) }
+  #t2 .last{ outline:2px solid #36f9c7; outline-offset:2px; box-shadow:0 0 12px #36f9c7 }
+  #t2 .hint{ width:24%;height:24%; background:#36f9c7; box-shadow:0 0 8px #36f9c7 }
+  #t2 .chip{ border:1px solid #36f9c7; color:#36f9c7; background:transparent } #t2 .chip.on{ background:#36f9c7; color:#0a0816 }
+  #t2 .badge{ background:#ff2e88; color:#fff; box-shadow:0 0 14px rgba(255,46,136,.6) }
+  #t2 .ico{ filter:drop-shadow(0 0 6px #00e0ff) }
+
+  /* ==================================================== 3. HEIRLOOM WOOD (warm) */
+  #t3{ background:linear-gradient(180deg,#6b4a2f,#5a3d27); color:#f3e6cf; font-family:'Cormorant Garamond',serif;
+       box-shadow:inset 0 0 0 2px #3e2a1a, 0 16px 36px rgba(0,0,0,.4); }
+  #t3 .name{ font-size:21px } #t3 .tname{ color:#d8b074; font-family:'Hanken Grotesk' }
+  #t3 .board{ padding:12px; border-radius:8px; gap:0;
+    background:repeating-linear-gradient(90deg,#caa56e 0 19.8%,#b8945c 19.8% 20%),
+               repeating-linear-gradient(0deg,#caa56e 0 19.8%,#b8945c 19.8% 20%);
+    background-blend-mode:multiply; border:6px solid #3e2a1a; box-shadow:inset 0 0 24px rgba(0,0,0,.4); }
+  #t3 .cell{ outline:1px solid rgba(62,42,26,.25) }
+  #t3 .piece{ width:66%;height:66% }
+  #t3 .a{ background:radial-gradient(circle at 38% 32%,#fff8ec,#e8d2a8); box-shadow:0 3px 5px rgba(0,0,0,.45),inset 0 -3px 4px rgba(140,110,60,.5) }
+  #t3 .b{ background:radial-gradient(circle at 38% 32%,#5a4632,#1c130a); box-shadow:0 3px 5px rgba(0,0,0,.55),inset 0 -3px 5px rgba(0,0,0,.6) }
+  #t3 .last{ outline:2px solid #d8b074; outline-offset:-3px }
+  #t3 .hint{ width:24%;height:24%; background:rgba(62,42,26,.4) }
+  #t3 .footer,#t3 .chips,#t3 .tokens{ font-family:'Hanken Grotesk' }
+  #t3 .chip{ background:#3e2a1a; color:#d8b074 } #t3 .chip.on{ background:#d8b074; color:#3e2a1a }
+  #t3 .badge{ background:#d8b074; color:#3e2a1a }
+
+  /* ====================================================== 4. BAUHAUS (light) */
+  #t4{ background:#f3efe6; color:#1a1a1a; font-family:'Archivo',sans-serif; border:3px solid #1a1a1a; }
+  #t4 .bar{ border-bottom:3px solid #1a1a1a } #t4 .tname{ color:#1a1a1a; opacity:.55 }
+  #t4 .board{ gap:0; background:#1a1a1a; border:3px solid #1a1a1a; }
+  #t4 .cell{ background:#f3efe6; border:1.5px solid #1a1a1a; }
+  #t4 .a{ background:#e2231a; border-radius:50% } /* circle */
+  #t4 .b{ background:#1356d8; border-radius:0; width:60%;height:60% } /* square */
+  #t4 .last{ background:#f7c400 } #t4 .last .piece{ box-shadow:0 0 0 3px #1a1a1a }
+  #t4 .hint{ width:0;height:0;border-radius:0; border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid #1a1a1a } /* triangle hint */
+  #t4 .chip{ background:#fff; border:2px solid #1a1a1a; color:#1a1a1a } #t4 .chip.on{ background:#f7c400 }
+  #t4 .badge{ background:#e2231a; color:#fff; border:2px solid #1a1a1a }
+
+  /* ===================================================== 5. BLUEPRINT (dark) */
+  #t5{ background:#0d1b2a; color:#cfe3ff; font-family:'JetBrains Mono',monospace;
+    background-image:linear-gradient(#13314e 1px,transparent 1px),linear-gradient(90deg,#13314e 1px,transparent 1px);
+    background-size:22px 22px; border:1px solid #1d3a59; }
+  #t5 .tname{ color:#56b6ff } #t5 .name{ font-weight:700 }
+  #t5 .board{ padding:10px; border:1px solid #2b5580; border-radius:4px; background:rgba(8,20,33,.7); }
+  #t5 .cell{ border:1px solid #1d3a59 }
+  #t5 .a{ background:transparent; border:2.5px solid #56b6ff; box-shadow:0 0 8px rgba(86,182,255,.4) }
+  #t5 .b{ background:transparent; border:2.5px dashed #ff8a5b; }
+  #t5 .last{ background:rgba(86,182,255,.12); outline:1px solid #56b6ff }
+  #t5 .hint{ width:30%;height:30%;border-radius:0; border:1px solid #56b6ff; transform:rotate(45deg) }
+  #t5 .chip{ border:1px solid #56b6ff; color:#56b6ff } #t5 .chip.on{ background:#56b6ff; color:#0d1b2a }
+  #t5 .badge{ background:transparent; border:1px solid #ff8a5b; color:#ff8a5b }
+</style>
+</head>
+<body>
+<div class="pagehead">
+  <h1>Treant Arcade — game visual themes</h1>
+  <p>Five ways the games themselves could look. Each card shows the board, both players' pieces, the last-move highlight, legal-move hints, difficulty chips, and a result badge — the full visual language, not just a palette.</p>
+</div>
+<div class="gallery" id="gallery"></div>
+
+<script>
+  // Shared 5×5 sample position so themes are directly comparable.
+  // 0 empty · 1 player A · 2 player B · 3 legal-hint · 4 player A (last move)
+  const LAYOUT = [
+    0,1,0,2,0,
+    0,1,2,0,3,
+    2,0,4,0,1,
+    0,2,0,1,0,
+    3,0,1,0,2,
+  ];
+  const THEMES = [
+    {id:'t1', ico:'⭕', name:'Tic-Tac-Toe', tname:'Candy Pop'},
+    {id:'t2', ico:'⬡', name:'Hex', tname:'Neon Arcade'},
+    {id:'t3', ico:'⚫', name:'Reversi', tname:'Heirloom Wood'},
+    {id:'t4', ico:'🔴', name:'Connect Four', tname:'Bauhaus'},
+    {id:'t5', ico:'♛', name:'Amazons', tname:'Blueprint'},
+  ];
+  const cellHtml = v => {
+    if(v===1) return '<div class="cell"><div class="piece a"></div></div>';
+    if(v===2) return '<div class="cell"><div class="piece b"></div></div>';
+    if(v===4) return '<div class="cell last"><div class="piece a"></div></div>';
+    if(v===3) return '<div class="cell"><div class="hint"></div></div>';
+    return '<div class="cell"></div>';
+  };
+  document.getElementById('gallery').innerHTML = THEMES.map(t=>`
+    <div class="theme" id="${t.id}">
+      <div class="bar">
+        <div class="title"><span class="ico">${t.ico}</span>
+          <div><div class="name">${t.name}</div><div class="tname">${t.tname}</div></div>
+        </div>
+        <span class="badge">Red wins!</span>
+      </div>
+      <div class="body">
+        <div class="board">${LAYOUT.map(cellHtml).join('')}</div>
+        <div class="footer">
+          <div class="tokens">
+            <span class="tok"><span class="dot" style="background:var(--a,#ff5fa2)"></span>You</span>
+            <span class="tok"><span class="dot" style="background:var(--b,#54b6f7)"></span>AI</span>
+          </div>
+          <div class="chips"><span class="chip">Easy</span><span class="chip on">Medium</span><span class="chip">Hard</span></div>
+        </div>
+      </div>
+    </div>`).join('');
+  // wire the token dots to each theme's actual piece colors
+  const A={t1:'#ff5fa2',t2:'#ff2e88',t3:'#e8d2a8',t4:'#e2231a',t5:'#56b6ff'};
+  const B={t1:'#54b6f7',t2:'#00e0ff',t3:'#1c130a',t4:'#1356d8',t5:'#ff8a5b'};
+  THEMES.forEach(t=>{ const el=document.getElementById(t.id);
+    el.querySelectorAll('.tok .dot')[0].style.background=A[t.id];
+    el.querySelectorAll('.tok .dot')[1].style.background=B[t.id];
+    if(t.id==='t4') el.querySelectorAll('.tok .dot')[1].style.borderRadius='0';
+    if(t.id==='t5'){ el.querySelectorAll('.tok .dot').forEach((d,i)=>{d.style.background='transparent';d.style.border='2px '+(i?'dashed':'solid')+' '+(i?B.t5:A.t5)}); }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Treant Logo Concepts — Restrained</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --fg: #1a1a1a;
+    --card: #fff;
+    --border: #e5e7eb;
+    --muted: #6b7280;
+    --accent: #16a34a;
+    --leaf: #22c55e;
+    --berry: #ef4444;
+    --mush: #ef4444;
+  }
+  [data-theme="dark"] {
+    --bg: #0f1216;
+    --fg: #e5e7eb;
+    --card: #1a1f26;
+    --border: #2a313a;
+    --muted: #9ca3af;
+    --accent: #4ade80;
+    --leaf: #4ade80;
+    --berry: #fb7185;
+    --mush: #fb7185;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 0.2s, color 0.2s;
+  }
+  header {
+    padding: 2rem 2rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { margin: 0; font-size: 1.6rem; }
+  header p { margin: 0.5rem 0 0; color: var(--muted); font-size: 0.9rem; max-width: 60ch; }
+  .toggle {
+    display: inline-flex;
+    gap: 0.25rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.25rem;
+  }
+  .toggle button {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .toggle button.active {
+    background: var(--accent);
+    color: #fff;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1rem;
+  }
+  .card-head h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .card-head .num {
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    font-size: 0.8rem;
+  }
+  .card-head .tag {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: var(--bg);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+  }
+  .card-desc {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin: 0 0 1rem;
+    line-height: 1.4;
+  }
+  .previews {
+    display: grid;
+    grid-template-columns: 128px 64px 32px 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .previews svg { display: block; }
+  .preview-label {
+    font-family: ui-monospace, monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.25rem;
+  }
+  .preview-cell { display: flex; flex-direction: column; align-items: center; }
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .wordmark svg { flex-shrink: 0; }
+  footer {
+    padding: 1.5rem 2rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body data-theme="light">
+
+<header>
+  <div>
+    <h1>Treant logo concepts — restrained</h1>
+    <p>Strict rules: no mouths, mostly no faces, at most one small life detail per logo, chunkier geometry. Things stay objects, not characters.</p>
+  </div>
+  <div class="toggle" role="tablist" aria-label="Theme">
+    <button id="t-light" class="active">Light</button>
+    <button id="t-dark">Dark</button>
+  </div>
+</header>
+
+<div class="grid">
+
+  <!-- 21. Squat oak (eyes-only) -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Squat oak <span class="tag">eyes only</span></h2><span class="num">21</span>
+    </div>
+    <p class="card-desc">A pillow-shaped canopy on a stout trunk. Two small dots imply a presence — no smile, no body.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <rect x="10" y="10" width="44" height="32" rx="20" fill="var(--leaf)" opacity="0.2"/>
+          <rect x="10" y="10" width="44" height="32" rx="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <rect x="26" y="42" width="12" height="14" rx="2" fill="currentColor"/>
+          <line x1="20" y1="56" x2="44" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="25" cy="26" r="2.2" fill="currentColor"/>
+          <circle cx="39" cy="26" r="2.2" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <rect x="10" y="10" width="44" height="32" rx="20" fill="var(--leaf)" opacity="0.2"/><rect x="10" y="10" width="44" height="32" rx="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><rect x="26" y="42" width="12" height="14" rx="2" fill="currentColor"/><line x1="20" y1="56" x2="44" y2="56" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="25" cy="26" r="2.2" fill="currentColor"/><circle cx="39" cy="26" r="2.2" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <rect x="8" y="8" width="48" height="34" rx="20" fill="var(--leaf)" opacity="0.22"/><rect x="8" y="8" width="48" height="34" rx="20" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><rect x="24" y="42" width="16" height="14" rx="2" fill="currentColor"/><circle cx="24" cy="25" r="3" fill="currentColor"/><circle cx="40" cy="25" r="3" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <rect x="10" y="10" width="44" height="32" rx="20" fill="var(--leaf)" opacity="0.22"/><rect x="10" y="10" width="44" height="32" rx="20" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/><rect x="26" y="42" width="12" height="14" rx="2" fill="currentColor"/><circle cx="25" cy="26" r="2.4" fill="currentColor"/><circle cx="39" cy="26" r="2.4" fill="currentColor"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 22. Soft seedling (no face) -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Soft seedling <span class="tag">no face</span></h2><span class="num">22</span>
+    </div>
+    <p class="card-desc">Original Seedling, but rounder and chunkier. Pure object — the cap, body, stem, and leaf carry it.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <path d="M 16 30 Q 16 56 32 58 Q 48 56 48 30 Z" fill="currentColor"/>
+          <path d="M 12 22 Q 12 16 16 14 Q 32 8 48 14 Q 52 16 52 22 Q 52 30 48 32 L 16 32 Q 12 30 12 22 Z" fill="currentColor"/>
+          <line x1="22" y1="20" x2="22" y2="30" stroke="var(--card)" stroke-width="1.2" opacity="0.6" stroke-linecap="round"/>
+          <line x1="32" y1="18" x2="32" y2="30" stroke="var(--card)" stroke-width="1.2" opacity="0.6" stroke-linecap="round"/>
+          <line x1="42" y1="20" x2="42" y2="30" stroke="var(--card)" stroke-width="1.2" opacity="0.6" stroke-linecap="round"/>
+          <line x1="32" y1="14" x2="32" y2="6" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+          <path d="M 32 8 Q 40 4 44 8 Q 40 14 32 11 Z" fill="var(--leaf)"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <path d="M 16 30 Q 16 56 32 58 Q 48 56 48 30 Z" fill="currentColor"/><path d="M 12 22 Q 12 16 16 14 Q 32 8 48 14 Q 52 16 52 22 Q 52 30 48 32 L 16 32 Q 12 30 12 22 Z" fill="currentColor"/><line x1="32" y1="14" x2="32" y2="6" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><path d="M 32 8 Q 40 4 44 8 Q 40 14 32 11 Z" fill="var(--leaf)"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <path d="M 14 30 Q 14 58 32 60 Q 50 58 50 30 Z" fill="currentColor"/><path d="M 10 22 Q 10 14 14 12 Q 32 6 50 12 Q 54 14 54 22 Q 54 32 50 34 L 14 34 Q 10 32 10 22 Z" fill="currentColor"/><line x1="32" y1="12" x2="32" y2="2" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M 32 4 Q 44 0 48 6 Q 44 12 32 8 Z" fill="var(--leaf)"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <path d="M 16 30 Q 16 56 32 58 Q 48 56 48 30 Z" fill="currentColor"/><path d="M 12 22 Q 12 16 16 14 Q 32 8 48 14 Q 52 16 52 22 Q 52 30 48 32 L 16 32 Q 12 30 12 22 Z" fill="currentColor"/><line x1="32" y1="14" x2="32" y2="5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M 32 8 Q 41 3 45 8 Q 41 14 32 10 Z" fill="var(--leaf)"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 23. Leaning oak (no face) -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Leaning oak <span class="tag">no face</span></h2><span class="num">23</span>
+    </div>
+    <p class="card-desc">Canopy slightly off-center, trunk curving gently to meet it. Personality through tilt — no anatomy added.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <circle cx="26" cy="22" r="18" fill="var(--leaf)" opacity="0.2"/>
+          <circle cx="26" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="3"/>
+          <path d="M 32 56 C 31 48, 28 42, 26 38" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+          <line x1="20" y1="56" x2="44" y2="56" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="26" cy="22" r="18" fill="var(--leaf)" opacity="0.2"/><circle cx="26" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="3"/><path d="M 32 56 C 31 48, 28 42, 26 38" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><line x1="20" y1="56" x2="44" y2="56" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <circle cx="24" cy="22" r="20" fill="var(--leaf)" opacity="0.22"/><circle cx="24" cy="22" r="20" fill="none" stroke="currentColor" stroke-width="4"/><path d="M 32 58 C 30 48, 28 42, 24 36" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <circle cx="26" cy="22" r="18" fill="var(--leaf)" opacity="0.22"/><circle cx="26" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="3.2"/><path d="M 32 56 C 31 48, 28 42, 26 38" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 24. Stump and mushroom -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Stump and mushroom <span class="tag">one detail</span></h2><span class="num">24</span>
+    </div>
+    <p class="card-desc">A wide stump with one little mushroom growing on top. The mushroom is the personality — the stump is just the stage.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <path d="M 14 32 L 14 56 Q 14 58 16 58 L 48 58 Q 50 58 50 56 L 50 32 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          <ellipse cx="32" cy="32" rx="18" ry="6" fill="var(--card)" stroke="currentColor" stroke-width="3"/>
+          <ellipse cx="32" cy="32" rx="11" ry="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <ellipse cx="32" cy="32" rx="5" ry="1.5" fill="none" stroke="currentColor" stroke-width="1"/>
+          <ellipse cx="40" cy="22" rx="6" ry="4" fill="var(--mush)"/>
+          <rect x="38" y="24" width="4" height="6" rx="1" fill="currentColor"/>
+          <circle cx="38" cy="20" r="0.9" fill="var(--card)"/>
+          <circle cx="42" cy="22" r="0.9" fill="var(--card)"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <path d="M 14 32 L 14 56 Q 14 58 16 58 L 48 58 Q 50 58 50 56 L 50 32 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><ellipse cx="32" cy="32" rx="18" ry="6" fill="var(--card)" stroke="currentColor" stroke-width="3"/><ellipse cx="32" cy="32" rx="11" ry="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="32" cy="32" rx="5" ry="1.5" fill="none" stroke="currentColor" stroke-width="1"/><ellipse cx="40" cy="22" rx="6" ry="4" fill="var(--mush)"/><rect x="38" y="24" width="4" height="6" rx="1" fill="currentColor"/><circle cx="38" cy="20" r="0.9" fill="var(--card)"/><circle cx="42" cy="22" r="0.9" fill="var(--card)"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <path d="M 12 32 L 12 56 Q 12 58 14 58 L 50 58 Q 52 58 52 56 L 52 32 Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><ellipse cx="32" cy="32" rx="20" ry="6" fill="var(--card)" stroke="currentColor" stroke-width="4"/><ellipse cx="42" cy="22" rx="8" ry="5" fill="var(--mush)"/><rect x="38" y="24" width="8" height="8" rx="1" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <path d="M 14 32 L 14 56 Q 14 58 16 58 L 48 58 Q 50 58 50 56 L 50 32 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><ellipse cx="32" cy="32" rx="18" ry="6" fill="var(--card)" stroke="currentColor" stroke-width="3"/><ellipse cx="32" cy="32" rx="11" ry="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="40" cy="22" rx="6" ry="4" fill="var(--mush)"/><rect x="38" y="24" width="4" height="6" rx="1" fill="currentColor"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 25. Knothole heart -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Knothole heart <span class="tag">one detail</span></h2><span class="num">25</span>
+    </div>
+    <p class="card-desc">A round canopy on a thick trunk with a tiny heart-shaped hollow in the bark. Warmth without anthropomorphizing.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <circle cx="32" cy="22" r="18" fill="var(--leaf)" opacity="0.2"/>
+          <circle cx="32" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="3"/>
+          <rect x="22" y="40" width="20" height="18" rx="3" fill="currentColor"/>
+          <g transform="translate(32 50) scale(0.45)">
+            <circle cx="-4" cy="-2" r="4" fill="var(--card)"/>
+            <circle cx="4" cy="-2" r="4" fill="var(--card)"/>
+            <path d="M -7 -1 L 7 -1 L 0 8 Z" fill="var(--card)"/>
+          </g>
+          <line x1="14" y1="58" x2="50" y2="58" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="22" r="18" fill="var(--leaf)" opacity="0.2"/><circle cx="32" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="3"/><rect x="22" y="40" width="20" height="18" rx="3" fill="currentColor"/><g transform="translate(32 50) scale(0.45)"><circle cx="-4" cy="-2" r="4" fill="var(--card)"/><circle cx="4" cy="-2" r="4" fill="var(--card)"/><path d="M -7 -1 L 7 -1 L 0 8 Z" fill="var(--card)"/></g><line x1="14" y1="58" x2="50" y2="58" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <circle cx="32" cy="22" r="20" fill="var(--leaf)" opacity="0.22"/><circle cx="32" cy="22" r="20" fill="none" stroke="currentColor" stroke-width="4"/><rect x="20" y="42" width="24" height="18" rx="3" fill="currentColor"/><g transform="translate(32 52) scale(0.7)"><circle cx="-4" cy="-2" r="4" fill="var(--card)"/><circle cx="4" cy="-2" r="4" fill="var(--card)"/><path d="M -7 -1 L 7 -1 L 0 8 Z" fill="var(--card)"/></g>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <circle cx="32" cy="22" r="18" fill="var(--leaf)" opacity="0.22"/><circle cx="32" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="3.2"/><rect x="22" y="40" width="20" height="18" rx="3" fill="currentColor"/><g transform="translate(32 50) scale(0.5)"><circle cx="-4" cy="-2" r="4" fill="var(--card)"/><circle cx="4" cy="-2" r="4" fill="var(--card)"/><path d="M -7 -1 L 7 -1 L 0 8 Z" fill="var(--card)"/></g>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 26. Cloud canopy (eyes-only) -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Cloud canopy <span class="tag">eyes only</span></h2><span class="num">26</span>
+    </div>
+    <p class="card-desc">Soft multi-bump canopy. Just two eye-dots set deep in the foliage — a glance, not a face.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <circle cx="20" cy="22" r="11" fill="var(--leaf)" opacity="0.2"/>
+          <circle cx="32" cy="14" r="11" fill="var(--leaf)" opacity="0.2"/>
+          <circle cx="44" cy="22" r="11" fill="var(--leaf)" opacity="0.2"/>
+          <circle cx="32" cy="30" r="13" fill="var(--leaf)" opacity="0.2"/>
+          <circle cx="20" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="32" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="44" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="3"/>
+          <circle cx="32" cy="30" r="13" fill="none" stroke="currentColor" stroke-width="3"/>
+          <rect x="28" y="40" width="8" height="14" rx="1" fill="currentColor"/>
+          <line x1="20" y1="54" x2="44" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="27" cy="30" r="2" fill="currentColor"/>
+          <circle cx="37" cy="30" r="2" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="20" cy="22" r="11" fill="var(--leaf)" opacity="0.2"/><circle cx="32" cy="14" r="11" fill="var(--leaf)" opacity="0.2"/><circle cx="44" cy="22" r="11" fill="var(--leaf)" opacity="0.2"/><circle cx="32" cy="30" r="13" fill="var(--leaf)" opacity="0.2"/><circle cx="20" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="44" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="30" r="13" fill="none" stroke="currentColor" stroke-width="3"/><rect x="28" y="40" width="8" height="14" rx="1" fill="currentColor"/><line x1="20" y1="54" x2="44" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="27" cy="30" r="2" fill="currentColor"/><circle cx="37" cy="30" r="2" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <circle cx="20" cy="22" r="13" fill="var(--leaf)" opacity="0.22"/><circle cx="32" cy="12" r="13" fill="var(--leaf)" opacity="0.22"/><circle cx="44" cy="22" r="13" fill="var(--leaf)" opacity="0.22"/><circle cx="32" cy="30" r="15" fill="var(--leaf)" opacity="0.22"/><circle cx="20" cy="22" r="13" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="32" cy="12" r="13" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="44" cy="22" r="13" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="32" cy="30" r="15" fill="none" stroke="currentColor" stroke-width="4"/><rect x="26" y="40" width="12" height="16" rx="2" fill="currentColor"/><circle cx="26" cy="30" r="3" fill="currentColor"/><circle cx="38" cy="30" r="3" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <circle cx="20" cy="22" r="11" fill="var(--leaf)" opacity="0.22"/><circle cx="32" cy="14" r="11" fill="var(--leaf)" opacity="0.22"/><circle cx="44" cy="22" r="11" fill="var(--leaf)" opacity="0.22"/><circle cx="32" cy="30" r="13" fill="var(--leaf)" opacity="0.22"/><circle cx="20" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="3.2"/><circle cx="32" cy="14" r="11" fill="none" stroke="currentColor" stroke-width="3.2"/><circle cx="44" cy="22" r="11" fill="none" stroke="currentColor" stroke-width="3.2"/><circle cx="32" cy="30" r="13" fill="none" stroke="currentColor" stroke-width="3.2"/><rect x="28" y="40" width="8" height="14" rx="1" fill="currentColor"/><circle cx="27" cy="30" r="2.2" fill="currentColor"/><circle cx="37" cy="30" r="2.2" fill="currentColor"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 27. Falling leaf -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Falling leaf <span class="tag">one detail</span></h2><span class="num">27</span>
+    </div>
+    <p class="card-desc">A tree with a single leaf detached and drifting down. Motion as life — no face needed.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <circle cx="26" cy="22" r="16" fill="var(--leaf)" opacity="0.2"/>
+          <circle cx="26" cy="22" r="16" fill="none" stroke="currentColor" stroke-width="3"/>
+          <rect x="22" y="38" width="8" height="18" rx="1" fill="currentColor"/>
+          <line x1="14" y1="56" x2="50" y2="56" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+          <ellipse cx="48" cy="34" rx="4.5" ry="2.5" fill="var(--leaf)" transform="rotate(40 48 34)"/>
+          <ellipse cx="52" cy="48" rx="3.5" ry="2" fill="var(--leaf)" transform="rotate(-25 52 48)"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="26" cy="22" r="16" fill="var(--leaf)" opacity="0.2"/><circle cx="26" cy="22" r="16" fill="none" stroke="currentColor" stroke-width="3"/><rect x="22" y="38" width="8" height="18" rx="1" fill="currentColor"/><line x1="14" y1="56" x2="50" y2="56" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><ellipse cx="48" cy="34" rx="4.5" ry="2.5" fill="var(--leaf)" transform="rotate(40 48 34)"/><ellipse cx="52" cy="48" rx="3.5" ry="2" fill="var(--leaf)" transform="rotate(-25 52 48)"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <circle cx="24" cy="22" r="18" fill="var(--leaf)" opacity="0.22"/><circle cx="24" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="4"/><rect x="20" y="40" width="10" height="18" rx="1" fill="currentColor"/><ellipse cx="48" cy="34" rx="6" ry="3.5" fill="var(--leaf)" transform="rotate(40 48 34)"/><ellipse cx="52" cy="50" rx="4" ry="2.5" fill="var(--leaf)" transform="rotate(-25 52 50)"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <circle cx="26" cy="22" r="16" fill="var(--leaf)" opacity="0.22"/><circle cx="26" cy="22" r="16" fill="none" stroke="currentColor" stroke-width="3.2"/><rect x="22" y="38" width="8" height="18" rx="1" fill="currentColor"/><ellipse cx="48" cy="34" rx="4.5" ry="2.5" fill="var(--leaf)" transform="rotate(40 48 34)"/><ellipse cx="52" cy="48" rx="3.5" ry="2" fill="var(--leaf)" transform="rotate(-25 52 48)"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 28. Sapling pair -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Sapling pair <span class="tag">no face</span></h2><span class="num">28</span>
+    </div>
+    <p class="card-desc">Two saplings side by side. Pair-as-character — no need for any anatomy at all.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <line x1="22" y1="56" x2="22" y2="34" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+          <ellipse cx="17" cy="32" rx="5" ry="3" fill="var(--leaf)" transform="rotate(-30 17 32)"/>
+          <ellipse cx="27" cy="32" rx="5" ry="3" fill="var(--leaf)" transform="rotate(30 27 32)"/>
+          <ellipse cx="22" cy="26" rx="4" ry="2.5" fill="var(--leaf)"/>
+          <line x1="42" y1="56" x2="42" y2="22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+          <ellipse cx="36" cy="20" rx="6" ry="3.5" fill="var(--leaf)" transform="rotate(-30 36 20)"/>
+          <ellipse cx="48" cy="20" rx="6" ry="3.5" fill="var(--leaf)" transform="rotate(30 48 20)"/>
+          <ellipse cx="42" cy="12" rx="5" ry="3" fill="var(--leaf)"/>
+          <line x1="10" y1="56" x2="54" y2="56" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <line x1="22" y1="56" x2="22" y2="34" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="17" cy="32" rx="5" ry="3" fill="var(--leaf)" transform="rotate(-30 17 32)"/><ellipse cx="27" cy="32" rx="5" ry="3" fill="var(--leaf)" transform="rotate(30 27 32)"/><ellipse cx="22" cy="26" rx="4" ry="2.5" fill="var(--leaf)"/><line x1="42" y1="56" x2="42" y2="22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="36" cy="20" rx="6" ry="3.5" fill="var(--leaf)" transform="rotate(-30 36 20)"/><ellipse cx="48" cy="20" rx="6" ry="3.5" fill="var(--leaf)" transform="rotate(30 48 20)"/><ellipse cx="42" cy="12" rx="5" ry="3" fill="var(--leaf)"/><line x1="10" y1="56" x2="54" y2="56" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <line x1="20" y1="58" x2="20" y2="34" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><ellipse cx="14" cy="32" rx="7" ry="4" fill="var(--leaf)" transform="rotate(-30 14 32)"/><ellipse cx="26" cy="32" rx="7" ry="4" fill="var(--leaf)" transform="rotate(30 26 32)"/><ellipse cx="20" cy="22" rx="6" ry="3.5" fill="var(--leaf)"/><line x1="44" y1="58" x2="44" y2="20" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><ellipse cx="36" cy="18" rx="8" ry="4.5" fill="var(--leaf)" transform="rotate(-30 36 18)"/><ellipse cx="52" cy="18" rx="8" ry="4.5" fill="var(--leaf)" transform="rotate(30 52 18)"/><ellipse cx="44" cy="8" rx="6" ry="3.5" fill="var(--leaf)"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <line x1="22" y1="56" x2="22" y2="34" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="17" cy="32" rx="5" ry="3" fill="var(--leaf)" transform="rotate(-30 17 32)"/><ellipse cx="27" cy="32" rx="5" ry="3" fill="var(--leaf)" transform="rotate(30 27 32)"/><ellipse cx="22" cy="26" rx="4" ry="2.5" fill="var(--leaf)"/><line x1="42" y1="56" x2="42" y2="22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="36" cy="20" rx="6" ry="3.5" fill="var(--leaf)" transform="rotate(-30 36 20)"/><ellipse cx="48" cy="20" rx="6" ry="3.5" fill="var(--leaf)" transform="rotate(30 48 20)"/><ellipse cx="42" cy="12" rx="5" ry="3" fill="var(--leaf)"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 29. Berry oak -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Berry oak <span class="tag">one detail</span></h2><span class="num">29</span>
+    </div>
+    <p class="card-desc">A round canopy dotted with three small berries. The berries pop in red but they're hidden in foliage — not the focus.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <circle cx="32" cy="22" r="18" fill="var(--leaf)" opacity="0.2"/>
+          <circle cx="32" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="3"/>
+          <rect x="28" y="40" width="8" height="14" rx="1" fill="currentColor"/>
+          <line x1="20" y1="54" x2="44" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="22" cy="22" r="2.4" fill="var(--berry)"/>
+          <circle cx="34" cy="14" r="2.4" fill="var(--berry)"/>
+          <circle cx="40" cy="28" r="2.4" fill="var(--berry)"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="22" r="18" fill="var(--leaf)" opacity="0.2"/><circle cx="32" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="3"/><rect x="28" y="40" width="8" height="14" rx="1" fill="currentColor"/><line x1="20" y1="54" x2="44" y2="54" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><circle cx="22" cy="22" r="2.4" fill="var(--berry)"/><circle cx="34" cy="14" r="2.4" fill="var(--berry)"/><circle cx="40" cy="28" r="2.4" fill="var(--berry)"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <circle cx="32" cy="22" r="20" fill="var(--leaf)" opacity="0.22"/><circle cx="32" cy="22" r="20" fill="none" stroke="currentColor" stroke-width="4"/><rect x="27" y="42" width="10" height="14" rx="1" fill="currentColor"/><circle cx="22" cy="22" r="3" fill="var(--berry)"/><circle cx="34" cy="12" r="3" fill="var(--berry)"/><circle cx="42" cy="28" r="3" fill="var(--berry)"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <circle cx="32" cy="22" r="18" fill="var(--leaf)" opacity="0.22"/><circle cx="32" cy="22" r="18" fill="none" stroke="currentColor" stroke-width="3.2"/><rect x="28" y="40" width="8" height="14" rx="1" fill="currentColor"/><circle cx="22" cy="22" r="2.5" fill="var(--berry)"/><circle cx="34" cy="14" r="2.5" fill="var(--berry)"/><circle cx="40" cy="28" r="2.5" fill="var(--berry)"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 30. Leaf wreath -->
+  <div class="card">
+    <div class="card-head">
+      <h2>Leaf wreath <span class="tag">no face</span></h2><span class="num">30</span>
+    </div>
+    <p class="card-desc">A circle of leaves around a small acorn. Pure framing — feels editorial, badge-like, restrained.</p>
+    <div class="previews">
+      <div class="preview-cell">
+        <svg width="128" height="128" viewBox="0 0 64 64">
+          <g transform="translate(32 32)">
+            <g transform="rotate(0)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g>
+            <g transform="rotate(45)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g>
+            <g transform="rotate(90)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g>
+            <g transform="rotate(135)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g>
+            <g transform="rotate(180)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g>
+            <g transform="rotate(225)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g>
+            <g transform="rotate(270)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g>
+            <g transform="rotate(315)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g>
+          </g>
+          <ellipse cx="32" cy="36" rx="6" ry="7" fill="currentColor"/>
+          <path d="M 26 28 Q 32 24 38 28 L 38 32 Q 32 28 26 32 Z" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">128</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <g transform="translate(32 32)"><g transform="rotate(0)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(45)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(90)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(135)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(180)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(225)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(270)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(315)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g></g><ellipse cx="32" cy="36" rx="6" ry="7" fill="currentColor"/><path d="M 26 28 Q 32 24 38 28 L 38 32 Q 32 28 26 32 Z" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">64</span>
+      </div>
+      <div class="preview-cell">
+        <svg width="32" height="32" viewBox="0 0 64 64">
+          <g transform="translate(32 32)"><g transform="rotate(0)"><ellipse cx="0" cy="-24" rx="8" ry="4.5" fill="var(--leaf)"/></g><g transform="rotate(60)"><ellipse cx="0" cy="-24" rx="8" ry="4.5" fill="var(--leaf)"/></g><g transform="rotate(120)"><ellipse cx="0" cy="-24" rx="8" ry="4.5" fill="var(--leaf)"/></g><g transform="rotate(180)"><ellipse cx="0" cy="-24" rx="8" ry="4.5" fill="var(--leaf)"/></g><g transform="rotate(240)"><ellipse cx="0" cy="-24" rx="8" ry="4.5" fill="var(--leaf)"/></g><g transform="rotate(300)"><ellipse cx="0" cy="-24" rx="8" ry="4.5" fill="var(--leaf)"/></g></g><ellipse cx="32" cy="36" rx="8" ry="9" fill="currentColor"/><path d="M 24 26 Q 32 22 40 26 L 40 32 Q 32 28 24 32 Z" fill="currentColor"/>
+        </svg>
+        <span class="preview-label">32</span>
+      </div>
+      <div class="wordmark">
+        <svg width="36" height="36" viewBox="0 0 64 64">
+          <g transform="translate(32 32)"><g transform="rotate(0)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(45)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(90)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(135)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(180)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(225)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(270)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g><g transform="rotate(315)"><ellipse cx="0" cy="-22" rx="6" ry="3.5" fill="var(--leaf)"/></g></g><ellipse cx="32" cy="36" rx="6" ry="7" fill="currentColor"/><path d="M 26 28 Q 32 24 38 28 L 38 32 Q 32 28 26 32 Z" fill="currentColor"/>
+        </svg>
+        <span>treant</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Compare with <a href="/logos.html">geometric set</a> and <a href="/logos-cute.html">cute set</a>. Two of these (Squat oak, Cloud canopy) keep eyes-only — close to the original Treant face. The rest stay pure objects, like the original Seedling.
+</footer>
+
+<script>
+  const body = document.body;
+  document.getElementById('t-light').onclick = () => {
+    body.dataset.theme = 'light';
+    document.getElementById('t-light').classList.add('active');
+    document.getElementById('t-dark').classList.remove('active');
+  };
+  document.getElementById('t-dark').onclick = () => {
+    body.dataset.theme = 'dark';
+    document.getElementById('t-dark').classList.add('active');
+    document.getElementById('t-light').classList.remove('active');
+  };
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.getElementById('t-dark').click();
+  }
+</script>
+
+</body>
+</html>
