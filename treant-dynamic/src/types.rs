@@ -65,6 +65,8 @@ impl Default for DynConfig {
 pub struct DynChildStats {
     pub mov: String,
     pub visits: u64,
+    /// Mean reward over this child's visits, in the host's natural value
+    /// convention (roughly `[-1, 1]`, matching `EvalCallbacks::evaluate`).
     pub avg_reward: f64,
     pub prior: f64,
     pub proven_value: ProvenValue,
@@ -75,6 +77,8 @@ pub struct DynChildStats {
 #[derive(Clone, Debug)]
 pub struct DynTreeNode {
     pub visits: u64,
+    /// Mean reward over this node's visits, in the host's natural value
+    /// convention (roughly `[-1, 1]`, matching `EvalCallbacks::evaluate`).
     pub avg_reward: f64,
     pub proven: ProvenValue,
     pub children: Vec<DynTreeEdge>,
@@ -85,6 +89,8 @@ pub struct DynTreeNode {
 pub struct DynTreeEdge {
     pub mov: String,
     pub visits: u64,
+    /// Mean reward over this edge's visits, in the host's natural value
+    /// convention (roughly `[-1, 1]`, matching `EvalCallbacks::evaluate`).
     pub avg_reward: f64,
     pub prior: f64,
     pub child: Option<DynTreeNode>,

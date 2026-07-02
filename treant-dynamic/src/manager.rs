@@ -4,7 +4,7 @@ use std::time::Duration;
 use treant::tree_policy::AlphaGoPolicy;
 use treant::{MCTSManager, ProvenValue, ScoreBounds};
 
-use crate::adapter::{DynEvaluator, DynGameState, DynSpec};
+use crate::adapter::{DynEvaluator, DynGameState, DynSpec, REWARD_SCALE};
 use crate::callbacks::{EvalCallbacks, GameCallbacks};
 use crate::types::{DynChildStats, DynConfig, DynTreeEdge, DynTreeNode};
 
@@ -78,7 +78,9 @@ impl DynMCTSManager {
             .map(|cs| DynChildStats {
                 mov: cs.mov.0,
                 visits: cs.visits,
-                avg_reward: cs.avg_reward,
+                // Core accumulates rewards in scaled i64 space (value * REWARD_SCALE);
+                // divide back out so the host sees its natural [-1, 1] convention.
+                avg_reward: cs.avg_reward / REWARD_SCALE,
                 prior: cs.move_evaluation,
                 proven_value: cs.proven_value,
                 score_bounds: cs.score_bounds,
@@ -134,8 +136,9 @@ fn export_node(node: &treant::NodeHandle<'_, DynSpec>, max_depth: u32) -> DynTre
             children.push(DynTreeEdge {
                 mov: mi.get_move().0.clone(),
                 visits,
+                // Rescale from core's i64 reward space back to the host's [-1, 1].
                 avg_reward: if visits > 0 {
-                    mi.sum_rewards() as f64 / visits as f64
+                    mi.sum_rewards() as f64 / visits as f64 / REWARD_SCALE
                 } else {
                     0.0
                 },
@@ -150,8 +153,9 @@ fn export_node(node: &treant::NodeHandle<'_, DynSpec>, max_depth: u32) -> DynTre
 
     DynTreeNode {
         visits: root_visits,
+        // Rescale from core's i64 reward space back to the host's [-1, 1].
         avg_reward: if root_visits > 0 {
-            root_rewards as f64 / root_visits as f64
+            root_rewards as f64 / root_visits as f64 / REWARD_SCALE
         } else {
             0.0
         },
