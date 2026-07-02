@@ -2,14 +2,45 @@
 //!
 //! `pick_weak` adds `playouts` MCTS iterations to the current search, then selects a move by a
 //! temperature softmax over visit counts **restricted to the top-K most-visited
-//! children** (so it never samples a 1-visit blunder off the tail), while always
-//! taking a proven win. temp→0 = the engine's best move; larger temp = flatter
-//! choice among the K strongest moves; more playouts = stronger search.
+//! children** (so it never samples a 1-visit blunder off the tail). temp→0 = the
+//! engine's best move; larger temp = flatter choice among the K strongest moves;
+//! more playouts = stronger search.
+//!
+//! **Win protection is solver-only.** The two safety nets below — "never throw a
+//! proven win" and "take a proven-Loss child as an immediate win" — read
+//! `ProvenValue`s, and proven values are stored **only** when the game's
+//! `MCTS::solver_enabled()` returns `true` (see `search_tree`; the trait default
+//! is `false`). For a game that does not enable the solver — e.g. Connect6,
+//! Mancala, ConnectFour, Reversi, Pig, Dice — both guards are inert: every
+//! child's `proven_value` stays `Unknown`, so at high temperature `pick_weak`
+//! can and will sample a losing move off a winning position. The guards only
+//! function for the solver-enabled games (the small perfect-information ones:
+//! TicTacToe, Squava, Notakto, SquareUp, Order&Chaos, Nim, …).
+//!
+//! **`seed` is not full reproducibility.** It seeds only the final softmax
+//! tie-break draw. The visit counts that draw samples over come from
+//! `manager.playout_n(playouts)`, whose selection RNG is seeded from
+//! `MCTS::rng_seed()` — `None` (the default) for every arcade config, so the
+//! search itself draws from `thread_rng()`. The same `seed` therefore yields
+//! different visit distributions (and often different moves) run to run. Full
+//! reproducibility would additionally require a seeded search config.
 use rand::rngs::SmallRng;
 use rand::{Rng, SeedableRng};
 use std::fmt::Display;
 use treant::{MCTSManager, Move, MoveEvaluation, ProvenValue, MCTS};
 
+/// Pick a difficulty-weakened move. Parameter domains:
+///
+/// - `playouts == 0` → returns `None` (the caller falls back to a random legal
+///   move); otherwise this many MCTS iterations are added to the search first.
+/// - `top_k` is clamped to `[1, #root moves]`, so `0` behaves as `1` (greedy).
+/// - `temp <= 1e-4` (which includes any non-positive temp) means greedy: return
+///   the most-visited move. Larger `temp` flattens the softmax over the top-K.
+/// - `seed` only makes the softmax tie-break draw reproducible; see the module
+///   docs — the underlying search RNG is unseeded.
+///
+/// The proven-win / proven-Loss guards only fire for solver-enabled games (see
+/// the module docs).
 pub fn pick_weak<Spec>(
     manager: &mut MCTSManager<Spec>,
     playouts: u64,

@@ -143,13 +143,13 @@ impl DiceGameWasm {
 
     pub fn get_stats(&self) -> JsValue {
         let stats = types::build_stats(&self.manager, |_| None);
-        serde_wasm_bindgen::to_value(&stats).unwrap()
+        serde_wasm_bindgen::to_value(&stats).unwrap_or(JsValue::NULL)
     }
 
     pub fn get_tree(&self, max_depth: u32) -> JsValue {
         let tree =
             types::export_tree::<DiceConfig>(self.manager.tree().root_node(), max_depth, &|_| None);
-        serde_wasm_bindgen::to_value(&tree).unwrap()
+        serde_wasm_bindgen::to_value(&tree).unwrap_or(JsValue::NULL)
     }
 
     pub fn current_score(&self) -> i64 {
@@ -168,5 +168,54 @@ impl DiceGameWasm {
             UCTPolicy::new(0.5),
             (),
         );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn roll_opens_a_chance_node_and_resolves() {
+        let mut g = DiceGame { score: 0, pending_roll: false, stopped: false };
+        // Rolling opens a chance node with six equiprobable die faces.
+        g.make_move(&DiceMove::Roll);
+        assert!(g.pending_roll);
+        let outcomes = g.chance_outcomes().expect("a pending roll is a chance node");
+        assert_eq!(outcomes.len(), 6);
+        let total: f64 = outcomes.iter().map(|(_, p)| p).sum();
+        assert!((total - 1.0).abs() < 1e-9, "chance probs sum to 1");
+        // Resolving the chance outcome adds pips and closes the roll.
+        g.make_move(&DiceMove::Die(6));
+        assert_eq!(g.score, 6);
+        assert!(!g.pending_roll);
+        assert!(!g.available_moves().is_empty(), "still playable below 20");
+    }
+
+    #[test]
+    fn terminal_when_capped_or_stopped() {
+        // Terminal for this single-player game = no legal moves. Reaching the cap...
+        let mut g = DiceGame { score: 18, pending_roll: false, stopped: false };
+        g.make_move(&DiceMove::Roll);
+        g.make_move(&DiceMove::Die(6)); // 24 >= 20
+        assert_eq!(g.score, 24);
+        assert!(g.available_moves().is_empty());
+        // ...and choosing to stop both end the game.
+        let mut h = DiceGame { score: 5, pending_roll: false, stopped: false };
+        h.make_move(&DiceMove::Stop);
+        assert!(h.available_moves().is_empty());
+    }
+
+    #[test]
+    fn wasm_surface_searches_the_chance_tree() {
+        // Drive the chance machinery end to end through the WASM class. (get_stats /
+        // get_tree serialize via wasm-bindgen and can't run on a native test
+        // target, so we exercise the search + decision path only.)
+        let mut g = DiceGameWasm::new(0);
+        g.playout_n(300);
+        assert_eq!(g.current_score(), 0, "root score is unchanged by search");
+        // A weakened decision is one of the two push-your-luck moves.
+        let m = g.weak_move(300, 3, 0.5, 7);
+        assert!(matches!(m.as_deref(), Some("Roll") | Some("Stop")));
     }
 }

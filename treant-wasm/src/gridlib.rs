@@ -223,3 +223,42 @@ pub fn has_square(board: &[i8], cols: usize, rows: usize, sym: i8) -> bool {
     }
     false
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Build a `dim`×`dim` board with `sym` at the given (row, col) cells.
+    fn board(dim: usize, sym: i8, cells: &[(usize, usize)]) -> Vec<i8> {
+        let mut b = vec![-1i8; dim * dim];
+        for &(r, c) in cells {
+            b[idx(r, c, dim)] = sym;
+        }
+        b
+    }
+
+    #[test]
+    fn has_square_detects_tilted_square() {
+        // A diamond: (0,1),(1,0),(1,2),(2,1) — a square rotated 45°. This exercises
+        // the perpendicular-offset branch that an axis-aligned test never touches.
+        let b = board(3, 0, &[(0, 1), (1, 0), (1, 2), (2, 1)]);
+        assert!(has_square(&b, 3, 3, 0));
+    }
+
+    #[test]
+    fn has_square_rejects_collinear_points() {
+        // Three (and four) collinear cells are not a square.
+        let b = board(4, 0, &[(0, 0), (0, 1), (0, 2), (0, 3)]);
+        assert!(!has_square(&b, 4, 4, 0));
+    }
+
+    #[test]
+    fn has_square_rejects_sparse_board() {
+        // Scattered cells with no four forming a square.
+        let b = board(4, 1, &[(0, 0), (1, 2), (3, 1)]);
+        assert!(!has_square(&b, 4, 4, 1));
+        // Only the wrong symbol forms a square: querying the other symbol is false.
+        let b2 = board(3, 0, &[(0, 0), (0, 1), (1, 0), (1, 1)]);
+        assert!(!has_square(&b2, 3, 3, 1));
+    }
+}

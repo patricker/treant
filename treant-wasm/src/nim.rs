@@ -160,13 +160,13 @@ impl NimWasm {
 
     pub fn get_stats(&self) -> JsValue {
         let stats = types::build_stats(&self.manager, |_| None);
-        serde_wasm_bindgen::to_value(&stats).unwrap()
+        serde_wasm_bindgen::to_value(&stats).unwrap_or(JsValue::NULL)
     }
 
     pub fn get_tree(&self, max_depth: u32) -> JsValue {
         let tree =
             types::export_tree::<NimConfig>(self.manager.tree().root_node(), max_depth, &|_| None);
-        serde_wasm_bindgen::to_value(&tree).unwrap()
+        serde_wasm_bindgen::to_value(&tree).unwrap_or(JsValue::NULL)
     }
 
     pub fn root_proven_value(&self) -> String {
@@ -220,5 +220,48 @@ impl NimWasm {
             UCTPolicy::new(1.0),
             (),
         );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn apply_move_fallback_path() {
+        // Fresh manager, no playouts: the child isn't an owned expanded root
+        // child, so advance() fails and apply_move takes the playout_n(100)
+        // fallback before advancing. It must still succeed and shrink the pile.
+        let mut g = NimWasm::new(5);
+        assert!(g.apply_move("Take2"));
+        assert_eq!(g.current_stones(), 3);
+        assert_eq!(g.current_player(), "P2");
+    }
+
+    #[test]
+    fn apply_move_fast_path_after_search() {
+        // After a search expands the root children, advance() succeeds directly
+        // (the fast path) with no fallback playout.
+        let mut g = NimWasm::new(4);
+        g.playout_n(500);
+        assert!(g.apply_move("Take1"));
+        assert_eq!(g.current_stones(), 3);
+        assert_eq!(g.current_player(), "P2");
+    }
+
+    #[test]
+    fn play_to_terminal() {
+        let mut g = NimWasm::new(3);
+        assert!(g.apply_move("Take1")); // 2 left
+        assert!(g.apply_move("Take2")); // 0 left
+        assert!(g.is_terminal());
+        assert!(!g.apply_move("Take1"), "no legal move once the pile is empty");
+    }
+
+    #[test]
+    fn rejects_unknown_move() {
+        let mut g = NimWasm::new(5);
+        assert!(!g.apply_move("Take3"));
+        assert_eq!(g.current_stones(), 5);
     }
 }

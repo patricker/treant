@@ -30,13 +30,25 @@ export interface GameHandle {
   getBoard(): string;
   currentPlayer(): number;
   isTerminal(): boolean;
+  /** Canonical result contract, uniform across every engine:
+   *  `""` while the game is in progress, `"Draw"` for a draw, or a bare
+   *  1-indexed winner-seat digit (`"1"`..`"6"`). The session parses it as
+   *  `Number(result) - 1` to get the winner seat, so any other shape (e.g. a
+   *  `"P1"` prefix) yields a NaN seat. Emit exactly this from Rust `result()`. */
   result(): string;
   bestMove(): string | undefined;
   playoutN(n: number): void;
   /** The current player's legal move strings (random-move fallback when playouts===0, and movement-game target highlighting). */
   legalMoves(): string[];
   /** Difficulty-aware move (value-aware top-K visit temperature). Optional;
-   *  handles without it fall back in pickAiMove. */
+   *  handles without it fall back in pickAiMove. Parameter domains:
+   *  `playouts===0` returns undefined (pickAiMove then plays a random move);
+   *  `topK` is clamped to [1, #legal moves] (0 → greedy);
+   *  `temp <= ~1e-4` (or any non-positive temp) means greedy (the engine's best
+   *  move); larger temp flattens the choice over the top-K.
+   *  `seed` only makes the final softmax tie-break draw reproducible — the
+   *  underlying MCTS search RNG is unseeded, so repeated calls with the same
+   *  seed can still return different moves. */
   weakMove?(playouts: number, topK: number, temp: number, seed: number): string | undefined;
   free(): void;
   /** Solo games: a live status line, e.g. "Score 1234 · Best 128". */

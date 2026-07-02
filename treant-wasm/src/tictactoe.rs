@@ -85,13 +85,13 @@ impl TicTacToeWasm {
 
     pub fn get_stats(&self) -> JsValue {
         let stats = types::build_stats(&self.manager, |_| None);
-        serde_wasm_bindgen::to_value(&stats).unwrap()
+        serde_wasm_bindgen::to_value(&stats).unwrap_or(JsValue::NULL)
     }
 
     pub fn get_tree(&self, max_depth: u32) -> JsValue {
         let tree =
             types::export_tree::<GridMcts>(self.manager.tree().root_node(), max_depth, &|_| None);
-        serde_wasm_bindgen::to_value(&tree).unwrap()
+        serde_wasm_bindgen::to_value(&tree).unwrap_or(JsValue::NULL)
     }
 
     /// Board as string: ' '=empty, 'X'=p0, 'O'=p1, 'A'=p2, 'B'=p3. Row-major.
@@ -187,6 +187,11 @@ mod tests {
 
     #[test]
     fn weak_move_temp0_equals_best_and_protects_a_win() {
+        // TicTacToe enables the solver (new_manager builds GridMcts { solver: true }),
+        // so this is a genuine proven-win-protection test, not just visit
+        // concentration: X to move with X at {0,1} and O at {3,4} is a forced win
+        // (play 2 to complete the top row). The search proves it, so pick_weak's
+        // proven-win guard returns the winning move even at high temp / wide top-K.
         let mut g = TicTacToeWasm::new(3, 3, 3, 2);
         assert!(g.apply_move("0")); // X
         assert!(g.apply_move("3")); // O
@@ -196,6 +201,9 @@ mod tests {
         assert_eq!(strong.as_deref(), g.best_move().as_deref());
         let weak = g.weak_move(2000, 9, 3.0, 1);
         assert_eq!(weak.as_deref(), Some("2"));
+        // The guard's precondition: the search actually proved the win. Without
+        // this (e.g. on a solver-less game) high temp could scatter off the win.
+        assert_eq!(g.root_proven_value(), "Win");
     }
 
     #[test]
