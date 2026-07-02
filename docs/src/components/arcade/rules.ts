@@ -8,6 +8,7 @@ export const RULES: Record<string, string> = {
   frontline: 'Move a pawn one square straight forward into an empty cell, or one square diagonally forward to capture an enemy. Reach the far row, or capture every enemy pawn, to win. No draws.',
   clobber: 'The board starts as a full checkerboard of two colours. On your turn, move one of your pieces onto an orthogonally-adjacent enemy piece, removing it. If you cannot move, you lose.',
   konane: 'A jump-and-capture game. Hop one of your stones over an adjacent enemy stone into the empty cell beyond, removing the stone you jumped. The first player who cannot jump loses.',
+  'nine-morris': 'First, take turns placing your nine men on the points. Then slide a man along a line to a neighbouring empty point. Any time you line up three of your men on a marked line — a "mill" — remove one enemy man (one that is not itself in a mill, if you can). Reduce your opponent to two men, or leave them with no move, to win.',
   trails: 'Move your token one step to an open neighbour. The cell you leave becomes a permanent wall. Box your opponent in — the last player able to move wins. (Like light-cycles.)',
   'first-capture': 'Place a stone on any empty point. A group of stones with no empty neighbours (no "liberties") is captured. The first player to capture any enemy stone wins.',
   reversi: 'Place a disc so it flanks a straight line of enemy discs between your new disc and another of yours — all flanked discs flip to your colour. Most discs when the board fills wins.',

@@ -4,6 +4,20 @@ import { gameById } from './games';
 // Consistent flat icon set. All use `currentColor`, so they pick up the
 // surrounding text color (white on the hero, dark on tiles/headers).
 const GLYPHS: Record<string, JSX.Element> = {
+  'nine-morris': (
+    // three nested squares joined by midpoint spokes, with a mill of three dots
+    <g stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="0.5" />
+      <rect x="7" y="7" width="10" height="10" rx="0.5" />
+      <rect x="10.5" y="10.5" width="3" height="3" rx="0.5" opacity="0.6" />
+      <path d="M12 3v4M12 17v4M3 12h4M17 12h4" opacity="0.7" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="3" cy="3" r="1.7" />
+        <circle cx="12" cy="3" r="1.7" />
+        <circle cx="21" cy="3" r="1.7" />
+      </g>
+    </g>
+  ),
   'connect-four': (
     // four discs on a diagonal
     <g fill="currentColor">
