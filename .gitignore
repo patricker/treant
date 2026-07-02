@@ -14,6 +14,8 @@ treant-wasm/target/
 # Playwright / screenshots
 .playwright-mcp/
 *.png
+# ...but site images are real assets
+!docs/static/img/*.png
 
 # Visual-companion brainstorm mockups (local, not committed)
 .superpowers/
