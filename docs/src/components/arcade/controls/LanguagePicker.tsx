@@ -4,10 +4,8 @@ import styles from '../arcade.module.css';
 /** Compact language selector for the arcade chrome; switches copy live. */
 export default function LanguagePicker() {
   const { locale, setLocale, t } = useT();
-  const active = LOCALES.find((l) => l.id === locale) ?? LOCALES[0];
   return (
     <label className={styles.langPicker} title={t('Language')}>
-      <span aria-hidden="true">{active.flag}</span>
       <select
         aria-label={t('Language')}
         value={locale}
