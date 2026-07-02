@@ -54,7 +54,12 @@ pub trait EvalCallbacks: Send + Sync {
     /// Evaluate a game state. Returns `(per-move priors, state value)`.
     ///
     /// - `moves` is the list of available moves (same order as `available_moves()`).
-    /// - Priors should be non-negative and sum to approximately 1.0.
+    /// - Priors are normalized by the adapter before use: non-finite and
+    ///   negative entries are clamped to 0 and the vector is rescaled to sum to
+    ///   1.0 (falling back to uniform if the sum is non-positive). You may
+    ///   therefore return raw weights/probabilities; they need not already sum
+    ///   to 1.0. (This normalization is what keeps unnormalized host priors from
+    ///   tripping the core's release assertion and panicking a search thread.)
     /// - Return an empty priors vec to use uniform priors (1.0/N).
     /// - State value should be from the current player's perspective
     ///   (positive = good for current player).

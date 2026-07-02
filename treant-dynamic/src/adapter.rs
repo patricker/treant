@@ -63,7 +63,7 @@ impl GameState for DynGameState {
 /// Keep this small enough that the PUCT explore term (C * sqrt(N) * prior)
 /// can compete with the exploit term (mean reward). Too large a scale
 /// makes prior-guided exploration ineffective.
-const REWARD_SCALE: f64 = 10.0;
+pub(crate) const REWARD_SCALE: f64 = 10.0;
 
 pub(crate) struct DynEvaluator(pub(crate) Arc<dyn EvalCallbacks>);
 
@@ -79,10 +79,35 @@ impl Evaluator<DynSpec> for DynEvaluator {
         let move_strings: Vec<String> = moves.iter().map(|m| m.0.clone()).collect();
         let (mut priors, value) = self.0.evaluate(&*state.0, &move_strings);
 
-        // If no priors returned, generate uniform
         if priors.is_empty() && !moves.is_empty() {
+            // No priors returned: use uniform.
             let uniform = 1.0 / moves.len() as f64;
             priors = vec![uniform; moves.len()];
+        } else if !priors.is_empty() {
+            // Normalize host priors before handing them to the core. The core's
+            // AlphaGoPolicy::validate_evaluations release-asserts that every
+            // prior is non-negative and that they sum to ~1.0, so raw logits,
+            // unnormalized probabilities, or a stray negative from a host
+            // language would otherwise panic a search worker thread. Clamp
+            // non-finite / negative entries to 0, then divide by the sum; if the
+            // sum is non-positive there is no usable signal, so fall back to
+            // uniform.
+            for p in priors.iter_mut() {
+                if !p.is_finite() || *p < 0.0 {
+                    *p = 0.0;
+                }
+            }
+            let sum: f64 = priors.iter().sum();
+            if sum > 0.0 {
+                for p in priors.iter_mut() {
+                    *p /= sum;
+                }
+            } else {
+                let uniform = 1.0 / priors.len() as f64;
+                for p in priors.iter_mut() {
+                    *p = uniform;
+                }
+            }
         }
 
         let eval = DynStateEval {
@@ -94,23 +119,36 @@ impl Evaluator<DynSpec> for DynEvaluator {
 
     fn evaluate_existing_state(
         &self,
-        state: &DynGameState,
+        _state: &DynGameState,
         existing_evaln: &DynStateEval,
         _handle: SearchHandle<DynSpec>,
     ) -> DynStateEval {
-        // For open-loop chance nodes: re-evaluate the state
-        let move_strings: Vec<String> = state.0.available_moves().into_iter().collect();
-        let (_, value) = self.0.evaluate(&*state.0, &move_strings);
-        DynStateEval {
-            value,
-            player: existing_evaln.player,
-        }
+        // Open-loop chance nodes reuse the stored evaluation. Re-running the
+        // host evaluate() here would recompute a value from the resampled
+        // state but leave it tagged with the *old* evaluation's player, so its
+        // sign would be interpreted against the wrong perspective; it would
+        // also re-run the full host evaluator (a possible NN inference) only to
+        // discard the recomputed priors. Returning the existing evaluation
+        // unchanged is both correct and cheap.
+        existing_evaln.clone()
     }
 
     fn interpret_evaluation_for_player(&self, evaluation: &DynStateEval, player: &i32) -> i64 {
         let raw = self
             .0
             .interpret_for_player(evaluation.value, evaluation.player, *player);
+        // The float->int `as` cast saturates: NaN becomes 0 (a false "draw")
+        // and +/-inf saturate to i64::MAX/MIN, silently corrupting search. Treat
+        // any non-finite host value as neutral before scaling.
+        let raw = if raw.is_finite() {
+            raw
+        } else {
+            debug_assert!(
+                raw.is_finite(),
+                "host interpret_for_player returned non-finite value: {raw}"
+            );
+            0.0
+        };
         (raw * REWARD_SCALE) as i64
     }
 }
