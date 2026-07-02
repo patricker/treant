@@ -107,7 +107,7 @@ impl ChompWasm {
         self.manager.playout_n(n as u64);
     }
     pub fn get_stats(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap()
+        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap_or(JsValue::NULL)
     }
     /// '#' = cookie, ' ' = eaten (top-left index 0 is the poison).
     pub fn get_board(&self) -> String {

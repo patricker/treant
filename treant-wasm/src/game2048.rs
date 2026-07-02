@@ -404,7 +404,7 @@ impl Game2048Wasm {
 
     pub fn get_stats(&self) -> JsValue {
         let stats = types::build_stats(&self.manager, |_| None);
-        serde_wasm_bindgen::to_value(&stats).unwrap()
+        serde_wasm_bindgen::to_value(&stats).unwrap_or(JsValue::NULL)
     }
 
     /// Returns the board as a flat array of 16 u32 values (row-major, top to bottom).
@@ -416,7 +416,7 @@ impl Game2048Wasm {
             .flat_map(|row| row.iter())
             .copied()
             .collect();
-        serde_wasm_bindgen::to_value(&flat).unwrap()
+        serde_wasm_bindgen::to_value(&flat).unwrap_or(JsValue::NULL)
     }
 
     pub fn score(&self) -> u32 {

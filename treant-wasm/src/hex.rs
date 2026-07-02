@@ -165,7 +165,7 @@ impl HexWasm {
         self.manager.playout_n(k as u64);
     }
     pub fn get_stats(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap()
+        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap_or(JsValue::NULL)
     }
     pub fn get_board(&self) -> String {
         self.manager

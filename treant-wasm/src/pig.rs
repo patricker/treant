@@ -166,7 +166,7 @@ impl PigWasm {
     }
 
     pub fn get_stats(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap()
+        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap_or(JsValue::NULL)
     }
 
     /// "score0,score1,...|turn_total|last_roll|target"

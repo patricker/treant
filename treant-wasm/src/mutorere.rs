@@ -140,7 +140,7 @@ impl MuTorereWasm {
         self.manager.playout_n(n as u64);
     }
     pub fn get_stats(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap()
+        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap_or(JsValue::NULL)
     }
     /// 9 chars: index 0 = centre, then ring 1..8. ' '=empty, 'X'=p0, 'O'=p1.
     pub fn get_board(&self) -> String {

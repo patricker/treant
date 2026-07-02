@@ -139,13 +139,13 @@ impl CountingGameWasm {
 
     pub fn get_stats(&self) -> JsValue {
         let stats = types::build_stats(&self.manager, |_| None);
-        serde_wasm_bindgen::to_value(&stats).unwrap()
+        serde_wasm_bindgen::to_value(&stats).unwrap_or(JsValue::NULL)
     }
 
     pub fn get_tree(&self, max_depth: u32) -> JsValue {
         let tree =
             types::export_tree::<Config>(self.manager.tree().root_node(), max_depth, &|_| None);
-        serde_wasm_bindgen::to_value(&tree).unwrap()
+        serde_wasm_bindgen::to_value(&tree).unwrap_or(JsValue::NULL)
     }
 
     pub fn num_nodes(&self) -> usize {

@@ -151,7 +151,7 @@ impl DotsBoxesWasm {
         self.manager.playout_n(n as u64);
     }
     pub fn get_stats(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap()
+        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap_or(JsValue::NULL)
     }
     /// "edgesBits|boxOwners|score0,score1"  (edges: '0'/'1', boxes: '.'/'0'/'1')
     pub fn get_board(&self) -> String {

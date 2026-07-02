@@ -94,7 +94,7 @@ impl SubtractSquareWasm {
         self.manager.playout_n(n as u64);
     }
     pub fn get_stats(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap()
+        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap_or(JsValue::NULL)
     }
     pub fn current_stones(&self) -> u32 {
         self.manager.tree().root_state().pile

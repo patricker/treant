@@ -123,7 +123,7 @@ impl ColWasm {
         self.manager.playout_n(n as u64);
     }
     pub fn get_stats(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap()
+        serde_wasm_bindgen::to_value(&types::build_stats(&self.manager, |_| None)).unwrap_or(JsValue::NULL)
     }
     /// One char per cell, row-major: ' '=uncoloured, 'X'=player 0, 'O'=player 1.
     pub fn get_board(&self) -> String {
