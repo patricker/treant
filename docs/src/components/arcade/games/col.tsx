@@ -57,5 +57,5 @@ export const col: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.ColWasm(p.cols, p.rows)),
   Board: ColBoard,
-  playerLabels: ['Red', 'Blue'],
+  playerLabels: ['Red', 'Yellow'],
 };

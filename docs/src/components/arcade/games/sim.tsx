@@ -79,5 +79,5 @@ export const sim: GameDefinition = {
   knobs: [],
   create: (wasm) => moveHandle(new wasm.SimWasm()),
   Board: SimBoard,
-  playerLabels: ['Red', 'Blue'],
+  playerLabels: ['Red', 'Yellow'],
 };

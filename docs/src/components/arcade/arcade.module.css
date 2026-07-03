@@ -707,10 +707,14 @@
   cursor: default;
 }
 .mancalaLabel {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  opacity: 0.6;
-  width: 24px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  /* The row background flips between cream (idle) and dark (active seat), so
+     the label needs its own contrast chip — it was invisible on the light row. */
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
 }
 
 /* ---------- Shift ---------- */
