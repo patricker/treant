@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { GAMES } from './games';
 import { GameIcon } from './icons';
 import { useT } from './i18n';
+import { recentGames } from './recentGames';
 import styles from './arcade.module.css';
 
 // Game groupings for the launcher (any game not listed falls under "More").
@@ -72,16 +73,33 @@ function HeroArt({ id }: { id: string }) {
 export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
   const { t } = useT();
   const [featured, setFeatured] = useState(0);
+  const [recent, setRecent] = useState<string[]>([]);
+  // Auto-rotation stops FOR GOOD on the first interaction with the hero
+  // (moving targets are hostile once someone is reading), and never runs for
+  // users who ask the OS for reduced motion.
   const pausedRef = useRef(false);
 
   useEffect(() => {
+    setRecent(recentGames());
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      pausedRef.current = true;
+    }
     const id = setInterval(() => {
       if (!pausedRef.current) setFeatured((f) => (f + 1) % GAMES.length);
-    }, 5000);
+    }, 6000);
     return () => clearInterval(id);
   }, []);
 
+  const stopRotation = () => (pausedRef.current = true);
+  const step = (d: number) => {
+    stopRotation();
+    setFeatured((f) => (f + d + GAMES.length) % GAMES.length);
+  };
+
   const game = GAMES[featured];
+  const recentDefs = recent
+    .map((id) => GAMES.find((g) => g.id === id))
+    .filter(Boolean) as typeof GAMES;
 
   return (
     <div className={styles.launcher}>
@@ -94,8 +112,8 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
       <div
         className={styles.heroCard}
         style={{ background: HERO_BG[game.id] ?? 'linear-gradient(135deg,#ff5e7e,#ffb347)' }}
-        onMouseEnter={() => (pausedRef.current = true)}
-        onMouseLeave={() => (pausedRef.current = false)}
+        onMouseEnter={stopRotation}
+        onTouchStart={stopRotation}
       >
         <div className={styles.heroLabel}>{t('✨ Featured')}</div>
         <div className={styles.heroName}>
@@ -108,19 +126,30 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
         <button className={styles.heroPlay} onClick={() => onPick(game.id)}>
           {t('▶ Play')}
         </button>
-        <div className={styles.heroDots}>
-          {GAMES.map((g, i) => (
-            <button
-              key={g.id}
-              className={`${styles.heroDot} ${i === featured ? styles.heroDotOn : ''}`}
-              onClick={() => setFeatured(i)}
-              aria-label={t('Feature {name}', { name: t(g.name) })}
-            />
-          ))}
-        </div>
+        <button className={`${styles.heroNav} ${styles.heroNavPrev}`} aria-label={t('Previous game')} onClick={() => step(-1)}>
+          ‹
+        </button>
+        <button className={`${styles.heroNav} ${styles.heroNavNext}`} aria-label={t('Next game')} onClick={() => step(1)}>
+          ›
+        </button>
       </div>
 
       <div className={styles.launcherGames}>
+        {recentDefs.length > 0 && (
+          <div>
+            <div className={styles.moreLabel}>{t('Recently played')}</div>
+            <div className={styles.gameStrip}>
+              {recentDefs.map((g) => (
+                <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
+                  <span className={styles.stripIcon}>
+                    <GameIcon id={g.id} size={32} />
+                  </span>
+                  <span className={styles.stripName}>{t(g.name)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {CATEGORIES.map((cat) => {
           const games = cat.ids.map((id) => GAMES.find((g) => g.id === id)).filter(Boolean) as typeof GAMES;
           if (games.length === 0) return null;

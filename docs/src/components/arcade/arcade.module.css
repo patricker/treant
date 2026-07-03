@@ -169,24 +169,26 @@
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-.heroDots {
-  display: flex;
-  gap: 7px;
-  justify-content: center;
-  margin-top: 16px;
-}
-.heroDot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
+.heroNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
   border: none;
-  background: rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.22);
+  color: #fff;
+  font-size: 1.7rem;
+  line-height: 1;
   cursor: pointer;
   padding: 0;
 }
-.heroDotOn {
-  background: #fff;
-  transform: scale(1.25);
+.heroNavPrev {
+  left: 8px;
+}
+.heroNavNext {
+  right: 8px;
 }
 
 /* All-games strip */
@@ -1538,12 +1540,10 @@
 .neon[data-accent='stark'] .heroPlay {
   color: #000;
 }
-.neon .heroDot {
-  background: var(--neon-line);
-}
-.neon .heroDotOn {
-  background: var(--neon-ac);
-  box-shadow: 0 0 8px var(--neon-ac);
+.neon .heroNav {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--neon-line);
+  color: var(--neon-ac);
 }
 
 /* ---- launcher: game tiles ---- */
@@ -1703,4 +1703,17 @@
 .neon .settingsPanel {
   background: var(--neon-card, #10202a);
   border: 1px solid var(--neon-line);
+}
+
+
+/* Respect the OS motion preference: the arcade's pop/bump/celebrate/rotate
+   flourishes all become instant. */
+@media (prefers-reduced-motion: reduce) {
+  .arcade *,
+  .arcade *::before,
+  .arcade *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

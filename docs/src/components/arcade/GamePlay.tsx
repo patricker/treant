@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { GameDefinition, GameParams, PlayerKind } from './gameTypes';
 import { PLAYER_LABEL } from './gameTypes';
+import { recordRecentGame } from './recentGames';
 import { useGameSession } from './useGameSession';
 import { GameIcon } from './icons';
 import { gameRules } from './rules';
@@ -41,6 +42,7 @@ export default function GamePlay({
   const s = useGameSession(wasm, def, params, seats);
   const [hint, setHint] = useState('');
   const [showRules, setShowRules] = useState(false);
+  useEffect(() => recordRecentGame(def.id), [def.id]);
   const labels = def.playerLabels ?? PLAYER_LABEL;
   const interactive = s.phase === 'playing' && s.seats[s.current] === 'human';
   const status = def.solo
