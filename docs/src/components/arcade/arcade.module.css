@@ -22,17 +22,65 @@
   position: relative;
 }
 
-/* The arcade controls live in one flex row at the top of every screen —
-   never absolutely positioned over content (they used to collide with the
-   title and each other on phones). */
-.arcadeTopBar {
+/* All rarely-touched settings (theme, language, sound) live behind ONE small
+   ⚙ button in a slim right-aligned row — the arcade screens carry no other
+   permanent settings chrome. */
+.settingsWrap {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  padding: 6px 4px 0;
+}
+.settingsBtn {
+  border: none;
+  background: var(--arc-soft);
+  color: var(--arc-ink);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.85;
+}
+.settingsBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+.settingsPanel {
+  position: absolute;
+  top: 44px;
+  right: 4px;
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 250px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--arc-card);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+.settingsRow {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px 0;
+  justify-content: space-between;
+  gap: 12px;
 }
-.arcadeTopBar > :first-child {
-  margin-right: auto;
+.settingsLabel {
+  font-size: 0.78rem;
+  font-weight: 800;
+  opacity: 0.65;
+}
+.settingsFoot {
+  text-align: center;
+  font-size: 0.68rem;
+  opacity: 0.55;
+}
+.settingsFoot a {
+  color: inherit;
 }
 
 .muteBtn {
@@ -1644,4 +1692,15 @@
 .neon .langPicker select option {
   background: var(--neon-card, #1c1830);
   color: inherit;
+}
+
+/* neon skin for the settings control */
+.neon .settingsBtn {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  color: var(--neon-ac);
+}
+.neon .settingsPanel {
+  background: var(--neon-card, #10202a);
+  border: 1px solid var(--neon-line);
 }

@@ -8,9 +8,7 @@ import { useArcadeAccent } from './arcadeAccent';
 import Launcher from './Launcher';
 import GameSetup from './GameSetup';
 import GamePlay from './GamePlay';
-import MuteToggle from './controls/MuteToggle';
-import ThemeSwitcher from './controls/ThemeSwitcher';
-import LanguagePicker from './controls/LanguagePicker';
+import SettingsMenu from './controls/SettingsMenu';
 import { LocaleProvider } from './i18n';
 import styles from './arcade.module.css';
 
@@ -168,11 +166,7 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
     <>
       <LocaleProvider>
         <div className={`${styles.arcade} ${styles.neon}`} data-accent={accent}>
-          <div className={styles.arcadeTopBar}>
-            <ThemeSwitcher accent={accent} onChange={setAccent} />
-            <LanguagePicker />
-            <MuteToggle />
-          </div>
+          <SettingsMenu accent={accent} onAccent={setAccent} />
           {content}
         </div>
       </LocaleProvider>
