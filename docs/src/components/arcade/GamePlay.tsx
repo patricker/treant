@@ -118,9 +118,9 @@ export default function GamePlay({
 
       {status && (
         <div className={styles.turnBanner}>
-          {!def.solo && s.phase === 'playing' && (
+          {!def.solo && (s.phase === 'playing' || s.phase === 'thinking') && (
             <span
-              className={styles.turnDot}
+              className={`${styles.turnDot} ${s.phase === 'thinking' ? styles.turnDotThinking : ''}`}
               style={{ background: `var(--arc-p${s.current + 1})` }}
               aria-hidden="true"
             />

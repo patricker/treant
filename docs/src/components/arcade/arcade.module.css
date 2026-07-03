@@ -1544,7 +1544,7 @@
 .neon .heroPlay {
   background: var(--neon-ac);
   color: #05060a;
-  border-radius: 8px;
+  border-radius: 999px;
   font-family: 'JetBrains Mono', monospace;
   box-shadow: 0 0 20px color-mix(in srgb, var(--neon-ac) 45%, transparent);
 }
@@ -1633,11 +1633,15 @@
   color: var(--neon-tx);
 }
 .neon .segOn,
-.neon .seatOn,
 .neon .chipOn {
-  background: var(--neon-ac);
-  border-color: var(--neon-ac);
-  color: #05060a;
+  background: color-mix(in srgb, var(--neon-ac) 16%, transparent);
+  border: 1.5px solid var(--neon-ac);
+  color: var(--neon-ac);
+  box-shadow: none;
+}
+.neon .seatOn {
+  background: color-mix(in srgb, var(--neon-ac) 22%, transparent);
+  border: 1.5px solid var(--neon-ac);
 }
 .neon[data-accent='stark'] .segOn,
 .neon[data-accent='stark'] .seatOn,
@@ -1804,4 +1808,17 @@
     padding: 8px 9px;
     font-size: 0.82rem;
   }
+}
+
+
+/* The banner dot breathes while treant searches — the board itself shows
+   something is happening, not just a text swap. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes arcPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.35); opacity: 0.55; }
+  }
+}
+.turnDotThinking {
+  animation: arcPulse 1.1s ease-in-out infinite;
 }
