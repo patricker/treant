@@ -27,17 +27,32 @@ function modeOf(seats: PlayerKind[]): 'pvp' | 'pvai' | 'aivai' | 'custom' {
 
 export default function GameSetup({
   def,
+  wasm,
   onStart,
   onBack,
   initialSeats,
 }: {
   def: GameDefinition;
+  wasm?: any;
   onStart: (cfg: { params: GameParams; seats: PlayerKind[] }) => void;
   onBack: () => void;
   initialSeats?: PlayerKind[];
 }) {
   const { t } = useT();
   const [params, setParams] = useState<GameParams>(def.defaultParams);
+  // Live board preview: a throwaway engine renders the real board at the
+  // chosen knob values, so "Mega 10×10" is something you SEE, not imagine.
+  const [previewBoard, setPreviewBoard] = useState('');
+  useEffect(() => {
+    if (!wasm) return;
+    try {
+      const h = def.create(wasm, params);
+      setPreviewBoard(h.getBoard());
+      h.free();
+    } catch {
+      setPreviewBoard('');
+    }
+  }, [wasm, def, params]);
   const numPlayers = params.numPlayers ?? 2;
   const [aiStrength, setAiStrength] = useState<Difficulty>('medium');
   const [seats, setSeats] = useState<PlayerKind[]>(
@@ -183,6 +198,18 @@ export default function GameSetup({
           <div className={styles.setupLabel}>{t('Board')}</div>
           <PresetChips presets={def.presets} active={params} onPick={setParams} />
         </>
+      )}
+      {previewBoard && (
+        <div className={styles.setupPreview} aria-hidden="true">
+          <def.Board
+            board={previewBoard}
+            params={params}
+            currentPlayer={0}
+            interactive={false}
+            legalMoves={[]}
+            onMove={() => {}}
+          />
+        </div>
       )}
       {def.knobs.length > 0 && (
         <>

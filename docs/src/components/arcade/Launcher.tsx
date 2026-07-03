@@ -107,6 +107,15 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
     .map((id) => GAMES.find((g) => g.id === id))
     .filter(Boolean) as typeof GAMES;
 
+  const [query, setQuery] = useState('');
+  const q = query.trim().toLowerCase();
+  // Match the translated name AND the English name (players may search either).
+  const matches = q
+    ? GAMES.filter(
+        (g) => t(g.name).toLowerCase().includes(q) || g.name.toLowerCase().includes(q),
+      )
+    : null;
+
   return (
     <div className={styles.launcher}>
       <h1 className={styles.arcadeTitle}>🌳 Treant Arcade</h1>
@@ -140,6 +149,32 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
         </button>
       </div>
 
+      <input
+        type="search"
+        className={styles.searchBox}
+        placeholder={t('Search games…')}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        aria-label={t('Search games…')}
+      />
+
+      {matches ? (
+        <div className={styles.launcherGames}>
+          <div className={styles.moreLabel}>
+            {matches.length ? t('Search results') : t('No games match')}
+          </div>
+          <div className={styles.gameStrip}>
+            {matches.map((g) => (
+              <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
+                <span className={styles.stripIcon}>
+                  <GameIcon id={g.id} size={32} />
+                </span>
+                <span className={styles.stripName}>{t(g.name)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
       <div className={styles.launcherGames}>
         {recentDefs.length > 0 && (
           <div>
@@ -176,6 +211,7 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
           );
         })}
       </div>
+      )}
       </div>
     </div>
   );

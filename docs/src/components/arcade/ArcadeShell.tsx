@@ -142,6 +142,7 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
       content = (
         <GameSetup
           def={def}
+          wasm={wasm}
           initialSeats={screen.initialSeats}
           onBack={() => go({ name: 'launcher' })}
           onStart={({ params, seats }) => go({ name: 'playing', gameId: screen.gameId, params, seats })}
