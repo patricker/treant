@@ -36,8 +36,8 @@
   background: var(--arc-soft);
   color: var(--arc-ink);
   border-radius: 50%;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   font-size: 1rem;
   line-height: 1;
   cursor: pointer;
@@ -87,8 +87,8 @@
   border: none;
   background: var(--arc-soft);
   border-radius: 50%;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   font-size: 1.05rem;
   cursor: pointer;
   padding: 0;
@@ -116,7 +116,7 @@
 }
 .arcadeSub {
   color: var(--arc-ink);
-  opacity: 0.75;
+  opacity: 0.85;
   margin: 0 0 22px;
   font-weight: 600;
 }
@@ -254,8 +254,8 @@
   color: var(--arc-ink);
   font-size: 1.1rem;
   font-weight: 900;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
   cursor: pointer;
 }
@@ -264,7 +264,8 @@
   font-size: 0.72rem;
   letter-spacing: 0.05em;
   font-weight: 800;
-  opacity: 0.6;
+  /* 0.6 measured 3.35:1 against the dark skin — below WCAG AA. */
+  opacity: 0.85;
   margin: 16px 2px 8px;
 }
 
@@ -364,7 +365,7 @@
   padding: 9px 14px;
   border-radius: 999px;
   cursor: pointer;
-  min-height: 42px;
+  min-height: 44px;
 }
 .chipOn {
   border-color: var(--arc-accent);
@@ -375,13 +376,14 @@
 /* custom knobs */
 .customToggle {
   align-self: flex-start;
-  margin-top: 12px;
+  margin-top: 8px;
   border: none;
   background: transparent;
   color: var(--arc-accent);
   font-weight: 800;
   cursor: pointer;
-  padding: 6px 2px;
+  padding: 12px 2px;
+  min-height: 44px;
 }
 .knobs {
   display: grid;
@@ -474,10 +476,13 @@
   margin-bottom: 6px;
 }
 .playTitle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: block;
+  flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1461,8 +1466,8 @@
   gap: 7px;
 }
 .themeSwatch {
-  width: 17px;
-  height: 17px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   border: 1.5px solid rgba(255, 255, 255, 0.28);
   background: var(--sw);
@@ -1715,5 +1720,17 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* Landscape phones: the board is width-driven and roughly square, so cap its
+   width to what fits the viewport height (top bar + banner eat ~170px) —
+   otherwise the board runs below the fold. */
+@media (orientation: landscape) and (max-height: 540px) {
+  .boardWrap {
+    max-width: min(100%, calc(100vh - 170px));
+    margin-left: auto;
+    margin-right: auto;
   }
 }

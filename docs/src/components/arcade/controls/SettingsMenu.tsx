@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { AccentId } from '../arcadeAccent';
 import { useT } from '../i18n';
 import ThemeSwitcher from './ThemeSwitcher';
@@ -20,9 +20,25 @@ export default function SettingsMenu({
 }) {
   const { t } = useT();
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+
+  // Escape closes the popover and hands focus back to the gear.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        btnRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
   return (
     <div className={styles.settingsWrap}>
       <button
+        ref={btnRef}
         className={styles.settingsBtn}
         aria-label={t('Settings')}
         aria-expanded={open}
