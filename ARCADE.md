@@ -321,6 +321,38 @@ labels are `['Red','Gold']`, not `['Red','Black']`).
   screenshot/click stability — verify via DOM (`browser_evaluate` on the
   accessibility tree / element state), not screenshots, and use `.click()` /
   dispatched events rather than waiting for "stable".
+- **The flex `margin: auto` gotcha bit twice.** A `margin-left/right: auto` on
+  any child of the flex-column `.play`/`.setup` shrinks it to min-content
+  (boards became 92px thumbnails on desktop). Center with a capped parent or
+  `width: 100%` + `max-width`, never bare auto margins.
+
+## 7b. Conventions added by the 2026-07 UX rounds (new games must follow)
+
+- **Dark board palette.** Boards paint with `--arc-card`/`--arc-soft`/`--arc-ink`,
+  which the always-on `.neon` skin redefines DARK (Reversi's felt is the house
+  style). Never hardcode cream/white surfaces; saturated seat colours
+  (`--arc-p1..p6`) are the pieces' contrast. Check small on-board text against
+  the dark surface.
+- **i18n.** Every display string in a Board goes through `useT()`/`t()`
+  (gettext-style: the English string is the key; `{param}` placeholders).
+  GameDefinition data fields (name/blurb/presets/knobs/playerLabels/rules) stay
+  plain English — render sites translate them. After adding a game run
+  `node docs/scripts/i18n-keys.mjs --write` and top up all six
+  `i18n/locales/*.json` (verifier must report 0 missing).
+- **Undo.** `useGameSession` replays the move log on a fresh handle. Chance
+  games (dice, random spawns) must set `noUndo: true` on the GameDefinition or
+  undo will reroll their randomness.
+- **Setup preview.** The setup screen renders `def.Board` non-interactively
+  with a throwaway engine's `getBoard()` at the chosen params. Boards must
+  render sanely with an initial board string, `interactive={false}` and empty
+  `legalMoves` (captions inside `.shiftCaption` are auto-hidden there).
+- **Turn colour cues.** The turn banner shows a seat-coloured dot
+  (`--arc-p{n}`), pulsing while the AI thinks. Boards should also tint any
+  "whose move" affordance (e.g. Connect Four's drop arrows) by
+  `currentPlayer`, not a fixed accent.
+- **CTA hierarchy.** Solid neon-green is reserved for the one primary action
+  per screen; selected toggles are outline pills. Don't add new solid-green
+  buttons.
 
 ---
 
