@@ -47,6 +47,45 @@ body.arcade-route .footer__copyright {
   opacity: 0.7;
 }
 
+/* Arcade route: slim, dark navbar. The stock 60px white band (with a huge
+   hamburger on mobile) clashes with the CRT skin and eats vertical space the
+   game needs. Keep the site nav reachable, but compact and blended. */
+body.arcade-route {
+  --ifm-navbar-height: 44px;
+  --ifm-navbar-padding-vertical: 0.15rem;
+  --ifm-navbar-background-color: #0b0a14;
+  --ifm-navbar-link-color: #b9b6d0;
+  --ifm-font-color-base: #e8e6f2;
+}
+body.arcade-route .navbar {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+body.arcade-route .navbar__title,
+body.arcade-route .navbar__link,
+body.arcade-route .navbar__toggle {
+  color: #b9b6d0;
+}
+body.arcade-route .navbar__link--active,
+body.arcade-route .navbar__link:hover {
+  color: #ffffff;
+}
+body.arcade-route .navbar__toggle svg {
+  width: 22px;
+  height: 22px;
+}
+body.arcade-route .navbar__logo {
+  height: 1.6rem;
+}
+/* The light-theme logo is near-black; on the dark arcade navbar swap to the
+   dark-theme variant regardless of the site color mode. (Attribute-contains
+   selectors because the CSS-module hash suffix changes across builds.) */
+body.arcade-route .navbar__logo img[class*='themedComponent--light'] {
+  display: none;
+}
+body.arcade-route .navbar__logo img[class*='themedComponent--dark'] {
+  display: inline-block !important;
+}
+
 /* Arcade CRT-neon backdrop. The arcade column carries the skin; this paints a
    full-viewport near-black field (with a faint accent glow from the top) behind
    it so the neon look reads edge-to-edge. Keyed on the body attribute the

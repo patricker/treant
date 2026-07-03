@@ -168,9 +168,11 @@ export default function ArcadeShell({ wasm }: { wasm: any }) {
     <>
       <LocaleProvider>
         <div className={`${styles.arcade} ${styles.neon}`} data-accent={accent}>
-          <ThemeSwitcher accent={accent} onChange={setAccent} />
-          <LanguagePicker />
-          <MuteToggle />
+          <div className={styles.arcadeTopBar}>
+            <ThemeSwitcher accent={accent} onChange={setAccent} />
+            <LanguagePicker />
+            <MuteToggle />
+          </div>
           {content}
         </div>
       </LocaleProvider>

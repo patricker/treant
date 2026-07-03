@@ -66,7 +66,12 @@ function blip(
 // silent and still. The optional-chaining call is a no-op where unsupported.
 function buzz(pattern: number | number[]): void {
   if (isMuted()) return;
-  if (typeof navigator !== 'undefined') navigator.vibrate?.(pattern);
+  if (typeof navigator === 'undefined') return;
+  // Chrome logs a console error (and ignores the call) if vibrate fires before
+  // the user has ever interacted with the page — exactly what happens in
+  // watch-AI mode. Only buzz once there's been a real user gesture.
+  if (!(navigator as any).userActivation?.hasBeenActive) return;
+  navigator.vibrate?.(pattern);
 }
 
 export const sound = {

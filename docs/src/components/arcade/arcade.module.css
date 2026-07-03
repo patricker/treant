@@ -22,11 +22,20 @@
   position: relative;
 }
 
+/* The arcade controls live in one flex row at the top of every screen —
+   never absolutely positioned over content (they used to collide with the
+   title and each other on phones). */
+.arcadeTopBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px 0;
+}
+.arcadeTopBar > :first-child {
+  margin-right: auto;
+}
+
 .muteBtn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 5;
   border: none;
   background: var(--arc-soft);
   border-radius: 50%;
@@ -1393,11 +1402,8 @@
   z-index: 5;
 }
 .themeSwitch {
-  position: absolute;
-  top: 14px;
-  left: 12px;
-  z-index: 5;
   display: flex;
+  align-items: center;
   gap: 7px;
 }
 .themeSwatch {
@@ -1605,15 +1611,10 @@
   color: var(--neon-ac);
 }
 
-/* ---- language picker (top-right, beside the mute button) ---- */
+/* ---- language picker (in the top control bar) ---- */
 .langPicker {
-  position: absolute;
-  top: 12px;
-  right: 58px;
-  z-index: 5;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
   height: 38px;
   padding: 0 8px;
   border-radius: 19px;
@@ -1627,7 +1628,7 @@
   color: inherit;
   font: inherit;
   font-size: 0.8rem;
-  max-width: 92px;
+  max-width: 118px;
   cursor: pointer;
   outline: none;
 }
