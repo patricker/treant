@@ -158,6 +158,8 @@ export default function GamePlay({
           <div className={styles.overlay} onClick={() => setOverlayDismissed(true)}>
             <div
               className={`${styles.overlayCard} ${styles.overlayPop}`}
+              role="dialog"
+              aria-label={def.solo ? s.endText : winnerLabel(t, s.result, labels, s.seats)}
               onClick={(e) => e.stopPropagation()}
             >
               <button

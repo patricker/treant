@@ -1413,12 +1413,6 @@
   .gameStrip {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
-  /* Boards get room but never balloon; keep them visually centered. */
-  .boardWrap {
-    max-width: 560px;
-    margin-left: auto;
-    margin-right: auto;
-  }
 }
 
 /* ============================================================================
@@ -1646,7 +1640,9 @@
 .neon[data-accent='stark'] .segOn,
 .neon[data-accent='stark'] .seatOn,
 .neon[data-accent='stark'] .chipOn {
-  color: #000;
+  /* Outline pills carry accent-coloured TEXT now — black on the dim white
+     fill measured 1.69:1. White text like every other accent. */
+  color: #fff;
 }
 .neon .knobVal {
   color: var(--neon-ac);
