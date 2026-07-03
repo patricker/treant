@@ -71,19 +71,19 @@ body.arcade-route .footer {
   background: transparent;
 }
 body.arcade-route[data-arcade-accent='green'] {
-  background: radial-gradient(85% 55% at 50% 0, #0c2e1a, #05060a 62%);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #0c2e1a, #05060a 62%);
 }
 body.arcade-route[data-arcade-accent='amber'] {
-  background: radial-gradient(85% 55% at 50% 0, #2a1d05, #08060a 62%);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #2a1d05, #08060a 62%);
 }
 body.arcade-route[data-arcade-accent='cyan'] {
-  background: radial-gradient(85% 55% at 50% 0, #06283b, #03060c 62%);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #06283b, #03060c 62%);
 }
 body.arcade-route[data-arcade-accent='magenta'] {
-  background: radial-gradient(85% 55% at 50% 0, #1c1322, #08070b 62%);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #1c1322, #08070b 62%);
 }
 body.arcade-route[data-arcade-accent='stark'] {
-  background: radial-gradient(85% 55% at 50% 0, #161618, #000 62%);
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #161618, #000 62%);
 }
 
 /* Native app (Capacitor) chrome. ArcadeShell tags <body class="capacitor-app">

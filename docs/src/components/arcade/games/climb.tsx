@@ -120,7 +120,9 @@ function ClimbBoard({ board, currentPlayer, interactive, legalMoves, onMove }: B
                 style={{
                   fontSize: '0.7rem',
                   fontWeight: 900,
-                  color: owned ? '#fff' : 'var(--arc-ink)',
+                  // Fixed light tone: --arc-ink is near-black on the light site
+                  // theme, which vanished against the dark page backdrop.
+                  color: owned ? '#fff' : '#cfd0e4',
                   background: owned ? SEAT[c.claimed] : 'transparent',
                   borderRadius: 6,
                   width: '100%',

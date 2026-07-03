@@ -1398,22 +1398,26 @@
     margin-left: auto;
     margin-right: auto;
   }
-  /* Launcher: hero on the left, the all-games strip on the right. */
+  /* Launcher: full-width hero banner, then the game grid flowing across the
+     whole content width (the old hero-left/strip-right split left half the
+     fold as dead void). */
   .launcherBody {
-    display: flex;
-    gap: 28px;
-    align-items: flex-start;
     text-align: left;
   }
   .launcherBody > .heroCard {
-    flex: 1;
-    margin-bottom: 0;
-  }
-  .launcherGames {
-    flex: 1;
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 26px;
   }
   .gameStrip {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  /* Boards get room but never balloon; keep them visually centered. */
+  .boardWrap {
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -1440,19 +1444,20 @@
 /* sensible fallback if the attribute is ever missing */
 .neon {
   --neon-ac: #39ff7a; --neon-tx: #d8ffe6; --neon-dim: #6fae84; --neon-line: #114e2a; --neon-card: #07190d;
+  /* Dark board surfaces: the boards paint with --arc-* vars, and bright cream
+     cards on the near-black skin read as a flashbang (Reversi's dark felt is
+     the house style). Saturated seat colours pop harder on dark. */
+  --arc-ink: #eaf4ee;
+  --arc-bg: #0b1120;
+  --arc-card: #182233;
+  --arc-soft: #253449;
   color: var(--neon-tx);
   font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   max-width: 600px;
 }
-/* faint scanline overlay over the column (clicks pass through) */
-.neon::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 2px, transparent 2px 4px);
-}
+/* Scanlines live on the page backdrop (custom.css), NOT on the arcade column:
+   painted over light board cells they produced a moiré that read as a broken
+   panel. */
 
 /* ---- corner controls ---- */
 .neon .muteBtn {
@@ -1791,22 +1796,6 @@
 }
 .shakeCell {
   animation: arcShake 0.25s ease 2;
-}
-
-/* Bigger screens: stop wasting a 1440px display on a 560px column. The board
-   and launcher grow; the tile grid flows to fill the width. */
-@media (min-width: 900px) {
-  .arcade {
-    max-width: 760px;
-  }
-  .heroCard {
-    max-width: 560px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .gameStrip {
-    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-  }
 }
 
 /* Narrow phones: tighten the play-header buttons so the title keeps room. */

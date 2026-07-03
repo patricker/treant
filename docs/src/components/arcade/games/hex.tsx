@@ -80,7 +80,7 @@ function HexBoard({ board, params, interactive, onMove }: BoardProps) {
                   key={i}
                   points={hexPoints(cx, cy)}
                   fill={fill}
-                  stroke="rgba(0,0,0,0.16)"
+                  stroke="rgba(255,255,255,0.16)"
                   strokeWidth="0.6"
                   style={{ cursor: clickable ? 'pointer' : 'default' }}
                   onClick={clickable ? () => onMove(String(i)) : undefined}

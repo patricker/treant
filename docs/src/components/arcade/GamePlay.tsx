@@ -169,7 +169,15 @@ export default function GamePlay({
                 ✕
               </button>
               <div className={`${styles.overlayIcon} ${styles.celebrate}`}>
-                {def.solo ? '🎮' : s.result === 'Draw' ? '🤝' : '🏆'}
+                {(() => {
+                  if (def.solo) return '🎮';
+                  if (s.result === 'Draw') return '🤝';
+                  // A lone human who lost shouldn't get a trophy.
+                  const humans = s.seats.map((k, i) => (k === 'human' ? i : -1)).filter((i) => i >= 0);
+                  const winner = Number(s.result) - 1;
+                  const humanLost = humans.length === 1 && Number.isFinite(winner) && humans[0] !== winner;
+                  return humanLost ? '🤖' : '🏆';
+                })()}
               </div>
               <div className={styles.overlayText}>
                 {def.solo ? s.endText : winnerLabel(t, s.result, labels, s.seats)}

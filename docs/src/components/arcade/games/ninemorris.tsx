@@ -159,7 +159,10 @@ function NineMorrisBoard({ board, interactive, legalMoves, onMove }: BoardProps)
                 top: `${px(gy)}%`,
                 width: '10%',
                 height: '10%',
-                background: ch === 'X' ? 'var(--arc-p1)' : ch === 'O' ? 'var(--arc-p2)' : 'var(--arc-soft)',
+                // Empty points are RINGS — filled discs made an empty board
+                // look fully occupied.
+                background: ch === 'X' ? 'var(--arc-p1)' : ch === 'O' ? 'var(--arc-p2)' : 'transparent',
+                border: ch === ' ' ? '2.5px solid var(--arc-soft)' : undefined,
                 outline: victim ? '3px solid var(--arc-p1)' : undefined,
                 boxShadow: victim ? '0 0 0 4px rgba(255,59,92,0.25)' : undefined,
               }}
