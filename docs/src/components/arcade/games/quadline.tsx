@@ -105,9 +105,9 @@ export const quadline: GameDefinition = {
   icon: '🔶',
   blurb: 'Drop four, then slide — line them up or square them off.',
   difficulty: {
-    easy: { playouts: 15, topK: 6, temp: 2.5 },
-    medium: { playouts: 400, topK: 3, temp: 0.6 },
-    hard: { playouts: 1500, topK: 1, temp: 0.2 },
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 5, temp: 2 },
+    hard: { playouts: 800, topK: 2, temp: 0.35 },
   },
   defaultParams: { numPlayers: 2, size: 5, diagonals: 1 },
   presets: [

@@ -75,8 +75,8 @@ export const pinchFive: GameDefinition = {
   blurb: 'Get five-in-a-row — or capture five enemy pairs. Bracket a pair to snap it off the board.',
   difficulty: {
     easy: { playouts: 8, topK: 6, temp: 3 },
-    medium: { playouts: 120, topK: 4, temp: 1 },
-    hard: { playouts: 2500, topK: 1, temp: 0 },
+    medium: { playouts: 30, topK: 5, temp: 2 },
+    hard: { playouts: 200, topK: 3, temp: 0.5 },
   },
   defaultParams: { numPlayers: 2, cols: 13, rows: 13, pairs: 5 },
   presets: [

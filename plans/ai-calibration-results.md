@@ -527,3 +527,105 @@ Finished `release` profile [optimized] target(s) in 0.10s
   },
   (Hard capped at p800: strength peaked early — extra playouts add nothing.)
 ```
+
+---
+
+## 2026-07 pass — 7 new games
+
+Second calibration pass, covering the seven games added in July 2026:
+**pinch-five, nine-morris, quadline, oware, y, bagh-chal, climb**. Same harness,
+mechanism, and auto-selection rule as the pass above; each game measured at its
+**Classic preset** params. The harness now also prints a **seat-0 win-rate**
+line per game (≈50% = balanced) — a cheap diagnostic that stays near 50% for
+symmetric games and exposes a structural seat advantage in asymmetric ones.
+
+Runs were split across agents, so **n/pair differs per game** (noted in the
+table). oware and quadline were measured at higher n; those numbers are preferred
+where a higher- and lower-n run overlap. Ladders: STD for all except pinch-five
+(LIGHT — the 13×13 board is branchy, like gomoku).
+
+### Selected difficulty
+
+| Game | Easy | Medium | Hard | n/pair | Source |
+|---|---|---|---|---|---|
+| oware | {8,6,3} | {100,4,1} | {2000,1,0} | 20 | measured (n=12 run agrees exactly; unchanged from hand guess) |
+| quadline | {8,6,3} | {30,5,2} | {800,2,0.35} | 16 | measured (Classic size 5, diagonals on) |
+| pinch-five | {8,6,3} | {30,5,2} | {200,3,0.5} | 12 | measured (LIGHT ladder, Classic 13×13) |
+| y | {8,6,3} | {100,4,1} | {2000,1,0} | 12 | measured; Easy → true floor (low rungs noisy at n=12), matches Hex |
+| bagh-chal | {30,5,2} | {300,3,0.6} | {2000,1,0} | 12 | measured; see seat-imbalance note |
+| nine-morris | {30,5,2} | {300,3,0.6} | {2000,1,0} | 12 | hand — noise-dominated matrix (auto-pick inverted); monotonic ladder like sim |
+| climb | {12,6,2.5} | {80,4,1.2} | {1200,1,0} | — | hand — chance game; self-play ladder timed out; monotonic ladder by analogy to pig |
+
+### Notes
+
+- **oware / quadline / pinch-five** show clean monotonic gradients (oware 0→86%, pinch-five 0→79%), so the auto-rule applies directly. oware's measured block was identical to the pre-existing hand guess; quadline and pinch-five were both *weaker* than their hand guesses — their hand-set Hard of 1500–2500 playouts sat well past the measured plateau, so Hard drops to p800 / p200 respectively.
+- **y** (n=12) — the top of the ladder separates cleanly (p2000 field 70%, clearly strongest → Hard = p2000, matching Hex), but the *bottom* rungs are noisy at n=12 (p8 scored a spurious 50% field, so the auto-rule picked Easy = p30). Y is topologically Hex-like (a connection game with no draws), so Easy is set to the true weakest rung {8,6,3} and Medium {100,4,1} — both consistent with Hex. Left the tsx as-is since it already carried the Hex-analogue values.
+- **bagh-chal** is **asymmetric** (seat 0 = goats, move first; seat 1 = tigers). The round-robin has every config play both seats equally, so the field scores — and thus the single Easy/Medium/Hard setting — are seat-averaged and apply to whichever side the AI holds. The seat-0 diagnostic shows goats win only **11%** of decided games: with pure-rollout MCTS at Classic (20 goats / 5 captures) the **tigers are heavily favoured**. This is an inherent game-balance property, not a difficulty knob — the strength *gradient* (more playouts → stronger) is the same for both seats, so no per-seat split is needed; a single setting is correct. UX flag: a human playing **goats** will find it hard at any AI level. The gradient is also shallow (field 45→62%), so this is a short ladder; Hard = p2000 is the cheapest rung within 5% of peak.
+- **nine-morris** produced a **degenerate / noise-dominated matrix** at n=12 (field scores 35–62% with no monotonic order; the auto-rule inverted Easy/Hard, emitting Easy = p2000). Nine Men's Morris is a known draw under perfect play and is drawish/long under pure rollouts, so uniform-prior MCTS shows little measurable strength gradient here (same failure mode as `sim`). Hand-set to a sensible monotonic ladder {30,5,2} → {300,3,0.6} → {2000,1,0}; `temp` is the real felt lever. Re-measure at higher n if a gradient is wanted.
+- **climb** is a **chance (push-your-luck dice) game** — calibrated like `pig`. Its self-play ladder timed out even at reduced n: the dice chance-nodes blow up the search tree, so each playout is expensive and games are long. Values kept as a hand-set monotonic chance-game ladder ({12,6,2.5} / {80,4,1.2} / {1200,1,0}) by analogy to pig's measured profile.
+
+### Raw matrices
+
+```
+================  oware  (n=20/pair)  ================
+     rung\vs       p8      p30     p100     p300     p800    p2000    field
+       p8 t3        ·      35%       0%       0%       0%       0%       7%
+      p30 t2      65%        ·      20%       5%       0%       5%      19%
+     p100 t1     100%      80%        ·      40%      30%      25%      55%
+   p300 t0.6     100%      95%      60%        ·      40%      40%      67%
+  p800 t0.35     100%     100%      70%      60%        ·      28%      72%
+    p2000 t0     100%      95%      75%      60%      72%        ·      80%
+  seat-0 win rate (decided games): 48%  [~50% = balanced]
+
+================  quadline  (n=16/pair)  ================
+     rung\vs       p8      p30     p100     p300     p800    p2000    field
+       p8 t3        ·      28%      19%       3%       3%       0%      11%
+      p30 t2      72%        ·      34%      16%      16%      19%      31%
+     p100 t1      81%      66%        ·      34%      38%      34%      51%
+   p300 t0.6      97%      84%      66%        ·      41%      44%      66%
+  p800 t0.35      97%      84%      62%      59%        ·      44%      69%
+    p2000 t0     100%      81%      66%      56%      56%        ·      72%
+  seat-0 win rate (decided games): 69%  [first-move advantage — inherent to the game]
+
+================  pinch-five  (n=12/pair, LIGHT)  ================
+     rung\vs       p8      p30      p80     p200     p500    field
+       p8 t3        ·       0%       0%       0%       0%       0%
+      p30 t2     100%        ·       8%       0%       8%      29%
+      p80 t1     100%      92%        ·      25%      42%      65%
+   p200 t0.5     100%     100%      75%        ·      33%      77%
+   p500 t0.2     100%      92%      58%      67%        ·      79%
+  seat-0 win rate (decided games): 47%
+
+================  y  (n=12/pair)  ================
+     rung\vs       p8      p30     p100     p300     p800    p2000    field
+       p8 t3        ·      50%      50%      42%      50%      58%      50%
+      p30 t2      50%        ·      25%      25%      25%       8%      27%
+     p100 t1      50%      75%        ·      17%      25%      42%      42%
+   p300 t0.6      58%      75%      83%        ·      42%      25%      57%
+  p800 t0.35      50%      75%      75%      58%        ·      17%      55%
+    p2000 t0      42%      92%      58%      75%      83%        ·      70%
+  seat-0 win rate (decided games): 48%
+
+================  bagh-chal  (n=12/pair)  ================
+     rung\vs       p8      p30     p100     p300     p800    p2000    field
+       p8 t3        ·      58%      50%      33%      50%      33%      45%
+      p30 t2      42%        ·      67%      42%      42%      25%      43%
+     p100 t1      50%      33%        ·      50%      33%      50%      43%
+   p300 t0.6      67%      58%      50%        ·      42%      50%      53%
+  p800 t0.35      50%      58%      67%      58%        ·      33%      53%
+    p2000 t0      67%      75%      50%      50%      67%        ·      62%
+  seat-0 win rate (decided games): 11%  [goats heavily disfavoured — inherent balance]
+
+================  nine-morris  (n=12/pair)  — NOISE-DOMINATED, hand-set ================
+     rung\vs       p8      p30     p100     p300     p800    p2000    field
+       p8 t3        ·      46%      71%      33%      71%      54%      55%
+      p30 t2      54%        ·      38%      46%      46%      71%      51%
+     p100 t1      29%      62%        ·      58%      79%      79%      62%
+   p300 t0.6      67%      54%      42%        ·      54%      79%      59%
+  p800 t0.35      29%      54%      21%      46%        ·      42%      38%
+    p2000 t0      46%      29%      21%      21%      58%        ·      35%
+  seat-0 win rate (decided games): 59%
+  (No monotonic order — auto-rule inverted Easy/Hard; hand-set to a monotonic ladder.)
+
+climb: self-play ladder timed out (chance-node tree blow-up); no matrix — hand-set by analogy to pig.
+```

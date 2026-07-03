@@ -178,9 +178,9 @@ export const nineMorris: GameDefinition = {
   icon: '🔗',
   blurb: 'Place nine men, then slide them along the lines. Make a mill of three to snatch an enemy man. Grind them down to two.',
   difficulty: {
-    easy: { playouts: 30, topK: 6, temp: 2 },
-    medium: { playouts: 400, topK: 3, temp: 0.6 },
-    hard: { playouts: 3000, topK: 1, temp: 0 },
+    easy: { playouts: 30, topK: 5, temp: 2 },
+    medium: { playouts: 300, topK: 3, temp: 0.6 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
   },
   defaultParams: { numPlayers: 2, men: 9, flying: 0 },
   presets: [

@@ -148,8 +148,8 @@ export const baghchal: GameDefinition = {
     'Goats move first. While goats remain in hand, the goat player places one goat on any empty point. Once all goats are placed, a goat steps one point along a line to an empty neighbour. Tigers step along a line too, or jump an adjacent goat — landing on the empty point just beyond — to capture it. Tigers win by eating enough goats; goats win by blocking every tiger so none can move.',
   difficulty: {
     easy: { playouts: 30, topK: 5, temp: 2 },
-    medium: { playouts: 400, topK: 3, temp: 0.6 },
-    hard: { playouts: 3000, topK: 1, temp: 0 },
+    medium: { playouts: 300, topK: 3, temp: 0.6 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
   },
   defaultParams: { numPlayers: 2, goats: 20, captures: 5 },
   presets: [

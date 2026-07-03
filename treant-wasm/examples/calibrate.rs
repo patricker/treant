@@ -57,6 +57,7 @@ eng!(
     ClobberWasm, KonaneWasm, ShiftWasm, PigWasm, ChompWasm, WythoffWasm, TrailsWasm, CaptureGoWasm,
     SimWasm, MuTorereWasm, DomineeringWasm, NoGoWasm, ColWasm, AmazonsWasm, FoxHoundsWasm,
     TreblecrossWasm, EuclidWasm, Connect6Wasm, SquavaWasm, NotaktoWasm, SquareUpWasm, OrderChaosWasm,
+    PinchFiveWasm, NineMorrisWasm, QuadlineWasm, OwareWasm, YGameWasm, BaghchalWasm, ClimbWasm,
 );
 
 // Ladders, weak -> strong. STD for most games; LIGHT caps playouts for the
@@ -118,6 +119,16 @@ fn games() -> Vec<Game> {
         g("no-tac-toe", STD, || Box::new(NotaktoWasm::new(3, 3)) as Box<dyn Eng>),
         g("square-up", STD, || Box::new(SquareUpWasm::new(6, 6)) as Box<dyn Eng>),
         g("order-chaos", STD, || Box::new(OrderChaosWasm::new(6, 6)) as Box<dyn Eng>),
+        // 7 new games (2026-07). Classic-preset params; LIGHT for the branchy 13×13 board.
+        g("pinch-five", LIGHT, || Box::new(PinchFiveWasm::new(13, 13, 5, 2)) as Box<dyn Eng>),
+        g("nine-morris", STD, || Box::new(NineMorrisWasm::new(9, 0)) as Box<dyn Eng>),
+        g("quadline", STD, || Box::new(QuadlineWasm::new(5, 1)) as Box<dyn Eng>),
+        g("oware", STD, || Box::new(OwareWasm::new(6, 4)) as Box<dyn Eng>),
+        g("y", STD, || Box::new(YGameWasm::new(8)) as Box<dyn Eng>),
+        // bagh-chal is asymmetric: seat 0 = goats (move first), seat 1 = tigers.
+        g("bagh-chal", STD, || Box::new(BaghchalWasm::new(20, 5)) as Box<dyn Eng>),
+        // climb is a chance (push-your-luck dice) game — calibrated like pig.
+        g("climb", STD, || Box::new(ClimbWasm::new(2, 3)) as Box<dyn Eng>),
     ]
 }
 
@@ -154,15 +165,26 @@ fn run(game: &Game, n: u32) {
     let mut pts = vec![vec![0.0f64; m]; m];
     let mut field = vec![0.0f64; m];
     let mut played = vec![0.0f64; m];
+    // Seat-0 wins vs decided games — ~50% for symmetric games, reveals a
+    // structural seat advantage for asymmetric ones (bagh-chal: seat 0 = goats).
+    let mut seat0_wins = 0.0f64;
+    let mut decided = 0.0f64;
     for i in 0..m {
         for j in (i + 1)..m {
             for gi in 0..n {
                 let (x, y) = if gi % 2 == 0 { (i, j) } else { (j, i) }; // alternate first move
-                let (sx, sy) = match play(game.make, &pool[x], &pool[y], &mut rng) {
+                let outcome = play(game.make, &pool[x], &pool[y], &mut rng);
+                let (sx, sy) = match outcome {
                     0 => (1.0, 0.0),
                     1 => (0.0, 1.0),
                     _ => (0.5, 0.5),
                 };
+                if outcome != 2 {
+                    decided += 1.0;
+                    if outcome == 0 {
+                        seat0_wins += 1.0;
+                    }
+                }
                 pts[x][y] += sx;
                 pts[y][x] += sy;
                 field[x] += sx;
@@ -191,6 +213,9 @@ fn run(game: &Game, n: u32) {
             }
         }
         println!("{:>8.0}%", 100.0 * fscore[i]);
+    }
+    if decided > 0.0 {
+        println!("  seat-0 win rate (decided games): {:.0}%  [~50% = balanced]", 100.0 * seat0_wins / decided);
     }
 
     // --- auto-select Easy / Medium / Hard from the field scores ---
