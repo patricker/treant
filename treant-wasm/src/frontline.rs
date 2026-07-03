@@ -86,6 +86,19 @@ impl Frontline {
         }
         None
     }
+    /// The single winning cell to glow: the pawn that reached the enemy home row.
+    /// `None` for a win by elimination (no pawn broke through) or mid-game — those
+    /// have no meaningful cell to highlight.
+    fn winning_cell(&self) -> Option<usize> {
+        self.term()?; // no cell to glow mid-game
+        if let Some(c) = (0..self.cols).find(|&c| self.board[idx(0, c, self.cols)] == 0) {
+            return Some(idx(0, c, self.cols)); // player 0 broke through to the top
+        }
+        if let Some(c) = (0..self.cols).find(|&c| self.board[idx(self.rows - 1, c, self.cols)] == 1) {
+            return Some(idx(self.rows - 1, c, self.cols)); // player 1 to the bottom
+        }
+        None
+    }
     fn eval0(&self) -> i64 {
         let mut s = 0i64;
         for r in 0..self.rows {
@@ -217,6 +230,15 @@ impl FrontlineWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    /// 0-based index of the breakthrough cell to glow, or "" for a win by
+    /// elimination / mid-game. The UI glows this cell.
+    pub fn winning_cells(&self) -> String {
+        match self.manager.tree().root_state().winning_cell() {
+            Some(i) => i.to_string(),
+            None => String::new(),
+        }
+    }
+
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
         crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
     }
@@ -266,6 +288,22 @@ mod tests {
         g.current = 0;
         g.make_move(&BtMove { from: idx(1, 2, 6) as u16, to: idx(0, 2, 6) as u16 });
         assert_eq!(g.term(), Some(ProvenValue::Loss)); // current is now O, who lost
+        // The breakthrough cell (row 0, col 2) is the one to glow.
+        assert_eq!(g.winning_cell(), Some(idx(0, 2, 6)));
+    }
+
+    #[test]
+    fn winning_cell_none_mid_game_and_on_elimination() {
+        let g = Frontline::new(6, 6);
+        assert_eq!(g.winning_cell(), None, "opening has no winner");
+        // Elimination: player 0 has a lone pawn (not on the far row), player 1 has
+        // none — player 0 wins by wipeout, but no pawn broke through, so no glow.
+        let mut e = Frontline::new(6, 6);
+        e.board = vec![-1; 36];
+        e.board[idx(3, 3, 6)] = 0;
+        e.current = 1; // player 1 to move but has no pawns -> stuck/eliminated
+        assert!(e.term().is_some());
+        assert_eq!(e.winning_cell(), None);
     }
 
     #[test]

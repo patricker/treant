@@ -128,6 +128,47 @@ impl Y {
             None
         }
     }
+    /// Cells of the winning group: the single connected component of the winner's
+    /// stones whose accumulated side-mask touches all three sides. Empty when
+    /// nobody has connected. `connected(pl)` guarantees such a component exists;
+    /// we recover it by flooding each of the winner's components and returning the
+    /// one whose mask reaches `0b111`.
+    fn winning_chain(&self) -> Vec<usize> {
+        let pl: i8 = if self.connected(0) {
+            0
+        } else if self.connected(1) {
+            1
+        } else {
+            return Vec::new();
+        };
+        let ncells = self.board.len();
+        let mut seen = vec![false; ncells];
+        for start in 0..ncells {
+            if self.board[start] != pl || seen[start] {
+                continue;
+            }
+            let mut comp = Vec::new();
+            let mut mask = 0u8;
+            let mut stack = vec![start];
+            seen[start] = true;
+            while let Some(i) = stack.pop() {
+                comp.push(i);
+                let (r, c) = self.rc(i);
+                mask |= self.side_mask(r, c);
+                for nb in self.neighbors(i) {
+                    if self.board[nb] == pl && !seen[nb] {
+                        seen[nb] = true;
+                        stack.push(nb);
+                    }
+                }
+            }
+            if mask == 0b111 {
+                comp.sort_unstable();
+                return comp;
+            }
+        }
+        Vec::new()
+    }
 }
 impl GameState for Y {
     type Move = u16;
@@ -229,6 +270,19 @@ impl YGameWasm {
     }
     pub fn best_move(&self) -> Option<String> {
         self.manager.best_move().map(|m| format!("{m}"))
+    }
+
+    /// Comma-joined 0-based cell indices (triangular enumeration `r*(r+1)/2 + c`)
+    /// of the winning group, or "" when nobody has connected. The UI glows these.
+    pub fn winning_cells(&self) -> String {
+        self.manager
+            .tree()
+            .root_state()
+            .winning_chain()
+            .iter()
+            .map(|i| i.to_string())
+            .collect::<Vec<_>>()
+            .join(",")
     }
 
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
@@ -406,5 +460,46 @@ mod tests {
         let mut g = YGameWasm::new(5);
         g.playout_n(400);
         assert!(g.best_move().is_some());
+    }
+
+    #[test]
+    fn winning_chain_is_the_group_touching_all_three_sides() {
+        // The left edge + the bottom edge form one group touching all three sides
+        // (the bottom-right corner (5,5) is on the right side).
+        let mut g = Y::new(6);
+        let mut want: Vec<usize> = Vec::new();
+        for r in 0..6 {
+            g.board[tri(r, 0)] = 0; // left edge
+            want.push(tri(r, 0));
+        }
+        for c in 0..6 {
+            g.board[tri(5, c)] = 0; // bottom edge
+            want.push(tri(5, c));
+        }
+        // A stray player-0 stone in the interior, not adjacent to the winning
+        // group — it must NOT be reported. (3,2)'s neighbours are all off both
+        // the left column and the bottom row.
+        g.board[tri(3, 2)] = 0;
+        assert!(g.connected(0));
+        want.sort_unstable();
+        want.dedup();
+        let got = g.winning_chain();
+        assert_eq!(got, want);
+        // Every returned cell is the winner's stone…
+        assert!(got.iter().all(|&i| g.board[i] == 0));
+        // …and the group collectively touches all three sides.
+        let mask = got.iter().fold(0u8, |m, &i| {
+            let (r, c) = g.rc(i);
+            m | g.side_mask(r, c)
+        });
+        assert_eq!(mask, 0b111);
+    }
+
+    #[test]
+    fn winning_cells_empty_mid_game_and_for_non_winner() {
+        let mut g = YGameWasm::new(5);
+        assert_eq!(g.winning_cells(), "", "empty board has no group");
+        assert!(g.apply_move("0")); // a lone stone connects nothing
+        assert_eq!(g.winning_cells(), "");
     }
 }

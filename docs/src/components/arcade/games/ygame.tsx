@@ -29,8 +29,19 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
       return out;
     },
     weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
+    winningCells: () => {
+      const s = g.winning_cells();
+      return s ? s.split(',') : [];
+    },
     free: () => g.free(),
   };
+}
+
+// Inverse of tri(): recover (row, col) from a flat triangular index.
+function rcFromTri(i: number): [number, number] {
+  let r = 0;
+  while (((r + 1) * (r + 2)) / 2 <= i) r++;
+  return [r, i - (r * (r + 1)) / 2];
 }
 
 const S = 10; // hex radius (centre → vertex) in SVG units; the SVG scales to fit
@@ -47,9 +58,10 @@ function hexPoints(cx: number, cy: number) {
   }).join(' ');
 }
 
-function YBoard({ board, params, interactive, onMove }: BoardProps) {
+function YBoard({ board, params, interactive, winCells, onMove }: BoardProps) {
   const { t } = useT();
   const n = params.size;
+  const wins = new Set(winCells ?? []);
   const apex = center(0, 0);
   const bl = center(n - 1, 0);
   const br = center(n - 1, n - 1);
@@ -93,6 +105,16 @@ function YBoard({ board, params, interactive, onMove }: BoardProps) {
                 />
               );
             }),
+          )}
+          {/* Winning group drawn on top so its glow isn't clipped by neighbours. */}
+          {wins.size > 0 && (
+            <g fill="none" pointerEvents="none">
+              {[...wins].map((i) => {
+                const [r, c] = rcFromTri(i);
+                const { cx, cy } = center(r, c);
+                return <polygon key={`w${i}`} className={styles.winHex} points={hexPoints(cx, cy)} />;
+              })}
+            </g>
           )}
         </svg>
       </div>

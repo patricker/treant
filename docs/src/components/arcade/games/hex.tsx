@@ -20,6 +20,10 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
       return out;
     },
     weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
+    winningCells: () => {
+      const s = g.winning_cells();
+      return s ? s.split(',') : [];
+    },
     free: () => g.free(),
   };
 }
@@ -37,9 +41,10 @@ function hexPoints(cx: number, cy: number) {
   }).join(' ');
 }
 
-function HexBoard({ board, params, interactive, onMove }: BoardProps) {
+function HexBoard({ board, params, interactive, winCells, onMove }: BoardProps) {
   const { t } = useT();
   const n = params.size;
+  const wins = new Set(winCells ?? []);
   const tl = center(0, 0);
   const tr = center(0, n - 1);
   const bl = center(n - 1, 0);
@@ -88,6 +93,15 @@ function HexBoard({ board, params, interactive, onMove }: BoardProps) {
                 />
               );
             }),
+          )}
+          {/* Winning chain drawn on top so its glow isn't clipped by neighbours. */}
+          {wins.size > 0 && (
+            <g fill="none" pointerEvents="none">
+              {[...wins].map((i) => {
+                const { cx, cy } = center(Math.floor(i / n), i % n);
+                return <polygon key={`w${i}`} className={styles.winHex} points={hexPoints(cx, cy)} />;
+              })}
+            </g>
           )}
         </svg>
       </div>

@@ -96,6 +96,51 @@ impl Hex {
             None
         }
     }
+    /// Cells of the winning chain: the single connected component of the winner's
+    /// stones that touches both of their goal edges (player 0: top↔bottom, player
+    /// 1: left↔right). Empty when nobody has connected yet. `dist(pl) == 0`
+    /// guarantees such a component exists; we recover it by flooding each of the
+    /// winner's components and returning the one that reaches both edges.
+    fn winning_chain(&self) -> Vec<usize> {
+        let n = self.n;
+        let pl: i8 = if self.dist(0) == 0 {
+            0
+        } else if self.dist(1) == 0 {
+            1
+        } else {
+            return Vec::new();
+        };
+        let mut seen = vec![false; n * n];
+        for start in 0..n * n {
+            if self.board[start] != pl || seen[start] {
+                continue;
+            }
+            let mut comp = Vec::new();
+            let mut touch_lo = false; // player 0: top row; player 1: left col
+            let mut touch_hi = false; // player 0: bottom row; player 1: right col
+            let mut stack = vec![start];
+            seen[start] = true;
+            while let Some(i) = stack.pop() {
+                comp.push(i);
+                let (r, c) = (i / n, i % n);
+                let (lo, hi) = if pl == 0 { (r == 0, r == n - 1) } else { (c == 0, c == n - 1) };
+                touch_lo |= lo;
+                touch_hi |= hi;
+                for (nr, nc) in self.neighbors(r, c) {
+                    let j = idx(nr, nc, n);
+                    if self.board[j] == pl && !seen[j] {
+                        seen[j] = true;
+                        stack.push(j);
+                    }
+                }
+            }
+            if touch_lo && touch_hi {
+                comp.sort_unstable();
+                return comp;
+            }
+        }
+        Vec::new()
+    }
 }
 impl GameState for Hex {
     type Move = u16;
@@ -198,6 +243,19 @@ impl HexWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    /// Comma-joined 0-based cell indices (row-major `r*n + c`) of the winning
+    /// chain, or "" when nobody has connected. The UI glows these cells.
+    pub fn winning_cells(&self) -> String {
+        self.manager
+            .tree()
+            .root_state()
+            .winning_chain()
+            .iter()
+            .map(|i| i.to_string())
+            .collect::<Vec<_>>()
+            .join(",")
+    }
+
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
         crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
     }
@@ -247,5 +305,55 @@ mod tests {
         let mut g = HexWasm::new(5);
         g.playout_n(300);
         assert!(g.best_move().is_some());
+    }
+
+    #[test]
+    fn winning_chain_is_the_component_touching_both_edges() {
+        // Player 0 (top↔bottom) runs a straight column down col 2 on a 5×5 board.
+        let mut g = Hex::new(5);
+        let chain: Vec<usize> = (0..5).map(|r| idx(r, 2, 5)).collect();
+        for &i in &chain {
+            g.board[i] = 0;
+        }
+        // Add a stray, disconnected player-0 stone that must NOT be reported.
+        g.board[idx(0, 0, 5)] = 0;
+        assert_eq!(g.dist(0), 0);
+        let mut got = g.winning_chain();
+        got.sort_unstable();
+        let mut want = chain.clone();
+        want.sort_unstable();
+        assert_eq!(got, want);
+        // Every returned cell is the winner's stone…
+        assert!(got.iter().all(|&i| g.board[i] == 0));
+        // …and the set touches both the top row and the bottom row.
+        assert!(got.iter().any(|&i| i / 5 == 0));
+        assert!(got.iter().any(|&i| i / 5 == 4));
+    }
+
+    #[test]
+    fn winning_chain_for_player_1_spans_left_to_right() {
+        // Player 1 (left↔right) runs a straight row across row 2.
+        let mut g = Hex::new(5);
+        let chain: Vec<usize> = (0..5).map(|c| idx(2, c, 5)).collect();
+        for &i in &chain {
+            g.board[i] = 1;
+        }
+        assert_eq!(g.dist(1), 0);
+        let mut got = g.winning_chain();
+        got.sort_unstable();
+        let mut want = chain.clone();
+        want.sort_unstable();
+        assert_eq!(got, want);
+        assert!(got.iter().all(|&i| g.board[i] == 1));
+        assert!(got.iter().any(|&i| i % 5 == 0)); // left col
+        assert!(got.iter().any(|&i| i % 5 == 4)); // right col
+    }
+
+    #[test]
+    fn winning_cells_empty_mid_game() {
+        let mut g = HexWasm::new(5);
+        assert_eq!(g.winning_cells(), "", "empty board has no chain");
+        assert!(g.apply_move("12")); // one stone, no connection
+        assert_eq!(g.winning_cells(), "");
     }
 }

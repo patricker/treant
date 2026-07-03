@@ -680,6 +680,16 @@
   box-shadow: 0 0 0 2px var(--arc-win), 0 0 14px 3px rgba(255, 209, 71, 0.65);
 }
 
+/* SVG counterpart of .winCell for the connection games (Hex, Y): SVG can't take
+   box-shadow, so the winning polygons get a bright white stroke plus a gold
+   drop-shadow glow. This base rule is the reduced-motion-safe fallback (static);
+   the pulse layers on only under prefers-reduced-motion: no-preference. */
+.winHex {
+  stroke: #fff;
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 2px var(--arc-win)) drop-shadow(0 0 5px var(--arc-win));
+}
+
 /* ---------- Nim ---------- */
 .nimWrap {
   display: flex;
@@ -1395,6 +1405,21 @@
   }
   .winCell {
     animation: winGlow 1.1s ease-in-out infinite;
+  }
+
+  @keyframes winHexPulse {
+    0%,
+    100% {
+      stroke-width: 2.2;
+      filter: drop-shadow(0 0 2px var(--arc-win)) drop-shadow(0 0 4px var(--arc-win));
+    }
+    50% {
+      stroke-width: 3.2;
+      filter: drop-shadow(0 0 4px var(--arc-win)) drop-shadow(0 0 11px rgba(255, 209, 71, 0.95));
+    }
+  }
+  .winHex {
+    animation: winHexPulse 1.1s ease-in-out infinite;
   }
 }
 

@@ -94,6 +94,15 @@ impl FoxHounds {
             None
         }
     }
+    /// The single winning cell to glow: the fox's goal cell when it reaches the
+    /// Hounds' home row. `None` when the Hounds win by trapping the fox — a
+    /// blocking win has no single cell to highlight.
+    fn winning_cell(&self) -> Option<usize> {
+        if self.fox_row() == 0 {
+            return self.grid.iter().position(|&v| v == 0);
+        }
+        None
+    }
 }
 impl GameState for FoxHounds {
     type Move = FhMove;
@@ -208,6 +217,15 @@ impl FoxHoundsWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    /// 0-based index of the fox's goal cell to glow when the fox wins, or "" when
+    /// the Hounds win by trapping. The UI glows this cell.
+    pub fn winning_cells(&self) -> String {
+        match self.manager.tree().root_state().winning_cell() {
+            Some(i) => i.to_string(),
+            None => String::new(),
+        }
+    }
+
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
         crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
     }
@@ -271,6 +289,15 @@ mod tests {
         g.current = 1; // hounds to move, but fox already home
         assert_eq!(g.fox_row(), 0);
         assert_eq!(g.term(), Some(ProvenValue::Loss)); // from hounds' view, a loss
+        assert_eq!(g.winning_cell(), Some(1)); // the fox's cell on the top row
+    }
+
+    #[test]
+    fn winning_cell_none_when_fox_is_trapped() {
+        // Mid-game (fox not home) reports no cell; a trapping win has no glow cell.
+        let g = FoxHounds::new(8, 8);
+        assert!(g.fox_row() != 0);
+        assert_eq!(g.winning_cell(), None);
     }
 
     #[test]

@@ -7,9 +7,10 @@ import styles from '../arcade.module.css';
 // Select-then-move on the dark squares of a checkerboard. Fox (X) and Hounds
 // (O) get distinct glyphs; the light/dark tint makes the diagonal-only movement
 // legible. Legal targets come straight from the engine's "from-to" moves.
-function FoxHoundsBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
+function FoxHoundsBoard({ board, params, interactive, legalMoves, winCells, onMove }: BoardProps) {
   const { t } = useT();
   const { cols, rows } = params;
+  const wins = new Set(winCells ?? []);
   const [sel, setSel] = useState<number | null>(null);
   useEffect(() => setSel(null), [board]); // drop stale selection after any move
 
@@ -49,7 +50,7 @@ function FoxHoundsBoard({ board, params, interactive, legalMoves, onMove }: Boar
           return (
             <button
               key={i}
-              className={`${styles.fhCell} ${dark ? styles.fhDark : ''} ${isSel ? styles.shiftSel : ''} ${isTarget ? styles.moveTarget : ''}`}
+              className={`${styles.fhCell} ${dark ? styles.fhDark : ''} ${isSel ? styles.shiftSel : ''} ${isTarget ? styles.moveTarget : ''} ${wins.has(i) ? styles.winCell : ''}`}
               disabled={!interactive || (!fromTo.has(i) && !isTarget)}
               onClick={() => tap(i)}
               aria-label={t('Cell {n}: {state}', {
