@@ -116,7 +116,9 @@ jarsigner -verify app-release.aab                # → "jar verified."
 # (apksigner verifies APKs, not AABs, e.g. the debug APK:)
 $ANDROID_HOME/build-tools/35.0.0/apksigner verify --print-certs app-debug.apk
 # or inspect the keystore entry
-source ~/.config/homenet/treant-arcade-keystore.env
+# (the env file has no `export` lines — a bare `source` keeps the vars
+#  shell-local and gradle silently builds an UNSIGNED bundle; always use set -a)
+set -a; source ~/.config/homenet/treant-arcade-keystore.env; set +a
 keytool -list -v -keystore "$TREANT_ARCADE_KEYSTORE" \
   -storepass "$TREANT_ARCADE_STORE_PASSWORD" -alias arcade
 ```
