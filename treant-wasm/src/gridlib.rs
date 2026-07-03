@@ -88,6 +88,52 @@ pub fn line_symbol(board: &[i8], cols: usize, rows: usize, len: usize) -> Option
     None
 }
 
+/// Cell indices of the first maximal run of at least `len` consecutive cells
+/// equal to `sym` (`>= 0`), scanning row-major across the 4 line directions.
+/// Returns the whole run (which may exceed `len`), or `None` if there is none.
+/// Row-major scanning always reaches a run's top/left anchor first, so the
+/// returned run is the full one, not a sub-run.
+pub fn run_cells(board: &[i8], cols: usize, rows: usize, sym: i8, len: usize) -> Option<Vec<usize>> {
+    if sym < 0 {
+        return None;
+    }
+    let dirs: [(i32, i32); 4] = [(0, 1), (1, 0), (1, 1), (1, -1)];
+    for r in 0..rows {
+        for c in 0..cols {
+            if board[idx(r, c, cols)] != sym {
+                continue;
+            }
+            for (dr, dc) in dirs {
+                let mut cells = vec![idx(r, c, cols)];
+                let mut k = 1i32;
+                loop {
+                    let nr = r as i32 + dr * k;
+                    let nc = c as i32 + dc * k;
+                    if nr < 0 || nr >= rows as i32 || nc < 0 || nc >= cols as i32 {
+                        break;
+                    }
+                    if board[idx(nr as usize, nc as usize, cols)] == sym {
+                        cells.push(idx(nr as usize, nc as usize, cols));
+                        k += 1;
+                    } else {
+                        break;
+                    }
+                }
+                if cells.len() >= len {
+                    return Some(cells);
+                }
+            }
+        }
+    }
+    None
+}
+
+/// Cell indices of the first run of at least `len` of *any single* symbol — the
+/// winning line in symbol-agnostic games (Order & Chaos, where either mark wins).
+pub fn line_cells(board: &[i8], cols: usize, rows: usize, len: usize) -> Option<Vec<usize>> {
+    line_symbol(board, cols, rows, len).and_then(|s| run_cells(board, cols, rows, s, len))
+}
+
 /// Does `sym` have a run of at least `len` anywhere?
 pub fn has_line(board: &[i8], cols: usize, rows: usize, sym: i8, len: usize) -> bool {
     for r in 0..rows {
@@ -235,6 +281,33 @@ mod tests {
             b[idx(r, c, dim)] = sym;
         }
         b
+    }
+
+    #[test]
+    fn run_cells_returns_the_full_run() {
+        // Four X across row 2 of a 5×5: indices 10,11,12,13.
+        let b = board(5, 0, &[(2, 0), (2, 1), (2, 2), (2, 3)]);
+        assert_eq!(run_cells(&b, 5, 5, 0, 4), Some(vec![10, 11, 12, 13]));
+        // A shorter requirement still returns the whole maximal run.
+        assert_eq!(run_cells(&b, 5, 5, 0, 3), Some(vec![10, 11, 12, 13]));
+        // No run of the requested length, and the wrong symbol, are both None.
+        assert_eq!(run_cells(&b, 5, 5, 0, 5), None);
+        assert_eq!(run_cells(&b, 5, 5, 1, 4), None);
+    }
+
+    #[test]
+    fn run_cells_reads_a_diagonal() {
+        // Anti-diagonal (1,-1): (0,2),(1,1),(2,0) → indices 2,4,6 on a 3×3.
+        let b = board(3, 1, &[(0, 2), (1, 1), (2, 0)]);
+        assert_eq!(run_cells(&b, 3, 3, 1, 3), Some(vec![2, 4, 6]));
+    }
+
+    #[test]
+    fn line_cells_finds_any_symbol() {
+        // Symbol 1 forms the only 3-line (column 1): indices 1,4,7 on a 3×3.
+        let b = board(3, 1, &[(0, 1), (1, 1), (2, 1)]);
+        assert_eq!(line_cells(&b, 3, 3, 3), Some(vec![1, 4, 7]));
+        assert_eq!(line_cells(&b, 3, 3, 4), None);
     }
 
     #[test]

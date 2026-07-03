@@ -22,15 +22,20 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
       return out;
     },
     weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
+    winningCells: () => {
+      const s = g.winning_cells();
+      return s ? s.split(',') : [];
+    },
     free: () => g.free(),
   };
 }
 
-function ConnectFourBoard({ board, params, currentPlayer, interactive, onMove }: BoardProps) {
+function ConnectFourBoard({ board, params, currentPlayer, interactive, winCells, onMove }: BoardProps) {
   const { t } = useT();
   const { cols, rows } = params;
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
   const dropped = changedIndex(usePrevBoard(board), board);
+  const win = new Set(winCells ?? []);
   const legalCols = new Set<number>();
   for (let c = 0; c < cols; c++) if ((board[c] ?? ' ') === ' ') legalCols.add(c);
   return (
@@ -56,7 +61,7 @@ function ConnectFourBoard({ board, params, currentPlayer, interactive, onMove }:
           return (
             <div key={i} className={styles.cfCell}>
               <span
-                className={`${styles.cfDisc} ${i === dropped ? styles.dropIn : ''}`}
+                className={`${styles.cfDisc} ${i === dropped ? styles.dropIn : ''} ${win.has(i) ? styles.winCell : ''}`}
                 style={{ background: p ? DISC[p] : 'transparent' }}
               />
             </div>

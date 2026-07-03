@@ -12,6 +12,9 @@
   --arc-card: #ffffff;
   --arc-soft: #ffe7d6;
   --arc-accent: #ff3b5c;
+  /* Winning-line glow — gold reads as "victory" on both light and dark skins,
+     and stays distinct from the neon-green primary CTA. */
+  --arc-win: #ffd147;
 
   width: 100%;
   max-width: 560px;
@@ -662,6 +665,19 @@
 }
 .tttCell:disabled {
   cursor: default;
+}
+
+/* Winning-line highlight. Applied to the cells/discs of a completed line so the
+   win is visible under the game-over card and after it's dismissed. This base
+   rule is the reduced-motion-safe fallback: a static high-visibility gold ring
+   (box-shadow follows the cell's/disc's border-radius). The pulse is layered on
+   only under prefers-reduced-motion: no-preference. */
+.winCell {
+  position: relative;
+  z-index: 1;
+  outline: 3px solid var(--arc-win);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 2px var(--arc-win), 0 0 14px 3px rgba(255, 209, 71, 0.65);
 }
 
 /* ---------- Nim ---------- */
@@ -1364,6 +1380,21 @@
   }
   .celebrate {
     animation: celebrate 0.6s ease-in-out;
+  }
+
+  @keyframes winGlow {
+    0%,
+    100% {
+      box-shadow: 0 0 0 2px var(--arc-win), 0 0 8px 1px rgba(255, 209, 71, 0.5);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 0 0 3px var(--arc-win), 0 0 20px 6px rgba(255, 209, 71, 0.95);
+      transform: scale(1.09);
+    }
+  }
+  .winCell {
+    animation: winGlow 1.1s ease-in-out infinite;
   }
 }
 

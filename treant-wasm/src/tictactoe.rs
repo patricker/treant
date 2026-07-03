@@ -138,6 +138,15 @@ impl TicTacToeWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    /// Comma-joined 0-based cell indices of the winning k-in-a-row, or "" when
+    /// there is no line (in progress, or a draw). The UI glows these cells.
+    pub fn winning_cells(&self) -> String {
+        match self.manager.tree().root_state().winning_line() {
+            Some(cells) => cells.iter().map(|i| i.to_string()).collect::<Vec<_>>().join(","),
+            None => String::new(),
+        }
+    }
+
     /// Difficulty-aware move: see `crate::difficulty::pick_weak`.
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
         crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
@@ -244,6 +253,33 @@ mod tests {
         // clamp the engine was 10×10=100 cells and this move was silently refused.
         assert!(g.apply_move("224"));
         assert_eq!(g.get_board().chars().nth(224), Some('X'));
+    }
+
+    #[test]
+    fn winning_cells_reports_the_line_and_is_empty_otherwise() {
+        let mut g = TicTacToeWasm::new(3, 3, 3, 2);
+        assert_eq!(g.winning_cells(), "", "empty board has no line");
+        // X: 0,1,2 (top row); O: 3,4 harmlessly. X completes the row.
+        assert!(g.apply_move("0")); // X
+        assert!(g.apply_move("3")); // O
+        assert!(g.apply_move("1")); // X
+        assert_eq!(g.winning_cells(), "", "mid-game, still no line");
+        assert!(g.apply_move("4")); // O
+        assert!(g.apply_move("2")); // X completes 0,1,2
+        assert!(g.is_terminal());
+        assert_eq!(g.winning_cells(), "0,1,2");
+    }
+
+    #[test]
+    fn winning_cells_is_empty_on_a_draw() {
+        // A full 3×3 with no line: X O X / X O O / O X X.
+        let mut g = TicTacToeWasm::new(3, 3, 3, 2);
+        for m in ["0", "1", "2", "4", "3", "5", "7", "6", "8"] {
+            assert!(g.apply_move(m), "move {m}");
+        }
+        assert!(g.is_terminal());
+        assert_eq!(g.result(), "Draw");
+        assert_eq!(g.winning_cells(), "");
     }
 
     #[test]

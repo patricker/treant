@@ -130,6 +130,15 @@ impl ConnectFourWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    /// Comma-joined 0-based cell indices of the winning line, or "" when there is
+    /// no line (in progress, or a draw). Cell index is `row*cols+col`, top row 0.
+    pub fn winning_cells(&self) -> String {
+        match self.manager.tree().root_state().winning_line() {
+            Some(cells) => cells.iter().map(|i| i.to_string()).collect::<Vec<_>>().join(","),
+            None => String::new(),
+        }
+    }
+
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
         crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
     }
@@ -168,5 +177,22 @@ mod tests {
         assert_eq!(bottom.chars().nth(3), Some('1'));
         assert_eq!(g.current_player(), 1);
         assert!(!g.apply_move("9")); // out of range
+    }
+
+    #[test]
+    fn winning_cells_reports_a_vertical_line() {
+        // Player 0 stacks four discs in column 0; player 1 fills column 1.
+        let mut g = ConnectFourWasm::new(7, 6, 4, 2);
+        assert_eq!(g.winning_cells(), "");
+        for (x, o) in [("0", "1"), ("0", "1"), ("0", "1")] {
+            assert!(g.apply_move(x));
+            assert!(g.apply_move(o));
+        }
+        assert_eq!(g.winning_cells(), "", "only three stacked so far");
+        assert!(g.apply_move("0")); // fourth X, top at row 2 (index 14)
+        assert!(g.is_terminal());
+        assert_eq!(g.result(), "1");
+        // Column 0, rows 2..5 → indices 14, 21, 28, 35 (top-down).
+        assert_eq!(g.winning_cells(), "14,21,28,35");
     }
 }

@@ -114,6 +114,41 @@ impl GridGame {
         None
     }
 
+    /// The cells forming the first k-in-a-row (row-major, in the 4 canonical
+    /// directions), extended to the full maximal run. Cell index = `row*cols+col`.
+    /// `None` when there is no line. Used by the UI to highlight the winning row.
+    pub fn winning_line(&self) -> Option<Vec<usize>> {
+        let (rows, cols, k) = (self.cfg.rows, self.cfg.cols, self.cfg.k);
+        let dirs: [(i32, i32); 4] = [(0, 1), (1, 0), (1, 1), (1, -1)];
+        for r in 0..rows {
+            for c in 0..cols {
+                if let Cell::Player(p) = self.board[self.idx(r, c)] {
+                    for &(dr, dc) in &dirs {
+                        let mut cells = vec![self.idx(r, c)];
+                        let mut step = 1i32;
+                        loop {
+                            let nr = r as i32 + dr * step;
+                            let nc = c as i32 + dc * step;
+                            if nr < 0 || nr >= rows as i32 || nc < 0 || nc >= cols as i32 {
+                                break;
+                            }
+                            if self.board[self.idx(nr as usize, nc as usize)] == Cell::Player(p) {
+                                cells.push(self.idx(nr as usize, nc as usize));
+                                step += 1;
+                            } else {
+                                break;
+                            }
+                        }
+                        if cells.len() >= k {
+                            return Some(cells);
+                        }
+                    }
+                }
+            }
+        }
+        None
+    }
+
     /// Every cell is occupied.
     pub fn is_full(&self) -> bool {
         self.board.iter().all(|&c| c != Cell::Empty)
@@ -353,6 +388,28 @@ mod tests {
         put(&mut h, 1, 1, 1);
         put(&mut h, 2, 0, 1);
         assert_eq!(h.winner(), Some(1));
+    }
+
+    #[test]
+    fn winning_line_reports_the_run_cells() {
+        // Horizontal 3-in-a-row on row 2 of a 5×5: indices 10,11,12.
+        let mut g = GridGame::new(ttt(5, 5, 3, 2));
+        put(&mut g, 2, 0, 0);
+        put(&mut g, 2, 1, 0);
+        put(&mut g, 2, 2, 0);
+        assert_eq!(g.winning_line(), Some(vec![10, 11, 12]));
+        // No line yet → None.
+        assert_eq!(GridGame::new(ttt(3, 3, 3, 2)).winning_line(), None);
+    }
+
+    #[test]
+    fn winning_line_captures_overshoot() {
+        // Four in a row when only k=3 is needed → the full run is highlighted.
+        let mut g = GridGame::new(ttt(5, 5, 3, 2));
+        for c in 0..4 {
+            put(&mut g, 0, c, 1);
+        }
+        assert_eq!(g.winning_line(), Some(vec![0, 1, 2, 3]));
     }
 
     #[test]

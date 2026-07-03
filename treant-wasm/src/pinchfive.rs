@@ -291,6 +291,18 @@ impl PinchFiveWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    /// Comma-joined 0-based cell indices of the winning five-in-a-row, or "" when
+    /// the game is unfinished, a draw, or won by capturing pairs (no line to glow).
+    pub fn winning_cells(&self) -> String {
+        let s = self.manager.tree().root_state();
+        match s.winner {
+            Some(w) => gridlib::run_cells(&s.board, self.cols, self.rows, w as i8, WIN_LEN)
+                .map(|cells| cells.iter().map(|i| i.to_string()).collect::<Vec<_>>().join(","))
+                .unwrap_or_default(),
+            None => String::new(),
+        }
+    }
+
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
         crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
     }
@@ -392,6 +404,42 @@ mod tests {
         let mut g = PinchFive::new(9, 9, 5, 2);
         g.plies = g.ply_cap;
         assert_eq!(g.term(), Some(ProvenValue::Draw));
+    }
+
+    #[test]
+    fn winning_cells_reports_a_five_line_and_is_empty_otherwise() {
+        // X builds five across the top row (0..4); O plays harmlessly on row 2.
+        let mut g = PinchFiveWasm::new(9, 9, 5, 2);
+        assert_eq!(g.winning_cells(), "", "empty board");
+        for (x, o) in [("0", "18"), ("1", "19"), ("2", "20"), ("3", "21")] {
+            assert!(g.apply_move(x));
+            assert!(g.apply_move(o));
+        }
+        assert_eq!(g.winning_cells(), "", "only four in a row so far");
+        assert!(g.apply_move("4")); // fifth X
+        assert!(g.is_terminal());
+        assert_eq!(g.result(), "1");
+        assert_eq!(g.winning_cells(), "0,1,2,3,4");
+    }
+
+    #[test]
+    fn winning_cells_empty_for_a_capture_win() {
+        // A pairs win has no five-in-a-row, so nothing to glow.
+        let mut g = PinchFiveWasm::new(9, 9, 3, 2); // 3 pairs to win
+        // Drive it directly to a capture win on the state, then mirror into a
+        // wasm handle to exercise winning_cells (which reads root_state().winner).
+        let mut s = PinchFive::new(9, 9, 3, 2);
+        s.captures[0] = 2;
+        s.board[idx(6, 0, 9)] = 0;
+        s.board[idx(6, 1, 9)] = 1;
+        s.board[idx(6, 2, 9)] = 1;
+        s.current = 0;
+        s.make_move(&(idx(6, 3, 9) as u16)); // third captured pair → X wins
+        assert_eq!(s.winner, Some(0));
+        g.manager = MCTSManager::new(s, PfCfg, PfEval, UCTPolicy::new(1.4), ());
+        assert!(g.is_terminal());
+        assert_eq!(g.result(), "1");
+        assert_eq!(g.winning_cells(), "", "won by capture, no line");
     }
 
     #[test]

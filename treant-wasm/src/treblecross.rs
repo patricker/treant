@@ -135,6 +135,20 @@ impl TreblecrossWasm {
         self.manager.best_move().map(|m| format!("{m}"))
     }
 
+    /// Comma-joined 0-based indices of the three-in-a-row that just won, or "".
+    pub fn winning_cells(&self) -> String {
+        let s = self.manager.tree().root_state();
+        if !s.has_three() {
+            return String::new();
+        }
+        for i in 0..s.cells.len().saturating_sub(2) {
+            if s.cells[i] == 1 && s.cells[i + 1] == 1 && s.cells[i + 2] == 1 {
+                return format!("{},{},{}", i, i + 1, i + 2);
+            }
+        }
+        String::new()
+    }
+
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
         crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
     }
@@ -179,6 +193,18 @@ mod tests {
         g.cells[5] = 1;
         assert!(!g.has_three());
         assert_eq!(g.term(), None);
+    }
+
+    #[test]
+    fn winning_cells_reports_the_triple() {
+        let mut g = TreblecrossWasm::new(7);
+        assert_eq!(g.winning_cells(), "");
+        // Both players place X; complete 2,3,4.
+        for m in ["2", "0", "3", "6", "4"] {
+            assert!(g.apply_move(m), "move {m}");
+        }
+        assert!(g.is_terminal());
+        assert_eq!(g.winning_cells(), "2,3,4");
     }
 
     #[test]

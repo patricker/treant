@@ -37,6 +37,10 @@ export interface GameHandle {
    *  `"P1"` prefix) yields a NaN seat. Emit exactly this from Rust `result()`. */
   result(): string;
   bestMove(): string | undefined;
+  /** Cell indices of the winning line, when the game ended on a straight line
+   *  of K (line games only). `[]` for a draw, a non-line win, or in progress.
+   *  Absent on engines that don't report a line — the board simply skips the glow. */
+  winningCells?(): string[];
   playoutN(n: number): void;
   /** The current player's legal move strings (random-move fallback when playouts===0, and movement-game target highlighting). */
   legalMoves(): string[];
@@ -65,6 +69,8 @@ export interface BoardProps {
   interactive: boolean;
   /** the current player's legal moves (for movement games to highlight targets) */
   legalMoves: string[];
+  /** cell indices of the winning line to glow (line games; empty otherwise) */
+  winCells?: number[];
   onMove: (move: string) => void;
 }
 

@@ -136,6 +136,7 @@ export default function GamePlay({
           currentPlayer={s.current}
           interactive={interactive}
           legalMoves={s.legalMoves}
+          winCells={s.winCells}
           onMove={s.onHumanMove}
         />
 

@@ -29,14 +29,19 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
       return out;
     },
     weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
+    winningCells: () => {
+      const s = g.winning_cells();
+      return s ? s.split(',') : [];
+    },
     free: () => g.free(),
   };
 }
 
-function TicTacToeBoard({ board, params, interactive, onMove }: BoardProps) {
+function TicTacToeBoard({ board, params, interactive, winCells, onMove }: BoardProps) {
   const { cols, rows } = params;
   const { t } = useT();
   const placed = changedIndex(usePrevBoard(board), board);
+  const win = new Set(winCells ?? []);
   return (
     <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
       {Array.from({ length: cols * rows }, (_, i) => {
@@ -44,7 +49,7 @@ function TicTacToeBoard({ board, params, interactive, onMove }: BoardProps) {
         return (
           <button
             key={i}
-            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''}`}
+            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${win.has(i) ? styles.winCell : ''}`}
             disabled={!interactive || ch !== ' '}
             onClick={() => onMove(String(i))}
             style={{ color: COLOR[ch] }}

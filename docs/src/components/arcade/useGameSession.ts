@@ -32,6 +32,9 @@ export function useGameSession(
   const [statusText, setStatusText] = useState('');
   const [endText, setEndText] = useState('');
   const [legalMoves, setLegalMoves] = useState<string[]>([]);
+  // Cells of the winning line, set when the game ends on a line (line games only).
+  // Drives the board's win glow; cleared on start/undo.
+  const [winCells, setWinCells] = useState<number[]>([]);
   const [canUndo, setCanUndo] = useState(false);
   // Move log for undo: seat captured BEFORE the move applies. Undo replays the
   // prefix ending just before the last human move (popping any AI replies too).
@@ -55,6 +58,7 @@ export function useGameSession(
       const result = h.result();
       setResult(result);
       setEndText(h.endText?.() ?? '');
+      setWinCells((h.winningCells?.() ?? []).map(Number).filter((n) => Number.isFinite(n)));
       setPhase('over');
       if (def.solo) {
         if ((h.endText?.() ?? '').startsWith('🎉')) sound.win();
@@ -116,6 +120,7 @@ export function useGameSession(
     movesRef.current = [];
     setResult('');
     setEndText('');
+    setWinCells([]);
     setPhase('playing');
     syncBoard(h);
     if (seatsRef.current[h.currentPlayer()] !== 'human') runAiTurn();
@@ -147,6 +152,7 @@ export function useGameSession(
     movesRef.current = kept;
     setResult('');
     setEndText('');
+    setWinCells([]);
     setPhase('playing');
     syncBoard(h);
     // A human is to move by construction (we cut at a human's move).
@@ -195,5 +201,5 @@ export function useGameSession(
     return h.bestMove();
   }, []);
 
-  return { board, current, phase, result, seats, statusText, endText, legalMoves, onHumanMove, getHint, replay: start, undo, canUndo };
+  return { board, current, phase, result, seats, statusText, endText, legalMoves, winCells, onHumanMove, getHint, replay: start, undo, canUndo };
 }

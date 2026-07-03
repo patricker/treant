@@ -437,8 +437,12 @@ fn parse_oc_move(mov: &str, cols: usize, rows: usize) -> Option<OcMove> {
 // One WASM surface for every grid-pack game. `$movety` + `$parse` (a
 // `fn(&str, cols, rows) -> Option<$movety>`) are the only things that vary:
 // most games take a plain cell index, Order & Chaos takes a (cell, symbol) pair.
+// `$winlen` is the length of a WIN line for highlighting (Connect Six → 6,
+// Trap-Three → its winning 4, Order & Chaos → 5). Pass `0` for games whose
+// terminal shape is not a highlightable winning line (No-Tac-Toe's misère line,
+// Square Up's square) — `winning_cells` then always returns "".
 macro_rules! cell_game_wasm {
-    ($wasm:ident, $game:ident, $cfg:ident, $eval:ident, $c:expr, $movety:ty, $parse:expr) => {
+    ($wasm:ident, $game:ident, $cfg:ident, $eval:ident, $c:expr, $movety:ty, $parse:expr, $winlen:expr) => {
         #[wasm_bindgen]
         pub struct $wasm {
             manager: MCTSManager<$cfg>,
@@ -486,6 +490,22 @@ macro_rules! cell_game_wasm {
             pub fn best_move(&self) -> Option<String> {
                 self.manager.best_move().map(|m| format!("{m}"))
             }
+            /// Comma-joined 0-based cell indices of the winning line ("" if none,
+            /// or if this game has no highlightable winning line — see `$winlen`).
+            pub fn winning_cells(&self) -> String {
+                let win_len: usize = $winlen;
+                if win_len == 0 {
+                    return String::new();
+                }
+                let s = self.manager.tree().root_state();
+                if s.term().is_none() {
+                    return String::new();
+                }
+                match line_cells(&s.board, self.cols, self.rows, win_len) {
+                    Some(cells) => cells.iter().map(|i| i.to_string()).collect::<Vec<_>>().join(","),
+                    None => String::new(),
+                }
+            }
             pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
                 crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
             }
@@ -510,12 +530,12 @@ macro_rules! cell_game_wasm {
     };
 }
 
-cell_game_wasm!(Connect6Wasm, Connect6, C6Cfg, C6Eval, 1.6, u16, parse_cell);
-cell_game_wasm!(SquavaWasm, Squava, SqCfg, SqEval, 1.4, u16, parse_cell);
-cell_game_wasm!(NotaktoWasm, Notakto, NkCfg, NkEval, 1.4, u16, parse_cell);
-cell_game_wasm!(SquareUpWasm, SquareUp, SuCfg, SuEval, 1.4, u16, parse_cell);
+cell_game_wasm!(Connect6Wasm, Connect6, C6Cfg, C6Eval, 1.6, u16, parse_cell, 6);
+cell_game_wasm!(SquavaWasm, Squava, SqCfg, SqEval, 1.4, u16, parse_cell, 4); // 4-line WIN (3-line loss isn't a win)
+cell_game_wasm!(NotaktoWasm, Notakto, NkCfg, NkEval, 1.4, u16, parse_cell, 0); // misère line, not a win
+cell_game_wasm!(SquareUpWasm, SquareUp, SuCfg, SuEval, 1.4, u16, parse_cell, 0); // win is a square, not a line
 // Order & Chaos differs only in its (cell, symbol) move — "cell,sym", sym 0/1.
-cell_game_wasm!(OrderChaosWasm, OrderChaos, OcCfg, OcEval, 1.5, OcMove, parse_oc_move);
+cell_game_wasm!(OrderChaosWasm, OrderChaos, OcCfg, OcEval, 1.5, OcMove, parse_oc_move, 5);
 
 #[cfg(test)]
 mod tests {
@@ -687,6 +707,63 @@ mod tests {
         }
         assert!(g.is_terminal());
         assert_eq!(g.result(), "1"); // black (seat 0) completed the line
+    }
+
+    #[test]
+    fn winning_cells_connect6_reports_the_six_line() {
+        // Black builds six across the top row (cells 0..5) on a 9×9.
+        let mut g = Connect6Wasm::new(9, 9);
+        assert_eq!(g.winning_cells(), "");
+        let moves = ["0", "40", "41", "1", "2", "42", "43", "3", "4", "44", "45", "5"];
+        for m in moves {
+            assert!(g.apply_move(m), "move {m}");
+        }
+        assert!(g.is_terminal());
+        assert_eq!(g.winning_cells(), "0,1,2,3,4,5");
+    }
+
+    #[test]
+    fn winning_cells_squava_glows_a_four_win_but_not_a_three_loss() {
+        // A 4-in-a-row WIN: X plays 0,1,3 then fills 2, jumping straight to four
+        // (a bare 3-run would have lost first, so the gap-then-fill is required).
+        let mut win = SquavaWasm::new(5, 5);
+        for m in ["0", "24", "1", "20", "3", "15", "2"] {
+            assert!(win.apply_move(m), "move {m}");
+        }
+        assert!(win.is_terminal());
+        assert_eq!(win.result(), "1");
+        assert_eq!(win.winning_cells(), "0,1,2,3");
+
+        // A 3-in-a-row LOSS has no winning line to highlight.
+        let mut loss = SquavaWasm::new(5, 5);
+        for m in ["0", "24", "1", "23", "2"] {
+            assert!(loss.apply_move(m), "move {m}");
+        }
+        assert!(loss.is_terminal());
+        assert_eq!(loss.result(), "2");
+        assert_eq!(loss.winning_cells(), "");
+    }
+
+    #[test]
+    fn winning_cells_order_chaos_reports_the_five_line() {
+        let mut g = OrderChaosWasm::new(5, 5);
+        let seq = [("0", 0), ("10", 1), ("1", 0), ("11", 1), ("2", 0), ("12", 1), ("3", 0), ("13", 1), ("4", 0)];
+        for (cell, sym) in seq {
+            assert!(g.apply_move(&format!("{cell},{sym}")), "{cell},{sym}");
+        }
+        assert!(g.is_terminal());
+        assert_eq!(g.winning_cells(), "0,1,2,3,4");
+    }
+
+    #[test]
+    fn winning_cells_notakto_has_no_winning_line() {
+        // No-Tac-Toe's completed line is the LOSING shape (win_len 0 → always "").
+        let mut g = NotaktoWasm::new(3, 3);
+        for m in ["0", "3", "1", "4", "2"] {
+            assert!(g.apply_move(m), "move {m}");
+        }
+        assert!(g.is_terminal());
+        assert_eq!(g.winning_cells(), "");
     }
 
     #[test]

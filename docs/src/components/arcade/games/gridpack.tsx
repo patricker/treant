@@ -30,16 +30,24 @@ export function cellHandle(g: any, cols: number, rows: number): GameHandle {
       return out;
     },
     weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
+    // Only line-win engines expose winning_cells; others skip the glow.
+    winningCells: g.winning_cells ? () => splitCells(g.winning_cells()) : undefined,
     free: () => g.free(),
   };
 }
 
+/** Parse the engine's comma-joined winning-cell string into indices ("" → []). */
+export function splitCells(s: string): string[] {
+  return s ? s.split(',') : [];
+}
+
 // A generic grid board: tap an empty cell to place. Reused by Connect Six,
 // Trap-Three, No-Tac-Toe and Square Up.
-export function MarkGridBoard({ board, params, interactive, onMove }: BoardProps) {
+export function MarkGridBoard({ board, params, interactive, winCells, onMove }: BoardProps) {
   const { t } = useT();
   const { cols, rows } = params;
   const placed = changedIndex(usePrevBoard(board), board);
+  const win = new Set(winCells ?? []);
   return (
     <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
       {Array.from({ length: cols * rows }, (_, i) => {
@@ -47,7 +55,7 @@ export function MarkGridBoard({ board, params, interactive, onMove }: BoardProps
         return (
           <button
             key={i}
-            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''}`}
+            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${win.has(i) ? styles.winCell : ''}`}
             disabled={!interactive || ch !== ' '}
             onClick={() => onMove(String(i))}
             style={{ color: COLOR[ch], fontSize: cols > 7 ? '0.9rem' : undefined }}
@@ -186,15 +194,17 @@ function ocHandle(g: any, cols: number, rows: number): GameHandle {
       return out;
     },
     weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
+    winningCells: g.winning_cells ? () => splitCells(g.winning_cells()) : undefined,
     free: () => g.free(),
   };
 }
 
-function OrderChaosBoard({ board, params, interactive, onMove }: BoardProps) {
+function OrderChaosBoard({ board, params, interactive, winCells, onMove }: BoardProps) {
   const { t } = useT();
   const { cols, rows } = params;
   const [sym, setSym] = useState(0); // 0 = X, 1 = O
   const placed = changedIndex(usePrevBoard(board), board);
+  const win = new Set(winCells ?? []);
   return (
     <div>
       <div className={styles.ocToggle}>
@@ -220,7 +230,7 @@ function OrderChaosBoard({ board, params, interactive, onMove }: BoardProps) {
           return (
             <button
               key={i}
-              className={`${styles.tttCell} ${i === placed ? styles.popIn : ''}`}
+              className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${win.has(i) ? styles.winCell : ''}`}
               disabled={!interactive || ch !== ' '}
               onClick={() => onMove(`${i},${sym}`)}
               style={{ color: COLOR[ch], fontSize: cols > 7 ? '0.9rem' : undefined }}
