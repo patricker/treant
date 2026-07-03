@@ -66,7 +66,13 @@ function HeroArt({ id }: { id: string }) {
     case '2048':
       return wrap([tile('2', '#eee4da'), tile('4', '#ede0c8'), tile('8', '#f2b179')].map((t, i) => <span key={i}>{t}</span>));
     default:
-      return null;
+      // Most games have no bespoke motif — show their SVG glyph large rather
+      // than an empty box.
+      return (
+        <span style={{ color: 'rgba(255,255,255,0.92)' }}>
+          <GameIcon id={id} size={54} />
+        </span>
+      );
   }
 }
 
