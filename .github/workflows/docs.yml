@@ -69,3 +69,13 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        # The Pages deployment API intermittently answers "Deployment failed,
+        # try again later" even with a good artifact (hit twice on 2026-07-02);
+        # one retry after a pause has cleared it every time.
+        continue-on-error: true
+      - name: Pause before retry (Pages API flake)
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 60
+      - name: Deploy to GitHub Pages (retry)
+        if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v4
