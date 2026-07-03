@@ -368,6 +368,7 @@
   "Twelve Men": "12駒",
   "Two numbers. On your turn, subtract any positive multiple of the smaller from the larger (the result must stay ≥ 0). The player who makes one of the numbers zero wins.": "2つの数。自分の番には、小さい方の正の倍数を大きい方から引きます（結果は0以上でなければいけません）。どちらかの数を0にしたプレイヤーが勝ち。",
   "Two numbers. Subtract a multiple of the smaller from the larger. Make a zero to win.": "2つの数。小さい方の倍数を大きい方から引く。0を作ったら勝ち。",
+  "Undo move": "一手戻す",
   "Unmute": "ミュート解除",
   "Up": "上",
   "Vertical": "縦",

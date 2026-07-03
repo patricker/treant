@@ -84,6 +84,12 @@ export interface GameDefinition {
   Board: ComponentType<BoardProps>;
   /** Single-player game: uses the solo setup/flow (You-play + Hint / Watch-AI). */
   solo?: boolean;
+  /**
+   * Disable the undo button. Set on chance games (dice rolls, random spawns):
+   * undo replays the move log on a fresh engine, which would reroll the
+   * randomness and rewrite history.
+   */
+  noUndo?: boolean;
   /** Solo games: prettify a hint move for display, e.g. "Up" -> "⬆️ Up". */
   formatHint?(move: string): string;
   /** Sound to play per move (default "move"; Connect Four uses "drop"). */

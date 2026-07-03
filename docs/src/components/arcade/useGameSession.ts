@@ -32,12 +32,17 @@ export function useGameSession(
   const [statusText, setStatusText] = useState('');
   const [endText, setEndText] = useState('');
   const [legalMoves, setLegalMoves] = useState<string[]>([]);
+  const [canUndo, setCanUndo] = useState(false);
+  // Move log for undo: seat captured BEFORE the move applies. Undo replays the
+  // prefix ending just before the last human move (popping any AI replies too).
+  const movesRef = useRef<{ move: string; seat: number }[]>([]);
 
   const syncBoard = useCallback((h: GameHandle) => {
     setBoard(h.getBoard());
     setCurrent(h.currentPlayer());
     setStatusText(h.statusText?.() ?? '');
     setLegalMoves(h.isTerminal() ? [] : h.legalMoves());
+    setCanUndo(movesRef.current.some((e) => seatsRef.current[e.seat] === 'human'));
   }, []);
 
   const playMoveSound = useCallback(() => {
@@ -81,7 +86,8 @@ export function useGameSession(
       // Solo "watch" uses a fixed budget; multiplayer uses this seat's strength.
       const mv = def.solo ? (h.playoutN(SOLO_AI_PLAYOUTS), h.bestMove()) : pickAiMove(h, aiConfig(def, kind));
       if (mv != null) {
-        h.applyMove(mv);
+        const seat = h.currentPlayer();
+        if (h.applyMove(mv)) movesRef.current.push({ move: mv, seat });
         playMoveSound();
       }
       const terminal = h.isTerminal();
@@ -107,12 +113,44 @@ export function useGameSession(
     if (handleRef.current) handleRef.current.free();
     const h = def.create(wasm, params);
     handleRef.current = h;
+    movesRef.current = [];
     setResult('');
     setEndText('');
     setPhase('playing');
     syncBoard(h);
     if (seatsRef.current[h.currentPlayer()] !== 'human') runAiTurn();
   }, [wasm, def, params, runAiTurn, syncBoard]);
+
+  // Rewind to just before the last human move (also popping AI replies after
+  // it) by replaying the move log on a fresh engine. Disabled for solo/chance
+  // games (def.noUndo) where replay would reroll randomness.
+  const undo = useCallback(() => {
+    const log = movesRef.current;
+    let cut = -1;
+    for (let i = log.length - 1; i >= 0; i--) {
+      if (seatsRef.current[log[i].seat] === 'human') {
+        cut = i;
+        break;
+      }
+    }
+    if (cut < 0) return;
+    genRef.current++; // cancel any AI turn in flight
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (handleRef.current) handleRef.current.free();
+    const h = def.create(wasm, params);
+    handleRef.current = h;
+    const kept = log.slice(0, cut);
+    for (const e of kept) h.applyMove(e.move);
+    movesRef.current = kept;
+    setResult('');
+    setEndText('');
+    setPhase('playing');
+    syncBoard(h);
+    // A human is to move by construction (we cut at a human's move).
+  }, [wasm, def, params, syncBoard]);
 
   useEffect(() => {
     start();
@@ -135,7 +173,9 @@ export function useGameSession(
       const h = handleRef.current;
       if (!h || phase !== 'playing') return;
       if (seatsRef.current[h.currentPlayer()] !== 'human') return;
+      const seat = h.currentPlayer();
       if (!h.applyMove(move)) return;
+      movesRef.current.push({ move, seat });
       playMoveSound();
       if (h.isTerminal()) {
         syncBoard(h);
@@ -155,5 +195,5 @@ export function useGameSession(
     return h.bestMove();
   }, []);
 
-  return { board, current, phase, result, seats, statusText, endText, legalMoves, onHumanMove, getHint, replay: start };
+  return { board, current, phase, result, seats, statusText, endText, legalMoves, onHumanMove, getHint, replay: start, undo, canUndo };
 }

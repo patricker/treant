@@ -1792,3 +1792,27 @@
 .shakeCell {
   animation: arcShake 0.25s ease 2;
 }
+
+/* Bigger screens: stop wasting a 1440px display on a 560px column. The board
+   and launcher grow; the tile grid flows to fill the width. */
+@media (min-width: 900px) {
+  .arcade {
+    max-width: 760px;
+  }
+  .heroCard {
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .gameStrip {
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  }
+}
+
+/* Narrow phones: tighten the play-header buttons so the title keeps room. */
+@media (max-width: 400px) {
+  .navBtn {
+    padding: 8px 9px;
+    font-size: 0.82rem;
+  }
+}

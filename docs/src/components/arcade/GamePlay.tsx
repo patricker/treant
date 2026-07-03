@@ -85,6 +85,17 @@ export default function GamePlay({
           <GameIcon id={def.id} size={20} /> {t(def.name)}
         </span>
         <div className={styles.playTopRight}>
+          {!def.solo && !def.noUndo && (
+            <button
+              className={styles.navBtn}
+              onClick={s.undo}
+              disabled={!s.canUndo}
+              aria-label={t('Undo move')}
+              title={t('Undo move')}
+            >
+              ↶
+            </button>
+          )}
           <button className={styles.navBtn} onClick={onChangeSetup} aria-label={t('New game / change setup')}>
             {t('↻ New')}
           </button>

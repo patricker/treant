@@ -70,6 +70,7 @@ function PigBoard({ board, currentPlayer, interactive, onMove }: BoardProps) {
 
 export const pig: GameDefinition = {
   id: 'pig',
+  noUndo: true, // dice game — replay-based undo would reroll the rolls
   name: 'Pig',
   icon: '🎲',
   blurb: 'Roll to build points — but a 1 wipes your turn. Bank before you bust!',

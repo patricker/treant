@@ -366,6 +366,7 @@
   "Twelve Men",
   "Two numbers. On your turn, subtract any positive multiple of the smaller from the larger (the result must stay ≥ 0). The player who makes one of the numbers zero wins.",
   "Two numbers. Subtract a multiple of the smaller from the larger. Make a zero to win.",
+  "Undo move",
   "Unmute",
   "Up",
   "Vertical",

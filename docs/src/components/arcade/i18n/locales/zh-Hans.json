@@ -368,6 +368,7 @@
   "Twelve Men": "十二子",
   "Two numbers. On your turn, subtract any positive multiple of the smaller from the larger (the result must stay ≥ 0). The player who makes one of the numbers zero wins.": "两个数。轮到你时，从较大的数里减去较小数的任意正整数倍（结果必须 ≥ 0）。让其中一个数变成零的人获胜。",
   "Two numbers. Subtract a multiple of the smaller from the larger. Make a zero to win.": "两个数。从较大的数里减去较小数的倍数。使之变为零即获胜。",
+  "Undo move": "悔棋",
   "Unmute": "取消静音",
   "Up": "上",
   "Vertical": "纵向",

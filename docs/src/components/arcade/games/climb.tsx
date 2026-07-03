@@ -212,6 +212,7 @@ function ClimbBoard({ board, currentPlayer, interactive, legalMoves, onMove }: B
 
 export const climb: GameDefinition = {
   id: 'climb',
+  noUndo: true, // dice game — replay-based undo would reroll the rolls
   name: 'Climb',
   icon: '🧗',
   blurb: 'Pair the dice, push your luck up the mountain — bust and you slide back.',

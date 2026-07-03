@@ -368,6 +368,7 @@
   "Twelve Men": "Zwölf Steine",
   "Two numbers. On your turn, subtract any positive multiple of the smaller from the larger (the result must stay ≥ 0). The player who makes one of the numbers zero wins.": "Zwei Zahlen. In deinem Zug ziehst du ein beliebiges positives Vielfaches der kleineren von der größeren ab (das Ergebnis muss ≥ 0 bleiben). Wer eine der Zahlen auf null bringt, gewinnt.",
   "Two numbers. Subtract a multiple of the smaller from the larger. Make a zero to win.": "Zwei Zahlen. Ziehe ein Vielfaches der kleineren von der größeren ab. Mach eine null, um zu gewinnen.",
+  "Undo move": "Zug zurücknehmen",
   "Unmute": "Ton an",
   "Up": "Oben",
   "Vertical": "Senkrecht",
