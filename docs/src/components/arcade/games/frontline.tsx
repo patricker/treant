@@ -55,6 +55,9 @@ export function makeMoveBoard(pieceKind: 'pawn' | 'disc') {
     const { t } = useT();
     const { cols, rows } = params;
     const [sel, setSel] = useState<number | null>(null);
+    // Tapping a piece that can't move gives a brief head-shake instead of dead
+    // silence — kids otherwise assume the game is frozen.
+    const [shake, setShake] = useState<number | null>(null);
     // Clear any selection once the board actually changes (a move landed, or the
     // opponent/AI moved) so a stale highlight never points at the wrong cell.
     useEffect(() => setSel(null), [board]);
@@ -72,14 +75,22 @@ export function makeMoveBoard(pieceKind: 'pawn' | 'disc') {
     }
     const targets = sel != null ? (fromTo.get(sel) ?? new Set<number>()) : new Set<number>();
 
-    const tap = (i: number) => {
+    const tap = (i: number, ch: string) => {
       if (!interactive) return;
       if (sel != null && targets.has(i)) {
         onMove(`${sel}-${i}`);
         setSel(null);
         return;
       }
-      setSel(fromTo.has(i) && i !== sel ? i : null);
+      if (fromTo.has(i)) {
+        setSel(i !== sel ? i : null);
+        return;
+      }
+      if (ch !== ' ') {
+        setShake(i);
+        window.setTimeout(() => setShake(null), 550);
+      }
+      setSel(null);
     };
 
     return (
@@ -92,9 +103,9 @@ export function makeMoveBoard(pieceKind: 'pawn' | 'disc') {
             return (
               <button
                 key={i}
-                className={`${styles.tttCell} ${isSel ? styles.shiftSel : ''} ${isTarget ? styles.moveTarget : ''}`}
-                disabled={!interactive || (!fromTo.has(i) && !isTarget)}
-                onClick={() => tap(i)}
+                className={`${styles.tttCell} ${isSel ? styles.shiftSel : ''} ${isTarget ? styles.moveTarget : ''} ${i === shake ? styles.shakeCell : ''}`}
+                disabled={!interactive || (ch === ' ' && !isTarget)}
+                onClick={() => tap(i, ch)}
                 aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
               >
                 {ch === 'X' || ch === 'O' ? <Piece ch={ch} kind={pieceKind} /> : isTarget ? <span className={styles.moveDot} /> : ''}

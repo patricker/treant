@@ -26,7 +26,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
   };
 }
 
-function ConnectFourBoard({ board, params, interactive, onMove }: BoardProps) {
+function ConnectFourBoard({ board, params, currentPlayer, interactive, onMove }: BoardProps) {
   const { t } = useT();
   const { cols, rows } = params;
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
@@ -43,6 +43,8 @@ function ConnectFourBoard({ board, params, interactive, onMove }: BoardProps) {
             disabled={!interactive || !legalCols.has(c)}
             onClick={() => onMove(String(c))}
             aria-label={t('Drop in column {n}', { n: c + 1 })}
+            // The arrow previews whose disc will drop — not a fixed accent.
+            style={{ color: DISC[currentPlayer + 1] }}
           >
             ▾
           </button>

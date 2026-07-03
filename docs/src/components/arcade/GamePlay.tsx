@@ -42,7 +42,21 @@ export default function GamePlay({
   const s = useGameSession(wasm, def, params, seats);
   const [hint, setHint] = useState('');
   const [showRules, setShowRules] = useState(false);
+  // Families want to study the final board ("how did I win?") — the game-over
+  // card can be dismissed (scrim tap / ✕ / Escape) and reopens on replay.
+  const [overlayDismissed, setOverlayDismissed] = useState(false);
   useEffect(() => recordRecentGame(def.id), [def.id]);
+  useEffect(() => {
+    if (s.phase !== 'over') setOverlayDismissed(false);
+  }, [s.phase]);
+  useEffect(() => {
+    if (s.phase !== 'over' || overlayDismissed) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOverlayDismissed(true);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [s.phase, overlayDismissed]);
   const labels = def.playerLabels ?? PLAYER_LABEL;
   const interactive = s.phase === 'playing' && s.seats[s.current] === 'human';
   const status = def.solo
@@ -91,7 +105,18 @@ export default function GamePlay({
         </div>
       )}
 
-      {status && <div className={styles.turnBanner}>{status}</div>}
+      {status && (
+        <div className={styles.turnBanner}>
+          {!def.solo && s.phase === 'playing' && (
+            <span
+              className={styles.turnDot}
+              style={{ background: `var(--arc-p${s.current + 1})` }}
+              aria-hidden="true"
+            />
+          )}
+          {status}
+        </div>
+      )}
 
       <div className={styles.boardWrap}>
         <def.Board
@@ -118,9 +143,20 @@ export default function GamePlay({
           </div>
         )}
 
-        {s.phase === 'over' && (
-          <div className={styles.overlay}>
-            <div className={`${styles.overlayCard} ${styles.overlayPop}`}>
+        {s.phase === 'over' && !overlayDismissed && (
+          <div className={styles.overlay} onClick={() => setOverlayDismissed(true)}>
+            <div
+              className={`${styles.overlayCard} ${styles.overlayPop}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className={styles.overlayClose}
+                aria-label={t('View board')}
+                title={t('View board')}
+                onClick={() => setOverlayDismissed(true)}
+              >
+                ✕
+              </button>
               <div className={`${styles.overlayIcon} ${styles.celebrate}`}>
                 {def.solo ? '🎮' : s.result === 'Draw' ? '🤝' : '🏆'}
               </div>
@@ -137,6 +173,14 @@ export default function GamePlay({
                 {t('🏠 Arcade')}
               </button>
             </div>
+          </div>
+        )}
+        {s.phase === 'over' && overlayDismissed && (
+          <div className={styles.resultPill}>
+            <span>{def.solo ? s.endText : winnerLabel(t, s.result, labels, s.seats)}</span>
+            <button className={styles.playBtn} onClick={s.replay}>
+              {t('↺ Play again')}
+            </button>
           </div>
         )}
       </div>

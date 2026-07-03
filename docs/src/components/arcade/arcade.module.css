@@ -565,6 +565,7 @@
   border-radius: 18px;
 }
 .overlayCard {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1733,4 +1734,61 @@
     margin-left: auto;
     margin-right: auto;
   }
+}
+
+/* Seat-coloured dot in the turn banner — pre-readers track colour, not words. */
+.turnDot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 9px;
+  vertical-align: -1px;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Game-over card: ✕ collapses to a compact pill so the final board is
+   reviewable; the pill keeps Play-again one tap away. */
+.overlayClose {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.resultPill {
+  position: sticky;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: var(--arc-card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  font-weight: 800;
+}
+.neon .resultPill {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+}
+
+/* Illegal-selection feedback: a quick head-shake on the tapped piece. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes arcShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+}
+.shakeCell {
+  animation: arcShake 0.25s ease 2;
 }
