@@ -215,10 +215,12 @@ export const climb: GameDefinition = {
   name: 'Climb',
   icon: '🧗',
   blurb: 'Pair the dice, push your luck up the mountain — bust and you slide back.',
+  // Measured by the self-play ladder (n=8/pair): field 12% → 50% → 78%;
+  // Hard capped at p800 where strength plateaus. Seat balance 53%.
   difficulty: {
-    easy: { playouts: 12, topK: 6, temp: 2.5 },
-    medium: { playouts: 80, topK: 4, temp: 1.2 },
-    hard: { playouts: 1200, topK: 1, temp: 0 },
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 800, topK: 2, temp: 0.35 },
   },
   defaultParams: { numPlayers: 2, toWin: 3 },
   presets: [

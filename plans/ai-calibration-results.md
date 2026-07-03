@@ -629,3 +629,22 @@ where a higher- and lower-n run overlap. Ladders: STD for all except pinch-five
 
 climb: self-play ladder timed out (chance-node tree blow-up); no matrix — hand-set by analogy to pig.
 ```
+    Finished `release` profile [optimized] target(s) in 0.10s
+     Running `target/release/examples/calibrate climb 8`
+
+================  climb  (n=8/pair)  ================
+     rung\vs       p8      p30     p100     p300     p800    p2000    field
+       p8 t3        ·      12%      38%       0%       0%      12%      12%
+      p30 t2      88%        ·      25%       0%      25%      25%      32%
+     p100 t1      62%      75%        ·      62%      25%      25%      50%
+   p300 t0.6     100%     100%      38%        ·      38%      38%      62%
+  p800 t0.35     100%      75%      75%      62%        ·      75%      78%
+    p2000 t0      88%      75%      75%      62%      25%        ·      65%
+  seat-0 win rate (decided games): 53%  [~50% = balanced]
+  >>> paste into docs/src/components/arcade/games/<climb>.tsx:
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 800, topK: 2, temp: 0.35 },
+  },
+  (Hard capped at p800: strength peaked early — extra playouts add nothing.)
