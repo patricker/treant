@@ -78,8 +78,8 @@ export default function GamePlay({
   return (
     <div className={styles.play}>
       <div className={styles.playTop}>
-        <button className={styles.navBtn} onClick={onQuit}>
-          {t('← Games')}
+        <button className={styles.navBtn} onClick={onQuit} aria-label={t('Back to games')}>
+          <span aria-hidden="true">←</span> <span className={styles.navLabel}>{t('Games')}</span>
         </button>
         <span className={styles.playTitle}>
           <GameIcon id={def.id} size={20} /> {t(def.name)}
@@ -97,14 +97,14 @@ export default function GamePlay({
             </button>
           )}
           <button className={styles.navBtn} onClick={onChangeSetup} aria-label={t('New game / change setup')}>
-            {t('↻ New')}
+            <span aria-hidden="true">↻</span> <span className={styles.navLabel}>{t('New')}</span>
           </button>
           <button
             className={`${styles.navBtn} ${showRules ? styles.navBtnOn : ''}`}
             onClick={() => setShowRules((v) => !v)}
             aria-label={t('How to play')}
           >
-            {t('? Rules')}
+            <span aria-hidden="true">?</span> <span className={styles.navLabel}>{t('Rules')}</span>
           </button>
         </div>
       </div>

@@ -117,6 +117,17 @@
   font-weight: 900;
   margin: 8px 0 4px;
 }
+/* The mascot stands next to the title, tinted and glowing like the letters
+   around him (text-shadow doesn't reach SVG — drop-shadow stands in). */
+.mascot {
+  vertical-align: -0.32em;
+  margin-right: 2px;
+}
+.neon .mascot {
+  color: var(--neon-ac);
+  filter: drop-shadow(0 0 4px var(--neon-ac))
+    drop-shadow(0 0 14px color-mix(in srgb, var(--neon-ac) 45%, transparent));
+}
 .arcadeSub {
   color: var(--arc-ink);
   opacity: 0.85;
@@ -146,9 +157,10 @@
   margin: 2px 0 12px;
 }
 .heroArt {
+  position: relative; /* the prev/next chevrons anchor to this frame */
   background: rgba(0, 0, 0, 0.12);
   border-radius: 14px;
-  padding: 14px;
+  padding: 14px 54px;
   min-height: 56px;
   display: flex;
   align-items: center;
@@ -172,26 +184,36 @@
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+/* Carousel chevrons live INSIDE the hero-art frame, vertically centred on the
+   art itself — not floating at half the card's height over whatever text
+   happens to be there. */
 .heroNav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border: none;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.22);
+  background: rgba(0, 0, 0, 0.28);
   color: #fff;
-  font-size: 1.7rem;
+  font-size: 1.6rem;
   line-height: 1;
   cursor: pointer;
   padding: 0;
+  transition: transform 0.08s ease, background 0.08s ease;
+}
+.heroNav:hover {
+  background: rgba(0, 0, 0, 0.42);
+}
+.heroNav:active {
+  transform: translateY(-50%) scale(0.92);
 }
 .heroNavPrev {
-  left: 8px;
+  left: 7px;
 }
 .heroNavNext {
-  right: 8px;
+  right: 7px;
 }
 
 /* All-games strip */
@@ -508,6 +530,43 @@
 }
 .navBtn:hover {
   filter: brightness(0.96);
+}
+/* Press feedback: every tappable surface dips slightly under the finger so a
+   tap never feels dead. (The reduced-motion block zeroes the transition, and
+   scale-on-press without transition is instant — no motion to object to.) */
+.navBtn,
+.playBtn,
+.secondaryBtn,
+.ghostBtn,
+.hintBtn,
+.backBtn,
+.quitBtn,
+.segBtn,
+.seatBtn,
+.chip,
+.stepper,
+.heroPlay,
+.g2048Arrow,
+.tttCell {
+  transition: transform 0.08s ease;
+}
+.navBtn:active,
+.playBtn:active,
+.secondaryBtn:active,
+.ghostBtn:active,
+.hintBtn:active,
+.backBtn:active,
+.quitBtn:active,
+.segBtn:active,
+.seatBtn:active,
+.chip:active,
+.stepper:active,
+.heroPlay:active,
+.g2048Arrow:active:not(:disabled) {
+  transform: scale(0.96);
+}
+.tttCell:active:not(:disabled) {
+  transform: scale(0.94);
 }
 .navBtnOn {
   background: var(--arc-accent);
@@ -1017,6 +1076,9 @@
   align-items: center;
   justify-content: center;
   font-weight: 800;
+}
+.g2048Empty {
+  background: rgba(238, 228, 218, 0.35);
 }
 .g2048Arrows {
   display: flex;
@@ -1773,6 +1835,13 @@
 }
 
 
+/* Strip-tile press: placed after the .neon hover rules so it wins while the
+   pointer is both hovering and pressing (hover lifts, press dips). */
+.stripTile:active,
+.neon .stripTile:active {
+  transform: translateY(-1px) scale(0.97);
+}
+
 /* Respect the OS motion preference: the arcade's pop/bump/celebrate/rotate
    flourishes all become instant. */
 @media (prefers-reduced-motion: reduce) {
@@ -1842,6 +1911,18 @@
   border: 1px solid var(--neon-line);
 }
 
+/* 2048 chrome joins the house style: the beige frame and empty wells go dark
+   with an accent tint. The classic tile colours stay — they ARE 2048. */
+.neon .g2048Grid {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--neon-ac) 14%, transparent);
+}
+.neon .g2048Empty {
+  background: color-mix(in srgb, var(--neon-ac) 7%, transparent);
+  border: 1px solid var(--neon-line);
+}
+
 /* Illegal-selection feedback: a quick head-shake on the tapped piece. */
 @media (prefers-reduced-motion: no-preference) {
   @keyframes arcShake {
@@ -1859,6 +1940,17 @@
   .navBtn {
     padding: 8px 9px;
     font-size: 0.82rem;
+  }
+}
+/* Narrowest phones: header buttons drop their text labels (icon only, the
+   aria-labels carry the name) so titles like "Tic-Tac-Toe" stop truncating. */
+@media (max-width: 360px) {
+  .navLabel {
+    display: none;
+  }
+  .navBtn {
+    padding: 8px 11px;
+    font-size: 0.95rem;
   }
 }
 

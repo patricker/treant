@@ -5,7 +5,6 @@ import styles from '../arcade.module.css';
 import { usePrevBoard } from '../boardDiff';
 
 const TILE_BG: Record<number, string> = {
-  0: 'rgba(238,228,218,0.35)',
   2: '#eee4da',
   4: '#ede0c8',
   8: '#f2b179',
@@ -99,12 +98,16 @@ function Game2048Board({ board, interactive, onMove }: BoardProps) {
         {tiles.map((v, i) => (
           <div
             key={i}
-            className={`${styles.g2048Tile} ${tileAnim(i)}`}
-            style={{
-              background: TILE_BG[v] ?? '#3c3a32',
-              color: tileColor(v),
-              fontSize: v >= 1024 ? '1.1rem' : '1.5rem',
-            }}
+            className={`${styles.g2048Tile} ${v === 0 ? styles.g2048Empty : ''} ${tileAnim(i)}`}
+            style={
+              v === 0
+                ? undefined
+                : {
+                    background: TILE_BG[v] ?? '#3c3a32',
+                    color: tileColor(v),
+                    fontSize: v >= 1024 ? '1.1rem' : '1.5rem',
+                  }
+            }
           >
             {v > 0 ? v : ''}
           </div>
