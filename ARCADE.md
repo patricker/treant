@@ -321,10 +321,15 @@ labels are `['Red','Gold']`, not `['Red','Black']`).
   screenshot/click stability — verify via DOM (`browser_evaluate` on the
   accessibility tree / element state), not screenshots, and use `.click()` /
   dispatched events rather than waiting for "stable".
-- **The flex `margin: auto` gotcha bit twice.** A `margin-left/right: auto` on
-  any child of the flex-column `.play`/`.setup` shrinks it to min-content
-  (boards became 92px thumbnails on desktop). Center with a capped parent or
-  `width: 100%` + `max-width`, never bare auto margins.
+- **The flex `margin: auto` gotcha bit THREE times.** A `margin-left/right: auto`
+  on any child of the flex-column `.play`/`.setup` shrinks it to min-content
+  (boards became 92px thumbnails on desktop; the C4 setup preview collapsed to
+  a 41px chip because `minmax(0,1fr)` grids have ~zero min-content). Center
+  with a capped parent or `width: 100%` + `max-width`, never bare auto margins.
+- **Backgrounds on `<body>` tile at ~100vh.** Docusaurus keeps `<body>` at
+  viewport height, so a body background gradient gets tiled by the canvas and
+  draws a hard seam one screen down. Page-wide backdrops go on a
+  `position: fixed` `body::before` (iOS ignores `background-attachment: fixed`).
 
 ## 7b. Conventions added by the 2026-07 UX rounds (new games must follow)
 
@@ -350,6 +355,18 @@ labels are `['Red','Gold']`, not `['Red','Black']`).
   (`--arc-p{n}`), pulsing while the AI thinks. Boards should also tint any
   "whose move" affordance (e.g. Connect Four's drop arrows) by
   `currentPlayer`, not a fixed accent.
+- **Last-move marker.** `useGameSession` diffs the board string at move time
+  and passes the changed indices as `BoardProps.lastCells`. Flat-grid boards
+  MUST append `${last.has(i) ? styles.lastCell : ''}` to their cell class so
+  the AI's reply is findable at a glance (SVG boards: TODO equivalent). Boards
+  whose rendered cells don't map 1:1 to board-string indices skip it.
+- **Board control rows must hide in previews.** Any always-rendered control
+  strip inside a Board (drop arrows, swipe buttons) needs a
+  `.setupPreview <class> { display: none }` rule — disabled buttons read as
+  rendering junk in the static setup preview.
+- **Speak the player's language.** Single-human games say "Your turn", never
+  third-person; screen-reader cell labels use `BoardProps.playerNames`
+  (translated seat names), not raw engine glyphs (X/O).
 - **CTA hierarchy.** Solid neon-green is reserved for the one primary action
   per screen; selected toggles are outline pills. Don't add new solid-green
   buttons.
