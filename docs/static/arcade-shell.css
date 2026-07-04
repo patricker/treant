@@ -1,0 +1,17 @@
+/* Arcade route: the docs chrome must not exist from the very first paint —
+   not appear briefly and then get hidden by JS. Loaded via <Head><link> from
+   src/pages/arcade.tsx because Docusaurus SSG emits helmet link tags but NOT
+   style tags; react-helmet removes the link again on client-side navigation
+   to a docs route. Keep in sync with the body.arcade-route rules in
+   src/css/custom.css (those cover the post-hydration accent theming). */
+.navbar,
+.footer {
+  display: none;
+}
+html {
+  --ifm-navbar-height: 0px;
+}
+html,
+body {
+  background: #05060a;
+}

@@ -330,6 +330,17 @@ labels are `['Red','Gold']`, not `['Red','Black']`).
   viewport height, so a body background gradient gets tiled by the canvas and
   draws a hard seam one screen down. Page-wide backdrops go on a
   `position: fixed` `body::before` (iOS ignores `background-attachment: fixed`).
+- **The arcade page does NOT use `@theme/Layout` — never reintroduce it.**
+  Docs chrome (navbar/footer) must not exist on this route in ANY loading
+  state. Earlier revisions rendered Layout and hid the chrome with a body
+  class + CSS; that leaked the full docs navbar during hydration, on slow
+  loads, and through stale service-worker shells ("the hamburger menu is
+  back"). `src/pages/arcade.tsx` renders its own minimal shell (Head +
+  ErrorBoundary + BrowserOnly); `static/arcade-shell.css` is linked via
+  `<Head><link>` for the first-paint backdrop (a `<link>`, not inline
+  `<style>` — Docusaurus SSG emits helmet link tags but silently drops style
+  tags). The `body.arcade-route` CSS rules in custom.css remain as defense in
+  depth only.
 
 ## 7b. Conventions added by the 2026-07 UX rounds (new games must follow)
 
