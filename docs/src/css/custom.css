@@ -60,29 +60,38 @@ body.arcade-route .footer {
 
 /* Arcade CRT-neon backdrop. The arcade column carries the skin; this paints a
    full-viewport near-black field (with a faint accent glow from the top) behind
-   it so the neon look reads edge-to-edge. Keyed on the body attribute the
-   arcade sets per accent; <body> background always shows behind page content,
-   so this needs no z-index juggling. */
+   it so the neon look reads edge-to-edge.
+
+   The scanlines + glow live on a position:fixed ::before, NOT on body's own
+   background: body is only viewport-height here, so a body background gets
+   tiled by the canvas and draws a hard seam at ~100vh on any page that
+   scrolls. (background-attachment:fixed would also fix it, but iOS ignores
+   it.) The flat base colour stays on body for overscroll. */
 body.arcade-route {
   background: #05060a;
+}
+body.arcade-route::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #0c2e1a, #05060a 62%);
 }
 body.arcade-route .main-wrapper,
 body.arcade-route .footer {
   background: transparent;
 }
-body.arcade-route[data-arcade-accent='green'] {
-  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #0c2e1a, #05060a 62%);
-}
-body.arcade-route[data-arcade-accent='amber'] {
+body.arcade-route[data-arcade-accent='amber']::before {
   background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #2a1d05, #08060a 62%);
 }
-body.arcade-route[data-arcade-accent='cyan'] {
+body.arcade-route[data-arcade-accent='cyan']::before {
   background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #06283b, #03060c 62%);
 }
-body.arcade-route[data-arcade-accent='magenta'] {
+body.arcade-route[data-arcade-accent='magenta']::before {
   background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #1c1322, #08070b 62%);
 }
-body.arcade-route[data-arcade-accent='stark'] {
+body.arcade-route[data-arcade-accent='stark']::before {
   background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 4px), radial-gradient(85% 55% at 50% 0, #161618, #000 62%);
 }
 

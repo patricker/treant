@@ -620,6 +620,9 @@
 .overlay {
   position: absolute;
   inset: 0;
+  /* Above the winning-cell glow (.winCell is position:relative + z-index:1) —
+     without this the glowing cells paint over the dialog and steal its clicks. */
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1942,9 +1945,10 @@
     font-size: 0.82rem;
   }
 }
-/* Narrowest phones: header buttons drop their text labels (icon only, the
-   aria-labels carry the name) so titles like "Tic-Tac-Toe" stop truncating. */
-@media (max-width: 360px) {
+/* Phones: header buttons drop their text labels (icon only, the aria-labels
+   carry the name) so titles like "Tic-Tac-Toe" and "Reversi" stop truncating.
+   420 covers the 390/412px mainstream — with labels, even "Reversi" clipped. */
+@media (max-width: 420px) {
   .navLabel {
     display: none;
   }
