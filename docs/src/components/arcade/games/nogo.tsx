@@ -12,10 +12,11 @@ const COLOR: Record<string, string> = {
 // Unlike a plain "place anywhere" grid, NoGo's legal cells are a subset of the
 // empty cells (placements that neither capture nor self-capture), so the board
 // is driven by the engine's legalMoves rather than "any empty cell".
-function NoGoBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
+function NoGoBoard({ board, params, interactive, legalMoves, lastCells, onMove }: BoardProps) {
   const { cols, rows } = params;
   const { t } = useT();
   const legal = new Set(legalMoves.map(Number).filter((n) => !Number.isNaN(n)));
+  const last = new Set(lastCells ?? []);
   const placed = changedIndex(usePrevBoard(board), board);
   return (
     <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
@@ -25,7 +26,7 @@ function NoGoBoard({ board, params, interactive, legalMoves, onMove }: BoardProp
         return (
           <button
             key={i}
-            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${isLegal ? styles.nogoLegal : ''}`}
+            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${isLegal ? styles.nogoLegal : ''} ${last.has(i) ? styles.lastCell : ''}`}
             disabled={!isLegal}
             onClick={() => onMove(String(i))}
             style={{ color: COLOR[ch] }}

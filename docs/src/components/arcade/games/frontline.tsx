@@ -60,10 +60,11 @@ export function Piece({ ch, kind }: { ch: string; kind: 'pawn' | 'disc' }) {
 // `pieceKind` picks how occupied cells are drawn (stones by default, pawns for
 // the movement/race games).
 export function makeMoveBoard(pieceKind: 'pawn' | 'disc') {
-  return function MoveBoardInner({ board, params, interactive, legalMoves, winCells, onMove }: BoardProps) {
+  return function MoveBoardInner({ board, params, interactive, legalMoves, winCells, lastCells, onMove }: BoardProps) {
     const { t } = useT();
     const { cols, rows } = params;
     const wins = new Set(winCells ?? []);
+    const last = new Set(lastCells ?? []);
     const [sel, setSel] = useState<number | null>(null);
     // Tapping a piece that can't move gives a brief head-shake instead of dead
     // silence — kids otherwise assume the game is frozen.
@@ -113,7 +114,7 @@ export function makeMoveBoard(pieceKind: 'pawn' | 'disc') {
             return (
               <button
                 key={i}
-                className={`${styles.tttCell} ${isSel ? styles.shiftSel : ''} ${isTarget ? styles.moveTarget : ''} ${i === shake ? styles.shakeCell : ''} ${wins.has(i) ? styles.winCell : ''}`}
+                className={`${styles.tttCell} ${isSel ? styles.shiftSel : ''} ${isTarget ? styles.moveTarget : ''} ${i === shake ? styles.shakeCell : ''} ${wins.has(i) ? styles.winCell : ''} ${last.has(i) ? styles.lastCell : ''}`}
                 disabled={!interactive || (ch === ' ' && !isTarget)}
                 onClick={() => tap(i, ch)}
                 aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}

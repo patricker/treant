@@ -10,6 +10,7 @@ export default function MuteToggle() {
     <button
       className={styles.muteBtn}
       aria-label={muted ? t('Unmute') : t('Mute')}
+      aria-pressed={!muted}
       onClick={() => {
         unlockAudio();
         const next = !muted;
@@ -17,7 +18,9 @@ export default function MuteToggle() {
         setMutedState(next);
       }}
     >
-      {muted ? '🔇' : '🔊'}
+      {/* State word beside the icon — a lone 🔊 doesn't say whether it shows
+          the current state or the action. */}
+      {muted ? <>🔇 {t('Off')}</> : <>🔊 {t('On')}</>}
     </button>
   );
 }

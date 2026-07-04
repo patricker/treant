@@ -181,6 +181,8 @@ export default function GameSetup({
                         className={`${styles.seatBtn} ${kind === o.kind ? styles.seatOn : ''}`}
                         onClick={() => setSeat(i, o.kind)}
                         title={o.kind === 'human' ? t('Human') : t('{level} AI', { level: t(DIFFICULTY[o.kind as Difficulty].label) })}
+                        aria-label={o.kind === 'human' ? t('Human') : t('{level} AI', { level: t(DIFFICULTY[o.kind as Difficulty].label) })}
+                        aria-pressed={kind === o.kind}
                       >
                         {o.emoji}
                       </button>

@@ -31,7 +31,7 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
   };
 }
 
-function QuadlineBoard({ board, params, currentPlayer, interactive, legalMoves, onMove }: BoardProps) {
+function QuadlineBoard({ board, params, currentPlayer, interactive, legalMoves, lastCells, onMove }: BoardProps) {
   const size: number = params.size;
   const { t } = useT();
   const me = SYM[currentPlayer];
@@ -45,6 +45,7 @@ function QuadlineBoard({ board, params, currentPlayer, interactive, legalMoves, 
 
   // In the move phase, the legal slide targets for the picked-up piece are the
   // engine's own moves that start at `sel` — no need to recompute adjacency.
+  const last = new Set(lastCells ?? []);
   const targets = new Set<number>();
   if (!placement && sel !== null) {
     for (const mv of legalMoves) {
@@ -85,7 +86,7 @@ function QuadlineBoard({ board, params, currentPlayer, interactive, legalMoves, 
         {cells.map((ch, i) => (
           <button
             key={i}
-            className={`${styles.shiftCell} ${sel === i ? styles.shiftSel : ''} ${targets.has(i) ? styles.moveTarget : ''} ${i === arrived ? styles.popIn : ''}`}
+            className={`${styles.shiftCell} ${sel === i ? styles.shiftSel : ''} ${targets.has(i) ? styles.moveTarget : ''} ${i === arrived ? styles.popIn : ''} ${last.has(i) ? styles.lastCell : ''}`}
             disabled={!interactive}
             onClick={() => tap(i)}
             style={{ color: ch === ' ' ? 'var(--ifm-color-emphasis-300)' : SEAT_COLOR[ch] }}

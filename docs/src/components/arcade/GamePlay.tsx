@@ -66,6 +66,11 @@ export default function GamePlay({
       : s.phase === 'over'
         ? ''
         : (() => {
+            // A lone human vs the AI hears "Your turn" — "Red's turn" reads
+            // like a status about someone else and kids lose track of which
+            // side they are.
+            const humans = s.seats.map((k, i) => (k === 'human' ? i : -1)).filter((i) => i >= 0);
+            if (humans.length === 1 && humans[0] === s.current) return t('Your turn');
             const en = labels[s.current] ?? `Player ${s.current + 1}`;
             const name = labels[s.current] ? t(labels[s.current]) : t('Player {n}', { n: s.current + 1 });
             // Pick the key by the ENGLISH label so the branch is stable across
@@ -137,6 +142,8 @@ export default function GamePlay({
           interactive={interactive}
           legalMoves={s.legalMoves}
           winCells={s.winCells}
+          lastCells={s.lastCells}
+          playerNames={labels.map((l) => t(l))}
           onMove={s.onHumanMove}
         />
 

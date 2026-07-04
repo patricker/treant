@@ -230,6 +230,8 @@
   "No moves — Pass ⤳": "Keine Züge — Passen ⤳",
   "No-Tac-Toe": "Nicht-Tac-Toe",
   "NoGo": "NoGo",
+  "Off": "Aus",
+  "On": "An",
   "One strip, and you BOTH play X. Whoever completes three X’s in a row wins.": "Ein Streifen, und ihr spielt BEIDE X. Wer drei X in einer Reihe vollendet, gewinnt.",
   "open": "offen",
   "Order": "Ordnung",
@@ -388,5 +390,6 @@
   "You are the Fox, starting at the bottom. Reach the top row — the Hounds' home edge — to win. The four Hounds only move forward (down) and win by boxing you in so you can't move.": "Du bist der Fuchs und startest unten. Erreiche die oberste Reihe — die Heimatkante der Hunde — um zu gewinnen. Die vier Hunde ziehen nur vorwärts (nach unten) und gewinnen, indem sie dich so einsperren, dass du nicht ziehen kannst.",
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "Du bist der einsame Fuchs und ziehst ein Feld diagonal in jede Richtung; die vier Hunde ziehen nur ein Feld diagonal vorwärts. Der Fuchs gewinnt, indem er zur gegenüberliegenden Reihe durchschlüpft; die Hunde gewinnen, indem sie ihn einsperren.",
   "You lost — {name} wins.": "Du hast verloren — {name} gewinnt.",
-  "You win! 🎉": "Du gewinnst! 🎉"
+  "You win! 🎉": "Du gewinnst! 🎉",
+  "Your turn": "Du bist dran"
 }

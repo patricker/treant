@@ -230,6 +230,8 @@
   "No moves — Pass ⤳",
   "No-Tac-Toe",
   "NoGo",
+  "Off",
+  "On",
   "One strip, and you BOTH play X. Whoever completes three X’s in a row wins.",
   "open",
   "Order",
@@ -388,5 +390,6 @@
   "You are the Fox, starting at the bottom. Reach the top row — the Hounds' home edge — to win. The four Hounds only move forward (down) and win by boxing you in so you can't move.",
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.",
   "You lost — {name} wins.",
-  "You win! 🎉"
+  "You win! 🎉",
+  "Your turn"
 ]

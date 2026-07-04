@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { GameDefinition, GameHandle, GameParams, PlayerKind } from './gameTypes';
 import { aiConfig, pickAiMove } from './gameTypes';
+import { diffCells } from './boardDiff';
 import { sound } from './sound';
 
 type Phase = 'playing' | 'thinking' | 'over';
@@ -35,6 +36,10 @@ export function useGameSession(
   // Cells of the winning line, set when the game ends on a line (line games only).
   // Drives the board's win glow; cleared on start/undo.
   const [winCells, setWinCells] = useState<number[]>([]);
+  // Cells changed by the most recent move (placement + any flips/captures) —
+  // the board marks them so the AI's reply is findable at a glance. Diffed
+  // here at move time (not in the board) so it survives unrelated re-renders.
+  const [lastCells, setLastCells] = useState<number[]>([]);
   const [canUndo, setCanUndo] = useState(false);
   // Move log for undo: seat captured BEFORE the move applies. Undo replays the
   // prefix ending just before the last human move (popping any AI replies too).
@@ -91,7 +96,11 @@ export function useGameSession(
       const mv = def.solo ? (h.playoutN(SOLO_AI_PLAYOUTS), h.bestMove()) : pickAiMove(h, aiConfig(def, kind));
       if (mv != null) {
         const seat = h.currentPlayer();
-        if (h.applyMove(mv)) movesRef.current.push({ move: mv, seat });
+        const before = h.getBoard();
+        if (h.applyMove(mv)) {
+          movesRef.current.push({ move: mv, seat });
+          setLastCells(diffCells(before, h.getBoard()));
+        }
         playMoveSound();
       }
       const terminal = h.isTerminal();
@@ -121,6 +130,7 @@ export function useGameSession(
     setResult('');
     setEndText('');
     setWinCells([]);
+    setLastCells([]);
     setPhase('playing');
     syncBoard(h);
     if (seatsRef.current[h.currentPlayer()] !== 'human') runAiTurn();
@@ -153,6 +163,7 @@ export function useGameSession(
     setResult('');
     setEndText('');
     setWinCells([]);
+    setLastCells([]);
     setPhase('playing');
     syncBoard(h);
     // A human is to move by construction (we cut at a human's move).
@@ -180,8 +191,10 @@ export function useGameSession(
       if (!h || phase !== 'playing') return;
       if (seatsRef.current[h.currentPlayer()] !== 'human') return;
       const seat = h.currentPlayer();
+      const before = h.getBoard();
       if (!h.applyMove(move)) return;
       movesRef.current.push({ move, seat });
+      setLastCells(diffCells(before, h.getBoard()));
       playMoveSound();
       if (h.isTerminal()) {
         syncBoard(h);
@@ -201,5 +214,5 @@ export function useGameSession(
     return h.bestMove();
   }, []);
 
-  return { board, current, phase, result, seats, statusText, endText, legalMoves, winCells, onHumanMove, getHint, replay: start, undo, canUndo };
+  return { board, current, phase, result, seats, statusText, endText, legalMoves, winCells, lastCells, onHumanMove, getHint, replay: start, undo, canUndo };
 }

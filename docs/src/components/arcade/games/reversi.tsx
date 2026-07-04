@@ -3,12 +3,13 @@ import { moveHandle } from './frontline';
 import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
-function ReversiBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
+function ReversiBoard({ board, params, interactive, legalMoves, lastCells, playerNames, onMove }: BoardProps) {
   const { cols, rows } = params;
   const { t } = useT();
   const cells = Array.from({ length: cols * rows }, (_, i) => board[i] ?? ' ');
   const mustPass = legalMoves.length === 1 && legalMoves[0] === 'pass';
   const legalSet = new Set(legalMoves.filter((m) => m !== 'pass'));
+  const last = new Set(lastCells ?? []);
   const x = cells.filter((c) => c === 'X').length;
   const o = cells.filter((c) => c === 'O').length;
 
@@ -24,10 +25,10 @@ function ReversiBoard({ board, params, interactive, legalMoves, onMove }: BoardP
           return (
             <button
               key={i}
-              className={styles.reversiCell}
+              className={`${styles.reversiCell} ${last.has(i) ? styles.lastCell : ''}`}
               disabled={!isLegal}
               onClick={() => onMove(String(i))}
-              aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
+              aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch === 'X' ? (playerNames?.[0] ?? ch) : (playerNames?.[1] ?? ch) })}
             >
               {ch !== ' ' ? (
                 <span

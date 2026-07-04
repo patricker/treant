@@ -9,11 +9,12 @@ import { useT } from '../i18n';
 // cell index; the engine's legal_moves() already lists the valid anchors for
 // whoever is to move, so the board just renders them and previews the partner
 // cell on hover.
-function DomineeringBoard({ board, params, currentPlayer, interactive, legalMoves, onMove }: BoardProps) {
+function DomineeringBoard({ board, params, currentPlayer, interactive, legalMoves, lastCells, onMove }: BoardProps) {
   const { t } = useT();
   const { cols, rows } = params;
   const [hover, setHover] = useState<number | null>(null);
   const legal = new Set(legalMoves.map(Number).filter((n) => !Number.isNaN(n)));
+  const last = new Set(lastCells ?? []);
   const vertical = currentPlayer === 0;
   const partner = (i: number) => (vertical ? i + cols : i + 1);
 
@@ -45,7 +46,7 @@ function DomineeringBoard({ board, params, currentPlayer, interactive, legalMove
           return (
             <button
               key={i}
-              className={`${styles.tttCell} ${isLegal ? styles.domLegal : ''}`}
+              className={`${styles.tttCell} ${isLegal ? styles.domLegal : ''} ${last.has(i) ? styles.lastCell : ''}`}
               disabled={!isLegal}
               onClick={() => onMove(String(i))}
               onMouseEnter={() => setHover(i)}

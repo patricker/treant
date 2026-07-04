@@ -37,11 +37,12 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
   };
 }
 
-function TicTacToeBoard({ board, params, interactive, winCells, onMove }: BoardProps) {
+function TicTacToeBoard({ board, params, interactive, winCells, lastCells, onMove }: BoardProps) {
   const { cols, rows } = params;
   const { t } = useT();
   const placed = changedIndex(usePrevBoard(board), board);
   const win = new Set(winCells ?? []);
+  const last = new Set(lastCells ?? []);
   return (
     <div className={styles.tttGrid} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
       {Array.from({ length: cols * rows }, (_, i) => {
@@ -49,7 +50,7 @@ function TicTacToeBoard({ board, params, interactive, winCells, onMove }: BoardP
         return (
           <button
             key={i}
-            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${win.has(i) ? styles.winCell : ''}`}
+            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${win.has(i) ? styles.winCell : ''} ${last.has(i) ? styles.lastCell : ''}`}
             disabled={!interactive || ch !== ' '}
             onClick={() => onMove(String(i))}
             style={{ color: COLOR[ch] }}

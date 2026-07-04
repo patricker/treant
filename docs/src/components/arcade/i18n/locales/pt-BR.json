@@ -230,6 +230,8 @@
   "No moves — Pass ⤳": "Sem jogadas — Passar ⤳",
   "No-Tac-Toe": "Velha às Avessas",
   "NoGo": "NoGo",
+  "Off": "Não",
+  "On": "Sim",
   "One strip, and you BOTH play X. Whoever completes three X’s in a row wins.": "Uma faixa, e VOCÊS DOIS jogam X. Quem completar três X em linha vence.",
   "open": "aberta",
   "Order": "Ordem",
@@ -388,5 +390,6 @@
   "You are the Fox, starting at the bottom. Reach the top row — the Hounds' home edge — to win. The four Hounds only move forward (down) and win by boxing you in so you can't move.": "Você é a Raposa, começando embaixo. Alcance a fileira de cima — a borda-casa dos Cães — para vencer. Os quatro Cães só se movem para frente (para baixo) e vencem encurralando você para que não possa se mover.",
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "Você é a Raposa solitária e se move uma casa na diagonal em qualquer direção; os quatro Cães se movem apenas uma casa na diagonal para frente. A Raposa vence escapulindo até a fileira do fundo; os Cães vencem encurralando-a.",
   "You lost — {name} wins.": "Você perdeu — {name} venceu.",
-  "You win! 🎉": "Você venceu! 🎉"
+  "You win! 🎉": "Você venceu! 🎉",
+  "Your turn": "Sua vez"
 }

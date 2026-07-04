@@ -13,7 +13,7 @@ const COLOR: Record<string, string> = {
 // like a queen, then shoot an arrow (also queen-wise) to burn a square. The
 // engine's legal_moves() are "from-to-arrow" triples, so the board just indexes
 // into them by the choices made so far.
-function AmazonsBoard({ board, params, currentPlayer, interactive, legalMoves, onMove }: BoardProps) {
+function AmazonsBoard({ board, params, currentPlayer, interactive, legalMoves, lastCells, onMove }: BoardProps) {
   const { t } = useT();
   const { cols, rows } = params;
   const [from, setFrom] = useState<number | null>(null);
@@ -46,6 +46,7 @@ function AmazonsBoard({ board, params, currentPlayer, interactive, legalMoves, o
   const phase = from == null ? 'pick' : to == null ? 'move' : 'shoot';
   const tos = from != null ? (tosByFrom.get(from) ?? new Set<number>()) : new Set<number>();
   const arrows = from != null && to != null ? (arrowsByFromTo.get(`${from}-${to}`) ?? new Set<number>()) : new Set<number>();
+  const last = new Set(lastCells ?? []);
 
   const tap = (i: number) => {
     if (!interactive) return;
@@ -91,7 +92,7 @@ function AmazonsBoard({ board, params, currentPlayer, interactive, legalMoves, o
           return (
             <button
               key={i}
-              className={`${styles.tttCell} ${isSel ? styles.shiftSel : ''} ${isMoveTarget ? styles.moveTarget : ''} ${isArrow ? styles.azArrow : ''}`}
+              className={`${styles.tttCell} ${isSel ? styles.shiftSel : ''} ${isMoveTarget ? styles.moveTarget : ''} ${isArrow ? styles.azArrow : ''} ${last.has(i) ? styles.lastCell : ''}`}
               disabled={!clickable}
               onClick={() => tap(i)}
               style={{

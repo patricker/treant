@@ -230,6 +230,8 @@
   "No moves — Pass ⤳": "无棋可走——跳过 ⤳",
   "No-Tac-Toe": "反井字棋",
   "NoGo": "NoGo",
+  "Off": "关",
+  "On": "开",
   "One strip, and you BOTH play X. Whoever completes three X’s in a row wins.": "一条单行，你们双方都放 X。谁先连成三个 X 谁就赢。",
   "open": "开放",
   "Order": "秩序",
@@ -388,5 +390,6 @@
   "You are the Fox, starting at the bottom. Reach the top row — the Hounds' home edge — to win. The four Hounds only move forward (down) and win by boxing you in so you can't move.": "你是狐狸，从底部出发。到达顶行——猎犬的大本营边——即获胜。四只猎犬只能向前（向下）移动，靠把你围住让你无法移动来获胜。",
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "你是孤独的狐狸，可以朝任意方向斜走一格；四只猎犬只能斜向前走一格。狐狸靠溜到对面底行获胜；猎犬靠困住它获胜。",
   "You lost — {name} wins.": "你输了——{name} 获胜。",
-  "You win! 🎉": "你赢了！🎉"
+  "You win! 🎉": "你赢了！🎉",
+  "Your turn": "轮到你了"
 }

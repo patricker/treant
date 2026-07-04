@@ -230,6 +230,8 @@
   "No moves — Pass ⤳": "動けない — パス ⤳",
   "No-Tac-Toe": "逆マルバツ",
   "NoGo": "NoGo",
+  "Off": "オフ",
+  "On": "オン",
   "One strip, and you BOTH play X. Whoever completes three X’s in a row wins.": "1本の帯で、二人ともXを置く。Xを3つ一列に並べた人が勝ち。",
   "open": "未確保",
   "Order": "オーダー",
@@ -388,5 +390,6 @@
   "You are the Fox, starting at the bottom. Reach the top row — the Hounds' home edge — to win. The four Hounds only move forward (down) and win by boxing you in so you can't move.": "あなたはキツネで、一番下からスタートします。一番上の列 — 猟犬のホーム — に着けば勝ち。4匹の猟犬は前（下）にしか進めず、あなたを囲い込んで動けなくすれば勝ちます。",
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "あなたは1匹だけのキツネで、どの向きにも斜めに1マス動けます。4匹の猟犬は斜め前にだけ1マス動けます。キツネは向こうの列にすり抜ければ勝ち、猟犬はキツネを閉じ込めれば勝ち。",
   "You lost — {name} wins.": "あなたの負け — {name}の勝ち。",
-  "You win! 🎉": "あなたの勝ち！ 🎉"
+  "You win! 🎉": "あなたの勝ち！ 🎉",
+  "Your turn": "あなたの番"
 }

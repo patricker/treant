@@ -44,10 +44,11 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
   };
 }
 
-function ShiftBoard({ board, params, currentPlayer, interactive, onMove }: BoardProps) {
+function ShiftBoard({ board, params, currentPlayer, interactive, lastCells, onMove }: BoardProps) {
   const { cols, rows } = params;
   const { t } = useT();
   const me = SYM[currentPlayer];
+  const last = new Set(lastCells ?? []);
   const [sel, setSel] = useState<number | null>(null);
   useEffect(() => setSel(null), [board]); // drop stale selection after any move
   const arrived = changedIndex(usePrevBoard(board), board);
@@ -89,7 +90,7 @@ function ShiftBoard({ board, params, currentPlayer, interactive, onMove }: Board
         {cells.map((ch, i) => (
           <button
             key={i}
-            className={`${styles.shiftCell} ${sel === i ? styles.shiftSel : ''} ${i === arrived ? styles.popIn : ''}`}
+            className={`${styles.shiftCell} ${sel === i ? styles.shiftSel : ''} ${i === arrived ? styles.popIn : ''} ${last.has(i) ? styles.lastCell : ''}`}
             disabled={!interactive}
             onClick={() => tap(i)}
             style={{ color: ch === ' ' ? 'var(--ifm-color-emphasis-300)' : SEAT_COLOR[ch] }}

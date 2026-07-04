@@ -742,6 +742,14 @@
   box-shadow: 0 0 0 2px var(--arc-win), 0 0 14px 3px rgba(255, 209, 71, 0.65);
 }
 
+/* "Last move" marker: a soft white inset ring on every cell the most recent
+   move touched (placement AND flips/captures), so the AI's instant reply is
+   findable at a glance. Persists until the next move; the gold .winCell glow
+   takes over visually at game end. */
+.lastCell:not(.winCell) {
+  box-shadow: inset 0 0 0 2.5px rgba(255, 255, 255, 0.5);
+}
+
 /* SVG counterpart of .winCell for the connection games (Hex, Y): SVG can't take
    box-shadow, so the winning polygons get a bright white stroke plus a gold
    drop-shadow glow. This base rule is the reduced-motion-safe fallback (static);
@@ -2001,11 +2009,19 @@
 }
 .setupPreview {
   margin: 14px auto 0;
+  /* width, not just max-width: .setup is a flex column, and margin:auto
+     children shrink to min-content there — Connect Four's minmax(0,1fr) grid
+     has ~zero min-content and collapsed to a 40px chip (ARCADE.md §7b). */
+  width: 100%;
   max-width: 300px;
   pointer-events: none;
   opacity: 0.9;
 }
-/* previews are decorative — hide interactive captions inside them */
-.setupPreview .shiftCaption {
+/* previews are decorative — hide interactive captions and control rows
+   (Connect Four's drop arrows, 2048's swipe buttons) inside them; disabled
+   buttons read as rendering junk in a static preview */
+.setupPreview .shiftCaption,
+.setupPreview .cfColHeaders,
+.setupPreview .g2048Arrows {
   display: none;
 }

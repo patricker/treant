@@ -7,10 +7,11 @@ import { useT } from '../i18n';
 // Col fills cells with solid colour "territory". Legal cells are a subset of
 // the empties (those not touching your own colour), so the board is driven by
 // the engine's legalMoves.
-function ColBoard({ board, params, currentPlayer, interactive, legalMoves, onMove }: BoardProps) {
+function ColBoard({ board, params, currentPlayer, interactive, legalMoves, lastCells, onMove }: BoardProps) {
   const { t } = useT();
   const { cols, rows } = params;
   const legal = new Set(legalMoves.map(Number).filter((n) => !Number.isNaN(n)));
+  const last = new Set(lastCells ?? []);
   const placed = changedIndex(usePrevBoard(board), board);
   const myColor = currentPlayer === 0 ? 'var(--arc-p1)' : 'var(--arc-p2)';
   return (
@@ -22,7 +23,7 @@ function ColBoard({ board, params, currentPlayer, interactive, legalMoves, onMov
         return (
           <button
             key={i}
-            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${isLegal ? styles.colLegal : ''}`}
+            className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${isLegal ? styles.colLegal : ''} ${last.has(i) ? styles.lastCell : ''}`}
             disabled={!isLegal}
             onClick={() => onMove(String(i))}
             style={{ background: fill, ['--col-hint' as string]: myColor }}

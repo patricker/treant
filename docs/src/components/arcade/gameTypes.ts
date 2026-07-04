@@ -71,6 +71,14 @@ export interface BoardProps {
   legalMoves: string[];
   /** cell indices of the winning line to glow (line games; empty otherwise) */
   winCells?: number[];
+  /** cell indices changed by the most recent move (placement + flips/moves);
+   *  boards that can render it show a "last move" ring so the AI's reply is
+   *  findable at a glance. Empty at game start. */
+  lastCells?: number[];
+  /** translated per-seat display names ("Red", "Gold", …) so screen-reader
+   *  cell labels can speak the same language as the visible UI instead of
+   *  raw engine glyphs (X/O). */
+  playerNames?: string[];
   onMove: (move: string) => void;
 }
 

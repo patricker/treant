@@ -11,13 +11,14 @@ const SYM_SEAT: Record<string, number> = { X: 0, O: 1, A: 2, B: 3 };
 
 // Custom board: a grid of stones (like MarkGridBoard) plus a per-seat
 // captured-pairs scoreline. The engine encodes "<cells>|<pairs>" into get_board.
-function PinchFiveBoard({ board, params, currentPlayer, interactive, winCells, onMove }: BoardProps) {
+function PinchFiveBoard({ board, params, currentPlayer, interactive, winCells, lastCells, onMove }: BoardProps) {
   const { t } = useT();
   const { cols, rows, numPlayers } = params;
   const [cells, countsStr] = board.split('|');
   const counts = (countsStr ?? '').split(',').map(Number);
   const placed = changedIndex(usePrevBoard(cells), cells);
   const win = new Set(winCells ?? []);
+  const last = new Set(lastCells ?? []);
 
   return (
     <div>
@@ -49,7 +50,7 @@ function PinchFiveBoard({ board, params, currentPlayer, interactive, winCells, o
           return (
             <button
               key={i}
-              className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${win.has(i) ? styles.winCell : ''}`}
+              className={`${styles.tttCell} ${i === placed ? styles.popIn : ''} ${win.has(i) ? styles.winCell : ''} ${last.has(i) ? styles.lastCell : ''}`}
               disabled={!interactive || ch !== ' '}
               onClick={() => onMove(String(i))}
               aria-label={t('Cell {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}

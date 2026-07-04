@@ -230,6 +230,8 @@
   "No moves — Pass ⤳": "Sin movimientos — Pasar ⤳",
   "No-Tac-Toe": "Tres en línea inverso",
   "NoGo": "NoGo",
+  "Off": "No",
+  "On": "Sí",
   "One strip, and you BOTH play X. Whoever completes three X’s in a row wins.": "Una tira, y AMBOS juegan X. Quien complete tres X en línea gana.",
   "open": "abierta",
   "Order": "Orden",
@@ -388,5 +390,6 @@
   "You are the Fox, starting at the bottom. Reach the top row — the Hounds' home edge — to win. The four Hounds only move forward (down) and win by boxing you in so you can't move.": "Eres el Zorro y empiezas abajo. Llega a la fila de arriba — el borde de casa de los Sabuesos — para ganar. Los cuatro Sabuesos solo avanzan (hacia abajo) y ganan encerrándote para que no puedas moverte.",
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "Eres el Zorro solitario y te mueves una casilla en diagonal en cualquier dirección; los cuatro Sabuesos solo se mueven una casilla en diagonal hacia adelante. El Zorro gana escabulléndose hasta la fila del fondo; los Sabuesos ganan atrapándolo.",
   "You lost — {name} wins.": "Perdiste — gana {name}.",
-  "You win! 🎉": "¡Ganaste! 🎉"
+  "You win! 🎉": "¡Ganaste! 🎉",
+  "Your turn": "Tu turno"
 }
