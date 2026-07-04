@@ -57,7 +57,10 @@ the bundled assets.
 
 Source art lives in `resources/` (`icon.svg` is the master; the PNGs are
 rasterized from it — neon treant-face `#ff3b5c` on the arcade backdrop `#1c1830`).
-Regenerate every platform's icon/splash set with:
+Regenerate every platform's icon/splash set with the command below.
+(`@capacitor/assets` is intentionally NOT a devDependency — it drags in a tree
+of unpatched high-severity advisories, and the generated icons are checked in —
+so `npx` fetches it transiently just for this run:)
 
 ```bash
 cd app
