@@ -25,6 +25,21 @@ const HERO_BG: Record<string, string> = {
   '2048': 'linear-gradient(135deg,#f59563,#edc22e)',
 };
 
+// The Treant mascot (same little guy as the site logo), drawn in currentColor
+// so he inherits the accent tint + glow of wherever he stands.
+function TreantMascot({ size = 30 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 64 64" width={size} height={size} className={styles.mascot} aria-hidden="true">
+      <circle cx="32" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="3.5" />
+      <rect x="27" y="42" width="10" height="14" fill="currentColor" />
+      <line x1="32" y1="56" x2="20" y2="60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <line x1="32" y1="56" x2="44" y2="60" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="25" cy="22" r="3" fill="currentColor" />
+      <circle cx="39" cy="22" r="3" fill="currentColor" />
+    </svg>
+  );
+}
+
 function HeroArt({ id }: { id: string }) {
   const disc = (bg: string) => (
     <span style={{ width: 18, height: 18, borderRadius: '50%', background: bg, display: 'inline-block' }} />
@@ -118,7 +133,9 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
 
   return (
     <div className={styles.launcher}>
-      <h1 className={styles.arcadeTitle}>🌳 Treant Arcade</h1>
+      <h1 className={styles.arcadeTitle}>
+        <TreantMascot /> Treant Arcade
+      </h1>
       <p className={styles.arcadeSub}>
         {t('Pass-and-play or take on the AI. Crank the knobs and make it weird.')}
       </p>
@@ -135,17 +152,17 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
           <GameIcon id={game.id} size={30} /> {t(game.name)}
         </div>
         <div className={styles.heroArt}>
+          <button className={`${styles.heroNav} ${styles.heroNavPrev}`} aria-label={t('Previous game')} onClick={() => step(-1)}>
+            ‹
+          </button>
           <HeroArt id={game.id} />
+          <button className={`${styles.heroNav} ${styles.heroNavNext}`} aria-label={t('Next game')} onClick={() => step(1)}>
+            ›
+          </button>
         </div>
         <div className={styles.heroBlurb}>{t(game.blurb)}</div>
         <button className={styles.heroPlay} onClick={() => onPick(game.id)}>
           {t('▶ Play')}
-        </button>
-        <button className={`${styles.heroNav} ${styles.heroNavPrev}`} aria-label={t('Previous game')} onClick={() => step(-1)}>
-          ‹
-        </button>
-        <button className={`${styles.heroNav} ${styles.heroNavNext}`} aria-label={t('Next game')} onClick={() => step(1)}>
-          ›
         </button>
       </div>
 
