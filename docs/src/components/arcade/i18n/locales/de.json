@@ -396,5 +396,9 @@
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "Du bist der einsame Fuchs und ziehst ein Feld diagonal in jede Richtung; die vier Hunde ziehen nur ein Feld diagonal vorwärts. Der Fuchs gewinnt, indem er zur gegenüberliegenden Reihe durchschlüpft; die Hunde gewinnen, indem sie ihn einsperren.",
   "You lost — {name} wins.": "Du hast verloren — {name} gewinnt.",
   "You win! 🎉": "Du gewinnst! 🎉",
-  "Your turn": "Du bist dran"
+  "Your turn": "Du bist dran",
+  "Endurance 12×12": "Ausdauer 12×12",
+  "Minefield 12×12": "Minenfeld 12×12",
+  "Acreage 12×12": "Fläche 12×12",
+  "Pandemonium 12×12": "Tumult 12×12"
 }

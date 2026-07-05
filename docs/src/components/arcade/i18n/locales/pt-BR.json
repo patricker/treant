@@ -396,5 +396,9 @@
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "Você é a Raposa solitária e se move uma casa na diagonal em qualquer direção; os quatro Cães se movem apenas uma casa na diagonal para frente. A Raposa vence escapulindo até a fileira do fundo; os Cães vencem encurralando-a.",
   "You lost — {name} wins.": "Você perdeu — {name} venceu.",
   "You win! 🎉": "Você venceu! 🎉",
-  "Your turn": "Sua vez"
+  "Your turn": "Sua vez",
+  "Endurance 12×12": "Resistência 12×12",
+  "Minefield 12×12": "Campo minado 12×12",
+  "Acreage 12×12": "Terreno 12×12",
+  "Pandemonium 12×12": "Pandemônio 12×12"
 }

@@ -396,5 +396,9 @@
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "你是孤独的狐狸，可以朝任意方向斜走一格；四只猎犬只能斜向前走一格。狐狸靠溜到对面底行获胜；猎犬靠困住它获胜。",
   "You lost — {name} wins.": "你输了——{name} 获胜。",
   "You win! 🎉": "你赢了！🎉",
-  "Your turn": "轮到你了"
+  "Your turn": "轮到你了",
+  "Endurance 12×12": "耐力 12×12",
+  "Minefield 12×12": "雷区 12×12",
+  "Acreage 12×12": "地块 12×12",
+  "Pandemonium 12×12": "喧嚣 12×12"
 }
