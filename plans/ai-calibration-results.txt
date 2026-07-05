@@ -1,32 +1,59 @@
 
-================  fox-hounds  (n=20/pair)  ================
+================  snort  (n=20/pair)  ================
      rung\vs       p8      p30     p100     p300     p800    p2000    field
-       p8 t3        ·      40%      20%      25%      20%      20%      25%
-      p30 t2      60%        ·      25%      30%      30%      35%      36%
-     p100 t1      80%      75%        ·      40%      50%      35%      56%
-   p300 t0.6      75%      70%      60%        ·      30%      25%      52%
-  p800 t0.35      80%      70%      50%      70%        ·      35%      61%
-    p2000 t0      80%      65%      65%      75%      65%        ·      70%
-  seat-0 win rate (decided games): 77%  [~50% = balanced]
-  >>> paste into docs/src/components/arcade/games/<fox-hounds>.tsx:
+       p8 t3        ·      55%      65%      35%      50%      70%      55%
+      p30 t2      45%        ·      50%      35%      40%      60%      46%
+     p100 t1      35%      50%        ·      45%      45%      60%      47%
+   p300 t0.6      65%      65%      55%        ·      40%      45%      54%
+  p800 t0.35      50%      60%      55%      60%        ·      65%      58%
+    p2000 t0      30%      40%      40%      55%      35%        ·      40%
+  seat-0 win rate (decided games): 50%  [~50% = balanced]
+  >>> paste into docs/src/components/arcade/games/<snort>.tsx:
+  difficulty: {
+    easy: { playouts: 2000, topK: 1, temp: 0 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 8, topK: 6, temp: 3 },
+  },
+  (Hard capped at p8: strength peaked early — extra playouts add nothing.)
+
+
+
+================  col  (n=20/pair)  ================
+     rung\vs       p8      p30     p100     p300     p800    p2000    field
+       p8 t3        ·      45%      55%      45%      20%      25%      38%
+      p30 t2      55%        ·      25%      50%      45%      25%      40%
+     p100 t1      45%      75%        ·      50%      30%      40%      48%
+   p300 t0.6      55%      50%      50%        ·      40%      20%      43%
+  p800 t0.35      80%      55%      70%      60%        ·      35%      60%
+    p2000 t0      75%      75%      60%      80%      65%        ·      71%
+  seat-0 win rate (decided games): 33%  [~50% = balanced]
+  >>> paste into docs/src/components/arcade/games/<col>.tsx:
   difficulty: {
     easy: { playouts: 8, topK: 6, temp: 3 },
-    medium: { playouts: 300, topK: 3, temp: 0.6 },
+    medium: { playouts: 800, topK: 2, temp: 0.35 },
     hard: { playouts: 2000, topK: 1, temp: 0 },
   },
 
-================  no-tac-toe  (n=20/pair)  ================
-     rung\vs       p8      p30     p100     p300     p800    p2000    field
-       p8 t3        ·      25%      20%      15%      15%      10%      17%
-      p30 t2      75%        ·      35%      20%      20%      10%      32%
-     p100 t1      80%      65%        ·      35%      40%      10%      46%
-   p300 t0.6      85%      80%      65%        ·      45%      25%      60%
-  p800 t0.35      85%      80%      60%      55%        ·      50%      66%
-    p2000 t0      90%      90%      90%      75%      50%        ·      79%
-  seat-0 win rate (decided games): 54%  [~50% = balanced]
-  >>> paste into docs/src/components/arcade/games/<no-tac-toe>.tsx:
-  difficulty: {
-    easy: { playouts: 8, topK: 6, temp: 3 },
-    medium: { playouts: 100, topK: 4, temp: 1 },
-    hard: { playouts: 2000, topK: 1, temp: 0 },
-  },
+
+-------------------------------------------------------------------------------
+Calibration notes (Task 2.1 — Snort tile)
+-------------------------------------------------------------------------------
+Snort's strength ladder is FLAT and NON-TRANSITIVE on 5x5, so the field-score
+auto-picker (which assumes playouts => strength) is unreliable here. Confirmed
+across higher-n runs:
+  - p800 is consistently the top field score (n=20: 58%, n=100: 61%, n=300: 61%)
+  - p2000 (temp=0, deterministic) is mediocre/exploitable (40% / 50% / 48%)
+  - near-random p8 (temp=3) scores high (~48-51%) because it is hard to exploit
+The emitted block flips run-to-run (n=20: easy=p2000/hard=p8 [inverted];
+n=100: easy=p2000, medium==hard=p800 [degenerate]). Pasting it would make
+"easy" the STRONGEST AI. DECISION: Snort keeps `difficulty: col.difficulty` —
+same engine/board as Col, giving a genuine pace-based weak->strong tier spread
+(p8 -> p100 -> p2000). Snort is a drawish shallow game; extra search barely
+changes measured strength, so tiers are keyed to search budget / pacing.
+
+Col (re-run to verify the ctor change is behavior-neutral for flag=0): ladder is
+clean and monotonic (field p8=38% ... p2000=71% at n=20; 37% ... 74% at n=100),
+confirming gameplay is UNCHANGED by the added avoid_enemy flag. The auto-picker's
+medium pick varies by seed between p100 and p800 (Col's ladder clusters below
+p2000, so the midpoint lands near either); Col's shipped medium=p100 remains
+valid, so Col's block is left unchanged.

@@ -16,10 +16,11 @@ struct Col {
     rows: usize,
     grid: Vec<i8>, // -1 uncoloured, else owner (0 or 1)
     current: u8,
+    avoid_enemy: bool, // false = Col (avoid own colour), true = Snort (avoid enemy)
 }
 impl Col {
-    fn new(cols: usize, rows: usize) -> Self {
-        Self { cols, rows, grid: vec![-1; cols * rows], current: 0 }
+    fn new(cols: usize, rows: usize, avoid_enemy: bool) -> Self {
+        Self { cols, rows, grid: vec![-1; cols * rows], current: 0, avoid_enemy }
     }
     fn neighbors(&self, i: usize) -> Vec<usize> {
         let r = i / self.cols;
@@ -43,9 +44,9 @@ impl Col {
         if self.grid[i] != -1 {
             return false;
         }
-        let me = self.current as i8;
-        // illegal if any orthogonal neighbour is already my colour
-        !self.neighbors(i).iter().any(|&n| self.grid[n] == me)
+        // Col: never touch your OWN colour. Snort (avoid_enemy): never touch the ENEMY.
+        let banned = if self.avoid_enemy { 1 - self.current as i8 } else { self.current as i8 };
+        !self.neighbors(i).iter().any(|&n| self.grid[n] == banned)
     }
     fn gen(&self) -> Vec<u16> {
         (0..self.grid.len()).filter(|&i| self.is_legal(i)).map(|i| i as u16).collect()
@@ -108,15 +109,18 @@ pub struct ColWasm {
     manager: MCTSManager<ColCfg>,
     cols: usize,
     rows: usize,
+    avoid_enemy: bool,
 }
 #[wasm_bindgen]
 impl ColWasm {
     #[wasm_bindgen(constructor)]
-    pub fn new(cols: usize, rows: usize) -> Self {
+    pub fn new(cols: usize, rows: usize, avoid_enemy: u32) -> Self {
+        let avoid_enemy = avoid_enemy != 0;
         Self {
-            manager: MCTSManager::new(Col::new(cols, rows), ColCfg, ColEval, UCTPolicy::new(1.4), ()),
+            manager: MCTSManager::new(Col::new(cols, rows, avoid_enemy), ColCfg, ColEval, UCTPolicy::new(1.4), ()),
             cols,
             rows,
+            avoid_enemy,
         }
     }
     pub fn playout_n(&mut self, n: u32) {
@@ -183,7 +187,8 @@ impl ColWasm {
         true
     }
     pub fn reset(&mut self) {
-        self.manager = MCTSManager::new(Col::new(self.cols, self.rows), ColCfg, ColEval, UCTPolicy::new(1.4), ());
+        self.manager =
+            MCTSManager::new(Col::new(self.cols, self.rows, self.avoid_enemy), ColCfg, ColEval, UCTPolicy::new(1.4), ());
     }
 }
 
@@ -193,13 +198,13 @@ mod tests {
 
     #[test]
     fn empty_board_allows_every_cell() {
-        let g = Col::new(4, 4);
+        let g = Col::new(4, 4, false);
         assert_eq!(g.gen().len(), 16);
     }
 
     #[test]
     fn cannot_colour_next_to_own_colour() {
-        let mut g = Col::new(3, 3);
+        let mut g = Col::new(3, 3, false);
         g.grid[4] = 0; // X in the centre
         g.current = 0; // X to move
         // the four orthogonal neighbours of centre (1,3,5,7) are now illegal for X
@@ -212,7 +217,7 @@ mod tests {
 
     #[test]
     fn opponent_may_colour_adjacent() {
-        let mut g = Col::new(3, 3);
+        let mut g = Col::new(3, 3, false);
         g.grid[4] = 0; // X centre
         g.current = 1; // O to move — O has no O-neighbours, so all empties are legal
         assert!(g.is_legal(1));
@@ -221,8 +226,21 @@ mod tests {
 
     #[test]
     fn ai_plays() {
-        let mut g = ColWasm::new(5, 5);
+        let mut g = ColWasm::new(5, 5, 0);
         g.playout_n(600);
         assert!(g.best_move().is_some());
+    }
+
+    #[test]
+    fn snort_cannot_colour_next_to_enemy_but_own_is_fine() {
+        let mut g = ColWasm::new(3, 3, 1); // avoid_enemy = Snort
+        assert!(g.apply_move("4")); // P0 takes centre
+        // P1 may NOT play any orthogonal neighbour of the centre…
+        assert!(!g.apply_move("1"));
+        assert!(g.apply_move("0")); // …but a diagonal-only contact is legal
+        // P0 may now play NEXT TO OWN centre stone (own-adjacency is fine in Snort).
+        // Cell 5 touches own centre (4) but NOT the enemy corner (0); a cell that
+        // also touched the enemy (e.g. 1, adjacent to enemy 0) would still be illegal.
+        assert!(g.apply_move("5"));
     }
 }

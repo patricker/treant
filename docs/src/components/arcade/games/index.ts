@@ -27,7 +27,7 @@ import { konane } from './konane';
 import { nineMorris } from './ninemorris';
 import { nogo } from './nogo';
 import { amazons } from './amazons';
-import { col } from './col';
+import { col, snort } from './col';
 import { sim } from './sim';
 import { foxHounds } from './foxhounds';
 import { treblecross } from './treblecross';
@@ -69,6 +69,7 @@ export const GAMES: GameDefinition[] = [
   euclid,
   nogo,
   col,
+  snort,
   sim,
   mancala,
   oware,

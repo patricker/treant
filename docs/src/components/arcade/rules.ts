@@ -30,6 +30,7 @@ export const RULES: Record<string, string> = {
   euclid: 'Two numbers. On your turn, subtract any positive multiple of the smaller from the larger (the result must stay ≥ 0). The player who makes one of the numbers zero wins.',
   nogo: 'The opposite of capture-Go: place a stone, but you may NEVER capture an enemy group or leave your own group without a liberty. The first player with no safe move loses.',
   col: 'Colour any empty cell in your colour — but never one orthogonally next to a cell you have already coloured (keep your patches apart). The first player who cannot colour a cell loses.',
+  snort: 'Take turns colouring any empty cell — but you may never colour a cell orthogonally touching an ENEMY-coloured cell. Your own cells are fine to touch. The first player with no legal cell loses.',
   sim: 'Six dots, fifteen connecting lines. Take turns colouring a line your colour. Completing a triangle of three dots all in your own colour LOSES — and someone always must.',
   mancala: 'Pick up all the seeds from one of your pits and sow them one-by-one into following pits. Land your last seed just right to capture. The most seeds in your store wins.',
   oware: 'Scoop up all the seeds from one of your pits and drop them one-by-one into the pits going round. If your last seed lands in an opponent pit and makes it hold exactly 2 or 3, you capture those seeds — and keep grabbing backward while the pits before it also hold 2 or 3. First to more than half the seeds wins.',

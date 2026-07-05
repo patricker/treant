@@ -56,7 +56,33 @@ export const col: GameDefinition = {
     { key: 'cols', label: 'Width', min: 4, max: 8, step: 1 },
     { key: 'rows', label: 'Height', min: 4, max: 8, step: 1 },
   ],
-  create: (wasm, p) => moveHandle(new wasm.ColWasm(p.cols, p.rows)),
+  create: (wasm, p) => moveHandle(new wasm.ColWasm(p.cols, p.rows, 0)),
+  Board: ColBoard,
+  playerLabels: ['Red', 'Yellow'],
+};
+
+// Snort — Col's mirror twin (Conway): you may not colour next to the ENEMY.
+export const snort: GameDefinition = {
+  id: 'snort',
+  name: 'Snort',
+  icon: '🐂',
+  blurb: 'Colour the map — but never next to the enemy. Spread wide, fence them in.',
+  // Snort's strength ladder is flat & non-transitive on the solver-backed board
+  // (p800 tops the field, p2000 is exploitable, near-random p8 scores high), so
+  // strength-based auto-calibration is unreliable. It intentionally mirrors Col's
+  // pace-based tiers — same engine/board. See plans/ai-calibration-results.txt.
+  difficulty: col.difficulty,
+  defaultParams: { numPlayers: 2, cols: 5, rows: 5 },
+  presets: [
+    { label: 'Classic 5×5', emoji: '⭐', params: { numPlayers: 2, cols: 5, rows: 5 } },
+    { label: 'Big 7×7', emoji: '🔲', params: { numPlayers: 2, cols: 7, rows: 7 } },
+    { label: 'Mega 10×10', emoji: '🤯', params: { numPlayers: 2, cols: 10, rows: 10 } },
+  ],
+  knobs: [
+    { key: 'cols', label: 'Width', min: 4, max: 10, step: 1 },
+    { key: 'rows', label: 'Height', min: 4, max: 10, step: 1 },
+  ],
+  create: (wasm, p) => moveHandle(new wasm.ColWasm(p.cols, p.rows, 1)),
   Board: ColBoard,
   playerLabels: ['Red', 'Yellow'],
 };
