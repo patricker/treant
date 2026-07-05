@@ -82,9 +82,14 @@ export const foxHounds: GameDefinition = {
   presets: [
     { label: 'Classic 8×8', emoji: '⭐', params: { numPlayers: 2, cols: 8, rows: 8 } },
     { label: 'Small 6×6', emoji: '🔳', params: { numPlayers: 2, cols: 6, rows: 6 } },
-    { label: 'Huge 10×10', emoji: '🤯', params: { numPlayers: 2, cols: 10, rows: 10 } },
+    { label: 'Hound Wall 12×8', emoji: '🐕', params: { numPlayers: 2, cols: 12, rows: 8 } },
+    { label: 'Long Chase 8×12', emoji: '🏃', params: { numPlayers: 2, cols: 8, rows: 12 } },
+    { label: 'Thunderdome 12×12', emoji: '🤯', params: { numPlayers: 2, cols: 12, rows: 12 } },
   ],
-  knobs: [],
+  knobs: [
+    { key: 'cols', label: 'Width', min: 6, max: 12, step: 1 },
+    { key: 'rows', label: 'Height', min: 6, max: 12, step: 1 },
+  ],
   create: (wasm, p) => moveHandle(new wasm.FoxHoundsWasm(p.cols, p.rows)),
   Board: FoxHoundsBoard,
   playerLabels: ['Fox', 'Hounds'],
