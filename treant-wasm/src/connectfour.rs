@@ -168,13 +168,7 @@ impl ConnectFourWasm {
         state
             .available_moves()
             .iter()
-            .map(|m| {
-                if m.0 >= POP_OFFSET {
-                    format!("pop{}", m.0 - POP_OFFSET)
-                } else {
-                    format!("{}", m.0)
-                }
-            })
+            .map(|m| Self::encode_move(format!("{m}")))
             .collect::<Vec<_>>()
             .join(",")
     }
@@ -308,6 +302,51 @@ mod tests {
         assert!(g.apply_move("pop3")); // P0 pops col3; P1's row-4 disc falls to row5
         assert!(g.is_terminal());
         assert_eq!(g.result(), "2", "the pop completed P1's line, so P1 wins");
+    }
+
+    #[test]
+    fn ai_encodes_a_pop_move_as_a_pop_token() {
+        // Regression for the raw-sentinel leak: `best_move`/`weak_move` must route
+        // the AI's chosen move through `encode_move`, so a pop surfaces as
+        // "pop<col>" — never the bare wire value ("131") the search speaks.
+        //
+        // Robust shape: fill a 4×3 Pop Out board (k=3) completely so the ONLY
+        // legal moves are pops (no column has room to drop), with P0 to move and
+        // P0 owning ≥1 bottom disc. The column order [0,0,0,1,1,1,3,2,2,3,3,2] is
+        // a witnessed 12-drop alternating fill with no intermediate win (found by
+        // DFS); P0 ends owning the bottom of cols 0 and 3, so best_move can only
+        // return a pop.
+        let mut g = ConnectFourWasm::new(4, 3, 3, 2, 1);
+        for c in ["0", "0", "0", "1", "1", "1", "3", "2", "2", "3", "3", "2"] {
+            assert!(g.apply_move(c), "drop {c} must be legal");
+        }
+        assert_eq!(g.current_player(), 0, "P0 to move after 12 drops");
+        // Only pops remain: every column is full, so no bare-column drop is legal.
+        let legal = g.legal_moves();
+        assert!(
+            legal.split(',').all(|m| m.starts_with("pop")),
+            "only pops should be legal, got {legal:?}"
+        );
+
+        // AI-encode side must round-trip: best_move yields a "pop…" token that
+        // apply_move accepts on this same position (the bug returned "131").
+        let mut g2 = ConnectFourWasm::new(4, 3, 3, 2, 1);
+        for c in ["0", "0", "0", "1", "1", "1", "3", "2", "2", "3", "3", "2"] {
+            assert!(g2.apply_move(c));
+        }
+        g2.playout_n(300);
+        let best = g2.best_move().expect("a move on a pops-only position");
+        assert!(best.starts_with("pop"), "best_move must encode a pop, got {best:?}");
+        assert!(g2.apply_move(&best), "the encoded best_move must be apply-able: {best:?}");
+
+        // weak_move takes the same encode path; its token must also apply.
+        let mut g3 = ConnectFourWasm::new(4, 3, 3, 2, 1);
+        for c in ["0", "0", "0", "1", "1", "1", "3", "2", "2", "3", "3", "2"] {
+            assert!(g3.apply_move(c));
+        }
+        let weak = g3.weak_move(50, 3, 1.0, 42).expect("a weak move on a pops-only position");
+        assert!(weak.starts_with("pop"), "weak_move must encode a pop, got {weak:?}");
+        assert!(g3.apply_move(&weak), "the encoded weak_move must be apply-able: {weak:?}");
     }
 
     #[test]

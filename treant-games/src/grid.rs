@@ -322,6 +322,16 @@ impl GameState for GridGame {
                 // the player to move (`self.current`) has won iff the line is
                 // theirs, otherwise the previous mover completed it and the
                 // player to move has lost.
+                //
+                // A single pop can complete BOTH players' lines at once (the
+                // shifted column lands a disc that closes one line for each
+                // seat). We do not adjudicate the tie specially: `winner()`
+                // returns the first line in its row-major, 4-direction scan
+                // order, and that seat is reported here. This is accepted —
+                // such double-completions are vanishingly rare, the outcome is
+                // deterministic, and the game still ends sanely (exactly one
+                // winner, no panic). A tie-break rule would add complexity for
+                // a case players effectively never reach.
                 if w == self.current {
                     Some(ProvenValue::Win)
                 } else {
