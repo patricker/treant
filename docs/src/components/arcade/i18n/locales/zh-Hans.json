@@ -1,5 +1,6 @@
 {
   "2048": "2048",
+  "♻ Swap sides": "♻ 交换先后手",
   "{level} AI": "{level} AI",
   "{n} stone left": "剩 {n} 颗棋子",
   "{n} stones left": "剩 {n} 颗棋子",
@@ -266,6 +267,7 @@
   "Phosphor": "荧光",
   "Pick a pairing to advance your climbers.": "选择一种配对来让你的登山者前进。",
   "Pick up all the seeds from one of your pits and sow them one-by-one into following pits. Land your last seed just right to capture. The most seeds in your store wins.": "从你的一个坑里拿起所有种子，一颗一颗地播进后面的坑里。让最后一颗种子恰好落对位置就能吃子。仓库里种子最多的人获胜。",
+  "Pie rule": "交换规则",
   "Pieces": "棋子数",
   "Pig": "Pig",
   "Pinch-Five": "夹五子",
@@ -293,7 +295,7 @@
   "Player 4": "玩家 4",
   "Players": "玩家数",
   "Players take turns placing one stone on any empty cell of the triangular board. You win by connecting all THREE sides of the triangle with a single connected group of your stones — the three corners each count for both of their sides. Stones are never moved or captured, and someone always connects, so Y can never be a draw.": "玩家轮流在三角形棋盘的任意空格上放一颗棋子。你要用一整个相连的棋子群连接三角形的全部三条边即获胜——三个角各自同时算作它相邻的两条边。棋子永不移动或被提走，而且总有人能连通，所以 Y 永远不会平局。",
-  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw.": "玩家轮流在任意空的六边形上放一颗棋子。红方用一条相连的红棋链连接上边和下边即获胜；金方连接左边和右边即获胜。棋子永不移动或被提走，而且总恰好有一名玩家完成连接——Hex 永远不会平局。",
+  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw. Pie rule: to blunt the first-move advantage, the second player may answer the opening stone with a single Swap — claiming that stone as their own — instead of placing.": "玩家轮流在任意空的六边形上放一颗棋子。红方用一条相连的红棋链连接上边和下边即获胜；金方连接左边和右边即获胜。棋子永不移动或被提走，而且总恰好有一名玩家完成连接——Hex 永远不会平局。 交换规则：为削弱先手优势，后手可以对开局的第一子选择一次交换——将该子据为己有——而不是落子。",
   "playing": "进行中",
   "Point {n}: {state}": "点 {n}：{state}",
   "poison": "毒药",

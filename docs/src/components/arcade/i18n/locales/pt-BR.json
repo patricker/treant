@@ -1,5 +1,6 @@
 {
   "2048": "2048",
+  "♻ Swap sides": "♻ Trocar de lado",
   "{level} AI": "IA {level}",
   "{n} stone left": "{n} pedra restante",
   "{n} stones left": "{n} pedras restantes",
@@ -266,6 +267,7 @@
   "Phosphor": "Fósforo",
   "Pick a pairing to advance your climbers.": "Escolha um par para avançar seus escaladores.",
   "Pick up all the seeds from one of your pits and sow them one-by-one into following pits. Land your last seed just right to capture. The most seeds in your store wins.": "Pegue todas as sementes de uma das suas covas e semeie-as uma a uma nas covas seguintes. Faça sua última semente cair no lugar certo para capturar. Quem tiver mais sementes no seu depósito vence.",
+  "Pie rule": "Regra da torta",
   "Pieces": "Peças",
   "Pig": "Pig",
   "Pinch-Five": "Belisca-Cinco",
@@ -293,7 +295,7 @@
   "Player 4": "Jogador 4",
   "Players": "Jogadores",
   "Players take turns placing one stone on any empty cell of the triangular board. You win by connecting all THREE sides of the triangle with a single connected group of your stones — the three corners each count for both of their sides. Stones are never moved or captured, and someone always connects, so Y can never be a draw.": "Os jogadores se revezam colocando uma pedra em qualquer casa vazia do tabuleiro triangular. Você vence conectando os TRÊS lados do triângulo com um único grupo conectado das suas pedras — cada um dos três cantos conta para os dois lados que toca. As pedras nunca são movidas ou capturadas, e alguém sempre conecta, então Y nunca pode dar empate.",
-  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw.": "Os jogadores se revezam colocando uma pedra em qualquer hexágono vazio. O Vermelho vence ligando a borda de cima à borda de baixo com uma cadeia conectada de pedras vermelhas; o Ouro vence ligando a borda esquerda à borda direita. As pedras nunca são movidas ou capturadas, e exatamente um jogador sempre completa uma conexão — Hex nunca pode dar empate.",
+  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw. Pie rule: to blunt the first-move advantage, the second player may answer the opening stone with a single Swap — claiming that stone as their own — instead of placing.": "Os jogadores se revezam colocando uma pedra em qualquer hexágono vazio. O Vermelho vence ligando a borda de cima à borda de baixo com uma cadeia conectada de pedras vermelhas; o Ouro vence ligando a borda esquerda à borda direita. As pedras nunca são movidas ou capturadas, e exatamente um jogador sempre completa uma conexão — Hex nunca pode dar empate. Regra da torta: para atenuar a vantagem da primeira jogada, o segundo jogador pode responder à pedra de abertura com um único Swap — assumindo essa pedra como sua — em vez de colocar.",
   "playing": "jogando",
   "Point {n}: {state}": "Ponto {n}: {state}",
   "poison": "veneno",

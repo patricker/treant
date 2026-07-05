@@ -1,5 +1,6 @@
 {
   "2048": "2048",
+  "♻ Swap sides": "♻ Seiten tauschen",
   "{level} AI": "{level} KI",
   "{n} stone left": "{n} Stein übrig",
   "{n} stones left": "{n} Steine übrig",
@@ -266,6 +267,7 @@
   "Phosphor": "Phosphor",
   "Pick a pairing to advance your climbers.": "Wähle eine Paarung, um deine Kletterer vorzurücken.",
   "Pick up all the seeds from one of your pits and sow them one-by-one into following pits. Land your last seed just right to capture. The most seeds in your store wins.": "Nimm alle Samen aus einer deiner Mulden und säe sie einen nach dem anderen in die folgenden Mulden. Landet dein letzter Samen genau richtig, fängst du. Wer die meisten Samen in seinem Speicher hat, gewinnt.",
+  "Pie rule": "Tauschregel",
   "Pieces": "Figuren",
   "Pig": "Pig",
   "Pinch-Five": "Klemm-Fünf",
@@ -293,7 +295,7 @@
   "Player 4": "Spieler 4",
   "Players": "Spieler",
   "Players take turns placing one stone on any empty cell of the triangular board. You win by connecting all THREE sides of the triangle with a single connected group of your stones — the three corners each count for both of their sides. Stones are never moved or captured, and someone always connects, so Y can never be a draw.": "Die Spieler setzen abwechselnd einen Stein auf ein beliebiges freies Feld des dreieckigen Bretts. Du gewinnst, indem du alle DREI Seiten des Dreiecks mit einer einzigen zusammenhängenden Gruppe deiner Steine verbindest — die drei Ecken zählen jeweils für beide angrenzenden Seiten. Steine werden nie bewegt oder gefangen, und irgendjemand verbindet immer, sodass Y nie unentschieden enden kann.",
-  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw.": "Die Spieler setzen abwechselnd einen Stein auf ein beliebiges freies Sechseck. Rot gewinnt, indem es die obere mit der unteren Kante durch eine zusammenhängende Kette roter Steine verbindet; Gold gewinnt, indem es die linke mit der rechten Kante verbindet. Steine werden nie bewegt oder gefangen, und genau ein Spieler vollendet immer eine Verbindung — Hex kann nie unentschieden enden.",
+  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw. Pie rule: to blunt the first-move advantage, the second player may answer the opening stone with a single Swap — claiming that stone as their own — instead of placing.": "Die Spieler setzen abwechselnd einen Stein auf ein beliebiges freies Sechseck. Rot gewinnt, indem es die obere mit der unteren Kante durch eine zusammenhängende Kette roter Steine verbindet; Gold gewinnt, indem es die linke mit der rechten Kante verbindet. Steine werden nie bewegt oder gefangen, und genau ein Spieler vollendet immer eine Verbindung — Hex kann nie unentschieden enden. Tauschregel: Um den Vorteil des ersten Zuges abzuschwächen, kann der zweite Spieler auf den Eröffnungsstein mit einem einzelnen Swap antworten — und diesen Stein als eigenen übernehmen — statt selbst zu setzen.",
   "playing": "spielt",
   "Point {n}: {state}": "Punkt {n}: {state}",
   "poison": "Gift",

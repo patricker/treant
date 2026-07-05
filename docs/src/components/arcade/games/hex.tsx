@@ -3,8 +3,7 @@ import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
 function makeHandle(wasm: any, p: GameParams): GameHandle {
-  const g = new wasm.HexWasm(p.size);
-  const n = p.size;
+  const g = new wasm.HexWasm(p.size, p.pie ?? 1);
   return {
     applyMove: (m) => g.apply_move(m),
     getBoard: () => g.get_board(),
@@ -14,10 +13,9 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
     bestMove: () => g.best_move() ?? undefined,
     playoutN: (k) => g.playout_n(k),
     legalMoves: () => {
-      const b = g.get_board();
-      const out: string[] = [];
-      for (let i = 0; i < n * n; i++) if ((b[i] ?? ' ') === ' ') out.push(String(i));
-      return out;
+      // Surfaced by the engine so the pie-rule "swap" reply appears alongside cells.
+      const s: string = g.legal_moves();
+      return s ? s.split(',') : [];
     },
     weakMove: (p, k, t, s) => g.weak_move(p, k, t, s) ?? undefined,
     winningCells: () => {
@@ -41,10 +39,11 @@ function hexPoints(cx: number, cy: number) {
   }).join(' ');
 }
 
-function HexBoard({ board, params, interactive, winCells, onMove }: BoardProps) {
+function HexBoard({ board, params, interactive, legalMoves, winCells, onMove }: BoardProps) {
   const { t } = useT();
   const n = params.size;
   const wins = new Set(winCells ?? []);
+  const canSwap = interactive && legalMoves.includes('swap');
   const tl = center(0, 0);
   const tr = center(0, n - 1);
   const bl = center(n - 1, 0);
@@ -64,6 +63,17 @@ function HexBoard({ board, params, interactive, winCells, onMove }: BoardProps) 
         <span className={styles.hexSwatch} style={{ background: 'var(--arc-p2)' }} />
         {t('Gold joins left ↔ right')}
       </div>
+      {canSwap && (
+        <div style={{ textAlign: 'center', paddingBottom: 8 }}>
+          <button
+            className={styles.secondaryBtn}
+            style={{ padding: '8px 16px', width: 'auto' }}
+            onClick={() => onMove('swap')}
+          >
+            {t('♻ Swap sides')}
+          </button>
+        </div>
+      )}
       <div className={styles.hexBoardWrap}>
         <svg viewBox={viewBox} className={styles.hexSvg}>
           {/* coloured goal edges along the rhombus border */}
@@ -115,20 +125,23 @@ export const hex: GameDefinition = {
   icon: '⬡',
   blurb: 'Connect your two sides with one unbroken chain of stones. It can never be a draw.',
   rules:
-    'Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw.',
+    'Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw. Pie rule: to blunt the first-move advantage, the second player may answer the opening stone with a single Swap — claiming that stone as their own — instead of placing.',
   difficulty: {
     easy: { playouts: 8, topK: 6, temp: 3 },
     medium: { playouts: 100, topK: 4, temp: 1 },
     hard: { playouts: 2000, topK: 1, temp: 0 },
   },
-  defaultParams: { numPlayers: 2, size: 7 },
+  defaultParams: { numPlayers: 2, size: 7, pie: 1 },
   presets: [
     { label: 'Classic 7×7', emoji: '⭐', params: { numPlayers: 2, size: 7 } },
     { label: 'Small 5×5', emoji: '🔳', params: { numPlayers: 2, size: 5 } },
     { label: 'Big 9×9', emoji: '🔲', params: { numPlayers: 2, size: 9 } },
     { label: 'Mega 11×11', emoji: '🤯', params: { numPlayers: 2, size: 11 } },
   ],
-  knobs: [{ key: 'size', label: 'Size', min: 5, max: 11, step: 1 }],
+  knobs: [
+    { key: 'size', label: 'Size', min: 5, max: 11, step: 1 },
+    { key: 'pie', label: 'Pie rule', min: 0, max: 1, step: 1 },
+  ],
   create: makeHandle,
   Board: HexBoard,
   playerLabels: ['Red', 'Gold'],

@@ -11,7 +11,7 @@ fn every_game_weak_move_returns_something_or_terminal() {
     ck!(TicTacToeWasm::new(3, 3, 3, 2));
     ck!(ReversiWasm::new(6, 6, 0));
     ck!(ReversiWasm::new(6, 6, 1)); // Anti-Reversi variant
-    ck!(HexWasm::new(7));
+    ck!(HexWasm::new(7, 1));
     ck!(FrontlineWasm::new(6, 6));
     ck!(MancalaWasm::new(6, 4, 2));
     ck!(DotsBoxesWasm::new(3, 3));

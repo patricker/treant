@@ -1,5 +1,6 @@
 {
   "2048": "2048",
+  "♻ Swap sides": "♻ Cambiar de lado",
   "{level} AI": "IA {level}",
   "{n} stone left": "Queda {n} piedra",
   "{n} stones left": "Quedan {n} piedras",
@@ -266,6 +267,7 @@
   "Phosphor": "Fósforo",
   "Pick a pairing to advance your climbers.": "Elige un emparejamiento para avanzar a tus escaladores.",
   "Pick up all the seeds from one of your pits and sow them one-by-one into following pits. Land your last seed just right to capture. The most seeds in your store wins.": "Levanta todas las semillas de uno de tus hoyos y siémbralas una por una en los hoyos siguientes. Deja caer tu última semilla justo en el lugar correcto para capturar. Gana quien tenga más semillas en su granero.",
+  "Pie rule": "Regla del pastel",
   "Pieces": "Piezas",
   "Pig": "Pig",
   "Pinch-Five": "Pinza cinco",
@@ -293,7 +295,7 @@
   "Player 4": "Jugador 4",
   "Players": "Jugadores",
   "Players take turns placing one stone on any empty cell of the triangular board. You win by connecting all THREE sides of the triangle with a single connected group of your stones — the three corners each count for both of their sides. Stones are never moved or captured, and someone always connects, so Y can never be a draw.": "Los jugadores se turnan para colocar una piedra en cualquier casilla vacía del tablero triangular. Ganas conectando los TRES lados del triángulo con un solo grupo conectado de tus piedras — cada una de las tres esquinas cuenta para sus dos lados. Las piedras nunca se mueven ni se capturan, y alguien siempre conecta, así que Y nunca puede terminar en empate.",
-  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw.": "Los jugadores se turnan para colocar una piedra en cualquier hexágono vacío. Rojo gana uniendo el borde superior con el inferior mediante una cadena conectada de piedras rojas; Oro gana uniendo el borde izquierdo con el derecho. Las piedras nunca se mueven ni se capturan, y exactamente un jugador siempre completa una conexión — Hex nunca puede terminar en empate.",
+  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw. Pie rule: to blunt the first-move advantage, the second player may answer the opening stone with a single Swap — claiming that stone as their own — instead of placing.": "Los jugadores se turnan para colocar una piedra en cualquier hexágono vacío. Rojo gana uniendo el borde superior con el inferior mediante una cadena conectada de piedras rojas; Oro gana uniendo el borde izquierdo con el derecho. Las piedras nunca se mueven ni se capturan, y exactamente un jugador siempre completa una conexión — Hex nunca puede terminar en empate. Regla del pastel: para atenuar la ventaja de la primera jugada, el segundo jugador puede responder a la piedra de apertura con un único Swap —quedándose con esa piedra como propia— en lugar de colocar.",
   "playing": "jugando",
   "Point {n}: {state}": "Punto {n}: {state}",
   "poison": "veneno",

@@ -94,7 +94,7 @@ fn games() -> Vec<Game> {
         g("gomoku", LIGHT, || Box::new(TicTacToeWasm::new(13, 13, 5, 2)) as Box<dyn Eng>),
         g("reversi", STD, || Box::new(ReversiWasm::new(8, 8, 0)) as Box<dyn Eng>),
         g("anti-reversi", STD, || Box::new(ReversiWasm::new(8, 8, 1)) as Box<dyn Eng>),
-        g("hex", STD, || Box::new(HexWasm::new(7)) as Box<dyn Eng>),
+        g("hex", STD, || Box::new(HexWasm::new(7, 1)) as Box<dyn Eng>),
         g("frontline", STD, || Box::new(FrontlineWasm::new(6, 6)) as Box<dyn Eng>),
         g("mancala", STD, || Box::new(MancalaWasm::new(6, 4, 2)) as Box<dyn Eng>),
         g("dots-and-boxes", STD, || Box::new(DotsBoxesWasm::new(3, 3)) as Box<dyn Eng>),

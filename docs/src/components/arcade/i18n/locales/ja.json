@@ -1,5 +1,6 @@
 {
   "2048": "2048",
+  "♻ Swap sides": "♻ 手番を交換",
   "{level} AI": "{level} AI",
   "{n} stone left": "残り{n}個",
   "{n} stones left": "残り{n}個",
@@ -266,6 +267,7 @@
   "Phosphor": "フォスファー",
   "Pick a pairing to advance your climbers.": "クライマーを進めるペアを選ぼう。",
   "Pick up all the seeds from one of your pits and sow them one-by-one into following pits. Land your last seed just right to capture. The most seeds in your store wins.": "自分の穴の1つから種を全部取り、次の穴へ1つずつまいていきます。最後の種をうまく置ければ種を取れます。自分の倉に種が一番多い人が勝ち。",
+  "Pie rule": "パイルール",
   "Pieces": "コマ",
   "Pig": "ピッグ",
   "Pinch-Five": "はさみ五目",
@@ -293,7 +295,7 @@
   "Player 4": "プレイヤー4",
   "Players": "人数",
   "Players take turns placing one stone on any empty cell of the triangular board. You win by connecting all THREE sides of the triangle with a single connected group of your stones — the three corners each count for both of their sides. Stones are never moved or captured, and someone always connects, so Y can never be a draw.": "プレイヤーは交代で、三角形の盤の空いているマスのどこかに石を1つ置きます。三角形の3つの辺すべてを、つながった1つの自分の石のグループで結べば勝ち — 3つの角はそれぞれ両側の辺に数えます。石は動かされたり取られたりせず、必ずだれかがつなげるので、Yに引き分けはありません。",
-  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw.": "プレイヤーは交代で、空いている六角形のどこかに石を1つ置きます。赤は上の辺と下の辺を、つながった赤い石の鎖で結べば勝ち。ゴールドは左の辺と右の辺を結べば勝ち。石は動かされたり取られたりせず、必ずどちらか一人だけがつながりを完成させます — ヘックスに引き分けはありません。",
+  "Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw. Pie rule: to blunt the first-move advantage, the second player may answer the opening stone with a single Swap — claiming that stone as their own — instead of placing.": "プレイヤーは交代で、空いている六角形のどこかに石を1つ置きます。赤は上の辺と下の辺を、つながった赤い石の鎖で結べば勝ち。ゴールドは左の辺と右の辺を結べば勝ち。石は動かされたり取られたりせず、必ずどちらか一人だけがつながりを完成させます — ヘックスに引き分けはありません。 パイルール：先手の有利を和らげるため、後手は最初の石に対して、石を置く代わりに一度だけスワップして——その石を自分のものにできる。",
   "playing": "プレイ中",
   "Point {n}: {state}": "点 {n}：{state}",
   "poison": "毒",

@@ -10,15 +10,34 @@ use wasm_bindgen::prelude::*;
 
 use crate::types;
 
+/// Move sentinel for the pie-rule swap. Out of range of every real cell index
+/// (0..n*n, max 120 for the 11×11 board), so it never collides with a placement.
+const SWAP: u16 = u16::MAX;
+
+/// Render an engine move as the string the UI / apply_move speak: real cells are
+/// their numeric index, the swap sentinel is the literal `"swap"`.
+fn fmt_move(m: u16) -> String {
+    if m == SWAP {
+        "swap".to_string()
+    } else {
+        format!("{m}")
+    }
+}
+
 #[derive(Clone)]
 struct Hex {
     board: Vec<i8>, // -1 empty, 0 = X (top-bottom), 1 = O (left-right)
     n: usize,
     current: u8,
+    /// Pie (swap) rule enabled: the second player may answer the opening stone
+    /// with a single `swap` instead of placing.
+    pie: bool,
+    /// Number of half-moves played so far (used to offer `swap` only at ply 1).
+    ply: u32,
 }
 impl Hex {
     fn new(n: usize) -> Self {
-        Self { board: vec![-1; n * n], n, current: 0 }
+        Self { board: vec![-1; n * n], n, current: 0, pie: false, ply: 0 }
     }
     fn neighbors(&self, r: usize, c: usize) -> Vec<(usize, usize)> {
         let n = self.n as i32;
@@ -153,11 +172,29 @@ impl GameState for Hex {
         if self.term().is_some() {
             return vec![];
         }
-        (0..self.board.len()).filter(|&i| self.board[i] < 0).map(|i| i as u16).collect()
+        let mut moves: Vec<u16> =
+            (0..self.board.len()).filter(|&i| self.board[i] < 0).map(|i| i as u16).collect();
+        // Pie rule: the second player's reply may be a swap instead of a placement.
+        if self.pie && self.ply == 1 {
+            moves.push(SWAP);
+        }
+        moves
     }
     fn make_move(&mut self, m: &u16) {
-        self.board[*m as usize] = self.current as i8;
+        if *m == SWAP {
+            // Reflect the single existing stone across the long diagonal (r,c)→(c,r)
+            // and recolour it to the swapping player. The post-swap position is a
+            // normal one-stone position — solver / win detection need no special case.
+            if let Some(i) = self.board.iter().position(|&v| v >= 0) {
+                let (r, c) = (i / self.n, i % self.n);
+                self.board[i] = -1;
+                self.board[idx(c, r, self.n)] = self.current as i8;
+            }
+        } else {
+            self.board[*m as usize] = self.current as i8;
+        }
         self.current = 1 - self.current;
+        self.ply += 1;
     }
     fn terminal_value(&self) -> Option<ProvenValue> {
         self.term()
@@ -195,13 +232,19 @@ impl MCTS for HexCfg {
 pub struct HexWasm {
     manager: MCTSManager<HexCfg>,
     n: usize,
+    pie: bool,
 }
 #[wasm_bindgen]
 impl HexWasm {
+    /// `pie != 0` enables the pie (swap) rule: after the opening stone the
+    /// second player's legal moves include the literal move `"swap"`.
     #[wasm_bindgen(constructor)]
-    pub fn new(n: u32) -> Self {
+    pub fn new(n: u32, pie: u32) -> Self {
         let n = (n as usize).clamp(4, 11);
-        Self { manager: MCTSManager::new(Hex::new(n), HexCfg, HexEval, UCTPolicy::new(1.4), ()), n }
+        let pie = pie != 0;
+        let mut st = Hex::new(n);
+        st.pie = pie;
+        Self { manager: MCTSManager::new(st, HexCfg, HexEval, UCTPolicy::new(1.4), ()), n, pie }
     }
     pub fn size(&self) -> u32 {
         self.n as u32
@@ -240,7 +283,20 @@ impl HexWasm {
         }
     }
     pub fn best_move(&self) -> Option<String> {
-        self.manager.best_move().map(|m| format!("{m}"))
+        self.manager.best_move().map(fmt_move)
+    }
+
+    /// Comma-joined legal move strings for the current player. Cell indices are
+    /// row-major (`r*n + c`); the pie-rule swap surfaces as the literal `"swap"`.
+    pub fn legal_moves(&self) -> String {
+        self.manager
+            .tree()
+            .root_state()
+            .available_moves()
+            .iter()
+            .map(|&m| fmt_move(m))
+            .collect::<Vec<_>>()
+            .join(",")
     }
 
     /// Comma-joined 0-based cell indices (row-major `r*n + c`) of the winning
@@ -257,12 +313,20 @@ impl HexWasm {
     }
 
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
+        // pick_weak formats moves via Display, so the swap sentinel comes back as
+        // its raw number — remap it to the "swap" token the UI/apply_move expect.
         crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
+            .map(|s| if s == format!("{SWAP}") { "swap".to_string() } else { s })
     }
     pub fn apply_move(&mut self, mov: &str) -> bool {
-        let m: u16 = match mov.parse() {
-            Ok(v) if (v as usize) < self.n * self.n => v,
-            _ => return false,
+        let m: u16 = if mov == "swap" {
+            SWAP
+        } else {
+            match mov.parse::<u16>() {
+                Ok(v) if v == SWAP => SWAP,
+                Ok(v) if (v as usize) < self.n * self.n => v,
+                _ => return false,
+            }
         };
         let mut s = self.manager.tree().root_state().clone();
         if !s.available_moves().contains(&m) {
@@ -273,7 +337,9 @@ impl HexWasm {
         true
     }
     pub fn reset(&mut self) {
-        self.manager = MCTSManager::new(Hex::new(self.n), HexCfg, HexEval, UCTPolicy::new(1.4), ());
+        let mut st = Hex::new(self.n);
+        st.pie = self.pie;
+        self.manager = MCTSManager::new(st, HexCfg, HexEval, UCTPolicy::new(1.4), ());
     }
 }
 
@@ -302,7 +368,7 @@ mod tests {
 
     #[test]
     fn ai_plays_and_no_draw_pressure() {
-        let mut g = HexWasm::new(5);
+        let mut g = HexWasm::new(5, 0);
         g.playout_n(300);
         assert!(g.best_move().is_some());
     }
@@ -350,8 +416,80 @@ mod tests {
     }
 
     #[test]
+    fn pie_swap_mirrors_and_recolors_the_first_stone() {
+        let mut g = HexWasm::new(7, 1);
+        assert!(g.apply_move("9")); // P0: (r1,c2)
+        assert!(g.legal_moves().split(',').any(|m| m == "swap"));
+        assert!(g.apply_move("swap"));
+        let b = g.get_board();
+        assert_eq!(b.chars().nth(9), Some(' ')); // original cell cleared
+        assert_eq!(b.chars().nth(15), Some('O')); // mirrored (r2,c1) is now P1's
+        assert_eq!(g.current_player(), 0);
+    }
+
+    #[test]
+    fn decline_swap_plays_normally() {
+        let mut g = HexWasm::new(5, 1);
+        assert!(g.apply_move("12")); // P0 opens
+        assert!(g.legal_moves().split(',').any(|m| m == "swap"));
+        assert!(g.apply_move("6")); // P1 declines: places a normal stone
+        // Ply 2 now: swap is no longer offered and the game is a normal position.
+        assert!(!g.legal_moves().split(',').any(|m| m == "swap"));
+        assert_eq!(g.current_player(), 0);
+        assert!(!g.is_terminal());
+    }
+
+    #[test]
+    fn no_swap_when_pie_disabled() {
+        let mut g = HexWasm::new(5, 0);
+        assert!(g.apply_move("12"));
+        assert!(!g.legal_moves().split(',').any(|m| m == "swap"));
+        assert!(!g.apply_move("swap"));
+    }
+
+    #[test]
+    fn swapped_stone_can_complete_a_win() {
+        // pie board: P0 opens at (1,2); P1 swaps -> O appears at the mirror (2,1).
+        let mut g = Hex::new(5);
+        g.pie = true;
+        g.make_move(&7); // P0 (X) at (1,2)
+        assert_eq!(g.board[7], 0);
+        g.make_move(&SWAP); // P1 swap -> clears (1,2), sets (2,1) to O
+        assert_eq!(g.board[7], -1);
+        assert_eq!(g.board[idx(2, 1, 5)], 1);
+        assert_eq!(g.current, 0);
+        // The swapped stone completes a left-right chain along row 2 for O.
+        for c in [0usize, 2, 3, 4] {
+            g.board[idx(2, c, 5)] = 1;
+        }
+        assert_eq!(g.dist(1), 0);
+        let cells = g.winning_chain();
+        assert!(cells.contains(&idx(2, 1, 5))); // swapped stone is in the winning chain
+        assert_eq!(cells.len(), 5);
+    }
+
+    #[test]
+    fn full_game_after_swap_terminates() {
+        let mut g = HexWasm::new(5, 1);
+        assert!(g.apply_move("7"));
+        assert!(g.apply_move("swap"));
+        for _ in 0..80 {
+            if g.is_terminal() {
+                break;
+            }
+            let m = g.weak_move(40, 3, 0.5, 7).or_else(|| g.best_move());
+            match m {
+                Some(mv) => assert!(g.apply_move(&mv), "engine emitted an unplayable move: {mv}"),
+                None => break,
+            }
+        }
+        assert!(g.is_terminal());
+        assert!(!g.result().is_empty());
+    }
+
+    #[test]
     fn winning_cells_empty_mid_game() {
-        let mut g = HexWasm::new(5);
+        let mut g = HexWasm::new(5, 0);
         assert_eq!(g.winning_cells(), "", "empty board has no chain");
         assert!(g.apply_move("12")); // one stone, no connection
         assert_eq!(g.winning_cells(), "");
