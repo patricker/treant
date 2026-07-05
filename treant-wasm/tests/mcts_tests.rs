@@ -15,6 +15,6 @@ fn every_game_weak_move_returns_something_or_terminal() {
     ck!(MancalaWasm::new(6, 4, 2));
     ck!(DotsBoxesWasm::new(3, 3));
     ck!(KonaneWasm::new(6, 6));
-    ck!(DomineeringWasm::new(6, 6));
+    ck!(DomineeringWasm::new(6, 6, 0));
     ck!(NimWasm::new(15));
 }

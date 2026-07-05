@@ -22,7 +22,7 @@ import { wythoff } from './wythoff';
 import { dotsBoxes } from './dotsboxes';
 import { gomoku } from './gomoku';
 import { muTorere } from './mutorere';
-import { domineering } from './domineering';
+import { domineering, cram } from './domineering';
 import { konane } from './konane';
 import { nineMorris } from './ninemorris';
 import { nogo } from './nogo';
@@ -75,6 +75,7 @@ export const GAMES: GameDefinition[] = [
   oware,
   muTorere,
   domineering,
+  cram,
   pig,
   climb,
   game2048,
