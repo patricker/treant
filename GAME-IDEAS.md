@@ -229,6 +229,121 @@ Amazons · Hedge (Quoridor) · Tablut · Fanorona · Havannah · Lasca · Halma 
 
 ---
 
+## 6z. Web-research wave (2026-07-05) — new candidates beyond the original catalogue
+
+> From a targeted web pass (traditional games encyclopedias, CGT literature,
+> pen-and-paper classics). Two-player, perfect-info, PD-safe unless noted.
+
+- **Surakarta** · 2p · ★★★ · 🟡 · 💪 · *new* — 6×6, 12 pieces each; step any
+  direction, but CAPTURE by travelling around one of the eight corner **loops**
+  and landing on an enemy. A capture mechanic "not known in any other recorded
+  game" — the arced board is a visual showpiece. Traditional Indonesian (PD).
+- **Gale** (Shannon switching game; a.k.a. Bridg-It) · 2p · ★★★ · 🟢 · 🏆 small ·
+  *reuse-ish* — claim edges on a grid-graph to connect your two sides / cut the
+  opponent. Union-find reuse from Hex; pairs with Hex/Y on the connection shelf.
+  Academic name "Gale" is safe (avoid "Bridg-It", 1960s trademark).
+- **Slimetrail** · 2p · ★★★ · 🟢 · 🏆 · *new* — one shared token; each turn move
+  it one step, its old cell becomes permanent slime; you win if the token
+  reaches YOUR corner, lose if it reaches theirs. Kid-perfect, tiny engine,
+  solver-strong.
+- **Toads & Frogs** (Conway) · 2p · ★★ · 🟢 · 🏆 · *new* — 1-D row: toads march
+  right, frogs march left; step into the gap or hop one enemy; no move = lose.
+  Near-zero code (Treblecross shelf), and knobs galore (row length, piece
+  counts, gap count, multiple rows).
+- **Strand** (Isolation/Isola mechanic, renamed) · 2p · ★★ · 🟢 · 💪 · *reuse* —
+  move your pawn, then remove ANY tile on the board; first pawn with no move
+  loses. Engine is Trails plus "remove anywhere" — consider shipping it as a
+  Trails *knob* ("walls: behind-you / anywhere / both") instead of a new game.
+- **Len Choa** · 2p · ★★ · 🟢 · 🏆 · *new* — Thai hunt: 1 tiger vs 6 leopards on
+  a small triangular board; tiger jump-captures, leopards immobilize. Fills the
+  hunt shelf (Bagh-Chal, Fox & Hounds) with a smaller, solver-perfect entry.
+- **World Threes** · 2p · ★★★ · 🟡 · 🏆 · *reuse* — ONE GameDefinition for the
+  global tiny three-in-a-row family, with the **board itself as the knob**:
+  Achi (Ghana, 3×3+diagonals), Tapatan (Philippines), Shisima (Kenya, octagon),
+  Tant Fant (India, home rows), Nine Holes (England, no-slide-diagonals),
+  Tsoro Yematatu (Zimbabwe, triangle), Picaria (Zuni). Peak
+  silly-customization: travel the world by turning a knob. Engine = Shift with
+  per-board adjacency tables.
+- **Cram** · 2p · ★★ · 🟢 · 🏆 · *reuse* — impartial Domineering: either player
+  may place a domino in either orientation; last to place wins (+ misère
+  variant). Cheapest possible add: a rule FLAG on the existing Domineering
+  engine — a customization win as much as a new game.
+- **Sumito** (Abalone mechanic, renamed) · 2p · ★★ · 🔴 · ⚠️ · *new* — hex
+  marble-pushing (2-vs-1 / 3-vs-2 shoves, push six off to win). Gorgeous but
+  needs an evaluator + careful branching control; deep-cut shelf with Amazons.
+  ("Abalone" is a live trademark — needs a clean name and rules-from-scratch.)
+
+Modern commercial games reviewed and *rejected* on trademark/IP grounds despite
+good fit: Hive, Onitama, Santorini, Tak, Quoridor (already renamed as Hedge in
+§6j), Isolation (mechanic kept, renamed Strand above).
+
+## 6y. Knob-expansion audit (2026-07-05) — customization headroom in the 40 shipped games
+
+> Per-game audit of GameDefinitions vs their Rust constructors. `[UI]` = engine
+> already supports it, knob/preset change only; `[ENG]` = needs a Rust change.
+> Full renderer caveat: grids are CSS-flexible to ~19 wide; phone cell size and
+> per-game difficulty constants (NOT retuned per size — giant boards silently
+> play easier) are the honest limits. Wild presets keep the 🤯 convention.
+
+### Tier 1 — engine headroom the UI never exposes (pure [UI], ~zero risk)
+
+- **fox-hounds**: NO knobs today; engine takes (cols, rows) unclamped, hounds
+  auto-scale with width. Add Width/Height 6–12 → a 12-wide board IS the 8-hound
+  fantasy. Presets "Hound Wall 12×8" 🐕, "Thunderdome 12×12" 🤯. [ENG] 2 foxes.
+- **wythoff**: NO knobs; engine clamps 4–12. Add a Size knob. [ENG] rectangular
+  boards; multi-queen.
+- **tic-tac-toe / gomoku**: engine MAX_DIM=15 but UI stops at 10/15-k-6. Widen
+  dims to 15, k to 15/8 — "15×15 k=2" slapstick, "k=8 on 15×15" 🤯. [ENG] misère.
+- **no-tac-toe**: UI max 6, engine (gridlib) takes 12. **Best single-knob change
+  in the arcade**: misère TTT on 12×12. Also trap-three, square-up, order-chaos
+  → widen to 12. [ENG] order-chaos target-line-length knob (5 hardcoded).
+- **connect-six**: [ENG] expose stones-per-turn (Connect(k,p) family, place 3!).
+- **mancala**: engine takes stones 1–8, pits 2–8; UI stops at 2–6/3–8. 1-stone
+  Kalah is a weird puzzle; "Overflow" 8×8×4p. [ENG] capture-rule toggle.
+- **pig**: engine target 20–200; UI 50–150. "Sprint to 20" lottery preset.
+  [ENG] bust-on-1-or-2 "Two-Pig"; 2-dice variant.
+- **shift**: engine 10×10/self-clamping pieces; UI 8×8/4. Widen; "1-piece duel".
+
+### Tier 2 — unclamped engines, conservative UIs ([UI] widen + sanity check)
+
+col →10-12 ([ENG] 3-color/3-player) · domineering →12 + skew "Corridor 3×12"
+([ENG] Cram flag — both players either orientation, ties into §6z) · konane →12
++ "Runway 4×12" · nogo →9 · treblecross →24 (check 1×N phone overflow) ·
+subtract-square →100 "Century" · euclid →99 · amazons 8×8 "Sprawl" preset
+(honest: hard AI mushy; [ENG] 4 amazons/side) · baghchal goats→30 "Goat
+Tsunami" ([ENG] tiger count 2–8) · nim stones→60 ([ENG] max-take knob;
+**multi-heap Nim + misère** — canonical, MCTS near-perfect).
+
+### Tier 3 — UI at engine clamp; one-line Rust clamp bumps ([ENG], trivial)
+
+capture-go →13 + capture-target-N knob · chomp →10×10 · clobber →10 + 2×8
+strip preset · dots-boxes →7 (hard AI weakens — label honestly) + 3-4 players ·
+frontline →12 (+ "Thermopylae 4×10" preset works TODAY) · trails →12 · hex →13
++ size-4 "Baby Hex" + **pie/swap rule** · y →15 · reversi →12/14 +
+**anti-Reversi misère flag** (fewest discs wins — one sign flip) + "Letterbox
+4×10" preset · quadline win-length 3–5 · connect-four k→2 ("Connect-2 chaos"),
+MAX_DIM→12, **Pop Out variant** (remove own bottom disc) · pinch-five pairs→10,
+players→6 · nine-morris lasker-morris flag · climb →6p, toWin→8 · oware
+seeds→8, pits→10.
+
+### Tier 4 — zero-param games (each [ENG] is that game's only possible knob)
+
+mu-torere ring size 8/10/12 · sim vertex count 5–7 (K7 is a real research
+object) · 2048 grid 3×3 (brutal)/5×5 (zen) + spawn-4 probability + target tile.
+
+### Top 10 cheapest-silliest, ranked
+
+1. no-tac-toe →12×12 [UI] — one number, transforms the game
+2. fox-hounds Width/Height knobs [UI] — unlocks 8+ hounds, zero Rust
+3. tic-tac-toe/gomoku →15, k→8+ [UI]
+4. wythoff size knob [UI] (knobless game, engine fully parameterized)
+5. mancala stones 1–8, pits 2 [UI]
+6. pig target 20–200 [UI]
+7. nim multi-heap + max-take [ENG]
+8. reversi anti/misère flag [ENG] — one sign flip, endless family arguments
+9. connect-four k=2 + Pop Out [ENG]
+10. hex pie rule [ENG] — the variant Hex players ask for first
+
 ## 7. Tally
 
 - **~15 reuse an existing engine** (cheap): the Grid line-of-N pack (~8), Shift
