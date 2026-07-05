@@ -2,8 +2,11 @@ import type { GameParams, Preset } from '../gameTypes';
 import { useT } from '../i18n';
 import styles from '../arcade.module.css';
 
+// Compare the FULL param set: presets are keyed on target/stones/men/size and
+// (soon) rule flags, not just grid dims — two presets must never both light up.
 function same(a: GameParams, b: GameParams) {
-  return a.cols === b.cols && a.rows === b.rows && a.k === b.k && a.numPlayers === b.numPlayers;
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+  return [...keys].every((k) => (a[k] ?? 0) === (b[k] ?? 0));
 }
 
 export default function PresetChips({
