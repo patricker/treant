@@ -277,6 +277,84 @@ Modern commercial games reviewed and *rejected* on trademark/IP grounds despite
 good fit: Hive, Onitama, Santorini, Tak, Quoridor (already renamed as Hedge in
 §6j), Isolation (mechanic kept, renamed Strand above).
 
+## 6n. Hidden-information pass-and-play (2026-07-05) — a NEW capability, not just new games
+
+> Peter: "games that require actual passing, as in there is 'secret'
+> information, like Battleship." These need one shared UX primitive plus an
+> honest per-game AI story.
+
+**The UX primitive (build once):** a blackout **pass screen** ("Hand the phone
+to Gold — tap when ready 👀") between turns, plus per-player secret views
+(your fleet vs your shots). Reusable by every game below; also unlocks
+simultaneous-pick games later. Native-app tie-in: works even better in the
+Capacitor build (no browser chrome to peek around).
+
+**The AI story (be honest):** treant is a perfect-information MCTS engine.
+Hidden-info games get AI via **determinization** — sample hidden states
+consistent with what the AI has observed, run treant on each sample, vote on
+the move. This is a real, respectable technique (and treant's chance nodes
+help), but strength varies by game; ship each with calibrated expectations.
+The AI must also *not cheat* — its playouts see sampled worlds, never the
+human's true secrets.
+
+- **Salvo** (Battleships mechanic) · 2p · ★★★ · 🟡 · 💪 determinized · *new* —
+  the WWI public-domain paper game; Hasbro's trademark covers only the name
+  "Battleship" ("Salvo" was the 1931 paper-era name and today names the
+  N-shots-per-turn variant). Placement + calling shots; AI = placement
+  sampling + hit-probability heat map, which is genuinely strong. Knobs go
+  fully silly: grid 6–15, fleet composition editor (one mega-carrier vs
+  a swarm of 12 dinghies), salvo size 1–5, hit-feedback rules (classic /
+  "hot-cold" / silent-running), ships-may-touch toggle.
+- **Bulls & Cows** (Mastermind's public-domain ancestor) · 2p · ★★ · 🟢 ·
+  🏆 · *new* — each sets a secret code; alternate guesses; bulls = right
+  digit+place, cows = right digit. Duel format is perfect pass-and-play; AI
+  (entropy-greedy consistent-set search) is near-perfect. Knobs: code length
+  2–6, symbol set (digits/colors/emoji), repeats allowed, race vs turn-count
+  scoring.
+- **Ambush** (L'Attaque mechanic, 1908 — Stratego® is the modern trademark) ·
+  2p · ★★ · 🔴 · ⚠️ determinized · *new* — hidden ranks, capture reveals both.
+  Start as a 6×7 "mini" (Stratego Duel-sized) to keep determinized MCTS sharp.
+  Flag: do a trademark pass on the chosen name; rules themselves are ancient.
+- **Spooks** (hidden-identity ghosts, Geister-like) · 2p · ★★ · 🟡 · ⚠️ ·
+  *new* — 4 good + 4 bad ghosts each; win by exiting a good ghost or feeding
+  the opponent your bad ones. ⚠️ IP caution: Geister is a 1982 commercial
+  design (Alex Randolph); mechanic-with-rename is likely fine but this one is
+  closer to the line than the traditional games — decide deliberately.
+- **Liar's Dice** (traditional; Perudo® is the trademark) · 2p+ · ★★ · 🔴 ·
+  ⚠️ · *new* — hidden dice + bluff calls; AI needs Bayesian opponent modeling
+  more than tree search. Deep-cut shelf; the pass-screen makes it possible.
+
+## 6o. Checkerboard shelf (2026-07-05) — more life from the 8×8 board
+
+> We ship Frontline, Clobber, Kōnane, Fox & Hounds, Amazons, Reversi… but not
+> the checkerboard's own game. Peter: "I don't know if I want chess, but there
+> might be more ideas on a checkerboard."
+
+- **Draughts (Checkers)** · 2p · ★★★ · 🟡 · 💪 · *new* — the glaring gap: the
+  most recognized board game we don't have, and public domain everywhere. It's
+  also a KNOB GOLDMINE: forced-capture on/off, flying kings (international
+  rules), misère **Giveaway Checkers** (a real historical variant — lose all
+  your men to win), board 8/10/12, rows-of-men 2–4, huffing. One engine,
+  five+ classic named variants as presets (American / Russian / International
+  / Giveaway / Sparse).
+- **Dama (Turkish draughts)** · 2p · ★★ · 🟡 · 💪 · *new* — draughts but
+  orthogonal (forward/sideways), full-board 16 men, kings slide like rooks.
+  Distinct feel from diagonal checkers; PD traditional.
+- **Latrunculi** · 2p · ★★ · 🟡 · 💪 · *new* — Roman soldiers' game:
+  rook-slides + custodial (sandwich) capture. Ancient PD; rules are a
+  scholarly reconstruction — say so in the rules text, pick the standard
+  Kowalski reconstruction.
+- **Pawn Duel** · 2p · ★★ · 🟢 · 🏆 small · *new* — chess pawns only ("chess
+  without chess"): double-step, en passant, first promotion wins. Hexapawn's
+  grown-up sibling; tiny engine, solver-strong on ≤6 ranks, and a gentle
+  gateway for chess-curious kids. Knobs: files 4–10, ranks 5–8, en-passant
+  toggle, pawns-per-side.
+- Already in the backlog, same shelf: Alquerque, Fanorona, Seega, Yote, Lasca,
+  Dara (§6g/6i), Gather (Lines of Action), Halma, Castle Run (Camelot).
+- **Trails "Joust" knob** [ENG] — movement-pattern knob (king-step / knight
+  leap) turns Trails into the classic knights-on-a-burning-board game with one
+  flag; pairs with the "walls: behind-you / anywhere (Strand)" knob from §6z.
+
 ## 6y. Knob-expansion audit (2026-07-05) — customization headroom in the 40 shipped games
 
 > Per-game audit of GameDefinitions vs their Rust constructors. `[UI]` = engine
