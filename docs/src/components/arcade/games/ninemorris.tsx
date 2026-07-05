@@ -52,7 +52,6 @@ function NineMorrisBoard({ board, interactive, legalMoves, onMove }: BoardProps)
   const cells = Array.from({ length: 24 }, (_, i) => cellStr[i] ?? ' ');
 
   const moves = legalMoves.map(parse).filter(Boolean) as ParsedMove[];
-  const placing = moves.some((m) => m.from === 'p');
 
   // placement target → its variants; slide source → target → variants
   const placeMap = new Map<number, ParsedMove[]>();
@@ -67,6 +66,12 @@ function NineMorrisBoard({ board, interactive, legalMoves, onMove }: BoardProps)
     }
   }
   const targets: Map<number, ParsedMove[]> = sel != null ? (slideMap.get(sel) ?? new Map()) : new Map();
+  // Classic Morris: placements and slides never coexist (hard phase gate). The
+  // Lasker variant relaxes that — while men remain in hand BOTH are offered, so
+  // an empty point may be a placement AND a slide target, and a friendly man may
+  // be a slide source. These flags drive a place-or-move-aware tap handler.
+  const canPlace = placeMap.size > 0;
+  const canSlide = slideMap.size > 0;
 
   const commit = (variants: ParsedMove[], prefix: string) => {
     if (variants.length === 1 && variants[0].victim == null) {
@@ -85,33 +90,42 @@ function NineMorrisBoard({ board, interactive, legalMoves, onMove }: BoardProps)
       }
       return; // in removal mode only enemy victims respond
     }
-    if (placing) {
-      const variants = placeMap.get(i);
-      if (variants) commit(variants, `p${i}`);
-      return;
-    }
+    // A piece is selected: tapping one of its highlighted targets slides it.
     if (sel != null && targets.has(i)) {
       commit(targets.get(i)!, `${sel}-${i}`);
       return;
     }
-    setSel(slideMap.has(i) && i !== sel ? i : null);
+    // Tapping one of your own movable pieces selects it (re-tap to deselect).
+    if (slideMap.has(i)) {
+      setSel(i !== sel ? i : null);
+      return;
+    }
+    // Otherwise an empty point places a man (in Lasker, allowed any turn men
+    // remain in hand; in classic play this only fires in the placement phase).
+    if (canPlace && placeMap.has(i)) {
+      setSel(null);
+      commit(placeMap.get(i)!, `p${i}`);
+      return;
+    }
+    setSel(null);
   };
 
   const isVictim = (i: number) => pending?.victims.has(i) ?? false;
   const isTarget = (i: number) => sel != null && targets.has(i);
   const tappable = (i: number) => {
     if (pending) return isVictim(i);
-    if (placing) return placeMap.has(i);
-    return slideMap.has(i) || isTarget(i);
+    return slideMap.has(i) || isTarget(i) || placeMap.has(i);
   };
 
   const caption = pending
     ? t('Mill! Tap an enemy piece to remove')
-    : placing
-      ? t('Tap an empty point to place')
-      : sel == null
-        ? t('Tap a piece')
-        : t('Tap where to move');
+    : sel != null
+      ? t('Tap where to move')
+      : canPlace && canSlide
+        ? t('Tap to place, or a piece to move')
+        : canPlace
+          ? t('Tap an empty point to place')
+          : t('Tap a piece');
 
   // Remaining-to-place pips (parsed from the "place:r0,r1" phase suffix).
   let toPlace: [number, number] | null = null;
@@ -196,7 +210,37 @@ export const nineMorris: GameDefinition = {
     { key: 'men', label: 'Men', min: 3, max: 12, step: 1 },
     { key: 'flying', label: 'Flying', min: 0, max: 1, step: 1 },
   ],
-  create: (wasm, p) => moveHandle(new wasm.NineMorrisWasm(p.men, p.flying)),
+  create: (wasm, p) => moveHandle(new wasm.NineMorrisWasm(p.men, p.flying, 0)),
+  Board: NineMorrisBoard,
+  playerLabels: ['Red', 'Yellow'],
+};
+
+export const laskerMorris: GameDefinition = {
+  id: 'lasker-morris',
+  name: 'Lasker Morris',
+  icon: '♟️',
+  blurb: "The chess champion's morris: ten men, and you may slide before you finish placing.",
+  // Calibration (calibrate example, n=20/pair) was degenerate for both Morris
+  // variants — the ladder is too noisy at this depth to rank the rungs (the
+  // strongest search did not win most; "hard" landed on a randomized rung). So
+  // we reuse the hand-tuned nine-morris ladder: same underlying engine, and a
+  // deterministic p2000 hard is the right prior for this place-or-move variant.
+  difficulty: {
+    easy: { playouts: 30, topK: 5, temp: 2 },
+    medium: { playouts: 300, topK: 3, temp: 0.6 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
+  defaultParams: { numPlayers: 2, men: 10, flying: 0 },
+  presets: [
+    { label: 'Classic', emoji: '⭐', params: { numPlayers: 2, men: 10, flying: 0 } },
+    { label: 'Nine Men', emoji: '⚡', params: { numPlayers: 2, men: 9, flying: 0 } },
+    { label: 'Flying Ten', emoji: '🪽', params: { numPlayers: 2, men: 10, flying: 1 } },
+  ],
+  knobs: [
+    { key: 'men', label: 'Men', min: 3, max: 12, step: 1 },
+    { key: 'flying', label: 'Flying', min: 0, max: 1, step: 1 },
+  ],
+  create: (wasm, p) => moveHandle(new wasm.NineMorrisWasm(p.men, p.flying, 1)),
   Board: NineMorrisBoard,
   playerLabels: ['Red', 'Yellow'],
 };

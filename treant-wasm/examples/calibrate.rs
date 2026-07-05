@@ -124,7 +124,8 @@ fn games() -> Vec<Game> {
         g("order-chaos", STD, || Box::new(OrderChaosWasm::new(6, 6)) as Box<dyn Eng>),
         // 7 new games (2026-07). Classic-preset params; LIGHT for the branchy 13×13 board.
         g("pinch-five", LIGHT, || Box::new(PinchFiveWasm::new(13, 13, 5, 2)) as Box<dyn Eng>),
-        g("nine-morris", STD, || Box::new(NineMorrisWasm::new(9, 0)) as Box<dyn Eng>),
+        g("nine-morris", STD, || Box::new(NineMorrisWasm::new(9, 0, 0)) as Box<dyn Eng>),
+        g("lasker-morris", STD, || Box::new(NineMorrisWasm::new(10, 0, 1)) as Box<dyn Eng>),
         g("quadline", STD, || Box::new(QuadlineWasm::new(5, 1)) as Box<dyn Eng>),
         g("oware", STD, || Box::new(OwareWasm::new(6, 4)) as Box<dyn Eng>),
         g("y", STD, || Box::new(YGameWasm::new(8)) as Box<dyn Eng>),

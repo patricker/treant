@@ -122,10 +122,11 @@ struct NineMorris {
     on_board: [u8; 2], // men currently on the board, per player
     men_per_player: u8,
     flying: bool,
+    lasker: bool, // Lasker variant: place OR slide each turn while men remain in hand
     progress_ply: u32, // plies since the last placement or capture
 }
 impl NineMorris {
-    fn new(men_per_player: u8, flying: bool) -> Self {
+    fn new(men_per_player: u8, flying: bool, lasker: bool) -> Self {
         Self {
             board: [-1; N_POINTS],
             current: 0,
@@ -133,6 +134,7 @@ impl NineMorris {
             on_board: [0, 0],
             men_per_player: men_per_player.clamp(3, 12),
             flying,
+            lasker,
             progress_ply: 0,
         }
     }
@@ -167,14 +169,23 @@ impl NineMorris {
         let mut v = Vec::new();
         let me = self.current as i8;
         let enemy = 1 - me;
-        if self.placing() {
+        let placing = self.placing();
+        let on_board = self.on_board[self.current as usize];
+        // Placements: while this player still has men in hand.
+        if placing {
             for to in 0..N_POINTS as u8 {
                 if self.board[to as usize] == -1 {
                     self.push_moves(&mut v, PLACE, to, me, enemy);
                 }
             }
-        } else {
-            let can_fly = self.flying && self.on_board[self.current as usize] == 3;
+        }
+        // Slides: always in the slide phase; in the Lasker variant ALSO while
+        // still placing, as long as this player has a man on the board. Flying
+        // is only reachable once the hand is empty (`!placing`), matching the
+        // engine's classic gate — with men still in hand you are never "reduced
+        // to three", so no flying during the place-or-move phase.
+        if !placing || (self.lasker && on_board > 0) {
+            let can_fly = self.flying && on_board == 3 && !placing;
             for from in 0..N_POINTS as u8 {
                 if self.board[from as usize] != me {
                     continue;
@@ -305,17 +316,20 @@ pub struct NineMorrisWasm {
     manager: MCTSManager<NmCfg>,
     men_per_player: u8,
     flying: bool,
+    lasker: bool,
 }
 #[wasm_bindgen]
 impl NineMorrisWasm {
     #[wasm_bindgen(constructor)]
-    pub fn new(men_per_player: u32, flying: u32) -> Self {
+    pub fn new(men_per_player: u32, flying: u32, lasker: u32) -> Self {
         let men = men_per_player as u8;
         let fly = flying != 0;
+        let las = lasker != 0;
         Self {
-            manager: MCTSManager::new(NineMorris::new(men, fly), NmCfg, NmEval, UCTPolicy::new(1.4), ()),
+            manager: MCTSManager::new(NineMorris::new(men, fly, las), NmCfg, NmEval, UCTPolicy::new(1.4), ()),
             men_per_player: men.clamp(3, 12),
             flying: fly,
+            lasker: las,
         }
     }
     pub fn playout_n(&mut self, n: u32) {
@@ -395,7 +409,7 @@ impl NineMorrisWasm {
     }
     pub fn reset(&mut self) {
         self.manager = MCTSManager::new(
-            NineMorris::new(self.men_per_player, self.flying),
+            NineMorris::new(self.men_per_player, self.flying, self.lasker),
             NmCfg,
             NmEval,
             UCTPolicy::new(1.4),
@@ -406,7 +420,7 @@ impl NineMorrisWasm {
 
 impl Default for NineMorrisWasm {
     fn default() -> Self {
-        Self::new(9, 0)
+        Self::new(9, 0, 0)
     }
 }
 
@@ -432,7 +446,7 @@ mod tests {
 
     #[test]
     fn opening_generates_all_placements_no_mills() {
-        let g = NineMorris::new(9, false);
+        let g = NineMorris::new(9, false, false);
         let moves = g.gen();
         assert_eq!(moves.len(), N_POINTS); // one placement per empty point
         assert!(moves.iter().all(|m| m.from == PLACE && m.victim == NONE));
@@ -442,7 +456,7 @@ mod tests {
     fn placing_into_a_mill_generates_removal_variants() {
         // p0 owns 0 and 1; p1 owns 9 and 10 (not in a mill). p0 to move can
         // place at 2 to complete mill [0,1,2], removing either enemy man.
-        let mut g = NineMorris::new(9, false);
+        let mut g = NineMorris::new(9, false, false);
         g.board[0] = 0;
         g.board[1] = 0;
         g.board[9] = 1;
@@ -493,7 +507,7 @@ mod tests {
     #[test]
     fn reduced_to_two_men_is_a_loss_for_the_player_to_move() {
         // Slide phase, p0 (to move) has only two men left → sees a Loss.
-        let mut g = NineMorris::new(9, false);
+        let mut g = NineMorris::new(9, false, false);
         g.placed = [9, 9];
         g.board[0] = 0;
         g.board[1] = 0;
@@ -508,7 +522,7 @@ mod tests {
     #[test]
     fn no_legal_move_is_a_loss() {
         // p0's single man at 0 is boxed in (1 and 9 occupied by the enemy).
-        let mut g = NineMorris::new(3, false);
+        let mut g = NineMorris::new(3, false, false);
         g.placed = [3, 3];
         g.board[0] = 0;
         g.board[3] = 0;
@@ -528,7 +542,7 @@ mod tests {
 
     #[test]
     fn draw_after_progress_stall() {
-        let mut g = NineMorris::new(9, false);
+        let mut g = NineMorris::new(9, false, false);
         g.placed = [9, 9];
         g.on_board = [4, 4];
         g.progress_ply = DRAW_PLY_CAP;
@@ -537,7 +551,7 @@ mod tests {
 
     #[test]
     fn ai_plays() {
-        let mut g = NineMorrisWasm::new(9, 0);
+        let mut g = NineMorrisWasm::new(9, 0, 0);
         g.playout_n(500);
         assert!(g.best_move().is_some());
     }
@@ -546,7 +560,7 @@ mod tests {
     fn ai_plays_a_full_game_to_terminal() {
         // A short self-play sanity check: rollouts terminate and the result is
         // one of the three legal verdicts.
-        let mut g = NineMorrisWasm::new(6, 0);
+        let mut g = NineMorrisWasm::new(6, 0, 0);
         for _ in 0..400 {
             if g.is_terminal() {
                 break;
@@ -559,6 +573,69 @@ mod tests {
             assert!(g.apply_move(&mv), "engine rejected its own move {mv}");
         }
         // Either it finished, or it is mid-game with legal moves — never stuck.
+        assert!(g.is_terminal() || !g.legal_moves().is_empty());
+    }
+
+    #[test]
+    fn lasker_offers_slides_during_placement() {
+        // Lasker Morris: while men remain in hand, a player may EITHER place a
+        // new man OR slide one already on the board.
+        let mut g = NineMorrisWasm::new(10, 0, 1);
+        assert!(g.apply_move("p0")); // P0 places (encoding is p<point>)
+        assert!(g.apply_move("p12")); // P1 places
+        // P0 still has 9 unplaced men, but sliding the placed man must ALSO be legal:
+        let moves = g.legal_moves();
+        assert!(moves.split(',').any(|m| m.contains('-')), "expected a slide move, got {moves}");
+        // ...and placements must STILL be offered too.
+        assert!(moves.split(',').any(|m| m.starts_with('p')), "expected a placement, got {moves}");
+    }
+
+    #[test]
+    fn non_lasker_offers_no_slides_during_placement() {
+        // Regression guard: the classic engine still gates place-then-slide hard.
+        let mut g = NineMorrisWasm::new(10, 0, 0);
+        assert!(g.apply_move("p0"));
+        assert!(g.apply_move("p12"));
+        let moves = g.legal_moves();
+        assert!(!moves.split(',').any(|m| m.contains('-')), "classic mode must not offer slides while placing, got {moves}");
+    }
+
+    #[test]
+    fn lasker_reduced_to_two_before_placement_done_is_not_a_loss() {
+        // Subtlety: in Lasker mode a player can be milled down to two men ON THE
+        // BOARD while still holding men in hand. That is NOT a loss — they can
+        // simply place another man. Loss only triggers once the hand is empty.
+        let mut g = NineMorris::new(10, false, true);
+        g.placed = [3, 3];
+        g.on_board = [2, 3]; // p0 down to two on board, but 7 still in hand
+        g.board[0] = 0;
+        g.board[1] = 0;
+        g.board[5] = 1;
+        g.board[6] = 1;
+        g.board[7] = 1;
+        g.current = 0;
+        assert_eq!(g.term(), None, "still has men in hand — not a loss");
+        // The very same board with the hand emptied (placed == men) IS a loss.
+        g.placed = [10, 10];
+        assert_eq!(g.term(), Some(ProvenValue::Loss));
+    }
+
+    #[test]
+    fn lasker_ai_plays_a_full_game_to_terminal() {
+        // Self-play sanity for the Lasker variant: it terminates cleanly and the
+        // progress counter / loss detection keep rollouts finite.
+        let mut g = NineMorrisWasm::new(10, 0, 1);
+        for _ in 0..400 {
+            if g.is_terminal() {
+                break;
+            }
+            g.playout_n(40);
+            let mv = match g.best_move() {
+                Some(m) => m,
+                None => break,
+            };
+            assert!(g.apply_move(&mv), "engine rejected its own move {mv}");
+        }
         assert!(g.is_terminal() || !g.legal_moves().is_empty());
     }
 }

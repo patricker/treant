@@ -24,7 +24,7 @@ import { gomoku } from './gomoku';
 import { muTorere } from './mutorere';
 import { domineering, cram } from './domineering';
 import { konane } from './konane';
-import { nineMorris } from './ninemorris';
+import { nineMorris, laskerMorris } from './ninemorris';
 import { nogo } from './nogo';
 import { amazons } from './amazons';
 import { col, snort } from './col';
@@ -47,6 +47,7 @@ export const GAMES: GameDefinition[] = [
   captureGo,
   konane,
   nineMorris,
+  laskerMorris,
   amazons,
   foxHounds,
   baghchal,
