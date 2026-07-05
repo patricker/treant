@@ -71,7 +71,34 @@ export const reversi: GameDefinition = {
     { key: 'cols', label: 'Width', min: 4, max: 10, step: 2 },
     { key: 'rows', label: 'Height', min: 4, max: 10, step: 2 },
   ],
-  create: (wasm, p) => moveHandle(new wasm.ReversiWasm(p.cols, p.rows)),
+  create: (wasm, p) => moveHandle(new wasm.ReversiWasm(p.cols, p.rows, 0)),
+  Board: ReversiBoard,
+  playerLabels: ['Red', 'Yellow'],
+};
+
+export const antiReversi: GameDefinition = {
+  id: 'anti-reversi',
+  name: 'Anti-Reversi',
+  icon: '🙃',
+  blurb: 'Reversi upside-down: flip everything at the ENEMY — fewest discs wins.',
+  // Calibrated via scripts/calibrate.sh anti-reversi 20 (transitive ladder,
+  // field 7→17→41→62→78→94; seat-0 52%). Medium lands lower than Reversi's.
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
+  defaultParams: { numPlayers: 2, cols: 8, rows: 8 },
+  presets: [
+    { label: 'Classic 8×8', emoji: '⭐', params: { numPlayers: 2, cols: 8, rows: 8 } },
+    { label: 'Small 6×6', emoji: '🔳', params: { numPlayers: 2, cols: 6, rows: 6 } },
+    { label: 'Mega 10×10', emoji: '🤯', params: { numPlayers: 2, cols: 10, rows: 10 } },
+  ],
+  knobs: [
+    { key: 'cols', label: 'Width', min: 4, max: 10, step: 2 },
+    { key: 'rows', label: 'Height', min: 4, max: 10, step: 2 },
+  ],
+  create: (wasm, p) => moveHandle(new wasm.ReversiWasm(p.cols, p.rows, 1)),
   Board: ReversiBoard,
   playerLabels: ['Red', 'Yellow'],
 };

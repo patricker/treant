@@ -14,7 +14,7 @@ import { frontline } from './frontline';
 import { hex } from './hex';
 import { ygame } from './ygame';
 import { clobber } from './clobber';
-import { reversi } from './reversi';
+import { reversi, antiReversi } from './reversi';
 import { trails } from './trails';
 import { captureGo } from './capturego';
 import { chomp } from './chomp';
@@ -51,6 +51,7 @@ export const GAMES: GameDefinition[] = [
   foxHounds,
   baghchal,
   reversi,
+  antiReversi,
   hex,
   ygame,
   orderChaos,

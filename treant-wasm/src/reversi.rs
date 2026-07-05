@@ -30,16 +30,18 @@ struct Reversi {
     cols: usize,
     rows: usize,
     current: u8,
+    /// Anti-Reversi (misère): fewest discs wins at game end.
+    anti: bool,
 }
 impl Reversi {
-    fn new(cols: usize, rows: usize) -> Self {
+    fn new(cols: usize, rows: usize, anti: bool) -> Self {
         let mut board = vec![-1i8; cols * rows];
         let (mr, mc) = (rows / 2, cols / 2);
         board[idx(mr - 1, mc - 1, cols)] = 0;
         board[idx(mr, mc, cols)] = 0;
         board[idx(mr - 1, mc, cols)] = 1;
         board[idx(mr, mc - 1, cols)] = 1;
-        Self { board, cols, rows, current: 0 }
+        Self { board, cols, rows, current: 0, anti }
     }
     fn flips(&self, cell: usize, player: i8) -> Vec<usize> {
         if self.board[cell] != -1 {
@@ -89,8 +91,9 @@ impl Reversi {
         // neither can move -> game over
         let (me, you) = (self.count(self.current as i8), self.count(1 - self.current as i8));
         Some(match me.cmp(&you) {
-            std::cmp::Ordering::Greater => ProvenValue::Win,
-            std::cmp::Ordering::Less => ProvenValue::Loss,
+            // Anti-Reversi (misère): fewest discs wins, so the comparison flips.
+            std::cmp::Ordering::Greater => if self.anti { ProvenValue::Loss } else { ProvenValue::Win },
+            std::cmp::Ordering::Less => if self.anti { ProvenValue::Win } else { ProvenValue::Loss },
             std::cmp::Ordering::Equal => ProvenValue::Draw,
         })
     }
@@ -148,9 +151,12 @@ impl Evaluator<RvCfg> for RvEval {
 }
 impl Reversi {
     fn eval0(&self) -> i64 {
-        (self.count(0) - self.count(1))
-            + 12 * (self.corners(0) - self.corners(1))
-            + 2 * (self.mobility(0) - self.mobility(1))
+        // Material + corner control are good in Reversi but BAD in Anti-Reversi
+        // (fewest discs wins), so sign-flip them under `anti`. Mobility keeps its
+        // sign either way — having moves available is always an advantage.
+        let material = (self.count(0) - self.count(1)) + 12 * (self.corners(0) - self.corners(1));
+        let signed = if self.anti { -material } else { material };
+        signed + 2 * (self.mobility(0) - self.mobility(1))
     }
 }
 #[derive(Default)]
@@ -169,14 +175,16 @@ pub struct ReversiWasm {
     manager: MCTSManager<RvCfg>,
     cols: usize,
     rows: usize,
+    anti: bool,
 }
 #[wasm_bindgen]
 impl ReversiWasm {
     #[wasm_bindgen(constructor)]
-    pub fn new(cols: u32, rows: u32) -> Self {
+    pub fn new(cols: u32, rows: u32, anti: u32) -> Self {
         let cols = ((cols as usize) & !1).clamp(4, 10); // even dims only
         let rows = ((rows as usize) & !1).clamp(4, 10);
-        Self { manager: MCTSManager::new(Reversi::new(cols, rows), RvCfg, RvEval, UCTPolicy::new(1.4), ()), cols, rows }
+        let anti = anti != 0;
+        Self { manager: MCTSManager::new(Reversi::new(cols, rows, anti), RvCfg, RvEval, UCTPolicy::new(1.4), ()), cols, rows, anti }
     }
     pub fn cols(&self) -> u32 {
         self.cols as u32
@@ -262,7 +270,7 @@ impl ReversiWasm {
         true
     }
     pub fn reset(&mut self) {
-        self.manager = MCTSManager::new(Reversi::new(self.cols, self.rows), RvCfg, RvEval, UCTPolicy::new(1.4), ());
+        self.manager = MCTSManager::new(Reversi::new(self.cols, self.rows, self.anti), RvCfg, RvEval, UCTPolicy::new(1.4), ());
     }
 }
 
@@ -272,14 +280,14 @@ mod tests {
 
     #[test]
     fn opening_has_four_legal_moves() {
-        let g = ReversiWasm::new(6, 6);
+        let g = ReversiWasm::new(6, 6, 0);
         assert_eq!(g.legal_moves().split(',').count(), 4);
         assert_eq!(g.scores(), "2,2");
     }
 
     #[test]
     fn placing_flips_a_disc() {
-        let g0 = Reversi::new(6, 6);
+        let g0 = Reversi::new(6, 6, false);
         // find a legal move for player 0 and verify a flip occurs
         let mv = g0.available_moves()[0];
         let mut g = g0.clone();
@@ -292,9 +300,25 @@ mod tests {
 
     #[test]
     fn ai_plays() {
-        let mut g = ReversiWasm::new(6, 6);
+        let mut g = ReversiWasm::new(6, 6, 0);
         g.playout_n(300);
         let m = g.best_move().unwrap();
         assert!(g.apply_move(&m));
+    }
+
+    #[test]
+    fn anti_reversi_awards_the_win_to_fewer_discs() {
+        let mut g = ReversiWasm::new(4, 4, 1);
+        // Drive to terminal with any legal sequence (reuse the pattern from the
+        // existing full-game test), then assert result is the LOW-count seat.
+        while !g.is_terminal() {
+            let m = g.legal_moves().split(',').next().unwrap().to_string();
+            assert!(g.apply_move(&m));
+        }
+        let b = g.get_board();
+        let x = b.chars().filter(|&c| c == 'X').count();
+        let o = b.chars().filter(|&c| c == 'O').count();
+        let expect = if x < o { "1" } else if o < x { "2" } else { "Draw" };
+        assert_eq!(g.result(), expect);
     }
 }
