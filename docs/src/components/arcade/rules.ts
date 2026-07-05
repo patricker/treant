@@ -2,6 +2,8 @@
 // prefers a game's own `rules` field, then this map, then the short blurb.
 export const RULES: Record<string, string> = {
   'connect-four': 'Take turns dropping a disc into a column; it falls to the lowest empty slot. First to line up four of your colour in a row — across, down, or diagonally — wins.',
+  'pop-out': 'Like Connect Four, but on your turn you may instead POP one of your own discs out of the bottom of a column — the whole stack above it drops one slot. First to line up four of your colour wins; beware, a pop can even complete your opponent’s line.',
+  'cylinder-four': 'Connect Four wrapped into a tube: the left and right edges are joined, so a row of four can run right off one side and continue on the other. First to line up four of your colour — across (even around the seam), down, or diagonally — wins.',
   'tic-tac-toe': 'Take turns marking an empty square. First to get your mark three-in-a-row (across, down, or diagonally) wins. With the knobs you can grow the board and the line length.',
   shift: 'Phase one: take turns placing your pieces. Once everyone has placed all their pieces, phase two begins — slide one of your pieces into an empty neighbouring cell each turn. Make a line to win.',
   quadline: 'First, take turns dropping your four pieces onto any empty cells. Then take turns sliding one piece into an adjacent empty cell. Win the moment your four pieces form a straight line of four — or the corners of a 2×2 square.',

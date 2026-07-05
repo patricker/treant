@@ -659,6 +659,12 @@
   display: grid;
   gap: 5px;
 }
+/* Pop Out affordance: a ⤵ button row under the grid (mirrors the drop-arrow
+   header). Only rendered when a pop is legal for the mover. */
+.cfPopRow {
+  display: grid;
+  gap: 5px;
+}
 .cfColButton {
   border: none;
   background: var(--arc-soft);
@@ -2022,6 +2028,7 @@
    buttons read as rendering junk in a static preview */
 .setupPreview .shiftCaption,
 .setupPreview .cfColHeaders,
+.setupPreview .cfPopRow,
 .setupPreview .g2048Arrows {
   display: none;
 }

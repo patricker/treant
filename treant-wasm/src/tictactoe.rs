@@ -26,6 +26,8 @@ fn config(cols: usize, rows: usize, k: usize, num_players: usize) -> GridConfig 
         num_players,
         gravity: false,
         center_column_bonus: false,
+        wrap_cols: false,
+        allow_pop: false,
     }
 }
 

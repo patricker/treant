@@ -1,17 +1,19 @@
 use treant::tree_policy::UCTPolicy;
 use treant::*;
-use treant_games::grid::{GridConfig, GridEval, GridGame, GridMcts, GridMove};
+use treant_games::grid::{GridConfig, GridEval, GridGame, GridMcts, GridMove, POP_OFFSET};
 use wasm_bindgen::prelude::*;
 
 use crate::types;
 
-const MAX_DIM: usize = 10;
+const MAX_DIM: usize = 12;
 const MAX_PLAYERS: usize = 6;
 
-fn config(cols: usize, rows: usize, k: usize, num_players: usize) -> GridConfig {
+/// `variant`: 0 = classic, 1 = Pop Out (pop your own bottom disc), 2 = Cylinder
+/// (the board wraps into a tube). Anything else is treated as classic.
+fn config(cols: usize, rows: usize, k: usize, num_players: usize, variant: u32) -> GridConfig {
     let cols = cols.clamp(3, MAX_DIM);
     let rows = rows.clamp(3, MAX_DIM);
-    let k = k.clamp(3, cols.max(rows));
+    let k = k.clamp(2, cols.max(rows));
     let num_players = num_players.clamp(2, MAX_PLAYERS);
     GridConfig {
         cols,
@@ -20,6 +22,8 @@ fn config(cols: usize, rows: usize, k: usize, num_players: usize) -> GridConfig 
         num_players,
         gravity: true,
         center_column_bonus: true,
+        wrap_cols: variant == 2,
+        allow_pop: variant == 1,
     }
 }
 
@@ -41,7 +45,7 @@ pub struct ConnectFourWasm {
 
 impl Default for ConnectFourWasm {
     fn default() -> Self {
-        let cfg = config(7, 6, 4, 2);
+        let cfg = config(7, 6, 4, 2, 0);
         Self {
             manager: new_manager(cfg),
             cfg,
@@ -51,9 +55,10 @@ impl Default for ConnectFourWasm {
 
 #[wasm_bindgen]
 impl ConnectFourWasm {
+    /// `variant`: 0 = classic, 1 = Pop Out, 2 = Cylinder.
     #[wasm_bindgen(constructor)]
-    pub fn new(cols: u32, rows: u32, k: u32, num_players: u32) -> Self {
-        let cfg = config(cols as usize, rows as usize, k as usize, num_players as usize);
+    pub fn new(cols: u32, rows: u32, k: u32, num_players: u32, variant: u32) -> Self {
+        let cfg = config(cols as usize, rows as usize, k as usize, num_players as usize, variant);
         Self {
             manager: new_manager(cfg),
             cfg,
@@ -126,8 +131,20 @@ impl ConnectFourWasm {
         }
     }
 
+    /// Re-encode a raw `GridMove` string into the UI move vocabulary. Drops stay
+    /// bare column indices; a pop (value ≥ `POP_OFFSET`) becomes `"pop<col>"`.
+    /// (Connect Four columns are ≤ 12, so there is no ambiguity here — unlike
+    /// TicTacToe's placement indices, which is why `GridMove`'s own `Display`
+    /// stays pop-agnostic.)
+    fn encode_move(s: String) -> String {
+        match s.parse::<u16>() {
+            Ok(v) if v >= POP_OFFSET as u16 => format!("pop{}", v - POP_OFFSET as u16),
+            _ => s,
+        }
+    }
+
     pub fn best_move(&self) -> Option<String> {
-        self.manager.best_move().map(|m| format!("{m}"))
+        self.manager.best_move().map(|m| Self::encode_move(format!("{m}")))
     }
 
     /// Comma-joined 0-based cell indices of the winning line, or "" when there is
@@ -140,20 +157,51 @@ impl ConnectFourWasm {
     }
 
     pub fn weak_move(&mut self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
-        crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed)
+        crate::difficulty::pick_weak(&mut self.manager, playouts as u64, top_k, temp, seed).map(Self::encode_move)
     }
 
-    pub fn apply_move(&mut self, col: &str) -> bool {
-        let col_num: u8 = match col.parse() {
-            Ok(n) if (n as usize) < self.cfg.cols => n,
-            _ => return false,
+    /// The current player's legal moves, comma-joined. Drops are the bare column
+    /// index (`"3"`); pops (Pop Out variant only) are `"pop<col>"`. The UI reads
+    /// this to enable per-column drop arrows and the pop-out affordance.
+    pub fn legal_moves(&self) -> String {
+        let state = self.manager.tree().root_state();
+        state
+            .available_moves()
+            .iter()
+            .map(|m| {
+                if m.0 >= POP_OFFSET {
+                    format!("pop{}", m.0 - POP_OFFSET)
+                } else {
+                    format!("{}", m.0)
+                }
+            })
+            .collect::<Vec<_>>()
+            .join(",")
+    }
+
+    /// Apply a drop (`"3"`) or a pop (`"pop3"`, Pop Out only). Validates against
+    /// the live legal moves and rebuilds the manager from the new root state
+    /// (a fresh tree), mirroring TicTacToe/gridpack — `advance` only succeeds for
+    /// an already-expanded child, which pops and low columns often are not.
+    pub fn apply_move(&mut self, mov: &str) -> bool {
+        let m = if let Some(rest) = mov.strip_prefix("pop") {
+            match rest.parse::<u8>() {
+                Ok(c) if (c as usize) < self.cfg.cols => GridMove(c + POP_OFFSET),
+                _ => return false,
+            }
+        } else {
+            match mov.parse::<u8>() {
+                Ok(c) if (c as usize) < self.cfg.cols => GridMove(c),
+                _ => return false,
+            }
         };
-        let m = GridMove(col_num);
-        if self.manager.advance(&m).is_ok() {
-            return true;
+        let mut state = self.manager.tree().root_state().clone();
+        if !state.available_moves().contains(&m) {
+            return false;
         }
-        self.manager.playout_n(100);
-        self.manager.advance(&m).is_ok()
+        state.make_move(&m);
+        self.manager = MCTSManager::new(state, GridMcts { solver: false }, GridEval, UCTPolicy::new(1.4), ());
+        true
     }
 
     pub fn reset(&mut self) {
@@ -167,7 +215,7 @@ mod tests {
 
     #[test]
     fn board_string_shape_and_drop() {
-        let mut g = ConnectFourWasm::new(7, 6, 4, 2);
+        let mut g = ConnectFourWasm::new(7, 6, 4, 2, 0);
         assert_eq!(g.get_board().len(), 42);
         assert!(g.get_board().chars().all(|c| c == ' '));
         assert!(g.apply_move("3"));
@@ -182,7 +230,7 @@ mod tests {
     #[test]
     fn winning_cells_reports_a_vertical_line() {
         // Player 0 stacks four discs in column 0; player 1 fills column 1.
-        let mut g = ConnectFourWasm::new(7, 6, 4, 2);
+        let mut g = ConnectFourWasm::new(7, 6, 4, 2, 0);
         assert_eq!(g.winning_cells(), "");
         for (x, o) in [("0", "1"), ("0", "1"), ("0", "1")] {
             assert!(g.apply_move(x));
@@ -194,5 +242,85 @@ mod tests {
         assert_eq!(g.result(), "1");
         // Column 0, rows 2..5 → indices 14, 21, 28, 35 (top-down).
         assert_eq!(g.winning_cells(), "14,21,28,35");
+    }
+
+    // ---- Task 2.7: the Connect Four family ----
+
+    #[test]
+    fn k2_is_accepted() {
+        // k=2: two of P0's discs in a line win immediately. Drive real drop
+        // physics — P0 stacks column 0 twice (P1 answers harmlessly in column 1),
+        // giving P0 a vertical 2-in-a-row.
+        let mut g = ConnectFourWasm::new(7, 6, 2, 2, 0);
+        assert_eq!(g.win_length(), 2, "k=2 must not be clamped up to 3");
+        assert!(g.apply_move("0")); // P0 → (row5,col0)
+        assert!(g.apply_move("1")); // P1 → (row5,col1)
+        assert!(!g.is_terminal(), "one disc each, no line yet");
+        assert!(g.apply_move("0")); // P0 → (row4,col0): vertical two
+        assert!(g.is_terminal());
+        assert_eq!(g.result(), "1");
+    }
+
+    #[test]
+    fn cylinder_wraps_the_win_check() {
+        // Variant 2, 12-wide tube, k=4. P0 lays a bottom-row line in cols
+        // 10,11,0,1 — contiguous only because the seam wraps. P1 stacks column 5
+        // harmlessly (never reaches 4). P0's fourth disc wins across the seam.
+        let mut g = ConnectFourWasm::new(12, 6, 4, 2, 2);
+        assert!(g.apply_move("10")); // P0
+        assert!(g.apply_move("5")); // P1
+        assert!(g.apply_move("11")); // P0
+        assert!(g.apply_move("5")); // P1
+        assert!(g.apply_move("0")); // P0
+        assert!(g.apply_move("5")); // P1 (3 stacked, k=4 → no win)
+        assert!(!g.is_terminal(), "P0 has only 3 in the wrapping run so far");
+        assert!(g.apply_move("1")); // P0 completes 10-11-0-1 across the seam
+        assert!(g.is_terminal());
+        assert_eq!(g.result(), "1");
+        // The wrapped winning cells are highlighted (bottom row = indices 60..71).
+        let cells = g.winning_cells();
+        for c in [10, 11, 0, 1] {
+            assert!(cells.split(',').any(|s| s == (60 + c).to_string()), "col {c} highlighted");
+        }
+    }
+
+    #[test]
+    fn pop_that_completes_opponents_line_loses() {
+        // Variant 1 (Pop Out), 7×6, k=4. We build a position where popping P0's
+        // own bottom disc in column 3 drops nothing of P0's own but lets the
+        // former row-4 P1 disc fall to the bottom row, completing P1's horizontal
+        // four (cols 2,3,4,5). Since the pop hands P1 the win, result is "2".
+        //
+        // Pre-pop bottom row (row5): col0=P0, col2=P1, col3=P0, col4=P1, col5=P1;
+        // col3 row4 = P1. P0 also stacks column 0 to keep the turn count even so
+        // it is P0 to move (4 discs each). Drops alternate P0/P1:
+        let mut g = ConnectFourWasm::new(7, 6, 4, 2, 1);
+        assert!(g.apply_move("3")); // P0 → col3 r5
+        assert!(g.apply_move("2")); // P1 → col2 r5
+        assert!(g.apply_move("0")); // P0 → col0 r5
+        assert!(g.apply_move("4")); // P1 → col4 r5
+        assert!(g.apply_move("0")); // P0 → col0 r4
+        assert!(g.apply_move("5")); // P1 → col5 r5
+        assert!(g.apply_move("0")); // P0 → col0 r3 (vertical 3, k=4 → no win)
+        assert!(g.apply_move("3")); // P1 → col3 r4
+        assert!(!g.is_terminal(), "no line before the pop");
+        assert_eq!(g.current_player(), 0, "P0 to move — its disc is col3's bottom");
+        assert!(g.apply_move("pop3")); // P0 pops col3; P1's row-4 disc falls to row5
+        assert!(g.is_terminal());
+        assert_eq!(g.result(), "2", "the pop completed P1's line, so P1 wins");
+    }
+
+    #[test]
+    fn legal_moves_lists_pops_only_in_pop_out() {
+        // Classic: never a pop token.
+        let mut classic = ConnectFourWasm::new(7, 6, 4, 2, 0);
+        assert!(classic.apply_move("0"));
+        assert!(!classic.legal_moves().contains("pop"));
+        // Pop Out: after P0 owns a bottom disc it becomes poppable on P0's turn.
+        let mut popg = ConnectFourWasm::new(7, 6, 4, 2, 1);
+        assert!(popg.apply_move("0")); // P0's disc at col0 bottom
+        assert!(!popg.legal_moves().contains("pop"), "P1 to move — col0 is not P1's");
+        assert!(popg.apply_move("1")); // P1 elsewhere → back to P0
+        assert!(popg.legal_moves().split(',').any(|m| m == "pop0"));
     }
 }

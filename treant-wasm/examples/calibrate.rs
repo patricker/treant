@@ -89,7 +89,9 @@ fn games() -> Vec<Game> {
         Game { name, ladder, make }
     }
     vec![
-        g("connect-four", STD, || Box::new(ConnectFourWasm::new(7, 6, 4, 2)) as Box<dyn Eng>),
+        g("connect-four", STD, || Box::new(ConnectFourWasm::new(7, 6, 4, 2, 0)) as Box<dyn Eng>),
+        g("pop-out", STD, || Box::new(ConnectFourWasm::new(7, 6, 4, 2, 1)) as Box<dyn Eng>),
+        g("cylinder-four", STD, || Box::new(ConnectFourWasm::new(12, 6, 4, 2, 2)) as Box<dyn Eng>),
         g("tic-tac-toe", STD, || Box::new(TicTacToeWasm::new(3, 3, 3, 2)) as Box<dyn Eng>),
         g("gomoku", LIGHT, || Box::new(TicTacToeWasm::new(13, 13, 5, 2)) as Box<dyn Eng>),
         g("reversi", STD, || Box::new(ReversiWasm::new(8, 8, 0)) as Box<dyn Eng>),

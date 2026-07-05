@@ -44,6 +44,31 @@ const GLYPHS: Record<string, JSX.Element> = {
       <circle cx="21" cy="4.5" r="2.6" opacity="0.3" />
     </g>
   ),
+  'pop-out': (
+    // a column of discs with the bottom one dropping out (a downward arrow)
+    <g fill="currentColor">
+      <circle cx="8" cy="5" r="2.4" opacity="0.5" />
+      <circle cx="8" cy="10.5" r="2.4" opacity="0.75" />
+      <circle cx="8" cy="16" r="2.4" />
+      <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 5v11M13 12l4 4 4-4" />
+      </g>
+    </g>
+  ),
+  'cylinder-four': (
+    // a cylinder/tube with a line of discs wrapping around it
+    <g stroke="currentColor" strokeWidth="1.8" fill="none">
+      <ellipse cx="12" cy="5" rx="8" ry="2.6" />
+      <path d="M4 5v14M20 5v14" />
+      <path d="M4 19a8 2.6 0 0 0 16 0" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="7" cy="12" r="1.8" />
+        <circle cx="12" cy="12.6" r="1.8" />
+        <circle cx="17" cy="12" r="1.8" />
+      </g>
+      <path d="M4 12.3a8 2.6 0 0 0 16 0" opacity="0.35" />
+    </g>
+  ),
   'tic-tac-toe': (
     <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round">
       <path d="M9 3v18M15 3v18M3 9h18M3 15h18" opacity="0.45" />

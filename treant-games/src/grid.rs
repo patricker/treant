@@ -7,6 +7,14 @@ pub const MAX_DIM: usize = 10;
 /// Maximum number of players supported.
 pub const MAX_PLAYERS: usize = 4;
 
+/// Pop-move encoding offset. A [`GridMove`] whose value is `>= POP_OFFSET`
+/// encodes a *pop-out* move on column `value - POP_OFFSET` (remove that column's
+/// bottom disc; the stack above it falls one row). Regular gravity/placement
+/// moves are `< POP_OFFSET`. Columns are clamped to ≤ 12 (`MAX_DIM` in the wasm
+/// layer), so column indices `0..=11` never collide with the pop range
+/// `128..=139`. Pops are only generated when [`GridConfig::allow_pop`] is set.
+pub const POP_OFFSET: u8 = 128;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Cell {
     Empty,
@@ -24,10 +32,20 @@ pub struct GridConfig {
     pub gravity: bool,
     /// `true` adds Connect Four's center-column heuristic bonus.
     pub center_column_bonus: bool,
+    /// `true` = Cylinder: the board is a tube — the `winner()`/`winning_line()`
+    /// scan wraps columns modulo `cols` (rows never wrap). `false` = flat board.
+    pub wrap_cols: bool,
+    /// `true` = Pop Out: a player may remove the bottom disc of a column that is
+    /// their own (the stack above falls one row). Adds pop moves (see
+    /// [`POP_OFFSET`]) and makes `terminal_value` seat-aware, because a pop can
+    /// complete the *opponent's* line.
+    pub allow_pop: bool,
 }
 
 /// A move. For gravity games it is a **column index**; for placement games it
-/// is a **cell index** (`row * cols + col`).
+/// is a **cell index** (`row * cols + col`). When [`GridConfig::allow_pop`] is
+/// set, a value `>= POP_OFFSET` instead encodes a *pop-out* on column
+/// `value - POP_OFFSET` (see [`POP_OFFSET`]).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct GridMove(pub u8);
 
@@ -83,6 +101,27 @@ impl GridGame {
             .find(|&row| self.board[self.idx(row, col)] == Cell::Empty)
     }
 
+    /// Resolve the neighbour column `step` cells along `dc` from column `c`.
+    /// On a cylinder (`wrap_cols`) columns wrap modulo `cols`; otherwise an
+    /// off-board column returns `None`. Rows never wrap, so callers bound rows
+    /// separately. Returns `None` for a purely-horizontal run (`dr == 0`) that
+    /// has already traversed a full lap — a wrapped row must not revisit a cell.
+    #[inline]
+    fn wrap_col(&self, c: usize, dr: i32, dc: i32, step: i32) -> Option<usize> {
+        let cols = self.cfg.cols as i32;
+        let raw = c as i32 + dc * step;
+        if self.cfg.wrap_cols {
+            if dr == 0 && step >= cols {
+                return None; // one lap of a row is all the distinct cells there are
+            }
+            Some(raw.rem_euclid(cols) as usize)
+        } else if raw < 0 || raw >= cols {
+            None
+        } else {
+            Some(raw as usize)
+        }
+    }
+
     /// The player who has a k-in-a-row, if any.
     pub fn winner(&self) -> Option<u8> {
         let (rows, cols, k) = (self.cfg.rows, self.cfg.cols, self.cfg.k);
@@ -94,11 +133,14 @@ impl GridGame {
                         let mut count = 1usize;
                         for step in 1..k {
                             let nr = r as i32 + dr * step as i32;
-                            let nc = c as i32 + dc * step as i32;
-                            if nr < 0 || nr >= rows as i32 || nc < 0 || nc >= cols as i32 {
+                            if nr < 0 || nr >= rows as i32 {
                                 break;
                             }
-                            if self.board[self.idx(nr as usize, nc as usize)] == Cell::Player(p) {
+                            let nc = match self.wrap_col(c, dr, dc, step as i32) {
+                                Some(nc) => nc,
+                                None => break,
+                            };
+                            if self.board[self.idx(nr as usize, nc)] == Cell::Player(p) {
                                 count += 1;
                             } else {
                                 break;
@@ -128,12 +170,15 @@ impl GridGame {
                         let mut step = 1i32;
                         loop {
                             let nr = r as i32 + dr * step;
-                            let nc = c as i32 + dc * step;
-                            if nr < 0 || nr >= rows as i32 || nc < 0 || nc >= cols as i32 {
+                            if nr < 0 || nr >= rows as i32 {
                                 break;
                             }
-                            if self.board[self.idx(nr as usize, nc as usize)] == Cell::Player(p) {
-                                cells.push(self.idx(nr as usize, nc as usize));
+                            let nc = match self.wrap_col(c, dr, dc, step) {
+                                Some(nc) => nc,
+                                None => break,
+                            };
+                            if self.board[self.idx(nr as usize, nc)] == Cell::Player(p) {
+                                cells.push(self.idx(nr as usize, nc));
                                 step += 1;
                             } else {
                                 break;
@@ -221,7 +266,7 @@ impl GameState for GridGame {
         if self.winner().is_some() {
             return vec![];
         }
-        if self.cfg.gravity {
+        let mut moves: Vec<GridMove> = if self.cfg.gravity {
             (0..self.cfg.cols as u8)
                 .filter(|&col| self.drop_row(col as usize).is_some())
                 .map(GridMove)
@@ -231,11 +276,33 @@ impl GameState for GridGame {
                 .filter(|&i| self.board[i] == Cell::Empty)
                 .map(|i| GridMove(i as u8))
                 .collect()
+        };
+        if self.cfg.allow_pop {
+            // Pop Out: a player may remove the bottom disc of any column whose
+            // bottom disc is their own (POP_OFFSET + column).
+            let bottom = self.cfg.rows - 1;
+            for col in 0..self.cfg.cols {
+                if self.cell(bottom, col) == Some(self.current) {
+                    moves.push(GridMove(col as u8 + POP_OFFSET));
+                }
+            }
         }
+        moves
     }
 
     fn make_move(&mut self, mov: &GridMove) {
-        if self.cfg.gravity {
+        if self.cfg.allow_pop && mov.0 >= POP_OFFSET {
+            // Pop the bottom disc of this column: every disc falls one row and
+            // the top cell empties. Bottom = rows-1, top = 0.
+            let col = (mov.0 - POP_OFFSET) as usize;
+            for row in (1..self.cfg.rows).rev() {
+                let from = self.idx(row - 1, col);
+                let to = self.idx(row, col);
+                self.board[to] = self.board[from];
+            }
+            let top = self.idx(0, col);
+            self.board[top] = Cell::Empty;
+        } else if self.cfg.gravity {
             let col = mov.0 as usize;
             if let Some(row) = self.drop_row(col) {
                 let i = self.idx(row, col);
@@ -248,8 +315,27 @@ impl GameState for GridGame {
     }
 
     fn terminal_value(&self) -> Option<ProvenValue> {
-        if self.winner().is_some() {
-            Some(ProvenValue::Loss) // winner just moved; current player lost
+        if let Some(w) = self.winner() {
+            if self.cfg.allow_pop {
+                // With pops a move can complete EITHER player's line, so the
+                // winner is not necessarily the previous mover. Compare seats:
+                // the player to move (`self.current`) has won iff the line is
+                // theirs, otherwise the previous mover completed it and the
+                // player to move has lost.
+                if w == self.current {
+                    Some(ProvenValue::Win)
+                } else {
+                    Some(ProvenValue::Loss)
+                }
+            } else {
+                // Classic drop/placement: a move can only extend the mover's own
+                // line, so the winner is always the previous mover and the player
+                // to move has lost. Kept as a distinct branch to preserve the
+                // exact semantics TicTacToe's solver proofs depend on. (The
+                // seat-aware branch above is equivalent here — the winner is
+                // never `self.current` — see `no_pop_winner_is_previous_mover`.)
+                Some(ProvenValue::Loss)
+            }
         } else if self.is_full() {
             Some(ProvenValue::Draw)
         } else {
@@ -339,6 +425,8 @@ mod tests {
             num_players: players,
             gravity: true,
             center_column_bonus: true,
+            wrap_cols: false,
+            allow_pop: false,
         }
     }
     fn ttt(cols: usize, rows: usize, k: usize, players: usize) -> GridConfig {
@@ -349,6 +437,8 @@ mod tests {
             num_players: players,
             gravity: false,
             center_column_bonus: false,
+            wrap_cols: false,
+            allow_pop: false,
         }
     }
 
@@ -538,6 +628,97 @@ mod tests {
         mgr.playout_n(200);
         let m = mgr.best_move().expect("a move");
         assert!((m.0 as usize) < 7);
+    }
+
+    // ---- Cylinder (wrap_cols) ----
+
+    #[test]
+    fn cylinder_wraps_a_horizontal_line_across_the_seam() {
+        // 12-wide tube, k=4. P0 at bottom-row cols 10,11,0,1 wraps the seam.
+        let mut g = GridGame::new(GridConfig { wrap_cols: true, ..cf(12, 6, 4, 2) });
+        for c in [10, 11, 0, 1] {
+            put(&mut g, 5, c, 0);
+        }
+        assert_eq!(g.winner(), Some(0));
+        // The highlighted line includes the wrapped cells (row 5 = indices 60..71).
+        let line = g.winning_line().unwrap();
+        assert_eq!(line.len(), 4);
+        for c in [10, 11, 0, 1] {
+            assert!(line.contains(&(5 * 12 + c)), "line should include col {c}");
+        }
+    }
+
+    #[test]
+    fn flat_board_does_not_wrap_the_seam() {
+        // Same discs, but on a FLAT board cols 10,11,0,1 are NOT contiguous.
+        let mut g = GridGame::new(cf(12, 6, 4, 2));
+        for c in [10, 11, 0, 1] {
+            put(&mut g, 5, c, 0);
+        }
+        assert_eq!(g.winner(), None);
+    }
+
+    #[test]
+    fn cylinder_short_row_does_not_double_count() {
+        // A 3-wide tube with k=4: a full lap is only 3 distinct cells, so even a
+        // completely filled row must NOT read as a 4-in-a-row (no revisiting).
+        let mut g = GridGame::new(GridConfig { wrap_cols: true, ..cf(3, 3, 4, 2) });
+        for c in 0..3 {
+            put(&mut g, 2, c, 0);
+        }
+        assert_eq!(g.winner(), None);
+    }
+
+    // ---- Pop Out (allow_pop) ----
+
+    fn pop(cols: usize, rows: usize, k: usize, players: usize) -> GridConfig {
+        GridConfig { allow_pop: true, ..cf(cols, rows, k, players) }
+    }
+
+    #[test]
+    fn pop_shifts_the_whole_column_down_one() {
+        // col 0 from bottom: P0(r5), P1(r4), P1(r3). Pop the bottom P0 disc.
+        let mut g = GridGame::new(pop(7, 6, 4, 2));
+        put(&mut g, 5, 0, 0);
+        put(&mut g, 4, 0, 1);
+        put(&mut g, 3, 0, 1);
+        g.make_move(&GridMove(POP_OFFSET)); // pop column 0
+        // Everything fell one row: bottom is now the former r4=P1, then r3=P1.
+        assert_eq!(g.cell(5, 0), Some(1));
+        assert_eq!(g.cell(4, 0), Some(1));
+        assert_eq!(g.cell(3, 0), None);
+    }
+
+    #[test]
+    fn pop_is_only_offered_for_the_movers_own_bottom_disc() {
+        let mut g = GridGame::new(pop(7, 6, 4, 2));
+        put(&mut g, 5, 0, 0); // bottom of col0 is P0
+        put(&mut g, 5, 1, 1); // bottom of col1 is P1
+        // current is P0: only col0 is poppable.
+        let pops: Vec<u8> = g
+            .available_moves()
+            .iter()
+            .map(|m| m.0)
+            .filter(|&v| v >= POP_OFFSET)
+            .collect();
+        assert_eq!(pops, vec![POP_OFFSET]); // only column 0
+    }
+
+    #[test]
+    fn no_pop_winner_is_previous_mover() {
+        // Equivalence witness for terminal_value's classic branch: in a no-pop
+        // game a completed line always belongs to the PREVIOUS mover, never the
+        // player to move, so the seat-aware comparison would return Loss too.
+        let mut g = GridGame::new(cf(7, 6, 4, 2));
+        // P0 stacks col0 four high (P1 answers col1) → P0 completes a vertical.
+        for _ in 0..3 {
+            g.make_move(&GridMove(0)); // P0
+            g.make_move(&GridMove(1)); // P1
+        }
+        g.make_move(&GridMove(0)); // P0's 4th disc completes the line
+        let w = g.winner().expect("a winner");
+        assert_ne!(w, g.current(), "winner is the previous mover, not the player to move");
+        assert_eq!(g.terminal_value(), Some(ProvenValue::Loss));
     }
 
     #[test]

@@ -1,4 +1,4 @@
-import { connectFour } from './connectFour';
+import { connectFour, popOut, cylinderFour } from './connectFour';
 import { ticTacToe } from './ticTacToe';
 import { nim } from './nim';
 import { mancala } from './mancala';
@@ -38,6 +38,8 @@ import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
   connectFour,
+  popOut,
+  cylinderFour,
   ticTacToe,
   shift,
   quadline,
