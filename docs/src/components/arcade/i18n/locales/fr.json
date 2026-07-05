@@ -48,6 +48,7 @@
   "A pile of stones. On your turn remove a perfect-square number of them — 1, 4, 9, 16, and so on. Take the last stone to win.": "Un tas de pierres. À votre tour, retirez-en un nombre carré parfait — 1, 4, 9, 16, et ainsi de suite. Prenez la dernière pierre pour gagner.",
   "A queen sits on a grid and only ever moves toward the corner: any distance left, down, or diagonally down-left. The player who moves it onto the corner square wins.": "Une reine est posée sur une grille et ne se déplace que vers le coin : d'autant de cases que voulu vers la gauche, vers le bas ou en diagonale bas-gauche. Le joueur qui l'amène sur la case du coin gagne.",
   "A single strip, and BOTH players place the same mark (X). Whoever completes three X’s in a row wins — even using marks the other player placed.": "Une seule bande, et les DEUX joueurs posent la même marque (X). Celui qui complète trois X alignés gagne — même en utilisant des marques posées par l'autre joueur.",
+  "Acreage 12×12": "Superficie 12×12",
   "Advance {a}": "Avancer {a}",
   "Advance {a} & {b}": "Avancer {a} & {b}",
   "Advance {a} twice": "Avancer {a} deux fois",
@@ -132,6 +133,7 @@
   "Edge {e}": "Arête {e}",
   "Edge {e} claimed": "Arête {e} prise",
   "empty": "vide",
+  "Endurance 12×12": "Endurance 12×12",
   "Epic (16)": "Épique (16)",
   "Epic 30": "Épique 30",
   "Epic 40": "Épique 40",
@@ -214,6 +216,7 @@
   "Mega 9×9": "Méga 9×9",
   "Men": "Pions",
   "Mill! Tap an enemy piece to remove": "Moulin ! Touchez une pièce ennemie à retirer",
+  "Minefield 12×12": "Champ de mines 12×12",
   "Mode": "Mode",
   "Move & capture": "Déplacer & capturer",
   "Move a pawn one square straight forward into an empty cell, or one square diagonally forward to capture an enemy. Reach the far row, or capture every enemy pawn, to win. No draws.": "Avancez un pion d'une case tout droit vers une case vide, ou d'une case en diagonale vers l'avant pour capturer un ennemi. Atteignez la rangée opposée, ou capturez tous les pions ennemis, pour gagner. Pas d'égalité.",
@@ -242,6 +245,7 @@
   "Oware": "Oware",
   "Pair the dice, push your luck up the mountain — bust and you slide back.": "Associez les dés, tentez votre chance sur la montagne — ratez et vous glissez en arrière.",
   "Pairs to win": "Paires pour gagner",
+  "Pandemonium 12×12": "Pandémonium 12×12",
   "Pass-and-play or take on the AI. Crank the knobs and make it weird.": "Jouez chacun son tour ou affrontez l'IA. Tournez les boutons et rendez ça bizarre.",
   "Phase one: take turns placing your pieces. Once everyone has placed all their pieces, phase two begins — slide one of your pieces into an empty neighbouring cell each turn. Make a line to win.": "Phase un : placez vos pièces à tour de rôle. Une fois que tout le monde a placé toutes ses pièces, la phase deux commence — faites glisser une de vos pièces dans une case voisine vide à chaque tour. Formez une ligne pour gagner.",
   "Phosphor": "Phosphore",
@@ -396,9 +400,5 @@
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "Vous êtes le Renard solitaire et vous vous déplacez d'une case en diagonale dans n'importe quelle direction ; les quatre Chiens ne se déplacent que d'une case en diagonale vers l'avant. Le Renard gagne en se faufilant jusqu'à la rangée opposée ; les Chiens gagnent en le piégeant.",
   "You lost — {name} wins.": "Vous avez perdu — {name} gagne.",
   "You win! 🎉": "Vous gagnez ! 🎉",
-  "Your turn": "À toi",
-  "Endurance 12×12": "Endurance 12×12",
-  "Minefield 12×12": "Champ de mines 12×12",
-  "Acreage 12×12": "Superficie 12×12",
-  "Pandemonium 12×12": "Pandémonium 12×12"
+  "Your turn": "À toi"
 }

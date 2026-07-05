@@ -110,7 +110,7 @@ export const trapThree: GameDefinition = {
   presets: [
     { label: 'Classic 5×5', emoji: '⭐', params: { numPlayers: 2, cols: 5, rows: 5 } },
     { label: 'Roomy 7×7', emoji: '🔲', params: { numPlayers: 2, cols: 7, rows: 7 } },
-    { label: 'Mega 8×8', emoji: '🤯', params: { numPlayers: 2, cols: 8, rows: 8 } },
+    { label: 'Mega 8×8', emoji: '🔲', params: { numPlayers: 2, cols: 8, rows: 8 } },
     { label: 'Minefield 12×12', emoji: '🤯', params: { numPlayers: 2, cols: 12, rows: 12 } },
   ],
   knobs: [
@@ -137,7 +137,7 @@ export const noTacToe: GameDefinition = {
   presets: [
     { label: 'Classic 3×3', emoji: '⭐', params: { numPlayers: 2, cols: 3, rows: 3 } },
     { label: 'Cramped 4×4', emoji: '🔲', params: { numPlayers: 2, cols: 4, rows: 4 } },
-    { label: 'Mega 6×6', emoji: '🤯', params: { numPlayers: 2, cols: 6, rows: 6 } },
+    { label: 'Mega 6×6', emoji: '🔲', params: { numPlayers: 2, cols: 6, rows: 6 } },
     { label: 'Endurance 12×12', emoji: '🤯', params: { numPlayers: 2, cols: 12, rows: 12 } },
   ],
   knobs: [
@@ -164,7 +164,7 @@ export const squareUp: GameDefinition = {
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },
     { label: 'Small 5×5', emoji: '🔳', params: { numPlayers: 2, cols: 5, rows: 5 } },
-    { label: 'Mega 8×8', emoji: '🤯', params: { numPlayers: 2, cols: 8, rows: 8 } },
+    { label: 'Mega 8×8', emoji: '🔲', params: { numPlayers: 2, cols: 8, rows: 8 } },
     { label: 'Acreage 12×12', emoji: '🤯', params: { numPlayers: 2, cols: 12, rows: 12 } },
   ],
   knobs: [
@@ -264,7 +264,7 @@ export const orderChaos: GameDefinition = {
   presets: [
     { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },
     { label: 'Wide 8×8', emoji: '🔲', params: { numPlayers: 2, cols: 8, rows: 8 } },
-    { label: 'Mega 9×9', emoji: '🤯', params: { numPlayers: 2, cols: 9, rows: 9 } },
+    { label: 'Mega 9×9', emoji: '🔲', params: { numPlayers: 2, cols: 9, rows: 9 } },
     { label: 'Pandemonium 12×12', emoji: '🤯', params: { numPlayers: 2, cols: 12, rows: 12 } },
   ],
   knobs: [

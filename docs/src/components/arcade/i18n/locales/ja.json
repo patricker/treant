@@ -48,6 +48,7 @@
   "A pile of stones. On your turn remove a perfect-square number of them — 1, 4, 9, 16, and so on. Take the last stone to win.": "石の山があります。自分の番には、平方数の石を取り除きます — 1, 4, 9, 16 など。最後の石を取ったら勝ち。",
   "A queen sits on a grid and only ever moves toward the corner: any distance left, down, or diagonally down-left. The player who moves it onto the corner square wins.": "盤の上にクイーンが1つあり、いつも角に向かってだけ動きます。左・下・左下の斜めに、どんな距離でも動けます。クイーンを角のマスに動かしたプレイヤーが勝ち。",
   "A single strip, and BOTH players place the same mark (X). Whoever completes three X’s in a row wins — even using marks the other player placed.": "1本の帯があり、両プレイヤーが同じ印（X）を置きます。Xを3つ一列に並べた人が勝ち — 相手が置いた印を使ってもかまいません。",
+  "Acreage 12×12": "敷地 12×12",
   "Advance {a}": "{a}を進める",
   "Advance {a} & {b}": "{a}と{b}を進める",
   "Advance {a} twice": "{a}を2回進める",
@@ -132,6 +133,7 @@
   "Edge {e}": "辺 {e}",
   "Edge {e} claimed": "辺 {e} を取った",
   "empty": "空き",
+  "Endurance 12×12": "耐久 12×12",
   "Epic (16)": "エピック（16）",
   "Epic 30": "エピック 30",
   "Epic 40": "エピック 40",
@@ -214,6 +216,7 @@
   "Mega 9×9": "メガ 9×9",
   "Men": "駒",
   "Mill! Tap an enemy piece to remove": "ミル！ 相手の駒をタップして取り除く",
+  "Minefield 12×12": "地雷原 12×12",
   "Mode": "モード",
   "Move & capture": "動かして取る",
   "Move a pawn one square straight forward into an empty cell, or one square diagonally forward to capture an enemy. Reach the far row, or capture every enemy pawn, to win. No draws.": "ポーンを1マスまっすぐ前の空きマスに進めるか、斜め前に進んで相手を取る。一番向こうの列に着くか、相手のポーンを全部取れば勝ち。引き分けなし。",
@@ -242,6 +245,7 @@
   "Oware": "オワレ",
   "Pair the dice, push your luck up the mountain — bust and you slide back.": "サイコロをペアにして、運だめしで山を登ろう — バーストすると滑り落ちる。",
   "Pairs to win": "勝ちのペア数",
+  "Pandemonium 12×12": "大混乱 12×12",
   "Pass-and-play or take on the AI. Crank the knobs and make it weird.": "交代プレイもAI対戦も。つまみを回して、思いっきり変わったルールに。",
   "Phase one: take turns placing your pieces. Once everyone has placed all their pieces, phase two begins — slide one of your pieces into an empty neighbouring cell each turn. Make a line to win.": "フェーズ1：交代でコマを置きます。全員がコマを全部置いたら、フェーズ2開始 — 毎ターン、自分のコマを1つ、となりの空きマスへスライドさせます。一列そろえたら勝ち。",
   "Phosphor": "フォスファー",
@@ -396,9 +400,5 @@
   "You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.": "あなたは1匹だけのキツネで、どの向きにも斜めに1マス動けます。4匹の猟犬は斜め前にだけ1マス動けます。キツネは向こうの列にすり抜ければ勝ち、猟犬はキツネを閉じ込めれば勝ち。",
   "You lost — {name} wins.": "あなたの負け — {name}の勝ち。",
   "You win! 🎉": "あなたの勝ち！ 🎉",
-  "Your turn": "あなたの番",
-  "Endurance 12×12": "耐久 12×12",
-  "Minefield 12×12": "地雷原 12×12",
-  "Acreage 12×12": "敷地 12×12",
-  "Pandemonium 12×12": "大混乱 12×12"
+  "Your turn": "あなたの番"
 }
