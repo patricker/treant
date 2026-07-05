@@ -18,8 +18,10 @@ export const wythoff: GameDefinition = {
     { label: 'Big 10×10', emoji: '🔲', params: { numPlayers: 2, cols: 10, rows: 10 } },
     { label: 'Mega 12×12', emoji: '🤯', params: { numPlayers: 2, cols: 12, rows: 12 } },
   ],
-  knobs: [],
+  knobs: [{ key: 'cols', label: 'Size', min: 4, max: 12, step: 1 }],
   create: (wasm, p) => moveHandle(new wasm.WythoffWasm(p.cols)),
-  Board: MoveBoard,
+  // The engine is square (n×n): mirror the single Size knob into rows so the
+  // shared MoveBoard renders the same board the engine plays.
+  Board: (props) => <MoveBoard {...props} params={{ ...props.params, rows: props.params.cols }} />,
   playerLabels: ['Player 1', 'Player 2'],
 };
