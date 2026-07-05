@@ -74,7 +74,7 @@ export const foxHounds: GameDefinition = {
   icon: '🦊',
   blurb: "You are the Fox, starting at the bottom. Reach the top row — the Hounds' home edge — to win. The four Hounds only move forward (down) and win by boxing you in so you can't move.",
   difficulty: {
-    easy: { playouts: 30, topK: 5, temp: 2 },
+    easy: { playouts: 8, topK: 6, temp: 3 },
     medium: { playouts: 300, topK: 3, temp: 0.6 },
     hard: { playouts: 2000, topK: 1, temp: 0 },
   },
