@@ -15,7 +15,7 @@ import { hex } from './hex';
 import { ygame } from './ygame';
 import { clobber } from './clobber';
 import { reversi, antiReversi } from './reversi';
-import { trails } from './trails';
+import { trails, joust } from './trails';
 import { captureGo } from './capturego';
 import { chomp } from './chomp';
 import { wythoff } from './wythoff';
@@ -44,6 +44,7 @@ export const GAMES: GameDefinition[] = [
   frontline,
   clobber,
   trails,
+  joust,
   captureGo,
   konane,
   nineMorris,

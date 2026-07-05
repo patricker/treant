@@ -29,15 +29,16 @@ struct Trails {
     cols: usize,
     rows: usize,
     current: u8,
+    knight: bool, // Joust variant: tokens leap like a chess knight
 }
 impl Trails {
-    fn new(cols: usize, rows: usize) -> Self {
+    fn new(cols: usize, rows: usize, knight: bool) -> Self {
         let mut board = vec![-1i8; cols * rows];
         let p0 = idx(0, 0, cols);
         let p1 = idx(rows - 1, cols - 1, cols);
         board[p0] = 0;
         board[p1] = 1;
-        Self { board, pos: [p0, p1], cols, rows, current: 0 }
+        Self { board, pos: [p0, p1], cols, rows, current: 0, knight }
     }
     fn orth(&self, cell: usize) -> Vec<usize> {
         let (r, c) = (cell / self.cols, cell % self.cols);
@@ -56,9 +57,33 @@ impl Trails {
         }
         v
     }
+    /// The 8 chess-knight leaps from `cell`, bounds-checked like `orth`.
+    fn leaps(&self, cell: usize) -> Vec<usize> {
+        let (r, c) = ((cell / self.cols) as i32, (cell % self.cols) as i32);
+        const OFF: [(i32, i32); 8] =
+            [(1, 2), (2, 1), (-1, 2), (-2, 1), (1, -2), (2, -1), (-1, -2), (-2, -1)];
+        let mut v = Vec::new();
+        for (dr, dc) in OFF {
+            let (nr, nc) = (r + dr, c + dc);
+            if nr >= 0 && nr < self.rows as i32 && nc >= 0 && nc < self.cols as i32 {
+                v.push(idx(nr as usize, nc as usize, self.cols));
+            }
+        }
+        v
+    }
+    /// Movement neighbours for the active variant: knight leaps in Joust,
+    /// orthogonal steps in Trails. Used by both move generation and the
+    /// reachable-area heuristic so mobility is measured through legal moves.
+    fn neighbors(&self, cell: usize) -> Vec<usize> {
+        if self.knight {
+            self.leaps(cell)
+        } else {
+            self.orth(cell)
+        }
+    }
     fn gen(&self) -> Vec<TrMove> {
         let from = self.pos[self.current as usize];
-        self.orth(from)
+        self.neighbors(from)
             .into_iter()
             .filter(|&to| self.board[to] == -1)
             .map(|to| TrMove { from: from as u16, to: to as u16 })
@@ -72,7 +97,7 @@ impl Trails {
         seen[self.pos[player as usize]] = true;
         let mut n = 0i64;
         while let Some(cell) = dq.pop_front() {
-            for nb in self.orth(cell) {
+            for nb in self.neighbors(cell) {
                 if !seen[nb] && self.board[nb] == -1 {
                     seen[nb] = true;
                     n += 1;
@@ -142,14 +167,22 @@ pub struct TrailsWasm {
     manager: MCTSManager<TrCfg>,
     cols: usize,
     rows: usize,
+    knight: bool,
 }
 #[wasm_bindgen]
 impl TrailsWasm {
+    /// `knight != 0` selects the Joust variant (tokens leap like a chess knight).
     #[wasm_bindgen(constructor)]
-    pub fn new(cols: u32, rows: u32) -> Self {
+    pub fn new(cols: u32, rows: u32, knight: u32) -> Self {
         let cols = (cols as usize).clamp(4, 9);
         let rows = (rows as usize).clamp(4, 9);
-        Self { manager: MCTSManager::new(Trails::new(cols, rows), TrCfg, TrEval, UCTPolicy::new(1.4), ()), cols, rows }
+        let knight = knight != 0;
+        Self {
+            manager: MCTSManager::new(Trails::new(cols, rows, knight), TrCfg, TrEval, UCTPolicy::new(1.4), ()),
+            cols,
+            rows,
+            knight,
+        }
     }
     pub fn cols(&self) -> u32 {
         self.cols as u32
@@ -226,7 +259,8 @@ impl TrailsWasm {
         true
     }
     pub fn reset(&mut self) {
-        self.manager = MCTSManager::new(Trails::new(self.cols, self.rows), TrCfg, TrEval, UCTPolicy::new(1.4), ());
+        self.manager =
+            MCTSManager::new(Trails::new(self.cols, self.rows, self.knight), TrCfg, TrEval, UCTPolicy::new(1.4), ());
     }
 }
 
@@ -236,7 +270,7 @@ mod tests {
 
     #[test]
     fn moving_leaves_a_wall() {
-        let mut g = Trails::new(5, 5);
+        let mut g = Trails::new(5, 5, false);
         let from = g.pos[0];
         let mv = g.gen()[0];
         g.make_move(&mv);
@@ -248,7 +282,7 @@ mod tests {
 
     #[test]
     fn boxed_in_player_loses() {
-        let mut g = Trails::new(5, 5);
+        let mut g = Trails::new(5, 5, false);
         // wall off player 0 (corner 0,0): its two neighbors become walls
         g.board[idx(0, 1, 5)] = WALL;
         g.board[idx(1, 0, 5)] = WALL;
@@ -258,8 +292,34 @@ mod tests {
 
     #[test]
     fn ai_plays() {
-        let mut g = TrailsWasm::new(6, 6);
+        let mut g = TrailsWasm::new(6, 6, 0);
         g.playout_n(300);
         assert!(g.best_move().is_some());
+    }
+
+    #[test]
+    fn joust_moves_like_a_knight() {
+        let g = TrailsWasm::new(6, 6, 1);
+        let moves = g.legal_moves();
+        // Every move must span a (1,2) or (2,1) offset.
+        for m in moves.split(',') {
+            let (f, t) = m.split_once('-').unwrap();
+            let (f, t) = (f.parse::<i32>().unwrap(), t.parse::<i32>().unwrap());
+            let (dr, dc) = ((t / 6 - f / 6).abs(), (t % 6 - f % 6).abs());
+            assert!((dr, dc) == (1, 2) || (dr, dc) == (2, 1), "non-knight move {m}");
+        }
+    }
+
+    #[test]
+    fn joust_spawns_have_a_knight_move_every_board_size() {
+        // Both spawns must have >= 1 legal knight leap on every board the UI
+        // offers (knobs 5..=9). Guards against a knight-dead corner spawn.
+        for n in 5..=9 {
+            let mut g = Trails::new(n, n, true);
+            g.current = 0;
+            assert!(!g.gen().is_empty(), "player 0 knight-dead on {n}x{n}");
+            g.current = 1;
+            assert!(!g.gen().is_empty(), "player 1 knight-dead on {n}x{n}");
+        }
     }
 }

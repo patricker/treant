@@ -67,7 +67,35 @@ export const trails: GameDefinition = {
     { key: 'cols', label: 'Width', min: 4, max: 9, step: 1 },
     { key: 'rows', label: 'Height', min: 4, max: 9, step: 1 },
   ],
-  create: (wasm, p) => moveHandle(new wasm.TrailsWasm(p.cols, p.rows)),
+  create: (wasm, p) => moveHandle(new wasm.TrailsWasm(p.cols, p.rows, 0)),
+  Board: TrailsBoard,
+  playerLabels: ['Red', 'Yellow'],
+};
+
+export const joust: GameDefinition = {
+  id: 'joust',
+  name: 'Joust',
+  icon: '🐴',
+  blurb: 'Knights on a burning board: leap, scorch the square you left, outlast your rival.',
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
+  defaultParams: { numPlayers: 2, cols: 6, rows: 6 },
+  presets: [
+    { label: 'Classic 6×6', emoji: '⭐', params: { numPlayers: 2, cols: 6, rows: 6 } },
+    { label: 'Big 8×8', emoji: '🔲', params: { numPlayers: 2, cols: 8, rows: 8 } },
+    // Engine clamps boards to 4–9, so the 🤯 preset tops out at 9×9.
+    { label: 'Mega 9×9', emoji: '🤯', params: { numPlayers: 2, cols: 9, rows: 9 } },
+  ],
+  // Knobs start at 5: a knight needs room to leap, so we keep boards comfortably
+  // above the 4×4 floor (every spawn still has a legal knight move at 5×5+).
+  knobs: [
+    { key: 'cols', label: 'Width', min: 5, max: 9, step: 1 },
+    { key: 'rows', label: 'Height', min: 5, max: 9, step: 1 },
+  ],
+  create: (wasm, p) => moveHandle(new wasm.TrailsWasm(p.cols, p.rows, 1)),
   Board: TrailsBoard,
   playerLabels: ['Red', 'Yellow'],
 };
