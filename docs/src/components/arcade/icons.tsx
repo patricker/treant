@@ -288,6 +288,35 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  'two-dice-pig': (
+    // two overlapping dice
+    <g>
+      <rect x="2.5" y="7" width="12" height="12" rx="3" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <g fill="currentColor">
+        <circle cx="6" cy="10.5" r="1.2" />
+        <circle cx="11" cy="15.5" r="1.2" />
+      </g>
+      <rect x="11" y="3" width="10.5" height="10.5" rx="2.6" fill="var(--arc-card, #1a1a1a)" stroke="currentColor" strokeWidth="1.8" />
+      <g fill="currentColor">
+        <circle cx="13.8" cy="5.8" r="1" />
+        <circle cx="18.7" cy="10.7" r="1" />
+        <circle cx="16.25" cy="8.25" r="1" />
+      </g>
+    </g>
+  ),
+  'big-pig': (
+    // a pig snout
+    <g stroke="currentColor" strokeWidth="1.8" fill="none">
+      <ellipse cx="12" cy="12" rx="9" ry="7.5" />
+      <ellipse cx="12" cy="13" rx="4" ry="3.2" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="10.5" cy="13" r="0.9" />
+        <circle cx="13.5" cy="13" r="0.9" />
+        <circle cx="8.5" cy="7.5" r="0.9" />
+        <circle cx="15.5" cy="7.5" r="0.9" />
+      </g>
+    </g>
+  ),
   euclid: (
     <g fill="currentColor">
       <circle cx="12" cy="6" r="1.7" />

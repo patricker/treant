@@ -7,7 +7,7 @@ import { shift } from './shift';
 import { quadline } from './quadline';
 import { game2048 } from './game2048';
 import { orderChaos, noTacToe, trapThree, squareUp, connectSix } from './gridpack';
-import { pig } from './pig';
+import { pig, twoDicePig, bigPig } from './pig';
 import { climb } from './climb';
 import { pinchFive } from './pinchfive';
 import { frontline } from './frontline';
@@ -82,6 +82,8 @@ export const GAMES: GameDefinition[] = [
   domineering,
   cram,
   pig,
+  twoDicePig,
+  bigPig,
   climb,
   game2048,
 ];
