@@ -294,6 +294,13 @@ labels are `['Red','Gold']`, not `['Red','Black']`).
   Mancala, Nim, Sim, Domineering, Col).
 - Every game needs concise, kid-readable **rules** in `rules.ts`: what you do on a
   turn and how you win, in 1–3 sentences.
+- **Variant tiles are cheap and encouraged.** A named variant with recognition
+  value ships as its OWN launcher tile: a config-only GameDefinition
+  (name/icon/blurb/rules + default params/flags) over a shared engine — the
+  Gomoku-on-TicTacToeWasm pattern. Players find "Giveaway Checkers" by name;
+  the tile still exposes the full knob panel. Variants without a recognizable
+  name stay knob-only. Never fork engine code for a variant a rule-flag can
+  express (see GAME-IDEAS.md §6x for the flag map).
 
 ---
 

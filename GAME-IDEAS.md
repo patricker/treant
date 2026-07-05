@@ -470,6 +470,14 @@ object) · 2048 grid 3×3 (brutal)/5×5 (zen) + spawn-4 probability + target til
 
 ### B. Variant-collapse map — catalogue/backlog games that become flags
 
+> **Shipping policy (Peter, 2026-07-05): flags collapse ENGINES, not launcher
+> tiles.** A named variant with recognition value ships as its OWN launcher
+> tile — a config-only GameDefinition (name/icon/blurb/rules/default flags)
+> over the shared engine, exactly how Gomoku already rides the TicTacToe
+> engine. Players find "Giveaway Checkers" by name; the tile still exposes the
+> full knob panel. Variants WITHOUT a recognizable name stay knob-only. So the
+> table below counts engine effort — each absorbed game can still be a tile.
+
 | Flag on existing engine | Games it absorbs | Effort |
 |---|---|---|
 | Col: adjacency polarity own↔enemy | **Snort** (§6f, whole entry) | [ENG] tiny |
