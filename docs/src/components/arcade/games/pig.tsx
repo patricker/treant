@@ -85,10 +85,12 @@ export const pig: GameDefinition = {
     { label: 'Quick (50)', emoji: '⚡', params: { numPlayers: 2, target: 50 } },
     { label: '4-Player', emoji: '🎉', params: { numPlayers: 4, target: 100 } },
     { label: '6-Player Frenzy', emoji: '🤯', params: { numPlayers: 6, target: 100 } },
+    { label: 'Sprint (20)', emoji: '🏎️', params: { numPlayers: 2, target: 20 } },
+    { label: 'Marathon (200)', emoji: '🤯', params: { numPlayers: 2, target: 200 } },
   ],
   knobs: [
     { key: 'numPlayers', label: 'Players', min: 2, max: 6, step: 1 },
-    { key: 'target', label: 'Target', min: 50, max: 150, step: 10 },
+    { key: 'target', label: 'Target', min: 20, max: 200, step: 5 },
   ],
   create: makeHandle,
   Board: PigBoard,
