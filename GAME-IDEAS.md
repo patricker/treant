@@ -422,6 +422,83 @@ object) · 2048 grid 3×3 (brutal)/5×5 (zen) + spawn-4 probability + target til
 9. connect-four k=2 + Pop Out [ENG]
 10. hex pie rule [ENG] — the variant Hex players ask for first
 
+## 6x. Knob design bible (2026-07-05) — variants research → knob sets
+
+> Second research pass: the *named variants* of each game family in the
+> literature are a pre-validated knob menu. Three outputs: (A) knob sets
+> designed up-front for the proposed new games, (B) a variant-collapse map —
+> backlog/catalogue games that become FLAGS on engines we already ship, (C)
+> notes. Rule of thumb honoured throughout: a knob is only worth shipping if
+> the AI still plays the variant credibly at phone budgets.
+
+### A. Knob sets for the proposed new games
+
+- **Draughts** — the deepest knob game we could ever ship; every knob below is
+  a *real named variant*, and the variant presets are knob bundles:
+  American ⭐ / Brazilian / Pool / Russian / Spanish / Italian / Frisian /
+  **Giveaway** 🙃. Knobs: board 8/10/12 · men-rows 2–4 · forced capture
+  off/on/maximum (Italian: max-pieces-then-kings priority) · men capture
+  backwards y/n · flying kings y/n · promotion-mid-chain y/n (Russian: yes,
+  Brazilian: no — a famously sneaky difference) · orthogonal captures
+  (Frisian) · misère (Giveaway) · huffing 🙃 (the historical "steal the lazy
+  piece" penalty — pure silly toggle). One engine, ~8 flags, 9 named games.
+- **Salvo** — grid 6–15 · **fleet editor** (counts per ship length 1–5; one
+  mega-carrier vs twelve dinghies) · ships-may-touch y/n · shots-per-turn 1–5
+  (1 = classic, 3+ = the actual 1931 "Salvo" rules) · feedback style: classic
+  hit/miss+sunk / silent-running (no "sunk" calls) / hot-cold 🙃 · moving-ships
+  variant (one unhit ship may relocate per turn — advanced paper rule).
+- **Bulls & Cows** — code length 2–6 · symbol set digits/colors/emoji 🙃 ·
+  repeats y/n · win format: first-to-crack vs fewest-guesses match.
+- **Surakarta** — piece rows 2–3 · win: annihilation vs first-to-N captures ·
+  min-loops-per-capture 1–2 🙃 (2 makes captures spectacular and rare).
+- **Gale** — grid size 3–7 dots · pie rule.
+- **Slimetrail** — board size 5–9 · square vs hex adjacency · goal placement
+  (opposite corners / random corners).
+- **Toads & Frogs** — row length 5–15 · toads ≠ frogs (asymmetric armies!) ·
+  gap count 1–3 · rows 1–3 played as a CGT *sum* (move in any one row) 🤯.
+- **World Threes** — THE BOARD IS THE KNOB: Achi / Tapatan / Shisima /
+  Tant Fant / Nine Holes / Tsoro Yematatu / Picaria / Pong Hau K'i (absorbs
+  the §6k entry) · pieces 3–4 (Achi plays 4).
+- **Pawn Duel** — files 4–10 · ranks 5–8 · double-step y/n · en passant y/n ·
+  pawn rows 1–2. (files=3, no double-step = literally Hexapawn, free preset.)
+- **Ambush** — board 6×7 mini → 8×8 · army composition editor 🙃 (eight bombs,
+  zero scouts — why not) · scout long-move y/n.
+- **Len Choa** — leopard count 5–7 · tiger jump chains y/n.
+- **Dama (Turkish)** — board 8/10 · men-rows 2–3 · flying kings y/n.
+- **Latrunculi** — board 8×8/8×12 (both attested) · piece counts · king
+  (dux) moves y/n — reconstructions differ, so the knobs ARE the scholarship.
+
+### B. Variant-collapse map — catalogue/backlog games that become flags
+
+| Flag on existing engine | Games it absorbs | Effort |
+|---|---|---|
+| Col: adjacency polarity own↔enemy | **Snort** (§6f, whole entry) | [ENG] tiny |
+| Domineering: either-orientation + misère | **Cram** (§6z) | [ENG] tiny |
+| Trails: walls vacated-cell ↔ any-tile | **Strand/Isolation** (§6z) | [ENG] small |
+| Trails: movement king ↔ knight | **"Joust"** knights-on-burning-board | [ENG] small |
+| Gomoku: ruleset knob — freestyle / exact-five+overline-void / Caro (unblocked-5) / Renju forbidden-forks / swap2 opening | **Renju, Caro, Omok** (3 named games) | [ENG] medium (Renju fork detection is the hard one; ship overline/Caro/swap2 first) |
+| Connect Four: pop-out move / cylinder wrap / prefilled-edges | **Pop Out, Cylinder C4, Hasbro "5-in-a-Row"** | [ENG] small each |
+| Mancala: capture rule Kalah ↔ empty-capture ↔ Oware-style; multi-lap sowing | closes the Kalah↔Oware gap into one continuum | [ENG] medium |
+| Nim (once multi-heap lands): max-take k / Moore's ≤k-heaps / Fibonacci (≤2× last take) / misère | **Moore's Nim, Fibonacci Nim** — canonical CGT set | [ENG] small each |
+| Nine Men's Morris: 10 men + place-or-move | **Lasker Morris** (solved in the literature — AI calibratable) | [ENG] small |
+| Pig: dice 1–2 / doubles rules / Hog mode (choose N dice, one throw) | **Two-Dice Pig, Big Pig, Hog** | [ENG] small each |
+| Dots & Boxes: pre-drawn borders (Swedish/Icelandic) | named opening-theory boards | [ENG] tiny |
+| Misère/anti flags: Reversi (Anti-Reversi), Hex (**Rex**), Checkers (Giveaway), Clobber | 4 named misère games | [ENG] tiny each (sign flips; NOTE: misère can invert difficulty calibration — retest AI levels) |
+| World Threes board knob | Achi, Tapatan, Shisima, Tant Fant, Nine Holes, Tsoro Yematatu, Picaria, Pong Hau K'i, Three Men's Morris | one new engine absorbs NINE catalogue entries |
+
+### C. Notes
+
+- Collapse math: ~20 catalogue/named games become ~15 flags on 10 existing
+  engines + 1 new engine (World Threes). Cheaper than building any 3 of them
+  standalone.
+- Difficulty blocks are per-game constants; variant flags (especially misère)
+  can invert what "hard" means — each shipped flag needs a quick calibration
+  pass (the autonomous audit harness from commit 3790639 can self-play these).
+- Dots-and-Triangles needs a triangular-grid renderer — defer; Swedish boards
+  are free.
+- Renju's forbidden-fork detection (3-3/4-4/overline for Black only) is real
+  work; Caro + overline + swap2 give 80% of the family for 20% of the effort.
+
 ## 7. Tally
 
 - **~15 reuse an existing engine** (cheap): the Grid line-of-N pack (~8), Shift
