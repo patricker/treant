@@ -34,10 +34,11 @@ struct QuadMove {
 
 impl std::fmt::Display for QuadMove {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self.from {
-            None => write!(f, "d{}", self.to),
-            Some(fr) => write!(f, "{},{}", fr, self.to),
-        }
+        // Display MUST match `encode()` (and thus round-trip through `decode()`):
+        // `pick_weak`/`weak_move` serialise moves via Display and feed the string
+        // straight back to `apply_move`, which parses with `decode()`. Slides use
+        // `<from>-<to>` (dash), never a comma.
+        write!(f, "{}", self.encode())
     }
 }
 
@@ -643,6 +644,32 @@ mod tests {
         }
         assert_eq!(g.terminal_value(), Some(ProvenValue::Draw));
         assert!(g.ply >= PLY_CAP);
+    }
+
+    #[test]
+    fn every_offered_slide_is_accepted_by_apply_move() {
+        // Regression for the self-play audit FLAG. `pick_weak`/`weak_move`
+        // serialise the chosen move with the Display impl (`format!("{m}")`),
+        // then feed that string back through apply_move, which parses with
+        // decode(). For slide moves the two encodings must agree — otherwise
+        // the engine offers a move its own apply_move rejects. Drive into the
+        // slide phase and assert every generated slide survives the round-trip.
+        let setup = ["d0", "d5", "d1", "d6", "d2", "d7", "d20", "d24"];
+        let mut probe = QuadlineWasm::new(5, 1);
+        play(&mut probe, &setup);
+        assert!(!probe.in_placement_phase(), "setup should reach the slide phase");
+        let moves = probe.manager.tree().root_state().gen_moves();
+        assert!(!moves.is_empty(), "slide phase should offer moves");
+        for m in &moves {
+            // Exactly what pick_weak emits back to the caller.
+            let offered = format!("{m}");
+            let mut g = QuadlineWasm::new(5, 1);
+            play(&mut g, &setup);
+            assert!(
+                g.apply_move(&offered),
+                "engine offered move '{offered}' but apply_move rejected it"
+            );
+        }
     }
 
     #[test]
