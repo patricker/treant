@@ -133,5 +133,24 @@ export const amazons: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.AmazonsWasm(p.cols, p.rows)),
   Board: AmazonsBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
+  // A game ends when an amazon is walled in by burnt squares and has no move —
+  // the generic "wins" line hides the whole point (trapping the foe). Tell the
+  // story. (Shared resultFlavor seam.)
+  resultFlavor: ({ result, labels, seats, t }) => {
+    const winner = Number(result) - 1;
+    if (!Number.isFinite(winner) || winner < 0) return undefined;
+    const loser = winner === 0 ? 1 : 0;
+    const name = (seat: number) => (labels[seat] ? t(labels[seat]) : t('Player {n}', { n: seat + 1 }));
+    const humans = seats.map((k, i) => (k === 'human' ? i : -1)).filter((i) => i >= 0);
+    if (humans.length === 1) {
+      return humans[0] === loser
+        ? t('🏹 Walled in! Your amazons have no move — {winner} wins.', { winner: name(winner) })
+        : t('🏹 Walled in! {loser} has no move left — you win! 🎉', { loser: name(loser) });
+    }
+    return t('🏹 Walled in! {loser} had no move — {winner} wins!', {
+      winner: name(winner),
+      loser: name(loser),
+    });
+  },
 };

@@ -11,7 +11,7 @@ export type SeatType = 'human' | 'ai';
 export type PlayerKind = 'human' | Difficulty;
 
 /** Default per-seat display names/colours (seats 0..5). */
-export const PLAYER_LABEL = ['Red', 'Yellow', 'Green', 'Purple', 'Teal', 'Orange'];
+export const PLAYER_LABEL = ['Red', 'Gold', 'Green', 'Purple', 'Teal', 'Orange'];
 
 export interface Preset {
   label: string;
@@ -118,7 +118,7 @@ export interface GameDefinition {
   formatHint?(move: string): string;
   /** Sound to play per move (default "move"; Connect Four uses "drop"). */
   moveSound?: 'move' | 'drop';
-  /** Display names per seat (default Red/Yellow/Green/Purple). */
+  /** Display names per seat (default Red/Gold/Green/Purple). */
   playerLabels?: string[];
   /** Override the default "{winner} wins!" end line with a message that tells
    *  the game's story — e.g. a box-in loss ("Snail trapped! …") that would

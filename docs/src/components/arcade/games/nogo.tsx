@@ -63,5 +63,5 @@ export const nogo: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.NoGoWasm(p.cols, p.rows)),
   Board: NoGoBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };

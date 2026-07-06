@@ -64,7 +64,7 @@ function MuTorereBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
               top: `${p.y}%`,
               background: ch === 'X' ? 'var(--arc-p1)' : ch === 'O' ? 'var(--arc-p2)' : 'var(--arc-soft)',
             }}
-            aria-label={t('Point {n}: {state}', { n: i, state: ch === ' ' ? t('empty') : ch })}
+            aria-label={t('Point {n}: {state}', { n: i + 1, state: ch === ' ' ? t('empty') : ch })}
           />
         );
       })}
@@ -87,5 +87,5 @@ export const muTorere: GameDefinition = {
   knobs: [],
   create: (wasm) => moveHandle(new wasm.MuTorereWasm()),
   Board: MuTorereBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };

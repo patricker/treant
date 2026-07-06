@@ -27,7 +27,7 @@ const EDGES: [number, number][] = (() => {
   return e;
 })();
 
-function BaghchalBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
+function BaghchalBoard({ board, params, interactive, legalMoves, onMove }: BoardProps) {
   const { t } = useT();
   const [sel, setSel] = useState<number | null>(null);
   useEffect(() => setSel(null), [board]); // drop stale selection after any move
@@ -97,7 +97,7 @@ function BaghchalBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
           🐐 {t('Goats in hand: {n}', { n: inHand })}
         </span>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-          🐅 {t('Goats eaten: {n}', { n: captured })}
+          🐅 {t('Goats eaten: {n} / {total}', { n: captured, total: params.captures })}
         </span>
       </div>
       <div className={styles.mtWrap} style={{ maxWidth: 360 }}>
@@ -128,7 +128,7 @@ function BaghchalBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
                 lineHeight: 1,
                 background: ch === 'G' ? 'var(--arc-p1)' : ch === 'T' ? 'var(--arc-p2)' : 'var(--arc-soft)',
               }}
-              aria-label={t('Point {n}: {state}', { n: i, state: stateWord })}
+              aria-label={t('Point {n}: {state}', { n: i + 1, state: stateWord })}
             >
               {ch === 'T' ? '🐅' : ch === 'G' ? '🐐' : ''}
             </button>

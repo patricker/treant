@@ -108,7 +108,7 @@ function WorldThreesBoard({ board, params, interactive, legalMoves, onMove }: Bo
           const p = layout.pts[i];
           const isSel = i === sel;
           const isTarget = targets.has(i);
-          const stateWord = ch === 'X' ? t('Red') : ch === 'O' ? t('Yellow') : t('empty');
+          const stateWord = ch === 'X' ? t('Red') : ch === 'O' ? t('Gold') : t('empty');
           return (
             <button
               key={i}
@@ -123,7 +123,7 @@ function WorldThreesBoard({ board, params, interactive, legalMoves, onMove }: Bo
                 background: ch === 'X' ? 'var(--arc-p1)' : ch === 'O' ? 'var(--arc-p2)' : 'transparent',
                 border: ch === ' ' ? '2.5px solid var(--arc-soft)' : undefined,
               }}
-              aria-label={t('Point {n}: {state}', { n: i, state: stateWord })}
+              aria-label={t('Point {n}: {state}', { n: i + 1, state: stateWord })}
             />
           );
         })}
@@ -161,5 +161,5 @@ export const worldThrees: GameDefinition = {
   knobs: [],
   create: (wasm, p) => makeHandle(wasm, p.board ?? 0),
   Board: WorldThreesBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };

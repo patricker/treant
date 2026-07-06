@@ -70,6 +70,24 @@ export const trails: GameDefinition = {
   create: (wasm, p) => moveHandle(new wasm.TrailsWasm(p.cols, p.rows, 0)),
   Board: TrailsBoard,
   playerLabels: ['Red', 'Gold'],
+  // Boxing the opponent in is the whole game — the generic winner line hides the
+  // trap. Tell the story. (Shared resultFlavor seam.)
+  resultFlavor: ({ result, labels, seats, t }) => {
+    const winner = Number(result) - 1;
+    if (!Number.isFinite(winner) || winner < 0) return undefined;
+    const loser = winner === 0 ? 1 : 0;
+    const name = (seat: number) => (labels[seat] ? t(labels[seat]) : t('Player {n}', { n: seat + 1 }));
+    const humans = seats.map((k, i) => (k === 'human' ? i : -1)).filter((i) => i >= 0);
+    if (humans.length === 1) {
+      return humans[0] === loser
+        ? t('🧱 Boxed in! You have no move — {winner} wins.', { winner: name(winner) })
+        : t('🧱 Boxed in! {loser} has no move — you win! 🎉', { loser: name(loser) });
+    }
+    return t('🧱 Boxed in! {loser} had no move — {winner} wins!', {
+      winner: name(winner),
+      loser: name(loser),
+    });
+  },
 };
 
 export const joust: GameDefinition = {
@@ -99,4 +117,22 @@ export const joust: GameDefinition = {
   create: (wasm, p) => moveHandle(new wasm.TrailsWasm(p.cols, p.rows, 1)),
   Board: TrailsBoard,
   playerLabels: ['Red', 'Gold'],
+  // A knight loses when its own scorched trail leaves it nowhere to leap. Tell
+  // the story instead of a bare winner line. (Shared resultFlavor seam.)
+  resultFlavor: ({ result, labels, seats, t }) => {
+    const winner = Number(result) - 1;
+    if (!Number.isFinite(winner) || winner < 0) return undefined;
+    const loser = winner === 0 ? 1 : 0;
+    const name = (seat: number) => (labels[seat] ? t(labels[seat]) : t('Player {n}', { n: seat + 1 }));
+    const humans = seats.map((k, i) => (k === 'human' ? i : -1)).filter((i) => i >= 0);
+    if (humans.length === 1) {
+      return humans[0] === loser
+        ? t('🔥 Scorched in! Your knight can’t leap — {winner} wins.', { winner: name(winner) })
+        : t('🔥 Scorched in! {loser} can’t leap — you win! 🎉', { loser: name(loser) });
+    }
+    return t('🔥 Scorched in! {loser} had no leap — {winner} wins!', {
+      winner: name(winner),
+      loser: name(loser),
+    });
+  },
 };

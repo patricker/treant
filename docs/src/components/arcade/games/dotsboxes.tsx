@@ -108,5 +108,5 @@ export const dotsBoxes: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.DotsBoxesWasm(p.cols, p.rows)),
   Board: DotsBoxesBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };

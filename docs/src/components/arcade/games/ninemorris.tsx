@@ -161,7 +161,7 @@ function NineMorrisBoard({ board, interactive, legalMoves, onMove }: BoardProps)
           const isSel = i === sel;
           const victim = isVictim(i);
           const target = isTarget(i);
-          const stateWord = ch === 'X' ? t('Red') : ch === 'O' ? t('Yellow') : t('empty');
+          const stateWord = ch === 'X' ? t('Red') : ch === 'O' ? t('Gold') : t('empty');
           return (
             <button
               key={i}
@@ -180,7 +180,7 @@ function NineMorrisBoard({ board, interactive, legalMoves, onMove }: BoardProps)
                 outline: victim ? '3px solid var(--arc-p1)' : undefined,
                 boxShadow: victim ? '0 0 0 4px rgba(255,59,92,0.25)' : undefined,
               }}
-              aria-label={t('Point {n}: {state}', { n: i, state: stateWord })}
+              aria-label={t('Point {n}: {state}', { n: i + 1, state: stateWord })}
             />
           );
         })}
@@ -212,7 +212,7 @@ export const nineMorris: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.NineMorrisWasm(p.men, p.flying, 0)),
   Board: NineMorrisBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };
 
 export const laskerMorris: GameDefinition = {
@@ -243,5 +243,5 @@ export const laskerMorris: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.NineMorrisWasm(p.men, p.flying, 1)),
   Board: NineMorrisBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };

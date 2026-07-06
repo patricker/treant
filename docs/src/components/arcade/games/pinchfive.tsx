@@ -13,7 +13,7 @@ const SYM_SEAT: Record<string, number> = { X: 0, O: 1, A: 2, B: 3 };
 // captured-pairs scoreline. The engine encodes "<cells>|<pairs>" into get_board.
 function PinchFiveBoard({ board, params, currentPlayer, interactive, winCells, lastCells, onMove }: BoardProps) {
   const { t } = useT();
-  const { cols, rows, numPlayers } = params;
+  const { cols, rows, numPlayers, pairs: target } = params;
   const [cells, countsStr] = board.split('|');
   const counts = (countsStr ?? '').split(',').map(Number);
   const placed = changedIndex(usePrevBoard(cells), cells);
@@ -38,7 +38,7 @@ function PinchFiveBoard({ board, params, currentPlayer, interactive, winCells, l
             <span
               style={{ width: 12, height: 12, borderRadius: '50%', background: SEAT[p], display: 'inline-block' }}
             />
-            <span>{t('{name}: {pairs} pairs', { name: t(PLAYER_LABEL[p]), pairs: counts[p] ?? 0 })}</span>
+            <span>{t('{name}: {pairs} / {target} pairs', { name: t(PLAYER_LABEL[p]), pairs: counts[p] ?? 0, target })}</span>
           </div>
         ))}
       </div>

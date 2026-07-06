@@ -24,5 +24,23 @@ export const konane: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.KonaneWasm(p.cols, p.rows)),
   Board: MoveBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
+  // Kōnane ends when a player has no jump left — "last to jump wins" reads as an
+  // arbitrary trophy otherwise. Tell the story. (Shared resultFlavor seam.)
+  resultFlavor: ({ result, labels, seats, t }) => {
+    const winner = Number(result) - 1;
+    if (!Number.isFinite(winner) || winner < 0) return undefined;
+    const loser = winner === 0 ? 1 : 0;
+    const name = (seat: number) => (labels[seat] ? t(labels[seat]) : t('Player {n}', { n: seat + 1 }));
+    const humans = seats.map((k, i) => (k === 'human' ? i : -1)).filter((i) => i >= 0);
+    if (humans.length === 1) {
+      return humans[0] === loser
+        ? t('🌺 No jumps left! You’re out of moves — {winner} wins.', { winner: name(winner) })
+        : t('🌺 No jumps left! {loser} is out of moves — you win! 🎉', { loser: name(loser) });
+    }
+    return t('🌺 No jumps left! {loser} had no move — {winner} wins!', {
+      winner: name(winner),
+      loser: name(loser),
+    });
+  },
 };

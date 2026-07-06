@@ -4,7 +4,7 @@ import styles from '../arcade.module.css';
 import { usePrevBoard, changedIndex } from '../boardDiff';
 import { useT } from '../i18n';
 
-// Two seats only: Red (X) and Yellow (O).
+// Two seats only: Red (X) and Gold (O).
 const SYM = ['X', 'O'];
 const SEAT_COLOR: Record<string, string> = {
   X: 'var(--arc-p1)',
@@ -124,5 +124,5 @@ export const quadline: GameDefinition = {
   ],
   create: makeHandle,
   Board: QuadlineBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };

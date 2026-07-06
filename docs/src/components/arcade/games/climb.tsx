@@ -238,5 +238,5 @@ export const climb: GameDefinition = {
   ],
   create: makeHandle,
   Board: ClimbBoard,
-  playerLabels: ['Red', 'Yellow', 'Green', 'Purple'],
+  playerLabels: ['Red', 'Gold', 'Green', 'Purple'],
 };

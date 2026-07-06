@@ -73,7 +73,7 @@ export const reversi: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.ReversiWasm(p.cols, p.rows, 0)),
   Board: ReversiBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };
 
 export const antiReversi: GameDefinition = {
@@ -101,5 +101,5 @@ export const antiReversi: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.ReversiWasm(p.cols, p.rows, 1)),
   Board: ReversiBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };

@@ -58,7 +58,7 @@ export const col: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.ColWasm(p.cols, p.rows, 0)),
   Board: ColBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };
 
 // Snort — Col's mirror twin (Conway): you may not colour next to the ENEMY.
@@ -85,5 +85,5 @@ export const snort: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.ColWasm(p.cols, p.rows, 1)),
   Board: ColBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };
