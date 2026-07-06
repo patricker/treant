@@ -1439,6 +1439,21 @@
   border-radius: 50%;
   opacity: 0.9;
 }
+/* Box-in end: the snail is trapped with nowhere to step. Ring the snail's cell
+   in alarm-red and glow the slime squares that pen it in, so a no-move loss
+   reads as "look — it's boxed in", not an arbitrary trophy. Static base rule so
+   it survives reduced-motion / animation-killed screenshots; a pulse layers on
+   below (mirrors the .winCell pattern). */
+.slimeTrapped {
+  position: relative;
+  z-index: 1;
+  outline: 3px solid #ff5a5f;
+  outline-offset: -3px;
+  box-shadow: 0 0 0 2px #ff5a5f, 0 0 14px 3px rgba(255, 90, 95, 0.6);
+}
+.slimeCage {
+  box-shadow: inset 0 0 0 3px rgba(255, 90, 95, 0.7);
+}
 
 /* ---------- Reversi ---------- */
 .reversiScores {
@@ -1700,6 +1715,21 @@
   }
   .winCell {
     animation: winGlow 1.1s ease-in-out infinite;
+  }
+
+  @keyframes trapPulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 2px #ff5a5f, 0 0 8px 1px rgba(255, 90, 95, 0.5);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 0 0 3px #ff5a5f, 0 0 18px 5px rgba(255, 90, 95, 0.9);
+      transform: scale(1.08);
+    }
+  }
+  .slimeTrapped {
+    animation: trapPulse 1.1s ease-in-out infinite;
   }
 
   @keyframes winHexPulse {

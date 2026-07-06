@@ -59,6 +59,23 @@ export default function GamePlay({
   }, [s.phase, overlayDismissed]);
   const labels = def.playerLabels ?? PLAYER_LABEL;
   const interactive = s.phase === 'playing' && s.seats[s.current] === 'human';
+  // The end-of-game line, shared by the overlay card and the dismissed pill so
+  // both tell the same story. A game may override the default winner line via
+  // resultFlavor (e.g. a box-in "Snail trapped!" message); it falls back to the
+  // standard "{winner} wins!" when the hook is absent or returns undefined.
+  const endLine =
+    def.solo
+      ? s.endText
+      : (s.phase === 'over' &&
+          def.resultFlavor?.({
+            result: s.result,
+            winCells: s.winCells,
+            board: s.board,
+            labels,
+            seats: s.seats,
+            t,
+          })) ||
+        winnerLabel(t, s.result, labels, s.seats);
   const status = def.solo
     ? s.statusText
     : s.phase === 'thinking'
@@ -143,6 +160,7 @@ export default function GamePlay({
           legalMoves={s.legalMoves}
           winCells={s.winCells}
           lastCells={s.lastCells}
+          terminal={s.phase === 'over'}
           playerNames={labels.map((l) => t(l))}
           onMove={s.onHumanMove}
         />
@@ -167,7 +185,7 @@ export default function GamePlay({
             <div
               className={`${styles.overlayCard} ${styles.overlayPop}`}
               role="dialog"
-              aria-label={def.solo ? s.endText : winnerLabel(t, s.result, labels, s.seats)}
+              aria-label={endLine}
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -189,9 +207,7 @@ export default function GamePlay({
                   return humanLost ? '🤖' : '🏆';
                 })()}
               </div>
-              <div className={styles.overlayText}>
-                {def.solo ? s.endText : winnerLabel(t, s.result, labels, s.seats)}
-              </div>
+              <div className={styles.overlayText}>{endLine}</div>
               <button className={styles.playBtn} onClick={s.replay}>
                 {t('↺ Play again')}
               </button>
@@ -206,7 +222,7 @@ export default function GamePlay({
         )}
         {s.phase === 'over' && overlayDismissed && (
           <div className={styles.resultPill}>
-            <span>{def.solo ? s.endText : winnerLabel(t, s.result, labels, s.seats)}</span>
+            <span>{endLine}</span>
             <button className={styles.playBtn} onClick={s.replay}>
               {t('↺ Play again')}
             </button>

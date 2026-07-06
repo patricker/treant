@@ -52,12 +52,18 @@ function edgeEnds(x: Cross, owner: string): [number, number, number, number] {
     : [2 * c + 1, 2 * r + 2, 2 * c + 3, 2 * r + 2]; // gold horizontal
 }
 
-function GaleBoard({ board, params, interactive, legalMoves, winCells, onMove }: BoardProps) {
+function GaleBoard({ board, params, currentPlayer, interactive, legalMoves, winCells, onMove }: BoardProps) {
   const { t } = useT();
   const n = params.size;
   const nCross = 2 * n * n - 2 * n + 1;
   const wins = new Set(winCells ?? []);
   const canSwap = interactive && legalMoves.includes('swap');
+  // Gale is the only board without a "here's what's tappable" cue. Tint every
+  // unclaimed, legal crossing in the CURRENT player's colour so a first-timer
+  // sees where to tap — red on Red's turn, gold after. Only while a human is to
+  // move (interactive); no tint while the AI thinks or in the setup preview.
+  const targets = new Set(legalMoves.map(Number).filter((v) => Number.isFinite(v)));
+  const turnColor = `var(--arc-p${currentPlayer + 1})`;
   const pad = 1.4;
   const span = 2 * n + 2 * pad;
   const viewBox = `${-pad} ${-pad} ${span} ${span}`;
@@ -132,10 +138,21 @@ function GaleBoard({ board, params, interactive, legalMoves, winCells, onMove }:
                 />
               );
             }
+            // Tint the tap guide in the current player's colour when it's a
+            // legal, tappable crossing for a human seat; otherwise leave the
+            // neutral faint dot (AI thinking / setup preview / already decided).
+            const tinted = clickable && targets.has(i);
             return (
               <g key={`c${i}`}>
-                {/* faint guide so players can see where a bridge would go */}
-                <circle cx={mx} cy={my} r={0.16} fill="var(--arc-ink)" opacity={0.28} />
+                {/* guide so players can see where a bridge would go; tinted to
+                    the current player's colour when it's their tappable move */}
+                <circle
+                  cx={mx}
+                  cy={my}
+                  r={tinted ? 0.24 : 0.16}
+                  fill={tinted ? turnColor : 'var(--arc-ink)'}
+                  opacity={tinted ? 0.6 : 0.28}
+                />
                 {/* invisible tap target. r=0.7 keeps adjacent crossings'
                     targets from overlapping (nearest crossings are √2 world
                     units apart), so a tap always resolves to the nearest bridge

@@ -28,7 +28,16 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 // Slimetrail board. One shared snail is walked toward YOUR goal corner; the cell
 // it leaves turns to permanent slime. Move = the destination cell index (the
 // engine already lists only the token's legal steps in `legalMoves`).
-function SlimetrailBoard({ board, params, currentPlayer, interactive, legalMoves, winCells, onMove }: BoardProps) {
+function SlimetrailBoard({
+  board,
+  params,
+  currentPlayer,
+  interactive,
+  legalMoves,
+  winCells,
+  terminal,
+  onMove,
+}: BoardProps) {
   const { t } = useT();
   const n = params.size;
   const goal0 = (n - 1) * n; // P0 / Red — bottom-left
@@ -38,6 +47,27 @@ function SlimetrailBoard({ board, params, currentPlayer, interactive, legalMoves
   const turnColor = `var(--arc-p${currentPlayer + 1})`;
 
   const cells = Array.from({ length: n * n }, (_, i) => board[i] ?? ' ');
+
+  // Box-in end: the game is over with no winning goal cell (winCells empty),
+  // so the loser's snail is trapped. Mark the snail and the slime squares
+  // penning it in, so the story ("nowhere to step") is visible on the board.
+  const boxedIn = !!terminal && wins.size === 0;
+  const trappedIdx = boxedIn ? cells.indexOf('T') : -1;
+  const cage = new Set<number>();
+  if (trappedIdx >= 0) {
+    const sr = Math.floor(trappedIdx / n);
+    const sc = trappedIdx % n;
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        const rr = sr + dr;
+        const cc = sc + dc;
+        if (rr < 0 || rr >= n || cc < 0 || cc >= n) continue;
+        const ni = rr * n + cc;
+        if (cells[ni] === '#') cage.add(ni);
+      }
+    }
+  }
 
   return (
     <div>
@@ -69,6 +99,8 @@ function SlimetrailBoard({ board, params, currentPlayer, interactive, legalMoves
             styles.slimeCell,
             isTarget ? styles.slimeTarget : '',
             wins.has(i) ? styles.winCell : '',
+            i === trappedIdx ? styles.slimeTrapped : '',
+            cage.has(i) ? styles.slimeCage : '',
           ]
             .filter(Boolean)
             .join(' ');
@@ -140,4 +172,27 @@ export const slimetrail: GameDefinition = {
   create: makeHandle,
   Board: SlimetrailBoard,
   playerLabels: ['Red', 'Gold'],
+  // A box-in loss (no goal reached) would otherwise show the generic "{winner}
+  // wins!" trophy, which reads as arbitrary to a kid. Tell the story instead —
+  // the snail got trapped with no move. A goal win keeps the classic line +
+  // goal glow (winCells is populated there, so we bow out and return undefined).
+  resultFlavor: ({ result, winCells, labels, seats, t }) => {
+    if (winCells.length > 0) return undefined; // goal win — keep the classic line
+    const winner = Number(result) - 1;
+    if (!Number.isFinite(winner) || winner < 0) return undefined;
+    const loser = winner === 0 ? 1 : 0;
+    const name = (seat: number) =>
+      labels[seat] ? t(labels[seat]) : t('Player {n}', { n: seat + 1 });
+    // A lone human hears it in the second person so a loss is unmistakable.
+    const humans = seats.map((k, i) => (k === 'human' ? i : -1)).filter((i) => i >= 0);
+    if (humans.length === 1) {
+      return humans[0] === loser
+        ? t('🐌 Snail trapped! You’re boxed in — {winner} wins.', { winner: name(winner) })
+        : t('🐌 Snail trapped! {loser} is boxed in — you win! 🎉', { loser: name(loser) });
+    }
+    return t('🐌 Snail trapped! {loser} had no move — {winner} wins!', {
+      winner: name(winner),
+      loser: name(loser),
+    });
+  },
 };

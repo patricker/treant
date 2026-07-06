@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import type { I18n } from './i18n';
 
 /** `numPlayers` is required (the seat/mode system needs it); every other knob
  *  (cols, rows, k, pits, stones, pieces, …) is a game-specific numeric entry. */
@@ -75,6 +76,10 @@ export interface BoardProps {
    *  boards that can render it show a "last move" ring so the AI's reply is
    *  findable at a glance. Empty at game start. */
   lastCells?: number[];
+  /** true once the game has ended (phase === 'over'). Boards that want to mark
+   *  a terminal that `winCells` can't describe — e.g. a box-in loss, where the
+   *  engine reports no winning line — use it to light up the trap instead. */
+  terminal?: boolean;
   /** translated per-seat display names ("Red", "Gold", …) so screen-reader
    *  cell labels can speak the same language as the visible UI instead of
    *  raw engine glyphs (X/O). */
@@ -115,6 +120,28 @@ export interface GameDefinition {
   moveSound?: 'move' | 'drop';
   /** Display names per seat (default Red/Yellow/Green/Purple). */
   playerLabels?: string[];
+  /** Override the default "{winner} wins!" end line with a message that tells
+   *  the game's story — e.g. a box-in loss ("Snail trapped! …") that would
+   *  otherwise read as an arbitrary trophy. Returns a fully-translated string,
+   *  or `undefined` to keep the default line. Consumed by GamePlay's game-over
+   *  overlay AND its dismissed-result pill, so both carry the same message.
+   *  `winCells` is the engine's winningCells() — empty on a box-in terminal,
+   *  populated on a line/goal win — the natural way to tell the two apart.
+   *  Reusable across box-in games (Slimetrail, Trails, Joust, Kōnane). */
+  resultFlavor?(ctx: {
+    /** Canonical result string (winner seat digit, or "Draw"). */
+    result: string;
+    /** Engine winningCells() for this terminal (empty ⇒ box-in). */
+    winCells: number[];
+    /** Final board string. */
+    board: string;
+    /** English seat-label keys (translate via `t`). */
+    labels: string[];
+    /** Per-seat human/AI assignment (for lone-human "You" phrasing). */
+    seats: PlayerKind[];
+    /** The arcade translate function. */
+    t: I18n['t'];
+  }): string | undefined;
 }
 
 /** Concrete AI knobs for one difficulty level. */
