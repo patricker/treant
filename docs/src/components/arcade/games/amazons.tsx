@@ -137,7 +137,8 @@ export const amazons: GameDefinition = {
   // A game ends when an amazon is walled in by burnt squares and has no move —
   // the generic "wins" line hides the whole point (trapping the foe). Tell the
   // story. (Shared resultFlavor seam.)
-  resultFlavor: ({ result, labels, seats, t }) => {
+  resultFlavor: ({ result, winCells, labels, seats, t }) => {
+    if (winCells.length > 0) return undefined; // a win-cell terminal (e.g. a line win) keeps the classic line
     const winner = Number(result) - 1;
     if (!Number.isFinite(winner) || winner < 0) return undefined;
     const loser = winner === 0 ? 1 : 0;

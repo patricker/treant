@@ -72,7 +72,8 @@ export const trails: GameDefinition = {
   playerLabels: ['Red', 'Gold'],
   // Boxing the opponent in is the whole game — the generic winner line hides the
   // trap. Tell the story. (Shared resultFlavor seam.)
-  resultFlavor: ({ result, labels, seats, t }) => {
+  resultFlavor: ({ result, winCells, labels, seats, t }) => {
+    if (winCells.length > 0) return undefined; // a win-cell terminal (e.g. a line win) keeps the classic line
     const winner = Number(result) - 1;
     if (!Number.isFinite(winner) || winner < 0) return undefined;
     const loser = winner === 0 ? 1 : 0;
@@ -119,7 +120,8 @@ export const joust: GameDefinition = {
   playerLabels: ['Red', 'Gold'],
   // A knight loses when its own scorched trail leaves it nowhere to leap. Tell
   // the story instead of a bare winner line. (Shared resultFlavor seam.)
-  resultFlavor: ({ result, labels, seats, t }) => {
+  resultFlavor: ({ result, winCells, labels, seats, t }) => {
+    if (winCells.length > 0) return undefined; // a win-cell terminal (e.g. a line win) keeps the classic line
     const winner = Number(result) - 1;
     if (!Number.isFinite(winner) || winner < 0) return undefined;
     const loser = winner === 0 ? 1 : 0;

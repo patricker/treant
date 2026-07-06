@@ -127,7 +127,8 @@ export interface GameDefinition {
    *  overlay AND its dismissed-result pill, so both carry the same message.
    *  `winCells` is the engine's winningCells() — empty on a box-in terminal,
    *  populated on a line/goal win — the natural way to tell the two apart.
-   *  Reusable across box-in games (Slimetrail, Trails, Joust, Kōnane). */
+   *  Reusable across box-in / last-to-move games — see the resultFlavor
+   *  convention in ARCADE.md §7b for current adopters. */
   resultFlavor?(ctx: {
     /** Canonical result string (winner seat digit, or "Draw"). */
     result: string;

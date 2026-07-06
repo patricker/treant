@@ -27,7 +27,8 @@ export const konane: GameDefinition = {
   playerLabels: ['Red', 'Gold'],
   // Kōnane ends when a player has no jump left — "last to jump wins" reads as an
   // arbitrary trophy otherwise. Tell the story. (Shared resultFlavor seam.)
-  resultFlavor: ({ result, labels, seats, t }) => {
+  resultFlavor: ({ result, winCells, labels, seats, t }) => {
+    if (winCells.length > 0) return undefined; // a win-cell terminal (e.g. a line win) keeps the classic line
     const winner = Number(result) - 1;
     if (!Number.isFinite(winner) || winner < 0) return undefined;
     const loser = winner === 0 ? 1 : 0;
