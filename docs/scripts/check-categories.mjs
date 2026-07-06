@@ -22,4 +22,16 @@ if (missing.length) {
   console.error(`check-categories: not in any Launcher category: ${missing.join(', ')}`);
   process.exit(1);
 }
-console.log(`check-categories: ${ids.length} game ids all categorized.`);
+
+// Every game id must also have a monochrome GLYPHS entry in icons.tsx — without
+// one it falls back to a colour emoji, which sticks out on the monochrome shelf.
+const icons = readFileSync(join(root, 'src/components/arcade/icons.tsx'), 'utf8');
+const glyphBlock = icons.match(/const GLYPHS[\s\S]*?\n\};/)?.[0] ?? '';
+const glyphed = new Set([...glyphBlock.matchAll(/^ {2}(?:'([a-z0-9-]+)'|([a-z0-9]+)):\s*\(/gm)].map((m) => m[1] ?? m[2]));
+const noGlyph = ids.filter((id) => !glyphed.has(id));
+if (noGlyph.length) {
+  console.error(`check-categories: no GLYPHS entry in icons.tsx (would fall back to emoji): ${noGlyph.join(', ')}`);
+  process.exit(1);
+}
+
+console.log(`check-categories: ${ids.length} game ids all categorized and glyphed.`);

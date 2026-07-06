@@ -35,6 +35,20 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  'lasker-morris': (
+    // The morris rings, plus a man still in hand — Lasker's place-or-move twist.
+    <g stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinejoin="round">
+      <rect x="3" y="3" width="14" height="14" rx="0.5" />
+      <rect x="6.5" y="6.5" width="7" height="7" rx="0.5" />
+      <path d="M10 3v3.5M10 13.5V17M3 10h3.5M13.5 10H17" opacity="0.7" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="3" cy="3" r="1.6" />
+        <circle cx="10" cy="3" r="1.6" />
+        <circle cx="17" cy="3" r="1.6" />
+        <circle cx="20.5" cy="20.5" r="2" />
+      </g>
+    </g>
+  ),
   'connect-four': (
     // four discs on a diagonal
     <g fill="currentColor">
@@ -232,10 +246,28 @@ const GLYPHS: Record<string, JSX.Element> = {
       <circle cx="16" cy="4" r="1.8" fill="currentColor" stroke="none" />
     </g>
   ),
+  joust: (
+    // Trails with a knight's move — the L-leap (two-then-one) plus a jump arc.
+    <g fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 20V10h6" />
+      <path d="M6 20q3-11 12-13" strokeDasharray="1.6 2" opacity="0.55" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="6" cy="20" r="1.9" />
+        <circle cx="18" cy="7" r="1.9" />
+      </g>
+    </g>
+  ),
   reversi: (
     <g>
       <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" strokeWidth="2" />
       <path d="M12 2.5a9.5 9.5 0 0 1 0 19z" fill="currentColor" />
+    </g>
+  ),
+  'anti-reversi': (
+    // Reversi's disc with the fill flipped to the other half — the goal is inverted.
+    <g>
+      <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M12 2.5a9.5 9.5 0 0 0 0 19z" fill="currentColor" />
     </g>
   ),
   clobber: (
@@ -374,6 +406,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       <rect x="3" y="13" width="8" height="8" rx="1.5" opacity="0.3" />
     </g>
   ),
+  snort: (
+    // Col's two-patch motif, but the constraint is the ENEMY: a barrier keeps
+    // your patch (filled) off the opponent's (outline).
+    <g>
+      <rect x="3" y="3" width="8" height="8" rx="1.5" fill="currentColor" />
+      <rect x="13" y="13" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M4.5 19.5L19.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+    </g>
+  ),
   amazons: (
     <g stroke="currentColor" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       {/* a crown (amazon) with an arrow flying off it */}
@@ -408,6 +449,18 @@ const GLYPHS: Record<string, JSX.Element> = {
       <rect x="6.5" y="13.5" width="14" height="7" rx="1.5" opacity="0.5" />
       <circle cx="10" cy="17" r="1" fill="var(--arc-bg, #fff)" />
       <circle cx="17" cy="17" r="1" fill="var(--arc-bg, #fff)" />
+    </g>
+  ),
+  cram: (
+    // Domineering's domino, but placeable either way by both players — a vertical
+    // and a horizontal tile crossing, pips and all.
+    <g fill="currentColor">
+      <rect x="9" y="3.5" width="6" height="17" rx="1.5" opacity="0.55" />
+      <rect x="3.5" y="9" width="17" height="6" rx="1.5" opacity="0.55" />
+      <circle cx="12" cy="6.2" r="0.9" fill="var(--arc-bg, #fff)" />
+      <circle cx="12" cy="17.8" r="0.9" fill="var(--arc-bg, #fff)" />
+      <circle cx="6.2" cy="12" r="0.9" fill="var(--arc-bg, #fff)" />
+      <circle cx="17.8" cy="12" r="0.9" fill="var(--arc-bg, #fff)" />
     </g>
   ),
   'mu-torere': (
