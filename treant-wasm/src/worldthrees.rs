@@ -96,38 +96,70 @@ const TSORO_ADJ: [&[u8]; 7] = [&[1, 2, 3], &[0, 2, 4], &[0, 1, 3, 5], &[0, 2, 6]
 // Five drawn lines: two sides, the central axis, the breadth line, the base.
 const TSORO_LINES: [&[u8]; 5] = [&[0, 1, 4], &[0, 3, 6], &[0, 2, 5], &[1, 2, 3], &[4, 5, 6]];
 
-// ── Picaria: 3×3 grid (0..8) + four outer "diamond" points (9..12) ───────────
-// 9 top, 10 left, 11 right, 12 bottom — each on two diamond diagonals that pass
-// through a corner (its middle). Grid coords compressed to leave room.
+// ── Picaria: 3×3 grid (0..8) + four INTERIOR quadrant-centre points (9..12) ────
+// The documented Zuni board: the outer square is split into four small squares
+// (the 3×3 grid, points 0..8), and each small square is split into four
+// triangles by BOTH of its diagonals. Those diagonals cross at the small
+// squares' centres, adding four INTERIOR playing points — 9 top-left, 10
+// top-right, 11 bottom-left, 12 bottom-right — each at the centre of its
+// quadrant (degree-4). Sources agree on this interior-point form: the cited
+// Wikipedia page ("four additional spaces … at the intersection of the four
+// additional diagonal lines with those of the larger diagonal lines"), and the
+// independent depictions at auntannie.com / whatdowedoallday.com / bead.game,
+// which all describe the 9-point variant as "leaving out the four inner points
+// that form a square". (The prior encoding placed these points EXTERIOR to the
+// grid — a degree-2 diamond — which no source supports.)
+//
+// Each interior point is the midpoint of both of its small square's diagonals,
+// e.g. 9 = mid(0,4) = mid(1,3). Grid points use a full 15/50/85 spread.
 const PICARIA_COORDS: [(f32, f32); 13] = [
-    (27.5, 27.5), (50.0, 27.5), (72.5, 27.5), // 0 1 2
-    (27.5, 50.0), (50.0, 50.0), (72.5, 50.0), // 3 4 5
-    (27.5, 72.5), (50.0, 72.5), (72.5, 72.5), // 6 7 8
-    (50.0, 5.0),  // 9  top
-    (5.0, 50.0),  // 10 left
-    (95.0, 50.0), // 11 right
-    (50.0, 95.0), // 12 bottom
+    (15.0, 15.0), (50.0, 15.0), (85.0, 15.0), // 0 1 2  grid top row
+    (15.0, 50.0), (50.0, 50.0), (85.0, 50.0), // 3 4 5  grid middle row
+    (15.0, 85.0), (50.0, 85.0), (85.0, 85.0), // 6 7 8  grid bottom row
+    (32.5, 32.5), // 9  top-left  quadrant centre  (mid of 0-4 and of 1-3)
+    (67.5, 32.5), // 10 top-right quadrant centre  (mid of 2-4 and of 1-5)
+    (32.5, 67.5), // 11 bot-left  quadrant centre  (mid of 4-6 and of 3-7)
+    (67.5, 67.5), // 12 bot-right quadrant centre  (mid of 4-8 and of 5-7)
 ];
-// Grid-with-diagonals adjacency PLUS each corner's two diamond points.
+// Drawn-line adjacency. The interior points sit ON the two main diagonals, which
+// therefore no longer join a corner straight to the grid centre: the diagonals
+// read 0-9-4-12-8 and 2-10-4-11-6. Each interior point joins the 4 grid points
+// of its small square (that square's two diagonals); the grid rows/cols keep
+// their orthogonal adjacencies. 28 undirected edges (verified in tests):
+//   0:1,3,9  1:0,2,4,9,10  2:1,5,10  3:0,4,6,9,11  4:1,3,5,7,9,10,11,12
+//   5:2,4,8,10,12  6:3,7,11  7:4,6,8,11,12  8:5,7,12  → deg-sum 56 / 2 = 28.
 const PICARIA_ADJ: [&[u8]; 13] = [
-    &[1, 3, 4, 9, 10],           // 0
-    &[0, 2, 4],                  // 1
-    &[1, 4, 5, 9, 11],           // 2
-    &[0, 4, 6],                  // 3
-    &[0, 1, 2, 3, 5, 6, 7, 8],   // 4
-    &[2, 4, 8],                  // 5
-    &[3, 4, 7, 10, 12],          // 6
-    &[4, 6, 8],                  // 7
-    &[4, 5, 7, 11, 12],          // 8
-    &[0, 2],                     // 9
-    &[0, 6],                     // 10
-    &[2, 8],                     // 11
-    &[6, 8],                     // 12
+    &[1, 3, 9],                   // 0
+    &[0, 2, 4, 9, 10],            // 1
+    &[1, 5, 10],                  // 2
+    &[0, 4, 6, 9, 11],            // 3
+    &[1, 3, 5, 7, 9, 10, 11, 12], // 4  grid centre — joins the 4 quadrant centres, not the corners
+    &[2, 4, 8, 10, 12],           // 5
+    &[3, 7, 11],                  // 6
+    &[4, 6, 8, 11, 12],           // 7
+    &[5, 7, 12],                  // 8
+    &[0, 1, 3, 4],                // 9  TL centre → its 4 surrounding grid points
+    &[1, 2, 4, 5],                // 10 TR centre
+    &[3, 4, 6, 7],                // 11 BL centre
+    &[4, 5, 7, 8],                // 12 BR centre
 ];
-// Eight grid lines + four diamond diagonals (each with a corner as its middle).
-const PICARIA_LINES: [&[u8]; 12] = [
-    &[0, 1, 2], &[3, 4, 5], &[6, 7, 8], &[0, 3, 6], &[1, 4, 7], &[2, 5, 8], &[0, 4, 8], &[2, 4, 6], // grid
-    &[9, 0, 10], &[9, 2, 11], &[12, 6, 10], &[12, 8, 11], // diamonds
+// Winning three-in-a-rows: every gapless collinear triple lying on a drawn line
+// (middle point second, per the line-adjacency invariant). The board has 12
+// DRAWN straight lines — 3 rows, 3 cols, 2 main diagonals, 4 small-square
+// anti-diagonals — which is the "12 winning lines" the sources cite. But the two
+// main diagonals are 5-point lines (corner-centre-centre-centre-corner), so each
+// yields THREE consecutive triples rather than one; the other 10 lines are
+// 3-point lines yielding one triple each. Total = 10 + 2·3 = 16 winning triples:
+//   rows (3)  cols (3)
+//   main diag 0-9-4-12-8 → [0,9,4] [9,4,12] [4,12,8]
+//   main diag 2-10-4-11-6 → [2,10,4] [10,4,11] [4,11,6]
+//   small-square anti-diagonals (4): [1,9,3] [1,10,5] [3,11,7] [5,12,7]
+const PICARIA_LINES: [&[u8]; 16] = [
+    &[0, 1, 2], &[3, 4, 5], &[6, 7, 8], // rows
+    &[0, 3, 6], &[1, 4, 7], &[2, 5, 8], // cols
+    &[0, 9, 4], &[9, 4, 12], &[4, 12, 8], // main diagonal through 9 (TL) and 12 (BR)
+    &[2, 10, 4], &[10, 4, 11], &[4, 11, 6], // main diagonal through 10 (TR) and 11 (BL)
+    &[1, 9, 3], &[1, 10, 5], &[3, 11, 7], &[5, 12, 7], // small-square anti-diagonals
 ];
 
 // ── Pong Hau K'i: 4 corners (0 TL, 1 TR, 2 BL, 3 BR) + centre 4 ──────────────
@@ -168,10 +200,10 @@ const BOARDS: [BoardDef; 8] = [
     // any 3-in-line.
     BoardDef { coords: &TSORO_COORDS, adj: &TSORO_ADJ, lines: &TSORO_LINES, jumps: &TSORO_LINES, pieces: 3, start: NO_START, home: NO_HOME, blockade: false },
     // 6 — Picaria (Zuni): https://en.wikipedia.org/wiki/Picaria
-    // 13-point diamond-extended board, three men each, place then slide. Twelve
-    // winning lines: eight grid lines + four diamond diagonals (the exact
-    // 13-point line-set is under-documented; this is the geometrically
-    // consistent 12-line form multiple sources attest).
+    // 13-point board: 3×3 grid + four INTERIOR quadrant-centre points, three men
+    // each, place then slide. The main diagonals run through the quadrant
+    // centres, so the diagonal wins are the small-square diagonals (16 gapless
+    // three-in-a-row triples over the 12 drawn lines — see PICARIA_LINES).
     BoardDef { coords: &PICARIA_COORDS, adj: &PICARIA_ADJ, lines: &PICARIA_LINES, jumps: NO_JUMPS, pieces: 3, start: NO_START, home: NO_HOME, blockade: false },
     // 7 — Pong Hau K'i (China): https://en.wikipedia.org/wiki/Pong_Hau_K%27i
     // 5 points, two men each, PRE-PLACED on opposite corners, slide only. You
@@ -512,7 +544,7 @@ mod tests {
         assert_eq!(edge_count(3), 16, "Tant Fant 3×3+diag");
         assert_eq!(edge_count(4), 12, "Nine Holes 3×3 orth"); // 6 rows + 6 cols
         assert_eq!(edge_count(5), 10, "Tsoro Yematatu triangle");
-        assert_eq!(edge_count(6), 24, "Picaria 13-point"); // 16 grid + 8 diamond
+        assert_eq!(edge_count(6), 28, "Picaria 13-point interior-point"); // see PICARIA_ADJ enumeration
         assert_eq!(edge_count(7), 7, "Pong Hau K'i"); // 5 vertices, 7 edges
     }
 
@@ -661,14 +693,38 @@ mod tests {
     }
 
     #[test]
-    fn picaria_diamond_line_wins() {
-        // A diamond diagonal {9,0,10} (corner 0 as its middle) is a winning line.
+    fn picaria_quadrant_centre_line_wins() {
+        // A small-square diagonal through quadrant-centre 9: corner 0, centre 9,
+        // grid centre 4 — a winning three-in-a-row.
         let mut g = WorldThrees::new(6);
         g.cells = vec![-1; 13];
-        g.cells[9] = 0;
         g.cells[0] = 0;
-        g.cells[10] = 0;
-        assert_eq!(g.line_winner(), Some(0), "diamond diagonal must win");
+        g.cells[9] = 0;
+        g.cells[4] = 0;
+        assert_eq!(g.line_winner(), Some(0), "corner–quadrant-centre–grid-centre diagonal must win");
+        // The interior–grid-centre–interior triple 9-4-12 (the middle of the main
+        // diagonal) is also a gapless three-in-a-row.
+        let mut g2 = WorldThrees::new(6);
+        g2.cells = vec![-1; 13];
+        g2.cells[9] = 1;
+        g2.cells[4] = 1;
+        g2.cells[12] = 1;
+        assert_eq!(g2.line_winner(), Some(1), "interior–centre–interior diagonal must win");
+        // The full grid corner-to-corner diagonal 0-4-8 is NOT a win: interior
+        // points 9 and 12 sit between the corners, so 0,4,8 have gaps.
+        let mut g3 = WorldThrees::new(6);
+        g3.cells = vec![-1; 13];
+        g3.cells[0] = 0;
+        g3.cells[4] = 0;
+        g3.cells[8] = 0;
+        assert_eq!(g3.line_winner(), None, "0-4-8 has interior gaps (9,12) — not a line");
+    }
+
+    #[test]
+    fn picaria_has_sixteen_winning_lines() {
+        // 6 rows/cols + 4 small-square anti-diagonals (one triple each) + 2 main
+        // diagonals (three gapless triples each) = 16. See PICARIA_LINES comment.
+        assert_eq!(BOARDS[6].lines.len(), 16, "Picaria: 12 drawn lines → 16 gapless three-in-a-row triples");
     }
 
     #[test]
