@@ -535,5 +535,21 @@
   "Every turn has TWO parts. First step your pawn one square in any of the 8 directions onto a remaining tile. Then remove ANY empty tile you like, anywhere on the board — it becomes a permanent hole no pawn can enter. Strand your opponent so their pawn has no square to step to, and you win.": "Jeder Zug hat ZWEI Teile. Ziehe zuerst deine Figur ein Feld in eine der 8 Richtungen auf ein verbliebenes Feld. Entferne dann ein BELIEBIGES leeres Feld irgendwo auf dem Brett — es wird zu einem dauerhaften Loch, das keine Figur betreten kann. Strande deinen Gegner, sodass seine Figur kein Feld mehr zum Hintreten hat, und du gewinnst.",
   "🏝️ Marooned! You had nowhere to step — {winner} wins.": "🏝️ Gestrandet! Du konntest nirgends hintreten – {winner} gewinnt.",
   "🏝️ Marooned! {loser} had nowhere to step — you win! 🎉": "🏝️ Gestrandet! {loser} konnte nirgends hintreten – du gewinnst! 🎉",
-  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ Gestrandet! {loser} konnte nirgends hintreten – {winner} gewinnt."
+  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ Gestrandet! {loser} konnte nirgends hintreten – {winner} gewinnt.",
+  "🐅 Feast! The tiger ate three leopards — {winner} wins!": "🐅 Festmahl! Der Tiger hat drei Leoparden gefressen — {winner} gewinnt!",
+  "🐅 Feast! The tiger ate three leopards — you lose.": "🐅 Festmahl! Der Tiger hat drei Leoparden gefressen — du verlierst.",
+  "🐅 Feast! You ate three leopards — you win! 🎉": "🐅 Festmahl! Du hast drei Leoparden gefressen — du gewinnst! 🎉",
+  "🐆 Cornered! The tiger can’t move — {winner} win.": "🐆 In die Enge getrieben! Der Tiger kann nicht ziehen — {winner} gewinnen.",
+  "🐆 Cornered! The tiger can’t move — you win! 🎉": "🐆 In die Enge getrieben! Der Tiger kann nicht ziehen — du gewinnst! 🎉",
+  "🐆 Cornered! Your tiger can’t move — you lose.": "🐆 In die Enge getrieben! Dein Tiger kann nicht ziehen — du verlierst.",
+  "A Thai tiger hunt on a 10-point triangle. Leopards move first: while leopards remain in hand, drop one on any empty point; once all six are placed, step a leopard one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing just beyond — to eat it. The leopards win by cornering the tiger so it cannot move; the tiger wins by eating three leopards.": "Eine thailändische Tigerjagd auf einem Dreieck mit 10 Punkten. Die Leoparden ziehen zuerst: Solange Leoparden in der Hand sind, setze einen auf einen beliebigen freien Punkt; sind alle sechs gesetzt, ziehe einen Leoparden einen Punkt entlang einer Linie auf einen freien Nachbarn. Der Tiger (er startet an der Spitze) zieht ebenfalls entlang einer Linie oder überspringt einen einzelnen benachbarten Leoparden — und landet direkt dahinter —, um ihn zu fressen. Die Leoparden gewinnen, indem sie den Tiger so einkesseln, dass er nicht ziehen kann; der Tiger gewinnt, indem er drei Leoparden frisst.",
+  "A Thai tiger hunt: six leopards try to corner one tiger before it eats three of them.": "Eine thailändische Tigerjagd: Sechs Leoparden versuchen, einen Tiger einzukesseln, bevor er drei von ihnen frisst.",
+  "Len Choa": "Len Choa",
+  "leopard": "Leopard",
+  "Leopards": "Leoparden",
+  "Leopards eaten: {n}": "Gefressene Leoparden: {n}",
+  "Leopards move first. While leopards remain in hand, the leopard player drops one on any empty point; once all six are placed, a leopard steps one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing on the empty point just beyond — to eat it. The leopards win by surrounding the tiger so it cannot move; the tiger wins by eating three leopards.": "Die Leoparden ziehen zuerst. Solange Leoparden in der Hand sind, setzt der Leopardenspieler einen auf einen beliebigen freien Punkt; sind alle sechs gesetzt, zieht ein Leopard einen Punkt entlang einer Linie auf einen freien Nachbarn. Der Tiger (er startet an der Spitze) zieht ebenfalls entlang einer Linie oder überspringt einen einzelnen benachbarten Leoparden — und landet auf dem freien Punkt direkt dahinter —, um ihn zu fressen. Die Leoparden gewinnen, indem sie den Tiger umzingeln, sodass er nicht ziehen kann; der Tiger gewinnt, indem er drei Leoparden frisst.",
+  "Leopards to place: {n}": "Zu setzende Leoparden: {n}",
+  "Tap an empty point to place a leopard": "Tippe einen freien Punkt an, um einen Leoparden zu setzen",
+  "Tiger": "Tiger"
 }

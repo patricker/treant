@@ -535,5 +535,21 @@
   "Every turn has TWO parts. First step your pawn one square in any of the 8 directions onto a remaining tile. Then remove ANY empty tile you like, anywhere on the board — it becomes a permanent hole no pawn can enter. Strand your opponent so their pawn has no square to step to, and you win.": "各手番は2つの部分に分かれる。まず自分のコマを8方向のいずれかに1マス、残っているマスへ進める。次に盤上のどこでも好きな空きマスを1つ取り除く — そこはどのコマも入れない永久の穴になる。相手のコマが進めるマスをなくして孤立させれば勝ち。",
   "🏝️ Marooned! You had nowhere to step — {winner} wins.": "🏝️ 孤立！あなたは進む場所がありません — {winner}の勝ち。",
   "🏝️ Marooned! {loser} had nowhere to step — you win! 🎉": "🏝️ 孤立！{loser}は進む場所がありません — あなたの勝ち！🎉",
-  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ 孤立！{loser}は進む場所がありません — {winner}の勝ち。"
+  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ 孤立！{loser}は進む場所がありません — {winner}の勝ち。",
+  "🐅 Feast! The tiger ate three leopards — {winner} wins!": "🐅 ごちそう！トラがヒョウを3頭食べた — {winner}の勝ち！",
+  "🐅 Feast! The tiger ate three leopards — you lose.": "🐅 ごちそう！トラがヒョウを3頭食べた — あなたの負け。",
+  "🐅 Feast! You ate three leopards — you win! 🎉": "🐅 ごちそう！ヒョウを3頭食べた — あなたの勝ち！🎉",
+  "🐆 Cornered! The tiger can’t move — {winner} win.": "🐆 追い詰めた！トラが動けない — {winner}の勝ち。",
+  "🐆 Cornered! The tiger can’t move — you win! 🎉": "🐆 追い詰めた！トラが動けない — あなたの勝ち！🎉",
+  "🐆 Cornered! Your tiger can’t move — you lose.": "🐆 追い詰めた！あなたのトラが動けない — あなたの負け。",
+  "A Thai tiger hunt on a 10-point triangle. Leopards move first: while leopards remain in hand, drop one on any empty point; once all six are placed, step a leopard one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing just beyond — to eat it. The leopards win by cornering the tiger so it cannot move; the tiger wins by eating three leopards.": "10 個の点からなる三角形の盤で行うタイのトラ狩り。ヒョウが先手：手元にヒョウがある間は、空いている点のどこかに1頭ずつ置く。6頭すべて置いたら、ヒョウを線に沿って隣の空き点へ1歩動かす。トラ（頂点から始まる）も線に沿って動き、または隣接するヒョウ1頭を飛び越えて — そのすぐ先に着地して — 食べる。ヒョウはトラを動けないように追い詰めれば勝ち、トラはヒョウを3頭食べれば勝ち。",
+  "A Thai tiger hunt: six leopards try to corner one tiger before it eats three of them.": "タイのトラ狩り：6頭のヒョウが、トラに3頭食べられる前にトラを追い詰めようとする。",
+  "Len Choa": "Len Choa",
+  "leopard": "ヒョウ",
+  "Leopards": "ヒョウ",
+  "Leopards eaten: {n}": "食べたヒョウ：{n}",
+  "Leopards move first. While leopards remain in hand, the leopard player drops one on any empty point; once all six are placed, a leopard steps one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing on the empty point just beyond — to eat it. The leopards win by surrounding the tiger so it cannot move; the tiger wins by eating three leopards.": "ヒョウが先手。手元にヒョウがある間は、ヒョウ側は空いている点のどこかに1頭置く。6頭すべて置いたら、ヒョウは線に沿って隣の空き点へ1歩動く。トラ（頂点から始まる）も線に沿って動き、または隣接するヒョウ1頭を飛び越えて — そのすぐ先の空き点に着地して — 食べる。ヒョウはトラを囲んで動けなくすれば勝ち、トラはヒョウを3頭食べれば勝ち。",
+  "Leopards to place: {n}": "置くヒョウ：{n}",
+  "Tap an empty point to place a leopard": "空いている点をタップしてヒョウを置く",
+  "Tiger": "トラ"
 }

@@ -21,6 +21,17 @@ const GLYPHS: Record<string, JSX.Element> = {
       <path d="M18 4c1.5 4 2 9 1.5 15" />
     </g>
   ),
+  'len-choa': (
+    // the Len Choa board: a triangle split by two breadth lines and a central
+    // axis, with the tiger (filled dot) waiting on the apex
+    <g stroke="currentColor" fill="none" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round">
+      <path d="M12 3 L21 21 L3 21 Z" />
+      <path d="M12 3 L12 21" />
+      <path d="M9 9 L15 9" />
+      <path d="M6 15 L18 15" />
+      <circle cx="12" cy="3" r="1.7" fill="currentColor" stroke="none" />
+    </g>
+  ),
   'nine-morris': (
     // three nested squares joined by midpoint spokes, with a mill of three dots
     <g stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinejoin="round">

@@ -59,6 +59,7 @@ eng!(
     TreblecrossWasm, EuclidWasm, Connect6Wasm, SquavaWasm, NotaktoWasm, SquareUpWasm, OrderChaosWasm,
     PinchFiveWasm, NineMorrisWasm, QuadlineWasm, OwareWasm, YGameWasm, BaghchalWasm, ClimbWasm,
     WorldThreesWasm, GaleWasm, SlimetrailWasm, ToadsFrogsWasm, PawnDuelWasm, StrandWasm,
+    LenChoaWasm,
 );
 
 // Ladders, weak -> strong. STD for most games; LIGHT caps playouts for the
@@ -150,6 +151,8 @@ fn games() -> Vec<Game> {
         g("pawn-duel", STD, || Box::new(PawnDuelWasm::new(8, 6, 1, 1)) as Box<dyn Eng>),
         // strand: move-then-remove-a-tile (Trails family), Classic 7×7.
         g("strand", STD, || Box::new(StrandWasm::new(7, 7)) as Box<dyn Eng>),
+        // len-choa is asymmetric: seat 0 = leopards (place first), seat 1 = tiger.
+        g("len-choa", STD, || Box::new(LenChoaWasm::new()) as Box<dyn Eng>),
     ]
 }
 

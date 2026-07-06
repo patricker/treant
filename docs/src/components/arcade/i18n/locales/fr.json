@@ -535,5 +535,21 @@
   "Every turn has TWO parts. First step your pawn one square in any of the 8 directions onto a remaining tile. Then remove ANY empty tile you like, anywhere on the board — it becomes a permanent hole no pawn can enter. Strand your opponent so their pawn has no square to step to, and you win.": "Chaque tour a DEUX parties. Déplace d’abord ton pion d’une case dans l’une des 8 directions vers une case restante. Retire ensuite N’IMPORTE QUELLE case vide, où tu veux sur le plateau — elle devient un trou permanent qu’aucun pion ne peut franchir. Isole ton adversaire pour que son pion n’ait plus aucune case où avancer, et tu gagnes.",
   "🏝️ Marooned! You had nowhere to step — {winner} wins.": "🏝️ Isolé ! Tu n’avais nulle part où avancer — {winner} gagne.",
   "🏝️ Marooned! {loser} had nowhere to step — you win! 🎉": "🏝️ Isolé ! {loser} n’avait nulle part où avancer — tu gagnes ! 🎉",
-  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ Isolé ! {loser} n’avait nulle part où avancer — {winner} gagne."
+  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ Isolé ! {loser} n’avait nulle part où avancer — {winner} gagne.",
+  "🐅 Feast! The tiger ate three leopards — {winner} wins!": "🐅 Festin ! Le tigre a mangé trois léopards — {winner} gagne !",
+  "🐅 Feast! The tiger ate three leopards — you lose.": "🐅 Festin ! Le tigre a mangé trois léopards — tu perds.",
+  "🐅 Feast! You ate three leopards — you win! 🎉": "🐅 Festin ! Tu as mangé trois léopards — tu gagnes ! 🎉",
+  "🐆 Cornered! The tiger can’t move — {winner} win.": "🐆 Acculé ! Le tigre ne peut plus bouger — {winner} gagnent.",
+  "🐆 Cornered! The tiger can’t move — you win! 🎉": "🐆 Acculé ! Le tigre ne peut plus bouger — tu gagnes ! 🎉",
+  "🐆 Cornered! Your tiger can’t move — you lose.": "🐆 Acculé ! Ton tigre ne peut plus bouger — tu perds.",
+  "A Thai tiger hunt on a 10-point triangle. Leopards move first: while leopards remain in hand, drop one on any empty point; once all six are placed, step a leopard one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing just beyond — to eat it. The leopards win by cornering the tiger so it cannot move; the tiger wins by eating three leopards.": "Une chasse au tigre thaïlandaise sur un triangle de 10 points. Les léopards jouent en premier : tant qu'il reste des léopards en main, posez-en un sur n'importe quel point vide ; une fois les six posés, déplacez un léopard d'un point le long d'une ligne vers un voisin vide. Le tigre (qui commence au sommet) se déplace aussi le long d'une ligne, ou saute par-dessus un seul léopard adjacent — en atterrissant juste au-delà — pour le manger. Les léopards gagnent en acculant le tigre de sorte qu'il ne puisse plus bouger ; le tigre gagne en mangeant trois léopards.",
+  "A Thai tiger hunt: six leopards try to corner one tiger before it eats three of them.": "Une chasse au tigre thaïlandaise : six léopards tentent d'acculer un tigre avant qu'il n'en mange trois.",
+  "Len Choa": "Len Choa",
+  "leopard": "léopard",
+  "Leopards": "Léopards",
+  "Leopards eaten: {n}": "Léopards mangés : {n}",
+  "Leopards move first. While leopards remain in hand, the leopard player drops one on any empty point; once all six are placed, a leopard steps one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing on the empty point just beyond — to eat it. The leopards win by surrounding the tiger so it cannot move; the tiger wins by eating three leopards.": "Les léopards jouent en premier. Tant qu'il reste des léopards en main, le joueur des léopards en pose un sur n'importe quel point vide ; une fois les six posés, un léopard se déplace d'un point le long d'une ligne vers un voisin vide. Le tigre (qui commence au sommet) se déplace aussi le long d'une ligne, ou saute par-dessus un seul léopard adjacent — en atterrissant sur le point vide juste au-delà — pour le manger. Les léopards gagnent en encerclant le tigre pour qu'il ne puisse plus bouger ; le tigre gagne en mangeant trois léopards.",
+  "Leopards to place: {n}": "Léopards à poser : {n}",
+  "Tap an empty point to place a leopard": "Touchez un point vide pour poser un léopard",
+  "Tiger": "Tigre"
 }

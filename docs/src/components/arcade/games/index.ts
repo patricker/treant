@@ -39,6 +39,7 @@ import { toadsFrogs } from './toadsfrogs';
 import { subtractSquare } from './subtractsquare';
 import { euclid } from './euclid';
 import { baghchal } from './baghchal';
+import { lenChoa } from './lenchoa';
 import { worldThrees } from './worldthrees';
 import type { GameDefinition } from '../gameTypes';
 
@@ -63,6 +64,7 @@ export const GAMES: GameDefinition[] = [
   amazons,
   foxHounds,
   baghchal,
+  lenChoa,
   reversi,
   antiReversi,
   hex,

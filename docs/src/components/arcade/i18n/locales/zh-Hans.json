@@ -535,5 +535,21 @@
   "Every turn has TWO parts. First step your pawn one square in any of the 8 directions onto a remaining tile. Then remove ANY empty tile you like, anywhere on the board — it becomes a permanent hole no pawn can enter. Strand your opponent so their pawn has no square to step to, and you win.": "每个回合分为两步。首先将你的棋子沿8个方向之一移动一格到一个剩余的格子上。然后移除棋盘上任意一个你喜欢的空格子——它会变成任何棋子都无法进入的永久洞。让对手的棋子无处可走而被困，你就获胜。",
   "🏝️ Marooned! You had nowhere to step — {winner} wins.": "🏝️ 被困孤岛！你无处可走——{winner}获胜。",
   "🏝️ Marooned! {loser} had nowhere to step — you win! 🎉": "🏝️ 被困孤岛！{loser}无处可走——你获胜！🎉",
-  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ 被困孤岛！{loser}无处可走——{winner}获胜。"
+  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ 被困孤岛！{loser}无处可走——{winner}获胜。",
+  "🐅 Feast! The tiger ate three leopards — {winner} wins!": "🐅 大餐！老虎吃掉了三只豹子 — {winner}获胜！",
+  "🐅 Feast! The tiger ate three leopards — you lose.": "🐅 大餐！老虎吃掉了三只豹子 — 你输了。",
+  "🐅 Feast! You ate three leopards — you win! 🎉": "🐅 大餐！你吃掉了三只豹子 — 你赢了！🎉",
+  "🐆 Cornered! The tiger can’t move — {winner} win.": "🐆 被困住了！老虎无法移动 — {winner}获胜。",
+  "🐆 Cornered! The tiger can’t move — you win! 🎉": "🐆 被困住了！老虎无法移动 — 你赢了！🎉",
+  "🐆 Cornered! Your tiger can’t move — you lose.": "🐆 被困住了！你的老虎无法移动 — 你输了。",
+  "A Thai tiger hunt on a 10-point triangle. Leopards move first: while leopards remain in hand, drop one on any empty point; once all six are placed, step a leopard one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing just beyond — to eat it. The leopards win by cornering the tiger so it cannot move; the tiger wins by eating three leopards.": "在十个点的三角形棋盘上进行的泰国猎虎游戏。豹子先走：只要手中还有豹子，就在任意空点上放下一只；六只全部放好后，将一只豹子沿着线移动一步到相邻的空点。老虎（从顶点开始）也沿着线移动，或跳过一只相邻的豹子 — 落在紧邻其后的空点上 — 把它吃掉。豹子把老虎围困到无法移动即获胜；老虎吃掉三只豹子即获胜。",
+  "A Thai tiger hunt: six leopards try to corner one tiger before it eats three of them.": "泰国猎虎游戏：六只豹子设法围困一只老虎，抢在它吃掉其中三只之前。",
+  "Len Choa": "Len Choa",
+  "leopard": "豹子",
+  "Leopards": "豹子",
+  "Leopards eaten: {n}": "已吃掉的豹子：{n}",
+  "Leopards move first. While leopards remain in hand, the leopard player drops one on any empty point; once all six are placed, a leopard steps one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing on the empty point just beyond — to eat it. The leopards win by surrounding the tiger so it cannot move; the tiger wins by eating three leopards.": "豹子先走。只要手中还有豹子，豹方就在任意空点上放下一只；六只全部放好后，一只豹子沿着线移动一步到相邻的空点。老虎（从顶点开始）也沿着线移动，或跳过一只相邻的豹子 — 落在紧邻其后的空点上 — 把它吃掉。豹子把老虎围住使其无法移动即获胜；老虎吃掉三只豹子即获胜。",
+  "Leopards to place: {n}": "待放置的豹子：{n}",
+  "Tap an empty point to place a leopard": "点按一个空点来放置豹子",
+  "Tiger": "老虎"
 }
