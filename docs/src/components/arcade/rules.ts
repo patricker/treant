@@ -2,7 +2,7 @@
 // prefers a game's own `rules` field, then this map, then the short blurb.
 export const RULES: Record<string, string> = {
   'connect-four': 'Take turns dropping a disc into a column; it falls to the lowest empty slot. First to line up four of your colour in a row — across, down, or diagonally — wins.',
-  'pop-out': 'Like Connect Four, but on your turn you may instead POP one of your own discs out of the bottom of a column — the whole stack above it drops one slot. First to line up four of your colour wins; beware, a pop can even complete your opponent’s line.',
+  'pop-out': 'Like Connect Four, but on your turn you may instead POP one of your own discs out of the bottom of a column — the whole stack above it drops one slot. First to line up four of your colour wins; beware, a pop can even complete your opponent’s line. A completely full board with no line is a draw — pop a disc to keep the game alive.',
   'cylinder-four': 'Connect Four wrapped into a tube: the left and right edges are joined, so a row of four can run right off one side and continue on the other. First to line up four of your colour — across (even around the seam), down, or diagonally — wins.',
   'tic-tac-toe': 'Take turns marking an empty square. First to get your mark three-in-a-row (across, down, or diagonally) wins. With the knobs you can grow the board and the line length.',
   shift: 'Phase one: take turns placing your pieces. Once everyone has placed all their pieces, phase two begins — slide one of your pieces into an empty neighbouring cell each turn. Make a line to win.',
@@ -43,7 +43,7 @@ export const RULES: Record<string, string> = {
   domineering: 'You and your opponent place dominoes on the grid, but you place yours vertically and they place theirs horizontally. The first player who cannot fit a domino loses.',
   cram: 'Take turns placing a domino on any two free side-by-side cells — vertical or horizontal, your choice (unlike Domineering, both players may use both). The first player who cannot fit a domino loses.',
   amazons: 'Move one of your amazons like a chess queen (any distance in a straight line), then from its new square shoot an arrow the same way. The arrow burns its square forever. Trap your opponent to win.',
-  'fox-hounds': 'You are the lone Fox and move one square diagonally in any direction; the four Hounds move one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.',
+  'fox-hounds': 'You are the lone Fox and move one square diagonally in any direction; a wall of Hounds moves one square diagonally forward only. The Fox wins by slipping past to the far row; the Hounds win by trapping it.',
   'bagh-chal': 'Goats move first. While goats remain in hand, place one goat on any empty point; once all are placed, step a goat one point along a line to an empty neighbour. Tigers step along a line too, or jump an adjacent goat — landing just beyond — to capture it. Tigers win by eating enough goats; goats win by blocking every tiger so none can move.',
   pig: 'Roll the die to build up a running total, then choose to bank it — but roll a 1 and you lose the whole turn’s points. First to reach the target score wins. Press your luck!',
   'two-dice-pig': 'Pig with two dice. On your turn keep rolling both dice to add their total to your running turn score, then bank it. But roll a single 1 and you lose the whole turn’s points; roll two 1s (snake eyes) and you also lose your entire banked score. First to the target wins.',

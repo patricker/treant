@@ -88,7 +88,7 @@ export const pig: GameDefinition = {
     { label: 'Classic (100)', emoji: '⭐', params: { numPlayers: 2, target: 100 } },
     { label: 'Quick (50)', emoji: '⚡', params: { numPlayers: 2, target: 50 } },
     { label: '4-Player', emoji: '🎉', params: { numPlayers: 4, target: 100 } },
-    { label: '6-Player Frenzy', emoji: '🤯', params: { numPlayers: 6, target: 100 } },
+    { label: '6-Player Frenzy', emoji: '🎊', params: { numPlayers: 6, target: 100 } },
     { label: 'Sprint (20)', emoji: '🏎️', params: { numPlayers: 2, target: 20 } },
     { label: 'Marathon (200)', emoji: '🤯', params: { numPlayers: 2, target: 200 } },
   ],
@@ -107,13 +107,13 @@ export const twoDicePig: GameDefinition = {
   name: 'Two-Dice Pig',
   icon: '🎲',
   blurb: 'Two dice, double the pace — but snake eyes eat your whole score.',
-  difficulty: pig.difficulty, // same press-your-luck shape as classic Pig (see plans/ai-calibration-results.txt)
+  difficulty: pig.difficulty, // same press-your-luck shape as classic Pig (see plans/ai-calibration-results.md)
   defaultParams: { numPlayers: 2, target: 100 },
   presets: [
     { label: 'Classic (100)', emoji: '⭐', params: { numPlayers: 2, target: 100 } },
     { label: 'Quick (50)', emoji: '⚡', params: { numPlayers: 2, target: 50 } },
     { label: '4-Player', emoji: '🎉', params: { numPlayers: 4, target: 100 } },
-    { label: '6-Player Frenzy', emoji: '🤯', params: { numPlayers: 6, target: 100 } },
+    { label: '6-Player Frenzy', emoji: '🎊', params: { numPlayers: 6, target: 100 } },
     { label: 'Sprint (20)', emoji: '🏎️', params: { numPlayers: 2, target: 20 } },
     { label: 'Marathon (200)', emoji: '🤯', params: { numPlayers: 2, target: 200 } },
   ],
@@ -132,13 +132,13 @@ export const bigPig: GameDefinition = {
   name: 'Big Pig',
   icon: '🐷',
   blurb: 'Doubles pay double and snake eyes pay 25. Greed, rewarded. Mostly.',
-  difficulty: pig.difficulty, // same press-your-luck shape as classic Pig (see plans/ai-calibration-results.txt)
+  difficulty: pig.difficulty, // same press-your-luck shape as classic Pig (see plans/ai-calibration-results.md)
   defaultParams: { numPlayers: 2, target: 100 },
   presets: [
     { label: 'Classic (100)', emoji: '⭐', params: { numPlayers: 2, target: 100 } },
     { label: 'Quick (50)', emoji: '⚡', params: { numPlayers: 2, target: 50 } },
     { label: '4-Player', emoji: '🎉', params: { numPlayers: 4, target: 100 } },
-    { label: '6-Player Frenzy', emoji: '🤯', params: { numPlayers: 6, target: 100 } },
+    { label: '6-Player Frenzy', emoji: '🎊', params: { numPlayers: 6, target: 100 } },
     { label: 'Sprint (20)', emoji: '🏎️', params: { numPlayers: 2, target: 20 } },
     { label: 'Marathon (200)', emoji: '🤯', params: { numPlayers: 2, target: 200 } },
   ],

@@ -85,7 +85,7 @@ export const mancala: GameDefinition = {
     { label: 'Kalah', emoji: '⭐', params: { numPlayers: 2, pits: 6, stones: 4 } },
     { label: 'Quick', emoji: '⚡', params: { numPlayers: 2, pits: 3, stones: 3 } },
     { label: '4-Player Ring', emoji: '🎉', params: { numPlayers: 4, pits: 4, stones: 3 } },
-    { label: 'Big 4-Player', emoji: '🤯', params: { numPlayers: 4, pits: 8, stones: 6 } },
+    { label: 'Big 4-Player', emoji: '🔲', params: { numPlayers: 4, pits: 8, stones: 6 } },
     { label: 'Micro', emoji: '🤏', params: { numPlayers: 2, pits: 2, stones: 1 } },
     { label: 'Overflow', emoji: '🤯', params: { numPlayers: 4, pits: 8, stones: 8 } },
   ],

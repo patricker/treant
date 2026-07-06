@@ -18,7 +18,7 @@ export const gomoku: GameDefinition = {
     { label: 'Classic 13×13', emoji: '⭐', params: { numPlayers: 2, cols: 13, rows: 13, k: 5 } },
     { label: 'Big 15×15', emoji: '🔲', params: { numPlayers: 2, cols: 15, rows: 15, k: 5 } },
     { label: 'Quick 9×9', emoji: '⚡', params: { numPlayers: 2, cols: 9, rows: 9, k: 5 } },
-    { label: '4-Player 15×15', emoji: '🤯', params: { numPlayers: 4, cols: 15, rows: 15, k: 5 } },
+    { label: '4-Player 15×15', emoji: '🎉', params: { numPlayers: 4, cols: 15, rows: 15, k: 5 } },
     { label: '8-in-a-row', emoji: '🤯', params: { numPlayers: 2, cols: 15, rows: 15, k: 8 } },
   ],
   knobs: [

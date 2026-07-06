@@ -120,7 +120,7 @@ export const shift: GameDefinition = {
     { label: 'Big', emoji: '🔲', params: { numPlayers: 2, cols: 5, rows: 4, k: 4, pieces: 4 } },
     { label: '3-Player', emoji: '👨‍👩‍👦', params: { numPlayers: 3, cols: 4, rows: 4, k: 3, pieces: 2 } },
     { label: '6-Player Scrum', emoji: '🤯', params: { numPlayers: 6, cols: 6, rows: 6, k: 3, pieces: 2 } },
-    { label: '1-piece duel', emoji: '🏎️', params: { numPlayers: 2, cols: 3, rows: 3, k: 2, pieces: 1 } },
+    { label: '1-Piece Duel', emoji: '🏎️', params: { numPlayers: 2, cols: 3, rows: 3, k: 2, pieces: 1 } },
   ],
   knobs: [
     { key: 'cols', label: 'Width', min: 2, max: 10, step: 1 },

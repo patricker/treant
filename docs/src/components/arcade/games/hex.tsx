@@ -125,18 +125,19 @@ export const hex: GameDefinition = {
   icon: '⬡',
   blurb: 'Connect your two sides with one unbroken chain of stones. It can never be a draw.',
   rules:
-    'Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw. Pie rule: to blunt the first-move advantage, the second player may answer the opening stone with a single Swap — claiming that stone as their own — instead of placing.',
+    'Players take turns placing one stone on any empty hexagon. Red wins by linking the top edge to the bottom edge with a connected chain of red stones; Gold wins by linking the left edge to the right edge. Stones are never moved or captured, and exactly one player always completes a connection — Hex can never be a draw. With the pie rule on, the second player may answer the opening stone with a single Swap — claiming that stone as their own — instead of placing, which blunts the first-move advantage.',
   difficulty: {
     easy: { playouts: 8, topK: 6, temp: 3 },
     medium: { playouts: 100, topK: 4, temp: 1 },
     hard: { playouts: 2000, topK: 1, temp: 0 },
   },
-  defaultParams: { numPlayers: 2, size: 7, pie: 1 },
+  defaultParams: { numPlayers: 2, size: 7, pie: 0 },
   presets: [
-    { label: 'Classic 7×7', emoji: '⭐', params: { numPlayers: 2, size: 7 } },
-    { label: 'Small 5×5', emoji: '🔳', params: { numPlayers: 2, size: 5 } },
-    { label: 'Big 9×9', emoji: '🔲', params: { numPlayers: 2, size: 9 } },
-    { label: 'Mega 11×11', emoji: '🤯', params: { numPlayers: 2, size: 11 } },
+    { label: 'Classic 7×7', emoji: '⭐', params: { numPlayers: 2, size: 7, pie: 0 } },
+    { label: 'Small 5×5', emoji: '🔳', params: { numPlayers: 2, size: 5, pie: 0 } },
+    { label: 'Big 9×9', emoji: '🔲', params: { numPlayers: 2, size: 9, pie: 0 } },
+    { label: 'Mega 11×11', emoji: '🤯', params: { numPlayers: 2, size: 11, pie: 0 } },
+    { label: 'Tournament', emoji: '♻️', params: { numPlayers: 2, size: 7, pie: 1 } },
   ],
   knobs: [
     { key: 'size', label: 'Size', min: 5, max: 11, step: 1 },

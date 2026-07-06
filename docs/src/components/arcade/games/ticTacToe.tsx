@@ -80,7 +80,7 @@ export const ticTacToe: GameDefinition = {
     { label: '5 in a row', emoji: '🧠', params: { cols: 9, rows: 9, k: 5, numPlayers: 2 } },
     { label: 'Big Board', emoji: '🔲', params: { cols: 6, rows: 6, k: 4, numPlayers: 2 } },
     { label: '3-Player', emoji: '👨‍👩‍👦', params: { cols: 6, rows: 6, k: 4, numPlayers: 3 } },
-    { label: '6-Player Chaos', emoji: '🤯', params: { cols: 10, rows: 10, k: 4, numPlayers: 6 } },
+    { label: '6-Player Chaos', emoji: '🎉', params: { cols: 10, rows: 10, k: 4, numPlayers: 6 } },
     { label: 'Speed Duel 2×10', emoji: '🏎️', params: { cols: 10, rows: 2, k: 2, numPlayers: 2 } },
     { label: 'Land War 15×15', emoji: '🤯', params: { cols: 15, rows: 15, k: 10, numPlayers: 6 } },
   ],

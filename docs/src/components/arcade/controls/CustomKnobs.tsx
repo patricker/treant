@@ -15,7 +15,7 @@ export default function CustomKnobs({
   return (
     <div className={styles.knobs}>
       {knobs.map((kn) => {
-        const v = params[kn.key];
+        const v = params[kn.key] ?? kn.min;
         const set = (nv: number) =>
           onChange({ ...params, [kn.key]: Math.max(kn.min, Math.min(kn.max, nv)) });
         return (
