@@ -411,6 +411,22 @@ pass-and-play blackout/per-seat-view primitive built into the shared session +
   what `seat` may know — its own secret plus all public info, **never** another
   seat's secret (reveal both only at game over). `getBoard()` (the fallback for
   perfect-information games) still only ever exposes the current seat's view.
+- **Seating precondition (enforced).** The viewSeat/handoff logic is only correct
+  when **at most one human** shares the table with AI. The three supported
+  line-ups: (1) **all-human** — pass-and-play blackouts between every seat;
+  (2) **all-AI (watch)** — `viewSeatOf` shows the current mover, no blackouts;
+  (3) **exactly-one-human vs AI** — the lone human's *fixed* seat is shown even on
+  the AI's turn. A line-up with **2+ humans AND any AI seat** (only possible at
+  `numPlayers ≥ 3`) is **unsupported and rejected**: `useGameSession` throws at
+  session start (gated behind `hiddenInfo`, so perfect-info games never hit it).
+  Left unguarded it would silently skip the between-human blackouts *and* leak
+  seat-0's secret to the other human, because `viewSeatOf` returns a single fixed
+  seat (`humans[0]`) and `maybeHandoff` only fires when **every** seat is human.
+  A future multi-human-plus-AI hidden game (Salvo/Ambush at 3p+) must first
+  generalize both: a **per-current-human** view (each human sees only their own
+  seat, keyed off the mover) and **blackouts between human turns even when AI
+  seats are interleaved** (raise the handoff whenever control passes from one
+  human to a *different* human, skipping only human→AI→same-human runs).
 - **Blackout handoff.** In pass-and-play (every seat human), `GamePlay` raises a
   fully opaque, **full-viewport** blackout (`position:fixed; inset:0;` z-index
   above the nav) before each seat's turn: "Hand the phone to {name} — nobody else

@@ -69,6 +69,10 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 
 function CodeDigits({ digits, len, hidden, active }: { digits: string; len: number; hidden?: boolean; active?: boolean }) {
   const chars = digits.split('');
+  // The cursor highlights the next slot to fill (chars.length), but clamps to the
+  // final slot so it stays visible once the code is complete (chars.length === len
+  // would otherwise point past the last cell and vanish right as you submit).
+  const cursor = Math.min(chars.length, len - 1);
   return (
     <div className={styles.bcCode}>
       {Array.from({ length: len }, (_, i) => {
@@ -77,7 +81,7 @@ function CodeDigits({ digits, len, hidden, active }: { digits: string; len: numb
         return (
           <div
             key={i}
-            className={`${styles.bcDigit} ${!filled ? styles.bcDigitEmpty : ''} ${active && i === chars.length ? styles.bcDigitActive : ''} ${hidden ? styles.bcHidden : ''}`}
+            className={`${styles.bcDigit} ${!filled ? styles.bcDigitEmpty : ''} ${active && i === cursor ? styles.bcDigitActive : ''} ${hidden ? styles.bcHidden : ''}`}
           >
             {filled ? (hidden ? '•' : d) : ''}
           </div>

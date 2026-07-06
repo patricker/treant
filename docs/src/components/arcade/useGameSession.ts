@@ -43,6 +43,8 @@ export function useGameSession(
   // Cells changed by the most recent move (placement + any flips/captures) —
   // the board marks them so the AI's reply is findable at a glance. Diffed
   // here at move time (not in the board) so it survives unrelated re-renders.
+  // Hidden-info games (Bulls & Cows) deliberately ignore this: their board is a
+  // serialized string, not a cell grid, so the per-mover view diff is dead data.
   const [lastCells, setLastCells] = useState<number[]>([]);
   const [canUndo, setCanUndo] = useState(false);
   // Move log for undo: seat captured BEFORE the move applies. Undo replays the
@@ -161,6 +163,25 @@ export function useGameSession(
   }, [def, syncBoard, finish, playMoveSound]);
 
   const start = useCallback(() => {
+    // Hidden-info seating precondition (see ARCADE.md §7b). The viewSeat/handoff
+    // logic is only correct when AT MOST ONE human shares the table with AI:
+    //   • all-human      → pass-and-play blackouts between every seat;
+    //   • all-AI (watch) → viewSeatOf shows the current mover, no blackouts;
+    //   • exactly-one-human vs AI → the lone human sees only their fixed seat.
+    // A future 2+-human game with any AI seat (numPlayers ≥ 3) would silently
+    // skip the between-human blackouts AND leak seat-0's secret to the other
+    // human. Unreachable today (Bulls & Cows is 2p) but the primitive is built
+    // for reuse (Salvo/Ambush) — fail loud at dev time rather than leak later.
+    // Gated behind def.hiddenInfo so perfect-information games never evaluate it.
+    if (def.hiddenInfo) {
+      const humans = seatsRef.current.filter((s) => s === 'human').length;
+      const total = seatsRef.current.length;
+      if (humans >= 2 && humans < total) {
+        throw new Error(
+          `hiddenInfo games support all-human, all-AI (watch), or exactly-one-human seating; got ${humans}/${total} humans mixed with AI`,
+        );
+      }
+    }
     genRef.current++; // invalidate any AI turn still pending from a prior game
     if (timerRef.current) {
       clearTimeout(timerRef.current);
