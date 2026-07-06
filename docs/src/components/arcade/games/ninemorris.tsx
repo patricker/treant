@@ -217,6 +217,7 @@ export const nineMorris: GameDefinition = {
 
 export const laskerMorris: GameDefinition = {
   id: 'lasker-morris',
+  variantOf: 'nine-morris',
   name: 'Lasker Morris',
   icon: '♟️',
   blurb: "The chess champion's morris: ten men, and you may slide before you finish placing.",

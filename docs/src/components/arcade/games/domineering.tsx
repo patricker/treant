@@ -151,6 +151,7 @@ export const domineering: GameDefinition = {
 // flag on). Both players may place a domino either way; last to fit one wins.
 export const cram: GameDefinition = {
   id: 'cram',
+  variantOf: 'domineering',
   name: 'Cram',
   icon: '🀫',
   blurb: 'Dominoes for two — but BOTH of you can place either way. Last to fit one wins.',

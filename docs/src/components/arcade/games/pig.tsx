@@ -103,6 +103,7 @@ export const pig: GameDefinition = {
 
 export const twoDicePig: GameDefinition = {
   id: 'two-dice-pig',
+  variantOf: 'pig',
   noUndo: true, // dice game — replay-based undo would reroll the rolls
   name: 'Two-Dice Pig',
   icon: '🎲',
@@ -128,6 +129,7 @@ export const twoDicePig: GameDefinition = {
 
 export const bigPig: GameDefinition = {
   id: 'big-pig',
+  variantOf: 'pig',
   noUndo: true, // dice game — replay-based undo would reroll the rolls
   name: 'Big Pig',
   icon: '🐷',

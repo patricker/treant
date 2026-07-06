@@ -64,6 +64,7 @@ export const col: GameDefinition = {
 // Snort — Col's mirror twin (Conway): you may not colour next to the ENEMY.
 export const snort: GameDefinition = {
   id: 'snort',
+  variantOf: 'col',
   name: 'Snort',
   icon: '🐂',
   blurb: 'Colour the map — but never next to the enemy. Spread wide, fence them in.',

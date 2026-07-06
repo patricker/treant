@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import type { GameDefinition } from './gameTypes';
 import { GAMES } from './games';
 import { GameIcon } from './icons';
 import { useT } from './i18n';
@@ -8,14 +9,25 @@ import styles from './arcade.module.css';
 
 // Game groupings for the launcher. Every game id must appear in exactly one
 // category — there is no "More" fallback bucket, and scripts/check-categories.mjs
-// fails the build if any id is left uncategorized.
+// fails the build if any id is left uncategorized. Variant children (games that
+// declare `variantOf`) are the exception: they are HIDDEN from the grid and
+// reached via their parent's family expansion, so they do NOT appear here.
 const CATEGORIES: { name: string; ids: string[] }[] = [
-  { name: 'Family classics', ids: ['connect-four', 'pop-out', 'cylinder-four', 'tic-tac-toe', 'reversi', 'anti-reversi', 'dots-and-boxes', 'mancala', 'oware', 'nim', 'quadline'] },
+  { name: 'Family classics', ids: ['connect-four', 'tic-tac-toe', 'reversi', 'dots-and-boxes', 'mancala', 'oware', 'nim', 'quadline'] },
   { name: 'Connect & line', ids: ['hex', 'y', 'gomoku', 'pinch-five', 'connect-six', 'square-up', 'order-chaos', 'treblecross'] },
-  { name: 'Move & capture', ids: ['frontline', 'clobber', 'konane', 'nine-morris', 'lasker-morris', 'amazons', 'fox-hounds', 'bagh-chal', 'first-capture', 'trails', 'joust', 'shift'] },
-  { name: 'Dice & solo', ids: ['pig', 'two-dice-pig', 'big-pig', 'climb', '2048'] },
-  { name: 'Brain-teasers', ids: ['no-tac-toe', 'trap-three', 'chomp', 'wythoff', 'subtract-square', 'euclid', 'mu-torere', 'domineering', 'cram', 'nogo', 'col', 'snort', 'sim'] },
+  { name: 'Move & capture', ids: ['frontline', 'clobber', 'konane', 'nine-morris', 'amazons', 'fox-hounds', 'bagh-chal', 'first-capture', 'trails', 'shift'] },
+  { name: 'Dice & solo', ids: ['pig', 'climb', '2048'] },
+  { name: 'Brain-teasers', ids: ['no-tac-toe', 'trap-three', 'chomp', 'wythoff', 'subtract-square', 'euclid', 'mu-torere', 'domineering', 'nogo', 'col', 'sim'] },
 ];
+
+// Variant children grouped by parent id (declared via `variantOf` on the child
+// GameDefinition). A parent with children renders a "+N" family chip; the
+// children live only inside that expansion, never as flat grid tiles.
+const CHILDREN: Record<string, GameDefinition[]> = {};
+for (const g of GAMES) {
+  if (!g.variantOf) continue;
+  (CHILDREN[g.variantOf] ??= []).push(g);
+}
 
 // Hero gradient + a tiny decorative board motif per game.
 const HERO_BG: Record<string, string> = {
@@ -93,10 +105,101 @@ function HeroArt({ id }: { id: string }) {
   }
 }
 
+// A single game tile (icon + name). Shared by search/recent/category shelves
+// and by family parents + children so every tile reads identically.
+function Tile({
+  g,
+  onPick,
+  t,
+}: {
+  g: GameDefinition;
+  onPick: (id: string) => void;
+  t: (key: string) => string;
+}) {
+  return (
+    <button className={styles.stripTile} onClick={() => onPick(g.id)}>
+      <span className={styles.stripIcon}>
+        <GameIcon id={g.id} size={32} />
+      </span>
+      <span className={styles.stripName}>{t(g.name)}</span>
+    </button>
+  );
+}
+
+// The expansion renderer seam, dispatched ON CHILD COUNT: small families expand
+// inline (a row of child tiles directly below the parent); large families will
+// get a bottom sheet once one exists.
+function renderFamily(
+  parent: GameDefinition,
+  kids: GameDefinition[],
+  onPick: (id: string) => void,
+  t: (key: string, params?: Record<string, string | number>) => string,
+) {
+  // TODO(draughts): families of ≥4 (the draughts family, up to 9 tiles) should
+  // open a bottom sheet instead of an inline row. None exist yet — fall back to
+  // the inline row so the seam is exercised the day draughts lands.
+  return (
+    <div className={styles.familyKids}>
+      <div className={styles.familyCaption}>
+        {t('More ways to play {name}', { name: t(parent.name) })}
+      </div>
+      <div className={styles.familyKidStrip}>
+        {kids.map((k) => (
+          <Tile key={k.id} g={k} onPick={onPick} t={t} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// A parent tile plus a "+N" chip that expands its variant family. Tapping the
+// tile body plays the parent (one tap, unchanged); tapping the chip toggles the
+// expansion. The chip carries aria-expanded and a descriptive accessible name.
+function FamilyTile({
+  parent,
+  kids,
+  expanded,
+  onToggle,
+  onPick,
+  t,
+}: {
+  parent: GameDefinition;
+  kids: GameDefinition[];
+  expanded: boolean;
+  onToggle: () => void;
+  onPick: (id: string) => void;
+  t: (key: string, params?: Record<string, string | number>) => string;
+}) {
+  const label = t('Show {n} more ways to play {name}', {
+    n: kids.length,
+    name: t(parent.name),
+  });
+  return (
+    <div className={expanded ? styles.familyOpen : styles.family}>
+      <div className={styles.familyHead}>
+        <Tile g={parent} onPick={onPick} t={t} />
+        <button
+          type="button"
+          className={styles.familyChip}
+          aria-expanded={expanded}
+          aria-label={label}
+          title={label}
+          onClick={onToggle}
+        >
+          {expanded ? '×' : `+${kids.length}`}
+        </button>
+      </div>
+      {expanded && renderFamily(parent, kids, onPick, t)}
+    </div>
+  );
+}
+
 export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
   const { t } = useT();
   const [featured, setFeatured] = useState(0);
   const [recent, setRecent] = useState<string[]>([]);
+  // Which variant family is expanded (only one at a time — simplest state).
+  const [openFamily, setOpenFamily] = useState<string | null>(null);
   // Auto-rotation stops FOR GOOD on the first interaction with the hero
   // (moving targets are hostile once someone is reading), and never runs for
   // users who ask the OS for reduced motion.
@@ -112,6 +215,16 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
     }, 6000);
     return () => clearInterval(id);
   }, []);
+
+  // Escape collapses an expanded family (second chip tap also collapses).
+  useEffect(() => {
+    if (!openFamily) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenFamily(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [openFamily]);
 
   const stopRotation = () => (pausedRef.current = true);
   const step = (d: number) => {
@@ -217,14 +330,25 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
             <div key={cat.name}>
               <div className={styles.moreLabel}>{t(cat.name)}</div>
               <div className={styles.gameStrip}>
-                {games.map((g) => (
-                  <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
-                    <span className={styles.stripIcon}>
-                      <GameIcon id={g.id} size={32} />
-                    </span>
-                    <span className={styles.stripName}>{t(g.name)}</span>
-                  </button>
-                ))}
+                {games.map((g) => {
+                  const kids = CHILDREN[g.id];
+                  if (!kids || kids.length === 0) {
+                    return <Tile key={g.id} g={g} onPick={onPick} t={t} />;
+                  }
+                  return (
+                    <FamilyTile
+                      key={g.id}
+                      parent={g}
+                      kids={kids}
+                      expanded={openFamily === g.id}
+                      onToggle={() =>
+                        setOpenFamily((cur) => (cur === g.id ? null : g.id))
+                      }
+                      onPick={onPick}
+                      t={t}
+                    />
+                  );
+                })}
               </div>
             </div>
           );

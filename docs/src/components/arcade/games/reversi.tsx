@@ -78,6 +78,7 @@ export const reversi: GameDefinition = {
 
 export const antiReversi: GameDefinition = {
   id: 'anti-reversi',
+  variantOf: 'reversi',
   name: 'Anti-Reversi',
   icon: '🙃',
   blurb: 'Reversi upside-down: flip everything at the ENEMY — fewest discs wins.',

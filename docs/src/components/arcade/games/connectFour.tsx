@@ -125,6 +125,7 @@ export const connectFour: GameDefinition = {
 
 export const popOut: GameDefinition = {
   id: 'pop-out',
+  variantOf: 'connect-four',
   name: 'Pop Out',
   icon: '⤵️',
   blurb: 'Connect Four where discs can leave: pop your own bottom disc and watch the column fall.',
@@ -153,6 +154,7 @@ export const popOut: GameDefinition = {
 
 export const cylinderFour: GameDefinition = {
   id: 'cylinder-four',
+  variantOf: 'connect-four',
   name: 'Cylinder Four',
   icon: '🛢️',
   blurb: 'Connect Four on a tube — lines wrap around the edges.',

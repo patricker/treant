@@ -84,6 +84,11 @@ export interface BoardProps {
 
 export interface GameDefinition {
   id: string;
+  /** Parent game id this is a variant of. Variant children are hidden from the
+   *  launcher grid and reached via the parent tile's family expansion (a "+N"
+   *  chip). They remain individually searchable and playable. The parent must
+   *  be a categorized, non-variant game (no variantOf chains). */
+  variantOf?: string;
   name: string;
   icon: string;
   blurb: string;

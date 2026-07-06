@@ -74,6 +74,7 @@ export const trails: GameDefinition = {
 
 export const joust: GameDefinition = {
   id: 'joust',
+  variantOf: 'trails',
   name: 'Joust',
   icon: '🐴',
   blurb: 'Knights on a burning board: leap, scorch the square you left, outlast your rival.',

@@ -257,6 +257,93 @@
   color: var(--arc-ink);
 }
 
+/* ---------- Variant families ---------- */
+/* Collapsed: a normal grid cell holding the parent tile with a "+N" chip badged
+   in its top-right corner. Expanded: the family unit spans the whole shelf row
+   and drops an inline row of child tiles directly below the parent. */
+.family {
+  position: relative;
+}
+.family .stripTile {
+  width: 100%;
+  height: 100%;
+}
+.familyHead {
+  position: relative;
+  height: 100%;
+}
+.familyChip {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 999px;
+  background: var(--arc-accent);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255, 59, 92, 0.32);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.familyChip:hover {
+  box-shadow: 0 4px 12px rgba(255, 59, 92, 0.42);
+}
+.familyOpen {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--arc-soft);
+}
+.familyOpen .familyHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: auto;
+}
+.familyOpen .familyHead .stripTile {
+  width: 118px;
+  height: auto;
+  flex: 0 0 auto;
+}
+/* Open: the chip becomes an inline control beside the parent tile. */
+.familyOpen .familyChip {
+  position: static;
+}
+.familyKids {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.familyCaption {
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  font-weight: 800;
+  opacity: 0.55;
+}
+.familyKidStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.familyKidStrip .stripTile {
+  width: 118px;
+  flex: 0 0 auto;
+}
+
 /* ---------- Setup ---------- */
 .setup {
   display: flex;
@@ -562,6 +649,7 @@
 .chip:active,
 .stepper:active,
 .heroPlay:active,
+.familyChip:active,
 .g2048Arrow:active:not(:disabled) {
   transform: scale(0.96);
 }
@@ -1774,6 +1862,28 @@
 .neon .stripName {
   color: var(--neon-tx);
   font-weight: 500;
+}
+/* Variant families on the neon skin: the chip is a solid accent pill (dark text
+   for contrast, like .playBtn), the open panel picks up the card/line chrome. */
+.neon .familyChip {
+  background: var(--neon-ac);
+  color: #05060a;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--neon-ac) 45%, transparent);
+}
+.neon[data-accent='stark'] .familyChip {
+  color: #000;
+}
+.neon .familyChip:hover {
+  box-shadow: 0 0 18px color-mix(in srgb, var(--neon-ac) 60%, transparent);
+}
+.neon .familyOpen {
+  background: var(--neon-card);
+  border: 1px solid var(--neon-line);
+}
+.neon .familyCaption {
+  color: var(--neon-ac);
+  opacity: 0.85;
+  letter-spacing: 0.12em;
 }
 
 /* ---- shared chrome: titles, nav, buttons ---- */
