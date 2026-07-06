@@ -37,7 +37,14 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 - This is a practical read, **not legal advice** — do a quick trademark search
   before committing to a public name.
 
-## 3. Already shipped — 40 games
+## 3. Already shipped — 56 games (46 visible tiles + 10 family children)
+
+The launcher shows **46 tiles**; 10 named variants ride shared engines as
+**family children** (`variantOf`), expanding inline under a parent tile's
+"+N ▾" chip rather than getting their own shelf slot: Pop Out & Cylinder Four
+(← Connect Four) · Two-Dice Pig & Big Pig (← Pig) · Anti-Reversi (← Reversi) ·
+Lasker Morris (← Nine Men's Morris) · Joust & Strand (← Trails) · Cram
+(← Domineering) · Snort (← Col). 46 visible + 10 children = **56 games**.
 
 **Wave of 2026-07-02:** Pinch-Five (Ninuki-renju: five-in-a-row or capture five
 pairs, 2-4p) · Y (three-sided connection) · Bagh-Chal (tigers vs goats) · Climb (push-your-luck dice mountain) · Nine Men's Morris (place/slide/mill, men + flying knobs) ·
@@ -88,6 +95,42 @@ engine-authoritative legal-target highlights via `BoardProps.legalMoves`),
 CF + TTT share the `treant-games` grid engine; **any "different size / k / players"
 game is already just a preset of that engine** (e.g. Gomoku = TTT 15×15, k=5).
 
+**Wave of 2026-07-05 — variant tiles (Phase 2) + the knob-widening program:**
+Nine named variants that ride existing engines as config-only tiles (the
+Gomoku-on-TicTacToe pattern), each with its own calibration block.
+
+| Game | Mechanic | AI |
+|---|---|---|
+| Snort (← Col) | color a cell never adjacent to an *enemy* color (Col's mirror) | 🏆 |
+| Cram (← Domineering) | impartial dominoes: either player, either orientation | 🏆 |
+| Anti-Reversi (← Reversi) | misère Reversi: **fewest** discs wins (one sign flip) | 💪 |
+| Lasker Morris (← Nine Men's Morris) | 10 men, place-**or**-move each turn | 💪 |
+| Joust (← Trails) | Trails with a knight's-leap move — knights on a burning board | 💪 |
+| Pop Out (← Connect Four) | drop a disc **or** pop your own from the bottom row | 💪 |
+| Cylinder Four (← Connect Four) | Connect Four wrapped around a cylinder (edges join) | 💪 |
+| Two-Dice Pig (← Pig) | two dice; a single 1 skips, snake-eyes wipes your whole score | 🎲 |
+| Big Pig (← Pig) | two dice; doubles score double (and snake-eyes = 25) | 🎲 |
+
+Plus the **Hex pie/swap rule** (first-move balancer, "Tournament ♻" preset;
+default off) and the **knob-widening program** (Phases 0–1): fox-hounds
+Width/Height (8+ hounds), no-tac-toe → 12×12, TTT/Gomoku → 15 & k→8, Wythoff
+size knob, Mancala/Pig/Shift/Connect-Four clamp widening — plus a build-time
+launcher-category guard and a self-play calibration harness per variant.
+
+**Wave of 2026-07-06 — Phase 3:**
+
+| Game | Mechanic | AI |
+|---|---|---|
+| Heap Nim (Nim upgrade) | multi-pile subtraction + max-take & misère flags | 🏆 |
+| Launcher variant families | `variantOf` grouping: 9 variant tiles fold under 7 parents | — |
+| World Threes | ONE engine, the board itself the knob — 8 world 3-in-a-row games (Achi, Tapatan, Shisima, Tant Fant, Nine Holes, Tsoro Yematatu, Picaria, Pong Hau K'i) | 🏆 |
+| Gale (Shannon switching / Bridg-It) | claim lattice edges to connect your two sides; pie rule | 🏆 |
+| Slimetrail | one shared token trailing permanent slime — steer it to YOUR corner | 🏆 |
+| Toads & Frogs (Conway) | 1-D CGT: toads march right, frogs left; step or hop into the gap | 🏆 |
+| Pawn Duel | chess pawns only: double-step, en passant, first promotion wins | 🏆 |
+| Strand (Isolation/Isola) | step one of 8, then remove any empty tile; maroon the foe | 💪 |
+| Len Choa | Thai hunt: 1 tiger jump-captures vs 6 blockading leopards | 🏆 |
+
 ## 4. Legend
 
 - **Fit** (arcade/family appeal): ★ niche · ★★ good · ★★★ great
@@ -102,6 +145,19 @@ game is already just a preset of that engine** (e.g. Gomoku = TTT 15×15, k=5).
 
 A pragmatic sequence — front-load cheap reuse and high-delight new mechanics,
 defer the heavy evaluators.
+
+> **STATUS (2026-07-06): done through Phase 3.** Waves 1–5 below are the
+> *original* roadmap and now read as history: Waves 1–4 have essentially all
+> shipped (see §3), joined by two later program waves — the 2026-07-05 variant
+> tiles + knob-widening and the 2026-07-06 Phase-3 new-engine slate (World
+> Threes, Gale, Slimetrail, Toads & Frogs, Pawn Duel, Strand, Len Choa) plus
+> launcher variant families. Still genuinely pending: Wave 5's heavy deep cuts
+> (Hedge, Tablut, Fanorona, Havannah, Lasca, Halma, Sprouts) plus Greed and
+> Handoff/Quarto. **Phase 4 = Draughts, the flagship** — built as a reusable
+> `draughtslib` (capture-chain generator, flying kings, forced-capture / misère
+> flags) fronting up to 9 named-variant tiles (American ⭐ / Brazilian / Pool /
+> Russian / Spanish / Italian / Frisian / Giveaway 🙃 / International 10×10),
+> per `plans/2026-07-05-knobs-variants-and-new-games.md`.
 
 **Wave 1 — Grid Pack** *(near-free: rule tweaks on the existing grid engine)*
 Order & Chaos · No-Tac-Toe · Trap-Three · Square Up · Connect Six.
@@ -134,35 +190,35 @@ Amazons · Hedge (Quoridor) · Tablut · Fanorona · Havannah · Lasca · Halma 
 ### 6a. Grid line-of-N family — REUSE the `treant-games` grid engine
 *The cheapest additions: place a mark / detect a shape, with a rule twist.*
 
-- **Order & Chaos** · 2p · ★★★ · 🟢 · 💪 · *reuse* — both players may place X *or* O on a 6×6; Order wins on 5-in-a-row, Chaos wins if the board fills with none.
-- **No-Tac-Toe** (← Notakto) · 2p · ★★ · 🟢 · 🏆 · *reuse* — shared mark; completing any 3-in-a-row **loses** (misère). Play 1–3 boards.
-- **Trap-Three** (← Squava) · 2p · ★★ · 🟢 · 🏆 · *reuse* — on 5×5, 4-in-a-row wins but **3-in-a-row loses**; both live at once.
-- **Square Up** (← Square It!) · 2-4p · ★★ · 🟡 · 💪 · *reuse* — place stones; win when four of yours form the corners of *any* square (even tilted).
-- **Connect Six** · 2p · ★★ · 🟡 · 💪 · *reuse* — place **two** stones per turn (one on the first move); first to six-in-a-row. Locality-prune to tame branching.
-- **Pinch-Five** (← Pente; PD *Ninuki-renju*) · 2-4p · ★★ · 🟡 · 💪 · *reuse* — five-in-a-row **or** capture five flanked pairs (sandwich exactly two).
+- **Order & Chaos** · 2p · ★★★ · 🟢 · 💪 · *reuse* — ✅ **SHIPPED** — both players may place X *or* O on a 6×6; Order wins on 5-in-a-row, Chaos wins if the board fills with none.
+- **No-Tac-Toe** (← Notakto) · 2p · ★★ · 🟢 · 🏆 · *reuse* — ✅ **SHIPPED** — shared mark; completing any 3-in-a-row **loses** (misère). Play 1–3 boards.
+- **Trap-Three** (← Squava) · 2p · ★★ · 🟢 · 🏆 · *reuse* — ✅ **SHIPPED** — on 5×5, 4-in-a-row wins but **3-in-a-row loses**; both live at once.
+- **Square Up** (← Square It!) · 2-4p · ★★ · 🟡 · 💪 · *reuse* — ✅ **SHIPPED** — place stones; win when four of yours form the corners of *any* square (even tilted).
+- **Connect Six** · 2p · ★★ · 🟡 · 💪 · *reuse* — ✅ **SHIPPED** — place **two** stones per turn (one on the first move); first to six-in-a-row. Locality-prune to tame branching.
+- **Pinch-Five** (← Pente; PD *Ninuki-renju*) · 2-4p · ★★ · 🟡 · 💪 · *reuse* — ✅ **SHIPPED** — five-in-a-row **or** capture five flanked pairs (sandwich exactly two).
 - **Handoff** (← Quarto) · 2p · ★★★ · 🟡 · 🏆 · *reuse-ish* — pieces have 4 binary traits; **your opponent picks the piece you must place**; a line of 4 sharing any trait wins.
 - **Stack-Up** (← Gobblet) · 2p · ★★ · 🟡 · 🏆/💪 · *reuse-ish* — 3×3 line win, but bigger pieces "gobble" smaller (yours or theirs); pieces can move.
 
 ### 6b. Shift family — place-then-slide (you basically have this)
 
-- **Quadline** (← Teeko) · 2p · ★★ · 🟢 · 🏆 · *reuse* — drop 4 pieces each, then slide one to an adjacent cell; win with a line **or** any 2×2 square.
+- **Quadline** (← Teeko) · 2p · ★★ · 🟢 · 🏆 · *reuse* — ✅ **SHIPPED** — drop 4 pieces each, then slide one to an adjacent cell; win with a line **or** any 2×2 square.
 - **Three Men's Morris** · 2p · ★★ · 🟢 · 🏆 · *reuse* — place 3, then slide to make 3-in-a-row. **≈ Shift already** — fold in as a Shift preset or skip.
-- **Picaria** · 2p · ★ · 🟢 · 🏆 · *reuse* — Three Men's Morris on a Zuni board (extra diagonals, no corner-line). Shift-adjacent.
+- **Picaria** · 2p · ★ · 🟢 · 🏆 · *reuse* — ✅ **SHIPPED** (as a World Threes board, §6z) — Three Men's Morris on a Zuni board (extra diagonals, no corner-line). Shift-adjacent.
 
 ### 6c. Mancala family — REUSE the sowing engine
 
-- **Oware** · 2p · ★★ · 🟡 · 💪 · *reuse* — sow counter-clockwise; capture when your last seed brings an opponent pit to 2 or 3, sweeping backward; must not starve the opponent. (The deeper mancala.)
+- **Oware** · 2p · ★★ · 🟡 · 💪 · *reuse* — ✅ **SHIPPED** — sow counter-clockwise; capture when your last seed brings an opponent pit to 2 or 3, sweeping backward; must not starve the opponent. (The deeper mancala.)
 
 ### 6d. Nim family — impartial subtraction games
 
-- **Wythoff's Nim** (Queen's-move Nim) · 2p · ★ · 🟢 · 🏆 · *reuse-ish* — a queen moves toward (0,0) any distance left/down/diagonal; land on (0,0) to win.
-- **Euclid's Game** · 2p · ★ · 🟢 · 🏆 · *new* — from two integers, subtract a multiple of the smaller from the larger; reach 0 to win.
-- **Chomp** · 2p · ★ · 🟢 · 🏆 · *new* — eat a brownie + everything right/below it; forced to eat the poisoned corner = you lose.
+- **Wythoff's Nim** (Queen's-move Nim) · 2p · ★ · 🟢 · 🏆 · *reuse-ish* — ✅ **SHIPPED** — a queen moves toward (0,0) any distance left/down/diagonal; land on (0,0) to win.
+- **Euclid's Game** · 2p · ★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** — from two integers, subtract a multiple of the smaller from the larger; reach 0 to win.
+- **Chomp** · 2p · ★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** — eat a brownie + everything right/below it; forced to eat the poisoned corner = you lose.
 
 ### 6e. Connection (new engine: union-find to edges)
 
-- **Hex** · 2p · ★★★ · 🟡 · 💪/🏆 small · *new* — connect your two opposite edges with one chain; **never draws**. Swap rule balances first move.
-- **Y** · 2p · ★★ · 🟡 · 🏆 small · *new* — connect all three sides of a triangular board with one group.
+- **Hex** · 2p · ★★★ · 🟡 · 💪/🏆 small · *new* — ✅ **SHIPPED** (+ pie/swap rule, Phase 2) — connect your two opposite edges with one chain; **never draws**. Swap rule balances first move.
+- **Y** · 2p · ★★ · 🟡 · 🏆 small · *new* — ✅ **SHIPPED** — connect all three sides of a triangular board with one group.
 - **Havannah** · 2p · ★★ · 🔴 · ⚠️ · *new* — on a hex-of-hexes, win with a ring, a bridge (two corners), or a fork (three edges). Ring detection is the hard part.
 - **Peglink** (← TwixT) · 2p · ★★ · 🔴 · ⚠️ · *new* — place pegs that auto-link a knight's-move apart if the link crosses none; connect your borders.
 - **Gather** (← Lines of Action) · 2p · ★★ · 🟡 · 💪/⚠️ · *new* — pieces move exactly as far as there are pieces on that line; collect all yours into one connected group.
@@ -170,23 +226,23 @@ Amazons · Hedge (Quoridor) · Tablut · Fanorona · Havannah · Lasca · Halma 
 
 ### 6f. Territory & capture (new)
 
-- **First Capture** (Capture-Go 6×6) · 2p · ★★ · 🟢 · 💪 · *new* — place stones; a group with no liberties is captured; first capture wins.
-- **Reversi** (6×6) · 2p · ★★ · 🟢 · 💪 · *new* — flank a line of enemy discs to flip them; most discs when full wins. (Use Reversi, **not** Othello™.)
+- **First Capture** (Capture-Go 6×6) · 2p · ★★ · 🟢 · 💪 · *new* — ✅ **SHIPPED** — place stones; a group with no liberties is captured; first capture wins.
+- **Reversi** (6×6) · 2p · ★★ · 🟢 · 💪 · *new* — ✅ **SHIPPED** (+ Anti-Reversi misère child, Phase 2) — flank a line of enemy discs to flip them; most discs when full wins. (Use Reversi, **not** Othello™.)
 - **Dice Reversi** · 2p · ★★ · 🟡 · 🎲 · *new* — Reversi but a die caps each turn's flips; free drop if no legal move.
-- **Clobber** (5×5) · 2p · ★★ · 🟢 · 🏆 · *new* — board starts as a full checkerboard; move onto an adjacent enemy to remove it; no move = you lose. Always ends.
-- **Snort** · 2p · ★ · 🟢 · 🏆 · *new* — color an empty cell, never adjacent to an *enemy* color; last to place wins.
-- **Col** · 2p · ★ · 🟢 · 🏆 · *new* — color an empty cell, never adjacent to your *own* color (spread out); last to place wins. (Mirror of Snort.)
-- **Konane** · 2p · ★★ · 🟡 · 💪 · *new* — Hawaiian checkers: after an opening removal, jump an adjacent enemy into the empty space beyond; chains allowed; no jump = lose.
-- **Trails** (← Surround) · 2-4p · ★★★ · 🟢 · 💪 · *new* — move your token one step; the vacated cell becomes a permanent wall; can't move = eliminated. Light-cycles; great FFA.
+- **Clobber** (5×5) · 2p · ★★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** — board starts as a full checkerboard; move onto an adjacent enemy to remove it; no move = you lose. Always ends.
+- **Snort** · 2p · ★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** (as a Col-family child, Phase 2) — color an empty cell, never adjacent to an *enemy* color; last to place wins.
+- **Col** · 2p · ★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** — color an empty cell, never adjacent to your *own* color (spread out); last to place wins. (Mirror of Snort.)
+- **Konane** · 2p · ★★ · 🟡 · 💪 · *new* — ✅ **SHIPPED** — Hawaiian checkers: after an opening removal, jump an adjacent enemy into the empty space beyond; chains allowed; no jump = lose.
+- **Trails** (← Surround) · 2-4p · ★★★ · 🟢 · 💪 · *new* — ✅ **SHIPPED** (+ Joust & Strand children) — move your token one step; the vacated cell becomes a permanent wall; can't move = eliminated. Light-cycles; great FFA.
 
 ### 6g. Mills / morris (new)
 
-- **Nine Men's Morris** · 2p · ★★ · 🟡 · 💪 · *new* — place 9 then slide; form a "mill" (3-in-a-line) to remove an enemy; reduce them to 2 or block them to win.
+- **Nine Men's Morris** · 2p · ★★ · 🟡 · 💪 · *new* — ✅ **SHIPPED** (+ Lasker Morris child, Phase 2) — place 9 then slide; form a "mill" (3-in-a-line) to remove an enemy; reduce them to 2 or block them to win.
 - **Dara** · 2p · ★★ · 🟡 · 💪 · *new* — drop 12 each (no 3s while dropping), then slide; making exactly-3 removes an enemy (4+ never counts).
 
 ### 6h. Asymmetric hunts & tafl (new)
 
-- **Bagh-Chal** · 2p · ★★ · 🟡 · 💪 · *new* — 4 tigers jump-capture vs 20 goats placed then moved to immobilize them; 5 captures vs blockade.
+- **Bagh-Chal** · 2p · ★★ · 🟡 · 💪 · *new* — ✅ **SHIPPED** — 4 tigers jump-capture vs 20 goats placed then moved to immobilize them; 5 captures vs blockade.
 - **Fox & Geese** · 2p · ★★ · 🟡 · 💪 · *new* — a lone fox jump-captures vs 13 geese cornering it.
 - **Tablut** (7×7) · 2p · ★★ · 🔴 · ⚠️ · *new* — king + 8 defenders escape to a corner vs 16 attackers surrounding; rook-like slides + custodial capture. High branching.
 
@@ -200,23 +256,23 @@ Amazons · Hedge (Quoridor) · Tablut · Fanorona · Havannah · Lasca · Halma 
 
 ### 6j. Race & movement (new)
 
-- **Frontline** (← Breakthrough 6×6) · 2p · ★★★ · 🟢 · 💪 · *new* — pawns step/capture diagonally forward; reach the back row (or capture all) to win. **No draws** → solver proves mid-game wins.
+- **Frontline** (← Breakthrough 6×6) · 2p · ★★★ · 🟢 · 💪 · *new* — ✅ **SHIPPED** — pawns step/capture diagonally forward; reach the back row (or capture all) to win. **No draws** → solver proves mid-game wins.
 - **Hedge** (← Quoridor 7×7) · 2-4p · ★★ · 🔴 · ⚠️ · *new* — move your pawn or drop a wall to block; race to the far edge; walls may never fully seal a path (BFS check).
 - **Halma** (8×8) · 2-4p · ★★ · 🟡 · ⚠️ · *new* — step or jump-chain (no captures); move all your pieces to the opposite corner. Weak mid-game signal → needs a distance evaluator.
-- **Amazons** (6×6) · 2p · ★★ · 🔴 · ⚠️ · *new* — move a queen, then shoot a square away forever; last to move wins. High branching, decomposes late.
+- **Amazons** (6×6) · 2p · ★★ · 🔴 · ⚠️ · *new* — ✅ **SHIPPED** — move a queen, then shoot a square away forever; last to move wins. High branching, decomposes late.
 - **Castle Run** (← Camelot) · 2p · ★★ · 🟡 · ⚠️ · *new* — canter over your own pieces (chainable, no capture) or jump enemies; get two pieces into their castle.
 
 ### 6k. Tiny solver gems (new, but trivial AI)
 
-- **Triangle Trap** (← Sim) · 2p · ★★ · 🟢 · 🏆 · *new* — color edges of a 6-dot graph; making a monochrome triangle **loses**. Draw-free (Ramsey), depth ≤ 15 — near-zero code, perfect AI.
-- **Mu Torere** · 2p · ★ · 🟢 · 🏆 · *new* — slide a pawn into the lone empty point on an 8-star; trap the opponent. Retrograde-solvable.
-- **Pong Hau K'i** · 2p · ★ · 🟢 · 🏆 · *new* — 2 pawns each on a 5-point board; slide into the empty point; lock the opponent. <100 positions.
+- **Triangle Trap** (← Sim) · 2p · ★★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** (as **Sim**) — color edges of a 6-dot graph; making a monochrome triangle **loses**. Draw-free (Ramsey), depth ≤ 15 — near-zero code, perfect AI.
+- **Mu Torere** · 2p · ★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** — slide a pawn into the lone empty point on an 8-star; trap the opponent. Retrograde-solvable.
+- **Pong Hau K'i** · 2p · ★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** (as a World Threes board, §6z) — 2 pawns each on a 5-point board; slide into the empty point; lock the opponent. <100 positions.
 - **Sprouts** (3-spot) · 2p · ★ · 🔴 · 🏆 · *new* — draw non-crossing lines + a dot; no dot exceeds 3 lines; no move = lose. Planar-map state is hard.
 
 ### 6l. Dice / press-your-luck (new, chance nodes)
 
-- **Pig** · 2-4p · ★★★ · 🟢 · 🎲 · *new* — roll to build a turn-total; bank it, but a 1 wipes the turn. First to 100. The 30-second classic; known-optimal policy to check against.
-- **Climb** (← Can't Stop) · 2-4p · ★★★ · 🟡 · 🎲 · *new* — roll 4 dice, pair them to advance runners; a roll with no legal pairing busts the turn. Top 3 columns wins.
+- **Pig** · 2-4p · ★★★ · 🟢 · 🎲 · *new* — ✅ **SHIPPED** (+ Two-Dice Pig & Big Pig children, Phase 2) — roll to build a turn-total; bank it, but a 1 wipes the turn. First to 100. The 30-second classic; known-optimal policy to check against.
+- **Climb** (← Can't Stop) · 2-4p · ★★★ · 🟡 · 🎲 · *new* — ✅ **SHIPPED** — roll 4 dice, pair them to advance runners; a roll with no legal pairing busts the turn. Top 3 columns wins.
 - **Greed** (← Farkle) · 2-4p · ★★ · 🟡 · 🎲 · *new* — roll 6 dice, set aside scorers; a scoreless roll Farkles the turn; clear all six to reroll. First to a target.
 - **Cross-Out** (← Quixx) · 2-4p · ★★ · 🟡 · 🎲 · *new* — on a shared roll, cross off a number strictly right of your last on a color track; skips are lost.
 - **Race-Off** (Backgammon-lite) · 2p · ★★ · 🟢 · 🎲 · *new* — 3 checkers each on an 8-point one-way track (no hitting); roll 2 dice, bear off first.
@@ -239,14 +295,15 @@ Amazons · Hedge (Quoridor) · Tablut · Fanorona · Havannah · Lasca · Halma 
   and landing on an enemy. A capture mechanic "not known in any other recorded
   game" — the arced board is a visual showpiece. Traditional Indonesian (PD).
 - **Gale** (Shannon switching game; a.k.a. Bridg-It) · 2p · ★★★ · 🟢 · 🏆 small ·
-  *reuse-ish* — claim edges on a grid-graph to connect your two sides / cut the
+  *reuse-ish* — ✅ **SHIPPED** (2026-07-06, Phase 3D; pie rule, default off) —
+  claim edges on a grid-graph to connect your two sides / cut the
   opponent. Union-find reuse from Hex; pairs with Hex/Y on the connection shelf.
   Academic name "Gale" is safe (avoid "Bridg-It", 1960s trademark).
-- **Slimetrail** · 2p · ★★★ · 🟢 · 🏆 · *new* — one shared token; each turn move
+- **Slimetrail** · 2p · ★★★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** (2026-07-06, Phase 3E) — one shared token; each turn move
   it one step, its old cell becomes permanent slime; you win if the token
   reaches YOUR corner, lose if it reaches theirs. Kid-perfect, tiny engine,
   solver-strong.
-- **Toads & Frogs** (Conway) · 2p · ★★ · 🟢 · 🏆 · *new* — 1-D row: toads march
+- **Toads & Frogs** (Conway) · 2p · ★★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** (2026-07-06, Phase 3F) — 1-D row: toads march
   right, frogs march left; step into the gap or hop one enemy; no move = lose.
   Near-zero code (Treblecross shelf), and knobs galore (row length, piece
   counts, gap count, multiple rows).
@@ -256,17 +313,17 @@ Amazons · Hedge (Quoridor) · Tablut · Fanorona · Havannah · Lasca · Halma 
   first pawn with no step is marooned and loses. Shipped as its own engine
   (`strand.rs`, three-part `from-to-removed` move + two-phase board), NOT a
   Trails knob — the 3-part move and remove-a-tile UI don't fit the knob machinery.
-- **Len Choa** · 2p · ★★ · 🟢 · 🏆 · *new* — Thai hunt: 1 tiger vs 6 leopards on
+- **Len Choa** · 2p · ★★ · 🟢 · 🏆 · *new* — ✅ **SHIPPED** (2026-07-06, Phase 3I) — Thai hunt: 1 tiger vs 6 leopards on
   a small triangular board; tiger jump-captures, leopards immobilize. Fills the
   hunt shelf (Bagh-Chal, Fox & Hounds) with a smaller, solver-perfect entry.
-- **World Threes** · 2p · ★★★ · 🟡 · 🏆 · *reuse* — ONE GameDefinition for the
+- **World Threes** · 2p · ★★★ · 🟡 · 🏆 · *reuse* — ✅ **SHIPPED** (2026-07-06, Phase 3C; 8 boards: Achi, Tapatan, Shisima, Tant Fant, Nine Holes, Tsoro Yematatu, Picaria, Pong Hau K'i) — ONE GameDefinition for the
   global tiny three-in-a-row family, with the **board itself as the knob**:
   Achi (Ghana, 3×3+diagonals), Tapatan (Philippines), Shisima (Kenya, octagon),
   Tant Fant (India, home rows), Nine Holes (England, no-slide-diagonals),
   Tsoro Yematatu (Zimbabwe, triangle), Picaria (Zuni). Peak
   silly-customization: travel the world by turning a knob. Engine = Shift with
   per-board adjacency tables.
-- **Cram** · 2p · ★★ · 🟢 · 🏆 · *reuse* — impartial Domineering: either player
+- **Cram** · 2p · ★★ · 🟢 · 🏆 · *reuse* — ✅ **SHIPPED** (2026-07-06, Phase 2, as a Domineering-family child) — impartial Domineering: either player
   may place a domino in either orientation; last to place wins (+ misère
   variant). Cheapest possible add: a rule FLAG on the existing Domineering
   engine — a customization win as much as a new game.
@@ -346,14 +403,14 @@ human's true secrets.
   rook-slides + custodial (sandwich) capture. Ancient PD; rules are a
   scholarly reconstruction — say so in the rules text, pick the standard
   Kowalski reconstruction.
-- **Pawn Duel** · 2p · ★★ · 🟢 · 🏆 small · *new* — chess pawns only ("chess
+- **Pawn Duel** · 2p · ★★ · 🟢 · 🏆 small · *new* — ✅ **SHIPPED** (2026-07-06, Phase 3G; Hexapawn preset) — chess pawns only ("chess
   without chess"): double-step, en passant, first promotion wins. Hexapawn's
   grown-up sibling; tiny engine, solver-strong on ≤6 ranks, and a gentle
   gateway for chess-curious kids. Knobs: files 4–10, ranks 5–8, en-passant
   toggle, pawns-per-side.
 - Already in the backlog, same shelf: Alquerque, Fanorona, Seega, Yote, Lasca,
   Dara (§6g/6i), Gather (Lines of Action), Halma, Castle Run (Camelot).
-- **Trails "Joust" knob** [ENG] — movement-pattern knob (king-step / knight
+- **Trails "Joust" knob** [ENG] — ✅ **SHIPPED** (2026-07-06, Phase 2, as a Trails-family child) — movement-pattern knob (king-step / knight
   leap) turns Trails into the classic knights-on-a-burning-board game with one
   flag; pairs with the "walls: behind-you / anywhere (Strand)" knob from §6z.
 
