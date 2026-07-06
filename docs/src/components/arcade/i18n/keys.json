@@ -68,6 +68,7 @@
   "🙂 You play",
   "🙃 {winner} gave everything away first — you lose.",
   "🙃 {winner} gave everything away first!",
+  "🙃 Goal: lose everything!",
   "🙃 You gave everything away first — you win! 🎉",
   "🚫 {loser} has no move — you win! 🎉",
   "🚫 No moves — {loser} is stuck, so {winner} wins!",

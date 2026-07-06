@@ -602,6 +602,7 @@
   "No moves — {winner} wins.": "Keine Züge – {winner} gewinnt.",
   "No moves left — {winner} wins.": "Keine Züge mehr – {winner} gewinnt.",
   "{loser} has no moves left — you win! 🎉": "{loser} kann nicht mehr ziehen – du gewinnst! 🎉",
+  "🙃 Goal: lose everything!": "🙃 Ziel: alles verlieren!",
   "🙃 {winner} gave everything away first!": "🙃 {winner} hat zuerst alles verschenkt!",
   "🙃 {winner} gave everything away first — you lose.": "🙃 {winner} hat zuerst alles verschenkt – du verlierst.",
   "🙃 You gave everything away first — you win! 🎉": "🙃 Du hast zuerst alles verschenkt – du gewinnst! 🎉"

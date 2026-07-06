@@ -602,6 +602,7 @@
   "No moves — {winner} wins.": "動ける手なし — {winner}の勝ち。",
   "No moves left — {winner} wins.": "残された手なし — {winner}の勝ち。",
   "{loser} has no moves left — you win! 🎉": "{loser}は動けません — あなたの勝ち！🎉",
+  "🙃 Goal: lose everything!": "🙃 目標：すべて手放すこと！",
   "🙃 {winner} gave everything away first!": "🙃 {winner}が先にすべて手放しました！",
   "🙃 {winner} gave everything away first — you lose.": "🙃 {winner}が先にすべて手放しました — あなたの負け。",
   "🙃 You gave everything away first — you win! 🎉": "🙃 あなたが先にすべて手放しました — あなたの勝ち！🎉"

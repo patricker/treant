@@ -602,6 +602,7 @@
   "No moves — {winner} wins.": "无棋可走——{winner}获胜。",
   "No moves left — {winner} wins.": "已无棋可走——{winner}获胜。",
   "{loser} has no moves left — you win! 🎉": "{loser}无棋可走——你赢了！🎉",
+  "🙃 Goal: lose everything!": "🙃 目标：输光所有棋子！",
   "🙃 {winner} gave everything away first!": "🙃 {winner}最先送光了所有棋子！",
   "🙃 {winner} gave everything away first — you lose.": "🙃 {winner}先送光了所有棋子——你输了。",
   "🙃 You gave everything away first — you win! 🎉": "🙃 你最先送光了所有棋子——你赢了！🎉"

@@ -602,6 +602,7 @@
   "No moves — {winner} wins.": "Sin movimientos: gana {winner}.",
   "No moves left — {winner} wins.": "No quedan movimientos: gana {winner}.",
   "{loser} has no moves left — you win! 🎉": "{loser} se quedó sin movimientos: ¡ganas! 🎉",
+  "🙃 Goal: lose everything!": "🙃 Objetivo: ¡perderlo todo!",
   "🙃 {winner} gave everything away first!": "🙃 ¡{winner} regaló todo primero!",
   "🙃 {winner} gave everything away first — you lose.": "🙃 {winner} regaló todo primero: pierdes.",
   "🙃 You gave everything away first — you win! 🎉": "🙃 Regalaste todo primero: ¡ganas! 🎉"

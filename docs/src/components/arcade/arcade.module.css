@@ -2471,3 +2471,19 @@
 .draughtsCancel:hover {
   background: var(--arc-card);
 }
+/* Persistent inverted-goal reminder for Giveaway (misère): the board looks
+   identical to normal draughts, so a fixed chip above it keeps the flipped
+   objective in view on every turn. */
+.draughtsGoalChip {
+  display: block;
+  margin: 0 auto 8px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: var(--arc-soft);
+  color: var(--arc-accent);
+  font-weight: 800;
+  font-size: 0.82rem;
+  text-align: center;
+}

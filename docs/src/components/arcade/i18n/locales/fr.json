@@ -602,6 +602,7 @@
   "No moves — {winner} wins.": "Plus de coup — {winner} gagne.",
   "No moves left — {winner} wins.": "Plus aucun coup — {winner} gagne.",
   "{loser} has no moves left — you win! 🎉": "{loser} n'a plus de coup — tu gagnes ! 🎉",
+  "🙃 Goal: lose everything!": "🙃 Objectif : tout perdre !",
   "🙃 {winner} gave everything away first!": "🙃 {winner} a tout donné en premier !",
   "🙃 {winner} gave everything away first — you lose.": "🙃 {winner} a tout donné en premier — tu perds.",
   "🙃 You gave everything away first — you win! 🎉": "🙃 Tu as tout donné en premier — tu gagnes ! 🎉"

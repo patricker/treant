@@ -38,8 +38,11 @@ function DraughtPiece({ ch }: { ch: string }) {
 // engine only offers capturing pieces — the UI enforces nothing itself. Kings
 // wear a crown; the whole chain (origin, every captured square, the landing) is
 // ringed as the last move via lastCells. Precedent: Strand's two-phase board.
-function DraughtsBoard({ board, interactive, legalMoves, lastCells, playerNames, onMove }: BoardProps) {
+function DraughtsBoard({ board, params, interactive, legalMoves, lastCells, playerNames, onMove }: BoardProps) {
   const { t } = useT();
+  // Giveaway (misère) looks identical to normal draughts, so a fixed chip keeps
+  // the inverted objective in view on every turn — not just during selection.
+  const misere = !!params?.misere;
   const n = Math.max(1, Math.round(Math.sqrt(board.length)));
   const cells = Array.from({ length: n * n }, (_, i) => board[i] ?? ' ');
   const last = new Set(lastCells ?? []);
@@ -104,6 +107,7 @@ function DraughtsBoard({ board, interactive, legalMoves, lastCells, playerNames,
 
   return (
     <div>
+      {misere && <div className={styles.draughtsGoalChip}>{t('🙃 Goal: lose everything!')}</div>}
       <div className={styles.shiftCaption}>{caption}</div>
       <div
         className={styles.draughtsGrid}
