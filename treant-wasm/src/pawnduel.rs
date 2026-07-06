@@ -404,6 +404,18 @@ impl PawnDuelWasm {
     }
 }
 
+// Test-only helper on the private state (kept out of the wasm surface).
+#[cfg(test)]
+impl PawnDuel {
+    fn result_seat(&self) -> u8 {
+        match self.term() {
+            Some(ProvenValue::Win) => self.current + 1,
+            Some(ProvenValue::Loss) => (1 - self.current) + 1,
+            _ => 0,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -669,18 +681,6 @@ mod tests {
             }
             assert!(g.is_terminal(), "({f},{r},{ds},{ep}) must terminate");
             assert!(!g.result().is_empty(), "Pawn Duel is decisive — no draws");
-        }
-    }
-}
-
-// Test-only helper on the private state (kept out of the wasm surface).
-#[cfg(test)]
-impl PawnDuel {
-    fn result_seat(&self) -> u8 {
-        match self.term() {
-            Some(ProvenValue::Win) => self.current + 1,
-            Some(ProvenValue::Loss) => (1 - self.current) + 1,
-            _ => 0,
         }
     }
 }

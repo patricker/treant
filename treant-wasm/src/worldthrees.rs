@@ -777,11 +777,11 @@ mod tests {
 
     #[test]
     fn layout_edges_match_adjacency() {
-        for board in 0..BOARDS.len() {
+        for (board, spec) in BOARDS.iter().enumerate() {
             let g = WorldThreesWasm::new(board as u32);
             let layout = g.get_layout();
             let (pts, edges) = layout.split_once('|').unwrap();
-            assert_eq!(pts.split(' ').count(), BOARDS[board].coords.len(), "board {board}: point count");
+            assert_eq!(pts.split(' ').count(), spec.coords.len(), "board {board}: point count");
             assert_eq!(edges.split(',').count(), edge_count(board), "board {board}: edge count");
         }
     }
