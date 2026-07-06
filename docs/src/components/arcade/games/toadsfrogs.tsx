@@ -125,7 +125,7 @@ export const toadsFrogs: GameDefinition = {
   id: 'toads-frogs',
   name: 'Toads & Frogs',
   icon: '🐸',
-  blurb: 'Conway’s hopping game. Toads only go right, Frogs only go left — box your rival in so they can’t move.',
+  blurb: 'Conway’s hopping game. Toads only go right, Frogs only go left — box your rival in so they can’t move. Toads move first and have the edge — swap seats between rounds!',
   rules:
     'A single row of squares. Toads (red) only ever move RIGHT; Frogs (gold) only ever move LEFT. On your turn either SLIDE one of your creatures forward into the next empty square, or HOP it over a single opposing creature sitting right in front, landing on the empty square just beyond (you can’t hop your own kind, and nothing is captured). No backward moves. If it’s your turn and none of your creatures can move, you lose!',
   // Calibrated via scripts/calibrate.sh toads-frogs 20 (2026-07). Strength

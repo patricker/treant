@@ -15,7 +15,7 @@ export const pawnDuel: GameDefinition = {
   icon: '♟️',
   blurb: 'Chess pawns, and only pawns. March, capture on the diagonal, and be first to break through.',
   rules:
-    'Every piece is a chess pawn. On your turn move one pawn straight forward into an empty square, or capture an enemy pawn sitting one square diagonally forward. From its starting row a pawn may jump two squares (if double-step is on), and a pawn that just jumped past you can be caught “en passant” on your very next move only (if en passant is on). You win the moment one of your pawns reaches the far row, or you capture every enemy pawn. Unlike chess, being stuck with NO legal move is a LOSS, not a draw — so the game is always decisive. Turn double-step and en passant off on a 3×3 board and you get Hexapawn, the classic teaching game.',
+    'Every piece is a chess pawn. On your turn move one pawn straight forward into an empty square, or capture an enemy pawn sitting one square diagonally forward. From its starting row a pawn may jump two squares (if double-step is on), and a pawn that just jumped past you can be caught “en passant” on your very next move only (if en passant is on). You win the moment one of your pawns reaches the far row, or you capture every enemy pawn. Unlike chess, being stuck with NO legal move is a LOSS, not a draw — so the game is always decisive. Turn double-step and en passant off on a 3×3 board and you get Hexapawn, the classic teaching game — where the second player can always win.',
   // Calibrated via `calibrate -- pawn-duel` (n=20/pair, 2026-07): strength keeps
   // climbing to the top rung on the Classic 8×6 tree, so Hard caps at p2000.
   // seat-0 win rate 52% — balanced.
