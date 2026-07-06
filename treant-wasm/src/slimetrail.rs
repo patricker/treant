@@ -43,14 +43,16 @@
 //!   convention this arcade's other walk-and-burn games (Trails, Domineering)
 //!   also use. → test `boxed_in_player_loses`.
 //!
-//! WHY NO REACHABILITY RESTRICTION: the CGT graph version adds "you may not move
-//! the token to a space from which it can't reach at least one goal" to keep the
-//! game winnable / avoid draws. Under the normal-play "blocked player loses"
-//! adjudication above the game is ALREADY fully decisive and always terminates
-//! (the slimed set strictly grows on every move, the board is finite), so that
-//! helper rule is unnecessary here — and dropping it keeps the rule kid-simple
-//! ("walk to any next-door square that isn't slime"). Legal moves are therefore
-//! exactly the empty 8-neighbours of the token.
+//! VARIANT SHIPPED — NO REACHABILITY RESTRICTION: we ship bodogemu's attested
+//! variant (8-directional moves, blocked-mover-loses, no reachability rule),
+//! which DIFFERS from the CGT blog's combinatorial variant. The CGT version adds
+//! a move-set restriction — "you may not move the token to a space from which it
+//! can't reach at least one goal" — that materially changes strategy (it is not
+//! merely a termination helper). Without it, walling / box-in lines are legal
+//! (~12.5% of strong games) that the CGT variant forbids. We drop it to match
+//! bodogemu and keep the rule kid-simple ("walk to any next-door square that
+//! isn't slime"). Legal moves are therefore exactly the empty 8-neighbours of
+//! the token.
 use crate::gridlib::idx;
 use treant::tree_policy::*;
 use treant::*;

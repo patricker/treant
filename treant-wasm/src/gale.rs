@@ -375,7 +375,9 @@ pub struct GaleWasm {
 }
 #[wasm_bindgen]
 impl GaleWasm {
-    /// `n` = dots-per-side, clamped 3..=7 (default preset 5 = classic Bridg-It).
+    /// `n` = dots-per-side (default preset 5 = classic Bridg-It). The engine
+    /// accepts 3..=7 (clamped); the UI knob ships 3..=6, capping at 6 for
+    /// touch-target (tap-target) reasons.
     /// `pie != 0` enables the pie (swap) rule.
     #[wasm_bindgen(constructor)]
     pub fn new(n: u32, pie: u32) -> Self {
