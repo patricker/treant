@@ -6,7 +6,9 @@ import { useT } from './i18n';
 import { recentGames } from './recentGames';
 import styles from './arcade.module.css';
 
-// Game groupings for the launcher (any game not listed falls under "More").
+// Game groupings for the launcher. Every game id must appear in exactly one
+// category — there is no "More" fallback bucket, and scripts/check-categories.mjs
+// fails the build if any id is left uncategorized.
 const CATEGORIES: { name: string; ids: string[] }[] = [
   { name: 'Family classics', ids: ['connect-four', 'pop-out', 'cylinder-four', 'tic-tac-toe', 'reversi', 'anti-reversi', 'dots-and-boxes', 'mancala', 'oware', 'nim', 'quadline'] },
   { name: 'Connect & line', ids: ['hex', 'y', 'gomoku', 'pinch-five', 'connect-six', 'square-up', 'order-chaos', 'treblecross'] },

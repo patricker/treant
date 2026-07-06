@@ -2,11 +2,6 @@
 use treant::tree_policy::UCTPolicy;
 use treant::*;
 
-/// Maximum board dimension (columns or rows) supported.
-pub const MAX_DIM: usize = 10;
-/// Maximum number of players supported.
-pub const MAX_PLAYERS: usize = 4;
-
 /// Pop-move encoding offset. A [`GridMove`] whose value is `>= POP_OFFSET`
 /// encodes a *pop-out* move on column `value - POP_OFFSET` (remove that column's
 /// bottom disc; the stack above it falls one row). Regular gravity/placement

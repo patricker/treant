@@ -70,7 +70,7 @@ export const snort: GameDefinition = {
   // Snort's strength ladder is flat & non-transitive on the solver-backed board
   // (p800 tops the field, p2000 is exploitable, near-random p8 scores high), so
   // strength-based auto-calibration is unreliable. It intentionally mirrors Col's
-  // pace-based tiers — same engine/board. See plans/ai-calibration-results.txt.
+  // pace-based tiers — same engine/board.
   difficulty: col.difficulty,
   defaultParams: { numPlayers: 2, cols: 5, rows: 5 },
   presets: [

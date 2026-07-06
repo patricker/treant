@@ -20,6 +20,10 @@ treant-wasm/target/
 # Visual-companion brainstorm mockups (local, not committed)
 .superpowers/
 
+# Calibration harness raw output is untracked scratch; the curated record is
+# plans/ai-calibration-results.md and the shipped blocks live in each game tile.
+plans/ai-calibration-results.txt
+
 # Capacitor app (app/). node_modules and the built web root are artifacts;
 # the android/ and ios/ project skeletons ARE committed (Capacitor convention),
 # with their own .gitignores excluding build outputs (.gradle, build/, Pods, …).

@@ -259,7 +259,7 @@ fn run(game: &Game, n: u32) {
     println!("  }},");
     if hard < m - 1 {
         println!(
-            "  (Hard capped at p{}: strength peaked early — extra playouts add nothing.)",
+            "  (Hard capped at p{}: strength peaked early — extra playouts add nothing. (self-play plateau, not an absolute ceiling))",
             pool[hard].playouts
         );
     }

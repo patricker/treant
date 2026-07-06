@@ -101,6 +101,23 @@ A clean split, exactly as the theory predicts:
 - **Open, high-branching games** (Hex, Reversi, Frontline, Amazons): strength
   keeps climbing the whole ladder — Hard goes to the top rung.
 
+## Policy
+
+Two practical rules govern what actually ships, on top of the auto-selection above:
+
+- **Hard ships as the max-strength rung** (typically `2000/1/0`) regardless of any
+  "cap here" note the harness prints. The self-play ladder *plateaus* once both
+  rungs already play the position well, so a cap note measures where *relative
+  self-play* strength stops climbing — **not** absolute strength against a human.
+  The ladder's real job is calibrating **Easy** and **Medium** to be beatable;
+  Hard is simply "as strong as we cheaply can." (The harness cap notes now say as
+  much: "self-play plateau, not an absolute ceiling.")
+- **Harness output is untracked scratch.** `scripts/calibrate.sh` writes its raw
+  matrices to `plans/ai-calibration-results.txt`, which is git-ignored — the
+  shipped difficulty blocks live in each game's tile
+  (`docs/src/components/arcade/games/<id>.tsx`), and the curated historical record
+  is [`plans/ai-calibration-results.md`](plans/ai-calibration-results.md).
+
 ## Re-running it (one command)
 
 ```bash
