@@ -300,6 +300,54 @@ const GLYPHS: Record<string, JSX.Element> = {
       <path d="M12 2.5a9.5 9.5 0 0 0 0 19z" fill="currentColor" />
     </g>
   ),
+  // Draughts family — a shared checker-disc motif with a per-variant differentiator.
+  draughts: (
+    // Parent: a stacked physical checkers piece (three ridged discs).
+    <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round">
+      <ellipse cx="12" cy="7.5" rx="7.5" ry="2.7" />
+      <path d="M4.5 7.5v3.2c0 1.5 3.4 2.7 7.5 2.7s7.5-1.2 7.5-2.7V7.5" />
+      <path d="M4.5 10.7v3.2c0 1.5 3.4 2.7 7.5 2.7s7.5-1.2 7.5-2.7" />
+      <path d="M4.5 13.9v3.2c0 1.5 3.4 2.7 7.5 2.7s7.5-1.2 7.5-2.7" />
+    </g>
+  ),
+  'international-draughts': (
+    // A flying king: a disc crossed by a long diagonal double-arrow.
+    <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M7.8 16.2l8.4-8.4" />
+      <path d="M12.6 7.8h3.8v3.8" />
+      <path d="M11.4 16.2H7.6v-3.8" />
+    </g>
+  ),
+  'brazilian-draughts': (
+    // Maximum-capture forced: a disc ringed twice (take the most).
+    <g fill="none" stroke="currentColor" strokeWidth="1.7">
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4.4" />
+    </g>
+  ),
+  'pool-checkers': (
+    // A pool-table nod: a disc with a solid centre spot.
+    <g stroke="currentColor" strokeWidth="1.7" fill="none">
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="3.2" fill="currentColor" stroke="none" />
+    </g>
+  ),
+  'russian-draughts': (
+    // Mid-chain crowning: a crowned disc.
+    <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M7.5 14.6l-1-5.1 3 2 2.5-3.6 2.5 3.6 3-2-1 5.1z" fill="currentColor" stroke="currentColor" strokeWidth="0.8" />
+    </g>
+  ),
+  'giveaway-checkers': (
+    // The goal inverted: a dashed (vanishing) disc shedding a piece downward.
+    <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round">
+      <circle cx="12" cy="12" r="8.5" strokeDasharray="2.6 2.6" />
+      <path d="M12 8.2v6" />
+      <path d="M9 11.4l3 3 3-3" />
+    </g>
+  ),
   clobber: (
     <g fill="currentColor">
       <circle cx="8" cy="12" r="4" opacity="0.4" />

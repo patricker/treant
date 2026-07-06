@@ -41,6 +41,14 @@ import { euclid } from './euclid';
 import { baghchal } from './baghchal';
 import { lenChoa } from './lenchoa';
 import { worldThrees } from './worldthrees';
+import {
+  draughts,
+  internationalDraughts,
+  brazilianDraughts,
+  poolCheckers,
+  russianDraughts,
+  giveawayCheckers,
+} from './draughts';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -93,6 +101,12 @@ export const GAMES: GameDefinition[] = [
   oware,
   muTorere,
   worldThrees,
+  draughts,
+  internationalDraughts,
+  brazilianDraughts,
+  poolCheckers,
+  russianDraughts,
+  giveawayCheckers,
   domineering,
   cram,
   pig,

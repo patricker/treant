@@ -153,12 +153,17 @@ fn games() -> Vec<Game> {
         g("strand", STD, || Box::new(StrandWasm::new(7, 7)) as Box<dyn Eng>),
         // len-choa is asymmetric: seat 0 = leopards (place first), seat 1 = tiger.
         g("len-choa", STD, || Box::new(LenChoaWasm::new()) as Box<dyn Eng>),
-        // draughts: ONE flag-driven engine. Registered as American (8×8, 3 rows,
-        // no flying / no backward / no max-capture / no mid-chain / no misère) so
-        // the audit fuzzes the engine; the six variant tiles get their own
-        // calibrate entries in Phase 4B. Ctor: (size, men_rows, flying,
-        // men_back, max_capture, promote_mid, misere).
+        // draughts: ONE flag-driven engine backing SIX wave-A national variant
+        // tiles. All six are registered so the audit fuzzer exercises every code
+        // path (flying kings, backward capture, max-capture filtering, mid-chain
+        // promotion, misère terminal) and each tile gets its own difficulty ladder.
+        // Ctor: (size, men_rows, flying, men_back, max_capture, promote_mid, misere).
         g("draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 0, 0, 0, 0, 0)) as Box<dyn Eng>),
+        g("international-draughts", LIGHT, || Box::new(DraughtsWasm::new(10, 4, 1, 1, 1, 0, 0)) as Box<dyn Eng>),
+        g("brazilian-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 1, 0, 0)) as Box<dyn Eng>),
+        g("pool-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 0, 0)) as Box<dyn Eng>),
+        g("russian-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 1, 0)) as Box<dyn Eng>),
+        g("giveaway-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 0, 0, 0, 0, 1)) as Box<dyn Eng>),
     ]
 }
 

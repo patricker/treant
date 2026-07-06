@@ -2394,6 +2394,80 @@
 .setupPreview .shiftCaption,
 .setupPreview .cfColHeaders,
 .setupPreview .cfPopRow,
+.setupPreview .draughtsCancel,
 .setupPreview .g2048Arrows {
   display: none;
+}
+
+/* ---------- Draughts (checkerboard + chain input) ---------- */
+/* A real checkerboard: squares abut (no gap), only the DARK squares play. The
+   light/dark tints ride on top of the dark board felt so they read in both the
+   default and always-on neon skins. */
+.draughtsGrid {
+  display: grid;
+  gap: 0;
+  padding: 6px;
+  background: var(--arc-soft);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.draughtsCell {
+  aspect-ratio: 1;
+  border: none;
+  padding: 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+.draughtsCell:disabled {
+  cursor: default;
+}
+/* Light (non-playing) squares are lit faintly; dark (playing) squares are the
+   deeper wells where every piece and move lands. */
+.draughtsLight {
+  background: rgba(255, 255, 255, 0.06);
+}
+.draughtsDark {
+  background: rgba(0, 0, 0, 0.34);
+}
+/* Selected origin piece: a bright inset ring. */
+.draughtsSel {
+  box-shadow: inset 0 0 0 3px var(--arc-accent);
+}
+/* A legal next landing square in the chain being built. */
+.draughtsTarget {
+  box-shadow: inset 0 0 0 3px var(--arc-p3);
+}
+.draughtsDot {
+  width: 34%;
+  height: 34%;
+  border-radius: 50%;
+  background: var(--arc-p3);
+  opacity: 0.6;
+}
+/* A landing already chosen earlier in the current chain (a faint breadcrumb). */
+.draughtsTrailDot {
+  width: 20%;
+  height: 20%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+}
+.draughtsCancel {
+  display: block;
+  margin: 10px auto 0;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--arc-soft);
+  color: var(--arc-ink);
+  font-weight: 800;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.draughtsCancel:hover {
+  background: var(--arc-card);
 }

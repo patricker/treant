@@ -371,9 +371,10 @@ impl Draughts {
     }
 
     fn term(&self) -> Option<ProvenValue> {
-        if self.no_progress >= DRAW_PLIES {
-            return Some(ProvenValue::Draw);
-        }
+        // A DECISIVE no-move terminal takes precedence over the 40-ply draw cap:
+        // if the player to move is out of moves the game is already won or lost, so
+        // reaching the no-progress cap on that same ply must NOT downgrade it to a
+        // draw. (Order matters — check the no-move terminal first.)
         if self.gen().is_empty() {
             // The player to move has no legal move. Normally that's a loss; under
             // misère (Giveaway) it's a WIN: "A player with no valid move remaining
@@ -381,6 +382,9 @@ impl Draughts {
             // if a player's pieces are obstructed from making a legal move by the
             // pieces of the opponent." (Poddavki).
             return Some(if self.misere { ProvenValue::Win } else { ProvenValue::Loss });
+        }
+        if self.no_progress >= DRAW_PLIES {
+            return Some(ProvenValue::Draw);
         }
         None
     }
@@ -814,6 +818,57 @@ mod tests {
         assert_eq!(normal.term(), Some(ProvenValue::Loss));
         let give = boxed(true);
         assert_eq!(give.term(), Some(ProvenValue::Win), "misère: no move = win");
+    }
+
+    #[test]
+    fn no_move_terminal_beats_the_draw_cap_when_they_coincide() {
+        // Simultaneous case: the player to move has NO legal move AND the 40-ply
+        // no-progress counter is already at the cap. The decisive terminal must
+        // win: normal rules = Loss (not Draw), misère = Win (not Draw).
+        fn boxed(misere: bool) -> Draughts {
+            let mut g = empty(8, false, false, false, false, misere);
+            set(&mut g, 0, 1, Cell::Man(0)); // seat-0 man stuck on its far row
+            set(&mut g, 7, 0, Cell::Man(1));
+            g.current = 0;
+            g.no_progress = DRAW_PLIES; // draw cap reached on the same ply
+            g
+        }
+        let normal = boxed(false);
+        assert!(normal.gen().is_empty());
+        assert_eq!(normal.term(), Some(ProvenValue::Loss), "decisive loss beats the draw cap");
+        let give = boxed(true);
+        assert_eq!(give.term(), Some(ProvenValue::Win), "misère win beats the draw cap");
+    }
+
+    #[test]
+    fn apply_move_by_string_reconstructs_a_multi_jump_chain() {
+        // End-to-end path→captured reconstruction: build a flying-king 4-capture
+        // loop, take the maximal chain's dash-joined STRING, drive DraughtsWasm's
+        // apply_move with it, and assert every captured square is cleared and the
+        // piece lands at the path's end (single-sourced captured-set recovery).
+        let mut g = empty(8, true, true, false, true, false);
+        set(&mut g, 5, 2, Cell::King(0));
+        set(&mut g, 4, 3, Cell::Man(1));
+        set(&mut g, 2, 3, Cell::Man(1));
+        set(&mut g, 2, 1, Cell::Man(1));
+        set(&mut g, 4, 1, Cell::Man(1));
+        let moves = g.gen();
+        let full = moves.iter().max_by_key(|m| m.captured.len()).unwrap().clone();
+        assert_eq!(full.captured.len(), 4, "need a real multi-jump chain");
+        let mv_str = format!("{full}");
+        assert!(mv_str.matches('-').count() >= 4, "a genuine chain string: {mv_str}");
+
+        // Wrap the hand-built state in a DraughtsWasm (flags mirror `g`) and drive
+        // apply_move with ONLY the string — captured squares are reconstructed.
+        let mut w = DraughtsWasm::new(8, 3, 1, 1, 0, 1, 0);
+        w.manager = MCTSManager::new(g.clone(), DrCfg, DrEval, UCTPolicy::new(1.4), ());
+        assert!(w.apply_move(&mv_str), "the chain string applies");
+        let after = w.get_board();
+        for &cap in &full.captured {
+            assert_eq!(after.chars().nth(cap as usize), Some(' '), "captured square {cap} cleared");
+        }
+        let end = *full.path.last().unwrap() as usize;
+        assert_eq!(after.chars().nth(end), Some('X'), "the king lands at the path end");
     }
 
     #[test]
