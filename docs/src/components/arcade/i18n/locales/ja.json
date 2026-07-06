@@ -524,5 +524,16 @@
   "No Frills": "シンプル",
   "Pawn Duel": "ポーン対決",
   "Ranks": "段",
-  "Wide 10×8": "ワイド 10×8"
+  "Wide 10×8": "ワイド 10×8",
+  "Strand": "漂流",
+  "Tight 5×5": "タイト 5×5",
+  "Grand 8×8": "グランド 8×8",
+  "hole": "穴",
+  "Tap where to step": "進む先をタップ",
+  "Now remove any tile 🕳️ — tap your pawn to cancel": "好きなマスを取り除こう 🕳️ — 自分のコマをタップでキャンセル",
+  "Step your pawn, then punch a hole anywhere on the board. Strand your rival with nowhere to step — last pawn moving wins.": "コマを1歩進めてから、盤上のどこでも好きなマスに穴を開ける。相手のコマが進む場所をなくして孤立させよう — 最後まで動けたコマの勝ち。",
+  "Every turn has TWO parts. First step your pawn one square in any of the 8 directions onto a remaining tile. Then remove ANY empty tile you like, anywhere on the board — it becomes a permanent hole no pawn can enter. Strand your opponent so their pawn has no square to step to, and you win.": "各手番は2つの部分に分かれる。まず自分のコマを8方向のいずれかに1マス、残っているマスへ進める。次に盤上のどこでも好きな空きマスを1つ取り除く — そこはどのコマも入れない永久の穴になる。相手のコマが進めるマスをなくして孤立させれば勝ち。",
+  "🏝️ Marooned! You had nowhere to step — {winner} wins.": "🏝️ 孤立！あなたは進む場所がありません — {winner}の勝ち。",
+  "🏝️ Marooned! {loser} had nowhere to step — you win! 🎉": "🏝️ 孤立！{loser}は進む場所がありません — あなたの勝ち！🎉",
+  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ 孤立！{loser}は進む場所がありません — {winner}の勝ち。"
 }

@@ -524,5 +524,16 @@
   "No Frills": "极简",
   "Pawn Duel": "兵之对决",
   "Ranks": "行",
-  "Wide 10×8": "宽版 10×8"
+  "Wide 10×8": "宽版 10×8",
+  "Strand": "孤岛",
+  "Tight 5×5": "紧凑 5×5",
+  "Grand 8×8": "宏大 8×8",
+  "hole": "洞",
+  "Tap where to step": "点击要走到的位置",
+  "Now remove any tile 🕳️ — tap your pawn to cancel": "现在移除任意格子 🕳️ — 点击你的棋子取消",
+  "Step your pawn, then punch a hole anywhere on the board. Strand your rival with nowhere to step — last pawn moving wins.": "先移动你的棋子，然后在棋盘上任意位置打出一个洞。让对手无处可走而被困——最后还能移动的棋子获胜。",
+  "Every turn has TWO parts. First step your pawn one square in any of the 8 directions onto a remaining tile. Then remove ANY empty tile you like, anywhere on the board — it becomes a permanent hole no pawn can enter. Strand your opponent so their pawn has no square to step to, and you win.": "每个回合分为两步。首先将你的棋子沿8个方向之一移动一格到一个剩余的格子上。然后移除棋盘上任意一个你喜欢的空格子——它会变成任何棋子都无法进入的永久洞。让对手的棋子无处可走而被困，你就获胜。",
+  "🏝️ Marooned! You had nowhere to step — {winner} wins.": "🏝️ 被困孤岛！你无处可走——{winner}获胜。",
+  "🏝️ Marooned! {loser} had nowhere to step — you win! 🎉": "🏝️ 被困孤岛！{loser}无处可走——你获胜！🎉",
+  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ 被困孤岛！{loser}无处可走——{winner}获胜。"
 }

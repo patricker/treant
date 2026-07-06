@@ -524,5 +524,16 @@
   "No Frills": "Sans fioritures",
   "Pawn Duel": "Duel de pions",
   "Ranks": "Rangées",
-  "Wide 10×8": "Large 10×8"
+  "Wide 10×8": "Large 10×8",
+  "Strand": "Naufragé",
+  "Tight 5×5": "Serré 5×5",
+  "Grand 8×8": "Grand 8×8",
+  "hole": "trou",
+  "Tap where to step": "Touchez où avancer",
+  "Now remove any tile 🕳️ — tap your pawn to cancel": "Retire maintenant une case 🕳️ — touche ton pion pour annuler",
+  "Step your pawn, then punch a hole anywhere on the board. Strand your rival with nowhere to step — last pawn moving wins.": "Déplace ton pion, puis perce un trou n’importe où sur le plateau. Isole ton rival jusqu’à ce qu’il n’ait plus où avancer — le dernier pion à pouvoir bouger gagne.",
+  "Every turn has TWO parts. First step your pawn one square in any of the 8 directions onto a remaining tile. Then remove ANY empty tile you like, anywhere on the board — it becomes a permanent hole no pawn can enter. Strand your opponent so their pawn has no square to step to, and you win.": "Chaque tour a DEUX parties. Déplace d’abord ton pion d’une case dans l’une des 8 directions vers une case restante. Retire ensuite N’IMPORTE QUELLE case vide, où tu veux sur le plateau — elle devient un trou permanent qu’aucun pion ne peut franchir. Isole ton adversaire pour que son pion n’ait plus aucune case où avancer, et tu gagnes.",
+  "🏝️ Marooned! You had nowhere to step — {winner} wins.": "🏝️ Isolé ! Tu n’avais nulle part où avancer — {winner} gagne.",
+  "🏝️ Marooned! {loser} had nowhere to step — you win! 🎉": "🏝️ Isolé ! {loser} n’avait nulle part où avancer — tu gagnes ! 🎉",
+  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ Isolé ! {loser} n’avait nulle part où avancer — {winner} gagne."
 }

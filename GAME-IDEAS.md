@@ -251,9 +251,11 @@ Amazons · Hedge (Quoridor) · Tablut · Fanorona · Havannah · Lasca · Halma 
   Near-zero code (Treblecross shelf), and knobs galore (row length, piece
   counts, gap count, multiple rows).
 - **Strand** (Isolation/Isola mechanic, renamed) · 2p · ★★ · 🟢 · 💪 · *reuse* —
-  move your pawn, then remove ANY tile on the board; first pawn with no move
-  loses. Engine is Trails plus "remove anywhere" — consider shipping it as a
-  Trails *knob* ("walls: behind-you / anywhere / both") instead of a new game.
+  ✅ SHIPPED (2026-07-06, Phase 3H) as a Trails-family child (`variantOf: 'trails'`):
+  move your pawn one of 8 steps, then remove ANY empty tile (a permanent hole);
+  first pawn with no step is marooned and loses. Shipped as its own engine
+  (`strand.rs`, three-part `from-to-removed` move + two-phase board), NOT a
+  Trails knob — the 3-part move and remove-a-tile UI don't fit the knob machinery.
 - **Len Choa** · 2p · ★★ · 🟢 · 🏆 · *new* — Thai hunt: 1 tiger vs 6 leopards on
   a small triangular board; tiger jump-captures, leopards immobilize. Fills the
   hunt shelf (Bagh-Chal, Fox & Hounds) with a smaller, solver-perfect entry.

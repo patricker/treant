@@ -257,6 +257,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  strand: (
+    // A lone palm on a small island above a waterline — you've been marooned.
+    <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 14v-3" />
+      <path d="M9 11c-2.4-1.4-4.2-1-5 0M9 11c2.4-1.4 4.2-1 5 0M9 11c0-2 1.6-3.4 3.6-3.4M9 11c0-2-1.6-3.4-3.6-3.4" />
+      <path d="M4 16.5c1.6 1.2 3.4-.8 5 .4 1.6-1.2 3.4.8 5-.4" />
+      <path d="M3 20c1.8 1.3 3.8-.9 5.5.4 1.7-1.3 3.7.9 5.5-.4" opacity="0.55" />
+    </g>
+  ),
   slimetrail: (
     // A snail: a spiral shell over a body, trailing a dotted slime trail behind.
     <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

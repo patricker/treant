@@ -524,5 +524,16 @@
   "No Frills": "Sem frescura",
   "Pawn Duel": "Duelo de Peões",
   "Ranks": "Fileiras",
-  "Wide 10×8": "Largo 10×8"
+  "Wide 10×8": "Largo 10×8",
+  "Strand": "Náufrago",
+  "Tight 5×5": "Apertado 5×5",
+  "Grand 8×8": "Grande 8×8",
+  "hole": "buraco",
+  "Tap where to step": "Toque onde pisar",
+  "Now remove any tile 🕳️ — tap your pawn to cancel": "Agora remova qualquer casa 🕳️ — toque no seu peão para cancelar",
+  "Step your pawn, then punch a hole anywhere on the board. Strand your rival with nowhere to step — last pawn moving wins.": "Mova seu peão e então abra um buraco em qualquer lugar do tabuleiro. Deixe seu rival sem nenhum lugar para pisar — o último peão que puder se mover vence.",
+  "Every turn has TWO parts. First step your pawn one square in any of the 8 directions onto a remaining tile. Then remove ANY empty tile you like, anywhere on the board — it becomes a permanent hole no pawn can enter. Strand your opponent so their pawn has no square to step to, and you win.": "Cada turno tem DUAS partes. Primeiro mova seu peão uma casa em qualquer uma das 8 direções para uma casa restante. Depois remova QUALQUER casa vazia que quiser, em qualquer lugar do tabuleiro — ela vira um buraco permanente que nenhum peão pode pisar. Deixe seu oponente sem nenhuma casa para pisar e você vence.",
+  "🏝️ Marooned! You had nowhere to step — {winner} wins.": "🏝️ Ilhado! Você não tinha para onde pisar — {winner} vence.",
+  "🏝️ Marooned! {loser} had nowhere to step — you win! 🎉": "🏝️ Ilhado! {loser} não tinha para onde pisar — você vence! 🎉",
+  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ Ilhado! {loser} não tinha para onde pisar — {winner} vence."
 }

@@ -524,5 +524,16 @@
   "No Frills": "Ohne Extras",
   "Pawn Duel": "Bauernduell",
   "Ranks": "Reihen",
-  "Wide 10×8": "Breit 10×8"
+  "Wide 10×8": "Breit 10×8",
+  "Strand": "Gestrandet",
+  "Tight 5×5": "Eng 5×5",
+  "Grand 8×8": "Groß 8×8",
+  "hole": "Loch",
+  "Tap where to step": "Tippe an, wohin treten",
+  "Now remove any tile 🕳️ — tap your pawn to cancel": "Jetzt ein beliebiges Feld entfernen 🕳️ — tippe deine Figur an zum Abbrechen",
+  "Step your pawn, then punch a hole anywhere on the board. Strand your rival with nowhere to step — last pawn moving wins.": "Ziehe deine Figur und stanze dann irgendwo ein Loch ins Brett. Strande deinen Rivalen, bis er nirgends mehr hintreten kann — die zuletzt bewegliche Figur gewinnt.",
+  "Every turn has TWO parts. First step your pawn one square in any of the 8 directions onto a remaining tile. Then remove ANY empty tile you like, anywhere on the board — it becomes a permanent hole no pawn can enter. Strand your opponent so their pawn has no square to step to, and you win.": "Jeder Zug hat ZWEI Teile. Ziehe zuerst deine Figur ein Feld in eine der 8 Richtungen auf ein verbliebenes Feld. Entferne dann ein BELIEBIGES leeres Feld irgendwo auf dem Brett — es wird zu einem dauerhaften Loch, das keine Figur betreten kann. Strande deinen Gegner, sodass seine Figur kein Feld mehr zum Hintreten hat, und du gewinnst.",
+  "🏝️ Marooned! You had nowhere to step — {winner} wins.": "🏝️ Gestrandet! Du konntest nirgends hintreten – {winner} gewinnt.",
+  "🏝️ Marooned! {loser} had nowhere to step — you win! 🎉": "🏝️ Gestrandet! {loser} konnte nirgends hintreten – du gewinnst! 🎉",
+  "🏝️ Marooned! {loser} had nowhere to step — {winner} wins.": "🏝️ Gestrandet! {loser} konnte nirgends hintreten – {winner} gewinnt."
 }
