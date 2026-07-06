@@ -27,11 +27,10 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
 function NimBoard({ board, params, interactive, onMove }: BoardProps) {
   const { t, tn } = useT();
   const heaps = board.split(',').map((s) => Number(s) || 0);
-  const maxTake = params.maxTake ?? 0; // 0 == take any number from one heap
+  const maxTake = params.maxTake ?? 2; // 0 == take any number from one heap
   const cap = (n: number) => (maxTake === 0 ? n : Math.min(n, maxTake));
 
   const [sel, setSel] = useState<{ heap: number; count: number } | null>(null);
-  const [shake, setShake] = useState<number | null>(null);
   // Drop any stale selection once the board changes (our move landed, or the AI
   // replied) so a highlight never points at the wrong heap.
   useEffect(() => setSel(null), [board]);
@@ -68,16 +67,11 @@ function NimBoard({ board, params, interactive, onMove }: BoardProps) {
 
   // Multi-heap / unbounded take: tap a stone to select "take from here to the
   // end of the row", tap again (or the confirm button) to commit. Stones beyond
-  // the max-take limit are dimmed and un-tappable; tapping a full heap that's
-  // over the cap head-shakes instead of dying silently.
+  // the max-take limit are dimmed and disabled, so an over-cap take can't be
+  // attempted in the first place.
   const tap = (heap: number, i: number, n: number) => {
     if (!interactive) return;
     const count = n - i; // this stone plus everything to its right
-    if (count > cap(n)) {
-      setShake(heap);
-      window.setTimeout(() => setShake(null), 550);
-      return;
-    }
     if (sel && sel.heap === heap && sel.count === count) {
       onMove(`${heap}-${count}`);
       setSel(null);
@@ -93,7 +87,7 @@ function NimBoard({ board, params, interactive, onMove }: BoardProps) {
       </div>
       <div className={styles.nimHeaps}>
         {heaps.map((n, h) => (
-          <div key={h} className={`${styles.nimHeapRow} ${h === shake ? styles.shakeCell : ''}`}>
+          <div key={h} className={styles.nimHeapRow}>
             <span className={styles.nimHeapLabel}>{n}</span>
             <div className={styles.nimHeapDots}>
               {n === 0 ? (

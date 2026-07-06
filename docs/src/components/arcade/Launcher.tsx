@@ -162,6 +162,7 @@ function FamilyTile({
   onToggle,
   onPick,
   t,
+  tn,
 }: {
   parent: GameDefinition;
   kids: GameDefinition[];
@@ -169,11 +170,19 @@ function FamilyTile({
   onToggle: () => void;
   onPick: (id: string) => void;
   t: (key: string, params?: Record<string, string | number>) => string;
+  tn: (
+    n: number,
+    singular: string,
+    plural: string,
+    params?: Record<string, string | number>,
+  ) => string;
 }) {
-  const label = t('Show {n} more ways to play {name}', {
-    n: kids.length,
-    name: t(parent.name),
-  });
+  const label = tn(
+    kids.length,
+    'Show 1 more way to play {name}',
+    'Show {n} more ways to play {name}',
+    { name: t(parent.name) },
+  );
   return (
     <div className={expanded ? styles.familyOpen : styles.family}>
       <div className={styles.familyHead}>
@@ -195,7 +204,7 @@ function FamilyTile({
 }
 
 export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
-  const { t } = useT();
+  const { t, tn } = useT();
   const [featured, setFeatured] = useState(0);
   const [recent, setRecent] = useState<string[]>([]);
   // Which variant family is expanded (only one at a time — simplest state).
@@ -297,12 +306,7 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
           </div>
           <div className={styles.gameStrip}>
             {matches.map((g) => (
-              <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
-                <span className={styles.stripIcon}>
-                  <GameIcon id={g.id} size={32} />
-                </span>
-                <span className={styles.stripName}>{t(g.name)}</span>
-              </button>
+              <Tile key={g.id} g={g} onPick={onPick} t={t} />
             ))}
           </div>
         </div>
@@ -313,12 +317,7 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
             <div className={styles.moreLabel}>{t('Recently played')}</div>
             <div className={styles.gameStrip}>
               {recentDefs.map((g) => (
-                <button key={g.id} className={styles.stripTile} onClick={() => onPick(g.id)}>
-                  <span className={styles.stripIcon}>
-                    <GameIcon id={g.id} size={32} />
-                  </span>
-                  <span className={styles.stripName}>{t(g.name)}</span>
-                </button>
+                <Tile key={g.id} g={g} onPick={onPick} t={t} />
               ))}
             </div>
           </div>
@@ -346,6 +345,7 @@ export default function Launcher({ onPick }: { onPick: (id: string) => void }) {
                       }
                       onPick={onPick}
                       t={t}
+                      tn={tn}
                     />
                   );
                 })}
