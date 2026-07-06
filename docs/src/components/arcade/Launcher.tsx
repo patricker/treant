@@ -135,9 +135,11 @@ function renderFamily(
   onPick: (id: string) => void,
   t: (key: string, params?: Record<string, string | number>) => string,
 ) {
-  // TODO(draughts): families of ≥4 (the draughts family, up to 9 tiles) should
-  // open a bottom sheet instead of an inline row. None exist yet — fall back to
-  // the inline row so the seam is exercised the day draughts lands.
+  // The draughts family (5 children) exercises this inline fallback and reads
+  // cleanly — Playwright-verified at 5 children on 390px (2·2·1 wrap, no kid
+  // overflow, no horizontal page scroll). A bottom sheet remains an option if a
+  // future, larger family (≥4 was the original trigger, up to 9 tiles) reads
+  // poorly inline; until then the inline row is the shipped behaviour.
   return (
     <div className={styles.familyKids}>
       <div className={styles.familyCaption}>

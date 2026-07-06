@@ -193,12 +193,14 @@ export const draughts: GameDefinition = {
   icon: '⛀',
   blurb: 'Classic checkers: march your men, jump diagonally — jumps are forced — and crown a king at the far row.',
   // Solver-off (long, cycle-prone games); strength is a real material+mobility
-  // evaluator. Calibrated via scripts/calibrate.sh draughts 12 (field
-  // 3→18→58→74→72→75; seat-0 47%; Hard plateaus at p300).
+  // evaluator. Hard = max rung per CALIBRATION.md policy (the self-play plateau
+  // measures relative self-play strength, not absolute strength vs humans).
+  // Easy/Medium measured via scripts/calibrate.sh draughts 12 on 2026-07-06
+  // (field 3→18→58→74→72→75; seat-0 47%).
   difficulty: {
     easy: { playouts: 8, topK: 6, temp: 3 },
     medium: { playouts: 100, topK: 4, temp: 1 },
-    hard: { playouts: 300, topK: 3, temp: 0.6 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
   },
   defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 0, promote_mid: 0, misere: 0 },
   presets: [
@@ -257,12 +259,14 @@ export const brazilianDraughts: GameDefinition = {
   name: 'Brazilian Draughts',
   icon: '⛀',
   blurb: 'International rules on a compact 8×8 board: flying kings, backward captures, and maximum-capture is forced.',
-  // Calibrated via scripts/calibrate.sh brazilian-draughts 12 (field
-  // 5→15→47→70→79→84; seat-0 49%; Hard plateaus at p800).
+  // Hard = max rung per CALIBRATION.md policy (the self-play plateau measures
+  // relative self-play strength, not absolute strength vs humans). Easy/Medium
+  // measured via scripts/calibrate.sh brazilian-draughts 12 on 2026-07-06
+  // (field 5→15→47→70→79→84; seat-0 49%).
   difficulty: {
     easy: { playouts: 8, topK: 6, temp: 3 },
     medium: { playouts: 100, topK: 4, temp: 1 },
-    hard: { playouts: 800, topK: 2, temp: 0.35 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
   },
   defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 1, promote_mid: 0, misere: 0 },
   presets: [{ label: 'Brazilian 8×8', emoji: '⭐', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 1, promote_mid: 0, misere: 0 } }],
@@ -279,12 +283,14 @@ export const poolCheckers: GameDefinition = {
   name: 'Pool Checkers',
   icon: '⛀',
   blurb: '8×8 checkers with flying kings and backward jumps — but take ANY capture you like, not necessarily the longest.',
-  // Calibrated via scripts/calibrate.sh pool-checkers 12 (field
-  // 8→12→44→73→79→83; seat-0 47%; Hard plateaus at p800).
+  // Hard = max rung per CALIBRATION.md policy (the self-play plateau measures
+  // relative self-play strength, not absolute strength vs humans). Easy/Medium
+  // measured via scripts/calibrate.sh pool-checkers 12 on 2026-07-06
+  // (field 8→12→44→73→79→83; seat-0 47%).
   difficulty: {
     easy: { playouts: 8, topK: 6, temp: 3 },
     medium: { playouts: 100, topK: 4, temp: 1 },
-    hard: { playouts: 800, topK: 2, temp: 0.35 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
   },
   defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 0, promote_mid: 0, misere: 0 },
   presets: [{ label: 'Pool 8×8', emoji: '⭐', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 0, promote_mid: 0, misere: 0 } }],
@@ -301,12 +307,14 @@ export const russianDraughts: GameDefinition = {
   name: 'Russian Draughts',
   icon: '⛀',
   blurb: '8×8 with flying kings and backward jumps — and a man that reaches the back row mid-jump is crowned at once and keeps going as a king.',
-  // Calibrated via scripts/calibrate.sh russian-draughts 12 (field
-  // 0→20→45→76→78→81; seat-0 49%; Hard plateaus at p300).
+  // Hard = max rung per CALIBRATION.md policy (the self-play plateau measures
+  // relative self-play strength, not absolute strength vs humans). Easy/Medium
+  // measured via scripts/calibrate.sh russian-draughts 12 on 2026-07-06
+  // (field 0→20→45→76→78→81; seat-0 49%).
   difficulty: {
     easy: { playouts: 8, topK: 6, temp: 3 },
     medium: { playouts: 100, topK: 4, temp: 1 },
-    hard: { playouts: 300, topK: 3, temp: 0.6 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
   },
   defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 0, promote_mid: 1, misere: 0 },
   presets: [{ label: 'Russian 8×8', emoji: '⭐', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 0, promote_mid: 1, misere: 0 } }],
@@ -327,13 +335,15 @@ export const giveawayCheckers: GameDefinition = {
   // text never mentions it.
   blurb: 'Checkers upside-down: the first player left with no move — because they gave every piece away, or got boxed in — WINS.',
   // Misère flips who is favoured, but the ladder is NON-DEGENERATE: the material
-  // sign-flip means deeper search genuinely plays the giveaway better. Calibrated
-  // via scripts/calibrate.sh giveaway-checkers 12 (field 3→17→48→73→78→81
-  // monotonic; seat-0 52%; Hard plateaus at p800).
+  // sign-flip means deeper search genuinely plays the giveaway better. Hard = max
+  // rung per CALIBRATION.md policy (the self-play plateau measures relative
+  // self-play strength, not absolute strength vs humans). Easy/Medium measured via
+  // scripts/calibrate.sh giveaway-checkers 12 on 2026-07-06 (field 3→17→48→73→78→81
+  // monotonic; seat-0 52%).
   difficulty: {
     easy: { playouts: 8, topK: 6, temp: 3 },
     medium: { playouts: 100, topK: 4, temp: 1 },
-    hard: { playouts: 800, topK: 2, temp: 0.35 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
   },
   defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 0, promote_mid: 0, misere: 1 },
   presets: [{ label: 'Giveaway 8×8', emoji: '🙃', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 0, promote_mid: 0, misere: 1 } }],

@@ -648,3 +648,26 @@ climb: self-play ladder timed out (chance-node tree blow-up); no matrix — hand
     hard: { playouts: 800, topK: 2, temp: 0.35 },
   },
   (Hard capped at p800: strength peaked early — extra playouts add nothing.)
+
+---
+
+## 2026-07-06 pass — draughts family (6 variants)
+
+Six config-only tiles over one flag-driven `DraughtsWasm` engine, each measured
+with `scripts/calibrate.sh <id> 12` (solver-off; the 4A material+mobility
+evaluator). All six ladders are monotone (stronger rung wins more, including the
+Giveaway misère variant); seat-0 rates 46–52% (balanced). Per
+[`CALIBRATION.md`](../CALIBRATION.md) **Policy**, Hard ships as the max-strength
+rung (`2000/1/0`) — the harness "plateau" note measures where *relative
+self-play* strength stops climbing, **not** absolute strength vs a human, so the
+measured ladder's job is to set beatable Easy/Medium. `international-draughts`
+uses the LIGHT ladder (the 10×10 board is branchy) and tops out at its p500 rung.
+
+| Variant | Field scores (weak→strong) | Easy | Medium | Hard | Source |
+|---|---|---|---|---|---|
+| draughts (American) | 3·18·58·74·72·75 | {8,6,3} | {100,4,1} | {2000,1,0} | measured (seat-0 47%) |
+| international-draughts | 6·19·58·79·88 (LIGHT) | {8,6,3} | {80,4,1} | {500,2,0.2} | measured (seat-0 46%; LIGHT ladder top rung) |
+| brazilian-draughts | 5·15·47·70·79·84 | {8,6,3} | {100,4,1} | {2000,1,0} | measured (seat-0 49%) |
+| pool-checkers | 8·12·44·73·79·83 | {8,6,3} | {100,4,1} | {2000,1,0} | measured (seat-0 47%) |
+| russian-draughts | 0·20·45·76·78·81 | {8,6,3} | {100,4,1} | {2000,1,0} | measured (seat-0 49%) |
+| giveaway-checkers 🙃 | 3·17·48·73·78·81 | {8,6,3} | {100,4,1} | {2000,1,0} | measured (seat-0 52%; non-degenerate misère) |
