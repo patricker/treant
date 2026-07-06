@@ -290,6 +290,7 @@
   font-weight: 800;
   font-size: 0.95rem;
   line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(255, 59, 92, 0.32);
   transition: transform 0.1s ease, box-shadow 0.1s ease;

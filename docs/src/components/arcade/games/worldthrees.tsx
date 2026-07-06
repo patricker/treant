@@ -136,7 +136,7 @@ export const worldThrees: GameDefinition = {
   id: 'world-threes',
   name: 'World Threes',
   icon: '🌍',
-  blurb: 'Eight of the world’s traditional three-in-a-row games — place, then slide along the lines. Pick a country to change the board.',
+  blurb: 'Eight of the world’s traditional three-in-a-row games — place, then slide along the lines. Most race to three-in-a-row; a couple win by trapping. Pick a country to change the board.',
   // Solver-tiny boards: the self-play calibration ladder was degenerate/noisy
   // (Hard "plateaued" at a non-deterministic rung), so — as with the Morris
   // variants — we hand-tune. A deterministic p800 Hard lets the exact solver

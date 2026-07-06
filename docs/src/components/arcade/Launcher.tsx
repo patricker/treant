@@ -195,7 +195,7 @@ function FamilyTile({
           title={label}
           onClick={onToggle}
         >
-          {expanded ? '×' : `+${kids.length}`}
+          {expanded ? '×' : `+${kids.length} ▾`}
         </button>
       </div>
       {expanded && renderFamily(parent, kids, onPick, t)}
