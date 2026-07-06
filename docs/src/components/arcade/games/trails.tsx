@@ -69,7 +69,7 @@ export const trails: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.TrailsWasm(p.cols, p.rows, 0)),
   Board: TrailsBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };
 
 export const joust: GameDefinition = {
@@ -98,5 +98,5 @@ export const joust: GameDefinition = {
   ],
   create: (wasm, p) => moveHandle(new wasm.TrailsWasm(p.cols, p.rows, 1)),
   Board: TrailsBoard,
-  playerLabels: ['Red', 'Yellow'],
+  playerLabels: ['Red', 'Gold'],
 };

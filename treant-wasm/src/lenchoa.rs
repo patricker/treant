@@ -513,6 +513,12 @@ mod tests {
         g.current = TIGER;
         let leap = LcMove { from: 0, to: 5 };
         assert!(g.gen().contains(&leap), "leap 0-5 over 2 should be legal");
+        // Captures are non-mandatory: a quiet slide to an empty neighbour (0→1)
+        // coexists in gen() alongside the leap — the tiger may decline the meal.
+        assert!(
+            g.gen().contains(&LcMove { from: 0, to: 1 }),
+            "quiet slide 0-1 should coexist with the leap (capture optional)"
+        );
         g.make_move(&leap);
         assert_eq!(g.grid[5], TIGER as i8, "tiger landed on 5");
         assert_eq!(g.grid[0], -1, "tiger vacated the apex");

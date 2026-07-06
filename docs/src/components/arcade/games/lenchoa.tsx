@@ -112,7 +112,7 @@ function LenChoaBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
           🐆 {t('Leopards to place: {n}', { n: inHand })}
         </span>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-          🐅 {t('Leopards eaten: {n}', { n: captured })}
+          🐅 {t('Leopards eaten: {n} / 3', { n: captured })}
         </span>
       </div>
       <div className={styles.mtWrap} style={{ maxWidth: 340 }}>
@@ -147,7 +147,7 @@ function LenChoaBoard({ board, interactive, legalMoves, onMove }: BoardProps) {
                 border: ch === ' ' ? '2.5px solid var(--arc-soft)' : undefined,
                 boxShadow: isTiger ? '0 0 0 2px var(--arc-p2)' : undefined,
               }}
-              aria-label={t('Point {n}: {state}', { n: i, state: stateWord })}
+              aria-label={t('Point {n}: {state}', { n: i + 1, state: stateWord })}
             >
               {isTiger ? '🐅' : ch === 'L' ? '🐆' : ''}
             </button>

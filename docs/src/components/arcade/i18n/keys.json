@@ -275,7 +275,7 @@
   "Length",
   "leopard",
   "Leopards",
-  "Leopards eaten: {n}",
+  "Leopards eaten: {n} / 3",
   "Leopards move first. While leopards remain in hand, the leopard player drops one on any empty point; once all six are placed, a leopard steps one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing on the empty point just beyond — to eat it. The leopards win by surrounding the tiger so it cannot move; the tiger wins by eating three leopards.",
   "Leopards to place: {n}",
   "Like Connect Four, but on your turn you may instead POP one of your own discs out of the bottom of a column — the whole stack above it drops one slot. First to line up four of your colour wins; beware, a pop can even complete your opponent’s line. A completely full board with no line is a draw — pop a disc to keep the game alive.",

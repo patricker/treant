@@ -388,6 +388,13 @@ labels are `['Red','Gold']`, not `['Red','Black']`).
 - **CTA hierarchy.** Solid neon-green is reserved for the one primary action
   per screen; selected toggles are outline pills. Don't add new solid-green
   buttons.
+- **Narrate non-goal endings (`resultFlavor` seam).** Games that end by box-in,
+  immobilisation, or any "no-glow" condition (nothing lights up to explain the
+  result) must supply `GameDefinition.resultFlavor` to narrate *why* the game
+  ended — the generic "X wins" banner leaves a boxed-in loss looking arbitrary.
+  Adopted by Slimetrail, Toads & Frogs, Pawn Duel, Strand, and Len Choa; new
+  games with non-goal endings follow the same seam (see `gameTypes.ts` for the
+  callback's context args).
 
 ---
 

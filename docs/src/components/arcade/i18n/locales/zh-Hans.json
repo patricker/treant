@@ -547,7 +547,7 @@
   "Len Choa": "Len Choa",
   "leopard": "豹子",
   "Leopards": "豹子",
-  "Leopards eaten: {n}": "已吃掉的豹子：{n}",
+  "Leopards eaten: {n} / 3": "已吃掉的豹子：{n} / 3",
   "Leopards move first. While leopards remain in hand, the leopard player drops one on any empty point; once all six are placed, a leopard steps one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing on the empty point just beyond — to eat it. The leopards win by surrounding the tiger so it cannot move; the tiger wins by eating three leopards.": "豹子先走。只要手中还有豹子，豹方就在任意空点上放下一只；六只全部放好后，一只豹子沿着线移动一步到相邻的空点。老虎（从顶点开始）也沿着线移动，或跳过一只相邻的豹子 — 落在紧邻其后的空点上 — 把它吃掉。豹子把老虎围住使其无法移动即获胜；老虎吃掉三只豹子即获胜。",
   "Leopards to place: {n}": "待放置的豹子：{n}",
   "Tap an empty point to place a leopard": "点按一个空点来放置豹子",

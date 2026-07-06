@@ -547,7 +547,7 @@
   "Len Choa": "Len Choa",
   "leopard": "Leopard",
   "Leopards": "Leoparden",
-  "Leopards eaten: {n}": "Gefressene Leoparden: {n}",
+  "Leopards eaten: {n} / 3": "Gefressene Leoparden: {n} / 3",
   "Leopards move first. While leopards remain in hand, the leopard player drops one on any empty point; once all six are placed, a leopard steps one point along a line to an empty neighbour. The tiger (starting on the apex) steps along a line too, or leaps a single adjacent leopard — landing on the empty point just beyond — to eat it. The leopards win by surrounding the tiger so it cannot move; the tiger wins by eating three leopards.": "Die Leoparden ziehen zuerst. Solange Leoparden in der Hand sind, setzt der Leopardenspieler einen auf einen beliebigen freien Punkt; sind alle sechs gesetzt, zieht ein Leopard einen Punkt entlang einer Linie auf einen freien Nachbarn. Der Tiger (er startet an der Spitze) zieht ebenfalls entlang einer Linie oder überspringt einen einzelnen benachbarten Leoparden — und landet auf dem freien Punkt direkt dahinter —, um ihn zu fressen. Die Leoparden gewinnen, indem sie den Tiger umzingeln, sodass er nicht ziehen kann; der Tiger gewinnt, indem er drei Leoparden frisst.",
   "Leopards to place: {n}": "Zu setzende Leoparden: {n}",
   "Tap an empty point to place a leopard": "Tippe einen freien Punkt an, um einen Leoparden zu setzen",
