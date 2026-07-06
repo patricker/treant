@@ -19,5 +19,6 @@ fn every_game_weak_move_returns_something_or_terminal() {
     ck!(DotsBoxesWasm::new(3, 3));
     ck!(KonaneWasm::new(6, 6));
     ck!(DomineeringWasm::new(6, 6, 0));
-    ck!(NimWasm::new(15));
+    ck!(NimWasm::new(15, 1, 2, 0)); // classic single-pile
+    ck!(NimWasm::new(7, 4, 0, 1)); // Marienbad (heaps + unbounded + misère)
 }

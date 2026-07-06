@@ -28,7 +28,7 @@ export const RULES: Record<string, string> = {
   'pinch-five': 'Place one stone per turn. Win by lining up five of your colour, OR by capturing enough enemy pairs. Bracket exactly two enemy stones between two of yours (your-stone, enemy, enemy, your-stone) and that pair is snapped off the board.',
   treblecross: 'A single strip, and BOTH players place the same mark (X). Whoever completes three X’s in a row wins — even using marks the other player placed.',
   'dots-and-boxes': 'Take turns drawing one edge between two dots. Complete the fourth side of a 1×1 box to claim it and immediately take another turn. Most boxes when the grid is full wins.',
-  nim: 'Stones sit in a pile. On your turn take 1 or 2 stones. The player who takes the very last stone wins. (There’s a hidden winning strategy — can you find it?)',
+  nim: 'Stones sit in one or more heaps. On your turn take stones from a single heap — up to the max-take limit, or as many as you like when it is set to “any”. In normal play the player who takes the very last stone wins; with the misère knob on, taking the last stone LOSES. (There’s a hidden winning strategy — can you find it?)',
   chomp: 'The grid is a chocolate bar; the top-left square is poisoned. On your turn eat a square and everything below-and-right of it. Whoever is forced to eat the poison loses.',
   wythoff: 'A queen sits on a grid and only ever moves toward the corner: any distance left, down, or diagonally down-left. The player who moves it onto the corner square wins.',
   'subtract-square': 'A pile of stones. On your turn remove a perfect-square number of them — 1, 4, 9, 16, and so on. Take the last stone to win.',

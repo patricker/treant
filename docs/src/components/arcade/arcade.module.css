@@ -814,6 +814,74 @@
   cursor: default;
   box-shadow: none;
 }
+/* Multi-heap / unbounded-take board: one row of tappable stones per heap. */
+.nimHeaps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+}
+.nimHeapRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--arc-soft);
+  border-radius: 14px;
+  padding: 4px 10px 4px 6px;
+}
+.nimHeapLabel {
+  min-width: 1.4em;
+  text-align: center;
+  font-weight: 800;
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+.nimHeapDots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+}
+.nimHeapEmpty {
+  font-weight: 700;
+  opacity: 0.4;
+  padding: 0 8px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.nimStoneBtn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nimStoneBtn::before {
+  content: '';
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #8fb2d7, var(--arc-p3));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.nimStoneBtn:disabled {
+  cursor: default;
+}
+.nimStoneOff::before {
+  opacity: 0.3;
+  box-shadow: none;
+}
+.nimStoneSel::before {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 3px var(--arc-accent), 0 2px 6px rgba(0, 0, 0, 0.3);
+}
 
 /* ---------- Mancala ---------- */
 .mancalaWrap {
