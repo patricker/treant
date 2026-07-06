@@ -489,5 +489,22 @@
   "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "蜗牛由双方共用。轮到你时，把它沿 8 个方向中的任意一个移动一步（含斜向）。蜗牛离开的每一格都会变成黏液，再也不能进入。蜗牛一到达红方的角落（左下角）红方就获胜；到达金方的角落（右上角）则金方获胜——而且无论是谁把它带到那里都算数，所以千万别把蜗牛推进对手的角落。轮到你时如果蜗牛被困，你就输了。",
   "🐌 Snail trapped! You’re boxed in — {winner} wins.": "🐌 蜗牛被困住了！你无路可走——{winner} 获胜。",
   "🐌 Snail trapped! {loser} is boxed in — you win! 🎉": "🐌 蜗牛被困住了！{loser} 无路可走——你赢了！🎉",
-  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 蜗牛被困住了！{loser} 没有可走的棋步——{winner} 获胜！"
+  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 蜗牛被困住了！{loser} 没有可走的棋步——{winner} 获胜！",
+  "◀ Frogs hop": "◀ 青蛙跳",
+  "🐸 Stuck! {loser} had no move — {winner} wins!": "🐸 卡住了！{loser}无法行动——{winner}获胜！",
+  "🐸 Stuck! {loser} has no move — you win! 🎉": "🐸 卡住了！{loser}无法行动——你赢了！🎉",
+  "🐸 Stuck! You have no move — {winner} wins.": "🐸 卡住了！你无法行动——{winner}获胜。",
+  "A single row of squares. Toads (red) only ever move RIGHT; Frogs (gold) only ever move LEFT. On your turn either SLIDE one of your creatures forward into the next empty square, or HOP it over a single opposing creature sitting right in front, landing on the empty square just beyond (you can’t hop your own kind, and nothing is captured). No backward moves. If it’s your turn and none of your creatures can move, you lose!": "单排格子。蟾蜍（红色）只能向右走，青蛙（金色）只能向左走。轮到你时，把你的一只生物向前滑动一格到相邻的空格，或让它跳过正前方的一只对方生物、落在再前面的空格上（不能跳过己方生物，也不吃子）。不能后退。若轮到你而你的生物都无法移动，你就输了！",
+  "Conway’s hopping game. Toads only go right, Frogs only go left — box your rival in so they can’t move.": "康威的跳跃游戏。蟾蜍只向右、青蛙只向左——把对手困住，让它无法行动。",
+  "frog": "青蛙",
+  "Frogs": "青蛙",
+  "Gaps": "空格",
+  "Long March": "长征",
+  "Square {n}: {state}": "格子 {n}：{state}",
+  "tap a glowing creature to move it": "点击发光的生物来移动它",
+  "Tiny": "迷你",
+  "toad": "蟾蜍",
+  "Toads": "蟾蜍",
+  "Toads & Frogs": "蟾蜍与青蛙",
+  "Toads hop ▶": "蟾蜍跳 ▶"
 }

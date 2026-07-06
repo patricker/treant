@@ -17,7 +17,7 @@ const CATEGORIES: { name: string; ids: string[] }[] = [
   { name: 'Connect & line', ids: ['hex', 'y', 'gale', 'gomoku', 'pinch-five', 'connect-six', 'square-up', 'order-chaos', 'treblecross'] },
   { name: 'Move & capture', ids: ['frontline', 'clobber', 'konane', 'nine-morris', 'amazons', 'fox-hounds', 'bagh-chal', 'first-capture', 'trails', 'shift'] },
   { name: 'Dice & solo', ids: ['pig', 'climb', '2048'] },
-  { name: 'Brain-teasers', ids: ['no-tac-toe', 'trap-three', 'chomp', 'wythoff', 'subtract-square', 'euclid', 'mu-torere', 'domineering', 'nogo', 'col', 'sim'] },
+  { name: 'Brain-teasers', ids: ['no-tac-toe', 'trap-three', 'toads-frogs', 'chomp', 'wythoff', 'subtract-square', 'euclid', 'mu-torere', 'domineering', 'nogo', 'col', 'sim'] },
 ];
 
 // Variant children grouped by parent id (declared via `variantOf` on the child

@@ -489,5 +489,22 @@
   "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "Un escargot est partagé par les deux joueurs. À ton tour, déplace-le d’une case dans l’une des 8 directions (diagonales comprises). Chaque case que l’escargot quitte se transforme en bave et ne peut plus jamais être empruntée. Rouge gagne à l’instant où l’escargot atteint le coin de Rouge (en bas à gauche) ; l’Or gagne quand il atteint le coin de l’Or (en haut à droite) — et cela compte peu importe qui l’y a mené, alors ne pousse jamais l’escargot dans le coin de ton rival. Si c’est ton tour et que l’escargot est bloqué, tu perds.",
   "🐌 Snail trapped! You’re boxed in — {winner} wins.": "🐌 Escargot piégé ! Vous êtes coincé — {winner} gagne.",
   "🐌 Snail trapped! {loser} is boxed in — you win! 🎉": "🐌 Escargot piégé ! {loser} est coincé — vous gagnez ! 🎉",
-  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 Escargot piégé ! {loser} n’avait plus de coup — {winner} gagne !"
+  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 Escargot piégé ! {loser} n’avait plus de coup — {winner} gagne !",
+  "◀ Frogs hop": "◀ Les grenouilles sautent",
+  "🐸 Stuck! {loser} had no move — {winner} wins!": "🐸 Bloqué ! {loser} ne pouvait plus bouger — {winner} gagne !",
+  "🐸 Stuck! {loser} has no move — you win! 🎉": "🐸 Bloqué ! {loser} ne peut plus bouger — tu gagnes ! 🎉",
+  "🐸 Stuck! You have no move — {winner} wins.": "🐸 Bloqué ! Tu ne peux plus bouger — {winner} gagne.",
+  "A single row of squares. Toads (red) only ever move RIGHT; Frogs (gold) only ever move LEFT. On your turn either SLIDE one of your creatures forward into the next empty square, or HOP it over a single opposing creature sitting right in front, landing on the empty square just beyond (you can’t hop your own kind, and nothing is captured). No backward moves. If it’s your turn and none of your creatures can move, you lose!": "Une seule rangée de cases. Les crapauds (rouge) ne vont que vers la DROITE ; les grenouilles (or) que vers la GAUCHE. À ton tour, soit tu FAIS GLISSER une de tes créatures d’une case en avant sur la case vide suivante, soit tu la fais SAUTER par-dessus une seule créature adverse juste devant, pour atterrir sur la case vide juste après (interdit de sauter par-dessus les tiennes, et rien n’est capturé). Aucun retour en arrière. Si c’est ton tour et qu’aucune de tes créatures ne peut bouger, tu perds !",
+  "Conway’s hopping game. Toads only go right, Frogs only go left — box your rival in so they can’t move.": "Le jeu de sauts de Conway. Les crapauds vont à droite, les grenouilles à gauche — coince ton rival pour qu’il ne puisse plus bouger.",
+  "frog": "grenouille",
+  "Frogs": "Grenouilles",
+  "Gaps": "Trous",
+  "Long March": "Longue marche",
+  "Square {n}: {state}": "Case {n} : {state}",
+  "tap a glowing creature to move it": "touche une créature qui brille pour la déplacer",
+  "Tiny": "Minuscule",
+  "toad": "crapaud",
+  "Toads": "Crapauds",
+  "Toads & Frogs": "Crapauds et grenouilles",
+  "Toads hop ▶": "Les crapauds sautent ▶"
 }

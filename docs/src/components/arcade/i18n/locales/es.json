@@ -489,5 +489,22 @@
   "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "Un caracol es compartido por ambos jugadores. En tu turno muévelo un paso en cualquiera de las 8 direcciones (también en diagonal). Cada casilla que el caracol abandona se convierte en baba y ya no se puede volver a pisar. Rojo gana en el instante en que el caracol llega a la esquina de Rojo (abajo a la izquierda); Oro gana cuando llega a la esquina de Oro (arriba a la derecha) — y cuenta sin importar quién lo llevó allí, así que nunca empujes el caracol a la esquina de tu rival. Si es tu turno y el caracol está encerrado, pierdes.",
   "🐌 Snail trapped! You’re boxed in — {winner} wins.": "🐌 ¡Babosa atrapada! Estás sin salida — gana {winner}.",
   "🐌 Snail trapped! {loser} is boxed in — you win! 🎉": "🐌 ¡Babosa atrapada! {loser} se quedó sin salida — ¡ganaste! 🎉",
-  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 ¡Babosa atrapada! {loser} se quedó sin movimientos — ¡gana {winner}!"
+  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 ¡Babosa atrapada! {loser} se quedó sin movimientos — ¡gana {winner}!",
+  "◀ Frogs hop": "◀ Las ranas saltan",
+  "🐸 Stuck! {loser} had no move — {winner} wins!": "🐸 ¡Atascado! {loser} no pudo mover — ¡gana {winner}!",
+  "🐸 Stuck! {loser} has no move — you win! 🎉": "🐸 ¡Atascado! {loser} no puede mover — ¡ganas tú! 🎉",
+  "🐸 Stuck! You have no move — {winner} wins.": "🐸 ¡Atascado! No puedes mover — gana {winner}.",
+  "A single row of squares. Toads (red) only ever move RIGHT; Frogs (gold) only ever move LEFT. On your turn either SLIDE one of your creatures forward into the next empty square, or HOP it over a single opposing creature sitting right in front, landing on the empty square just beyond (you can’t hop your own kind, and nothing is captured). No backward moves. If it’s your turn and none of your creatures can move, you lose!": "Una sola fila de casillas. Los sapos (rojo) solo se mueven a la DERECHA; las ranas (dorado) solo a la IZQUIERDA. En tu turno, DESLIZA una de tus criaturas una casilla hacia delante a la siguiente casilla vacía, o SÁLTALA por encima de una única criatura rival justo delante, cayendo en la casilla vacía siguiente (no puedes saltar sobre las tuyas y no se captura nada). Sin movimientos hacia atrás. Si es tu turno y ninguna de tus criaturas puede moverse, ¡pierdes!",
+  "Conway’s hopping game. Toads only go right, Frogs only go left — box your rival in so they can’t move.": "El juego de saltos de Conway. Los sapos solo van a la derecha y las ranas a la izquierda: acorrala a tu rival para que no pueda moverse.",
+  "frog": "rana",
+  "Frogs": "Ranas",
+  "Gaps": "Huecos",
+  "Long March": "Larga marcha",
+  "Square {n}: {state}": "Casilla {n}: {state}",
+  "tap a glowing creature to move it": "toca una criatura que brille para moverla",
+  "Tiny": "Diminuto",
+  "toad": "sapo",
+  "Toads": "Sapos",
+  "Toads & Frogs": "Sapos y ranas",
+  "Toads hop ▶": "Los sapos saltan ▶"
 }

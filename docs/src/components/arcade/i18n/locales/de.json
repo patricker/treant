@@ -489,5 +489,22 @@
   "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "Eine Schnecke gehört beiden Spielern. Wenn du am Zug bist, ziehe sie ein Feld weit in eine der 8 Richtungen (auch diagonal). Jedes Feld, das die Schnecke verlässt, wird zu Schleim und darf nie wieder betreten werden. Rot gewinnt in dem Moment, in dem die Schnecke Rots Ecke (unten links) erreicht; Gold gewinnt, wenn sie Golds Ecke (oben rechts) erreicht — und es zählt egal, wer sie dorthin gezogen hat, also schiebe die Schnecke nie in die Ecke deines Gegners. Bist du am Zug und die Schnecke ist eingekesselt, verlierst du.",
   "🐌 Snail trapped! You’re boxed in — {winner} wins.": "🐌 Schnecke gefangen! Du bist eingekesselt — {winner} gewinnt.",
   "🐌 Snail trapped! {loser} is boxed in — you win! 🎉": "🐌 Schnecke gefangen! {loser} ist eingekesselt — du gewinnst! 🎉",
-  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 Schnecke gefangen! {loser} hatte keinen Zug mehr — {winner} gewinnt!"
+  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 Schnecke gefangen! {loser} hatte keinen Zug mehr — {winner} gewinnt!",
+  "◀ Frogs hop": "◀ Frösche hüpfen",
+  "🐸 Stuck! {loser} had no move — {winner} wins!": "🐸 Festgefahren! {loser} konnte nicht ziehen – {winner} gewinnt!",
+  "🐸 Stuck! {loser} has no move — you win! 🎉": "🐸 Festgefahren! {loser} kann nicht ziehen – du gewinnst! 🎉",
+  "🐸 Stuck! You have no move — {winner} wins.": "🐸 Festgefahren! Du kannst nicht ziehen – {winner} gewinnt.",
+  "A single row of squares. Toads (red) only ever move RIGHT; Frogs (gold) only ever move LEFT. On your turn either SLIDE one of your creatures forward into the next empty square, or HOP it over a single opposing creature sitting right in front, landing on the empty square just beyond (you can’t hop your own kind, and nothing is captured). No backward moves. If it’s your turn and none of your creatures can move, you lose!": "Eine einzelne Reihe von Feldern. Kröten (rot) ziehen nur nach RECHTS; Frösche (gold) nur nach LINKS. Wenn du am Zug bist, SCHIEBE eine deiner Kreaturen ein Feld vorwärts auf das nächste leere Feld oder SPRINGE sie über eine einzelne gegnerische Kreatur direkt davor auf das leere Feld dahinter (eigene Kreaturen darfst du nicht überspringen, und es wird nichts geschlagen). Keine Rückwärtszüge. Wenn du am Zug bist und keine deiner Kreaturen ziehen kann, verlierst du!",
+  "Conway’s hopping game. Toads only go right, Frogs only go left — box your rival in so they can’t move.": "Conways Hüpfspiel. Kröten gehen nur nach rechts, Frösche nur nach links – dräng deinen Gegner ein, bis er nicht mehr ziehen kann.",
+  "frog": "Frosch",
+  "Frogs": "Frösche",
+  "Gaps": "Lücken",
+  "Long March": "Langer Marsch",
+  "Square {n}: {state}": "Feld {n}: {state}",
+  "tap a glowing creature to move it": "tippe eine leuchtende Kreatur an, um sie zu ziehen",
+  "Tiny": "Winzig",
+  "toad": "Kröte",
+  "Toads": "Kröten",
+  "Toads & Frogs": "Kröten & Frösche",
+  "Toads hop ▶": "Kröten hüpfen ▶"
 }

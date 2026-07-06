@@ -393,6 +393,19 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  'toads-frogs': (
+    // A strip with two creatures facing INWARD: a toad hopping right meets a
+    // frog hopping left — the whole game is "which way does it face".
+    <g fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2.5" y="9" width="19" height="6" rx="1.5" opacity="0.45" />
+      {/* toad (left) faces right */}
+      <circle cx="6.5" cy="12" r="1.9" fill="currentColor" stroke="none" />
+      <path d="M8.4 10.4l2 1.6-2 1.6" />
+      {/* frog (right) faces left */}
+      <circle cx="17.5" cy="12" r="1.9" fill="currentColor" stroke="none" />
+      <path d="M15.6 10.4l-2 1.6 2 1.6" />
+    </g>
+  ),
   'fox-hounds': (
     <g fill="currentColor">
       {/* one fox chip pursued by a row of hound chips */}

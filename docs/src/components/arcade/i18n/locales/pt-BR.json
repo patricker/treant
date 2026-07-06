@@ -489,5 +489,22 @@
   "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "Um caracol é compartilhado pelos dois jogadores. No seu turno, mova-o um passo em qualquer uma das 8 direções (inclusive na diagonal). Cada casa que o caracol deixa vira gosma e nunca mais pode ser pisada. Vermelho vence no instante em que o caracol chega ao canto do Vermelho (inferior esquerdo); Ouro vence quando ele chega ao canto do Ouro (superior direito) — e vale não importa quem o levou até lá, então nunca empurre o caracol para o canto do seu rival. Se for a sua vez e o caracol estiver encurralado, você perde.",
   "🐌 Snail trapped! You’re boxed in — {winner} wins.": "🐌 Lesma presa! Você ficou sem saída — {winner} venceu.",
   "🐌 Snail trapped! {loser} is boxed in — you win! 🎉": "🐌 Lesma presa! {loser} ficou sem saída — você venceu! 🎉",
-  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 Lesma presa! {loser} ficou sem jogadas — {winner} venceu!"
+  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 Lesma presa! {loser} ficou sem jogadas — {winner} venceu!",
+  "◀ Frogs hop": "◀ Rãs pulam",
+  "🐸 Stuck! {loser} had no move — {winner} wins!": "🐸 Travado! {loser} não pôde mover — {winner} vence!",
+  "🐸 Stuck! {loser} has no move — you win! 🎉": "🐸 Travado! {loser} não pode mover — você vence! 🎉",
+  "🐸 Stuck! You have no move — {winner} wins.": "🐸 Travado! Você não pode mover — {winner} vence.",
+  "A single row of squares. Toads (red) only ever move RIGHT; Frogs (gold) only ever move LEFT. On your turn either SLIDE one of your creatures forward into the next empty square, or HOP it over a single opposing creature sitting right in front, landing on the empty square just beyond (you can’t hop your own kind, and nothing is captured). No backward moves. If it’s your turn and none of your creatures can move, you lose!": "Uma única fileira de casas. Sapos (vermelho) só andam para a DIREITA; rãs (dourado) só para a ESQUERDA. No seu turno, DESLIZE uma de suas criaturas uma casa à frente para a próxima casa vazia, ou faça-a PULAR sobre uma única criatura adversária logo à frente, caindo na casa vazia seguinte (você não pode pular sobre as suas e nada é capturado). Sem movimentos para trás. Se for seu turno e nenhuma de suas criaturas puder se mover, você perde!",
+  "Conway’s hopping game. Toads only go right, Frogs only go left — box your rival in so they can’t move.": "O jogo de saltos de Conway. Sapos só vão para a direita e rãs só para a esquerda — encurrale seu rival até ele não poder mais mover.",
+  "frog": "rã",
+  "Frogs": "Rãs",
+  "Gaps": "Vãos",
+  "Long March": "Longa marcha",
+  "Square {n}: {state}": "Casa {n}: {state}",
+  "tap a glowing creature to move it": "toque numa criatura brilhante para movê-la",
+  "Tiny": "Minúsculo",
+  "toad": "sapo",
+  "Toads": "Sapos",
+  "Toads & Frogs": "Sapos e rãs",
+  "Toads hop ▶": "Sapos pulam ▶"
 }

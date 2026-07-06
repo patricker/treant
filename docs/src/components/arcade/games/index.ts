@@ -33,6 +33,7 @@ import { col, snort } from './col';
 import { sim } from './sim';
 import { foxHounds } from './foxhounds';
 import { treblecross } from './treblecross';
+import { toadsFrogs } from './toadsfrogs';
 import { subtractSquare } from './subtractsquare';
 import { euclid } from './euclid';
 import { baghchal } from './baghchal';
@@ -71,6 +72,7 @@ export const GAMES: GameDefinition[] = [
   pinchFive,
   gomoku,
   treblecross,
+  toadsFrogs,
   dotsBoxes,
   nim,
   chomp,

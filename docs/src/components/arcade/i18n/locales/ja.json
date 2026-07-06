@@ -489,5 +489,22 @@
   "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "カタツムリは両プレイヤーの共有です。自分の番には8方向（斜めも含む）のどこかへ1マス動かします。カタツムリが離れたマスはスライムになり、二度と入れません。カタツムリがレッドの角（左下）に着いた瞬間にレッドの勝ち、ゴールドの角（右上）に着けばゴールドの勝ち — しかも誰が動かしたかは関係ないので、相手の角へは絶対に押し込まないこと。自分の番でカタツムリが囲まれたら、負けです。",
   "🐌 Snail trapped! You’re boxed in — {winner} wins.": "🐌 カタツムリが動けない！あなたは行き場がありません — {winner}の勝ち。",
   "🐌 Snail trapped! {loser} is boxed in — you win! 🎉": "🐌 カタツムリが動けない！{loser}は行き場がありません — あなたの勝ち！ 🎉",
-  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 カタツムリが動けない！{loser}は動かせる手がありません — {winner}の勝ち！"
+  "🐌 Snail trapped! {loser} had no move — {winner} wins!": "🐌 カタツムリが動けない！{loser}は動かせる手がありません — {winner}の勝ち！",
+  "◀ Frogs hop": "◀ カエルが跳ぶ",
+  "🐸 Stuck! {loser} had no move — {winner} wins!": "🐸 詰み！{loser}は動けませんでした — {winner}の勝ち！",
+  "🐸 Stuck! {loser} has no move — you win! 🎉": "🐸 詰み！{loser}は動けません — あなたの勝ち！🎉",
+  "🐸 Stuck! You have no move — {winner} wins.": "🐸 詰み！あなたは動けません — {winner}の勝ち。",
+  "A single row of squares. Toads (red) only ever move RIGHT; Frogs (gold) only ever move LEFT. On your turn either SLIDE one of your creatures forward into the next empty square, or HOP it over a single opposing creature sitting right in front, landing on the empty square just beyond (you can’t hop your own kind, and nothing is captured). No backward moves. If it’s your turn and none of your creatures can move, you lose!": "1列のマス目。ヒキガエル（赤）は右にだけ、カエル（金）は左にだけ動きます。手番では、自分の生き物を1マス前の空きマスにスライドさせるか、すぐ前にいる相手の生き物1匹を飛び越えてその先の空きマスに着地させます（味方は飛び越えられず、取ることもありません）。後退はできません。自分の手番でどの生き物も動かせなければ、負けです！",
+  "Conway’s hopping game. Toads only go right, Frogs only go left — box your rival in so they can’t move.": "コンウェイの跳び越え遊び。ヒキガエルは右、カエルは左だけ。相手を囲い込んで動けなくしよう。",
+  "frog": "カエル",
+  "Frogs": "カエル",
+  "Gaps": "すき間",
+  "Long March": "ロングマーチ",
+  "Square {n}: {state}": "マス {n}：{state}",
+  "tap a glowing creature to move it": "光っている生き物をタップして動かそう",
+  "Tiny": "ミニ",
+  "toad": "ヒキガエル",
+  "Toads": "ヒキガエル",
+  "Toads & Frogs": "ヒキガエルとカエル",
+  "Toads hop ▶": "ヒキガエルが跳ぶ ▶"
 }
