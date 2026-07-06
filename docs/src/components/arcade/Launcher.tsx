@@ -13,7 +13,7 @@ import styles from './arcade.module.css';
 // declare `variantOf`) are the exception: they are HIDDEN from the grid and
 // reached via their parent's family expansion, so they do NOT appear here.
 const CATEGORIES: { name: string; ids: string[] }[] = [
-  { name: 'Family classics', ids: ['connect-four', 'tic-tac-toe', 'reversi', 'dots-and-boxes', 'mancala', 'oware', 'nim', 'quadline'] },
+  { name: 'Family classics', ids: ['connect-four', 'tic-tac-toe', 'reversi', 'dots-and-boxes', 'mancala', 'oware', 'nim', 'quadline', 'world-threes'] },
   { name: 'Connect & line', ids: ['hex', 'y', 'gomoku', 'pinch-five', 'connect-six', 'square-up', 'order-chaos', 'treblecross'] },
   { name: 'Move & capture', ids: ['frontline', 'clobber', 'konane', 'nine-morris', 'amazons', 'fox-hounds', 'bagh-chal', 'first-capture', 'trails', 'shift'] },
   { name: 'Dice & solo', ids: ['pig', 'climb', '2048'] },

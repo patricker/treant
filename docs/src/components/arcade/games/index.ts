@@ -34,6 +34,7 @@ import { treblecross } from './treblecross';
 import { subtractSquare } from './subtractsquare';
 import { euclid } from './euclid';
 import { baghchal } from './baghchal';
+import { worldThrees } from './worldthrees';
 import type { GameDefinition } from '../gameTypes';
 
 export const GAMES: GameDefinition[] = [
@@ -79,6 +80,7 @@ export const GAMES: GameDefinition[] = [
   mancala,
   oware,
   muTorere,
+  worldThrees,
   domineering,
   cram,
   pig,

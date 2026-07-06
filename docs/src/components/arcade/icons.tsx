@@ -487,6 +487,20 @@ const GLYPHS: Record<string, JSX.Element> = {
       </text>
     </g>
   ),
+  'world-threes': (
+    <g>
+      <g fill="none" stroke="currentColor" strokeWidth="1.6">
+        <circle cx="12" cy="12" r="9" />
+        <ellipse cx="12" cy="12" rx="3.6" ry="9" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+      </g>
+      <g fill="currentColor" stroke="none">
+        <circle cx="7" cy="12" r="1.7" />
+        <circle cx="12" cy="12" r="1.7" />
+        <circle cx="17" cy="12" r="1.7" />
+      </g>
+    </g>
+  ),
 };
 
 export function GameIcon({ id, size = 22 }: { id: string; size?: number }): JSX.Element {

@@ -39,6 +39,7 @@ mod tictactoe;
 mod trails;
 mod treblecross;
 mod types;
+mod worldthrees;
 mod wythoff;
 mod y;
 
@@ -78,6 +79,7 @@ pub use subtractsquare::SubtractSquareWasm;
 pub use tictactoe::TicTacToeWasm;
 pub use trails::TrailsWasm;
 pub use treblecross::TreblecrossWasm;
+pub use worldthrees::WorldThreesWasm;
 pub use wythoff::WythoffWasm;
 pub use y::YGameWasm;
 
