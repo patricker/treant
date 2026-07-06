@@ -13,6 +13,7 @@ import { pinchFive } from './pinchfive';
 import { frontline } from './frontline';
 import { hex } from './hex';
 import { ygame } from './ygame';
+import { gale } from './gale';
 import { clobber } from './clobber';
 import { reversi, antiReversi } from './reversi';
 import { trails, joust } from './trails';
@@ -59,6 +60,7 @@ export const GAMES: GameDefinition[] = [
   antiReversi,
   hex,
   ygame,
+  gale,
   orderChaos,
   noTacToe,
   trapThree,

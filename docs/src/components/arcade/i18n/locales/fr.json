@@ -463,5 +463,15 @@
   "You lost — {name} wins.": "Vous avez perdu — {name} gagne.",
   "You win! 🎉": "Vous gagnez ! 🎉",
   "Your turn": "À toi",
-  "Tournament": "Tournoi"
+  "Tournament": "Tournoi",
+  "Gale": "Gale",
+  "A bridge-building duel — connect your two sides before your rival cuts you off.": "Un duel de construction de ponts — reliez vos deux côtés avant que votre rival ne vous coupe la route.",
+  "Bridge point {n}": "Point de pont {n}",
+  "Classic 5": "Classique 5",
+  "Gale (the grid Shannon switching game). Two dot grids interlock: Red’s dots and Gold’s dots. On your turn, build one bridge between two of YOUR neighbouring dots. Bridges may never cross, so every bridge you build also blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides with an unbroken chain of red bridges; Gold wins by joining the top and bottom. Exactly one player always connects — Gale can never be a draw. With the pie rule on, the second player may answer the opening bridge with a single Swap, claiming the mirrored bridge as their own, which blunts the first-move advantage.": "Gale (la version sur grille du jeu de commutation de Shannon). Deux grilles de points s'imbriquent : les points du Rouge et ceux de l'Or. À votre tour, construisez un pont entre deux points voisins de VOTRE couleur. Les ponts ne peuvent jamais se croiser : chaque pont que vous construisez bloque donc le pont adverse qui l'aurait croisé. Le Rouge gagne en reliant les côtés gauche et droit par une chaîne ininterrompue de ponts rouges ; l'Or gagne en reliant le haut et le bas. Un joueur relie toujours exactement — Gale ne peut jamais être nul. Avec la règle de la tarte activée, le second joueur peut répondre au pont d'ouverture par un seul Échange, revendiquant le pont miroir comme le sien, ce qui atténue l'avantage du premier coup.",
+  "Gold joins top ↕ bottom": "L'Or relie haut ↕ bas",
+  "Red joins left ↔ right": "Le Rouge relie gauche ↔ droite",
+  "Small 3": "Petit 3",
+  "Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.": "Deux grilles de points imbriquées, une rouge, une or. À votre tour, construisez un pont entre deux points voisins de VOTRE couleur. Les ponts ne peuvent jamais se croiser : chacun de vos ponts bloque donc le pont adverse qui l'aurait croisé. Le Rouge gagne en reliant gauche et droite ; l'Or en reliant haut et bas. Gale ne peut jamais être nul.",
+  "Big 6": "Grand 6"
 }

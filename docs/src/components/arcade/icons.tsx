@@ -297,6 +297,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       <circle cx="12" cy="19" r="1.5" opacity="0.7" />
     </g>
   ),
+  gale: (
+    // an arch bridge with piers, deck, and suspension cables
+    <g stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 15c4-8 16-8 20 0" />
+      <path d="M3 15v4M21 15v4" />
+      <path d="M2 19h20" />
+      <path d="M7.5 12.2v6.8M12 10.6v8.4M16.5 12.2v6.8" opacity="0.6" />
+    </g>
+  ),
   frontline: (
     // two pawns advancing past a center line
     <g stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">

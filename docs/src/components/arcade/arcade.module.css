@@ -854,6 +854,10 @@
   stroke-width: 2.2;
   filter: drop-shadow(0 0 2px var(--arc-win)) drop-shadow(0 0 5px var(--arc-win));
 }
+/* Gale: the winning bridge's drawn edges pulse-glow (line form of .winHex). */
+.galeWinEdge {
+  filter: drop-shadow(0 0 0.4px var(--arc-win)) drop-shadow(0 0 1px var(--arc-win));
+}
 
 /* ---------- Nim ---------- */
 .nimWrap {

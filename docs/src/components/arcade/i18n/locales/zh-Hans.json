@@ -463,5 +463,15 @@
   "You lost — {name} wins.": "你输了——{name} 获胜。",
   "You win! 🎉": "你赢了！🎉",
   "Your turn": "轮到你了",
-  "Tournament": "锦标赛"
+  "Tournament": "锦标赛",
+  "Gale": "Gale",
+  "A bridge-building duel — connect your two sides before your rival cuts you off.": "一场架桥对决——在对手切断你之前，连接你的两条边。",
+  "Bridge point {n}": "桥点 {n}",
+  "Classic 5": "经典 5",
+  "Gale (the grid Shannon switching game). Two dot grids interlock: Red’s dots and Gold’s dots. On your turn, build one bridge between two of YOUR neighbouring dots. Bridges may never cross, so every bridge you build also blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides with an unbroken chain of red bridges; Gold wins by joining the top and bottom. Exactly one player always connects — Gale can never be a draw. With the pie rule on, the second player may answer the opening bridge with a single Swap, claiming the mirrored bridge as their own, which blunts the first-move advantage.": "Gale（香农开关游戏的方格版）。两张点阵相互交错：红方的点与金方的点。轮到你时，在你自己颜色的两个相邻点之间架一座桥。桥永远不能交叉，因此你架的每座桥同时也挡住了本会与之交叉的对方之桥。红方用不间断的红桥链连接左右两边即获胜；金方连接上下两边即获胜。总是恰好有一方连通——Gale 永远不会平局。开启贴饼（先手补偿）规则后，后手可以对开局之桥只用一次“交换”作答，把镜像的那座桥据为己有，从而削弱先手优势。",
+  "Gold joins top ↕ bottom": "金方连接上 ↕ 下",
+  "Red joins left ↔ right": "红方连接左 ↔ 右",
+  "Small 3": "小 3",
+  "Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.": "两张交错的点阵，一红一金。轮到你时，在你自己颜色的两个相邻点之间架一座桥。桥永远不能交叉，因此你的每座桥都会挡住本会与之交叉的对方之桥。红方连接左右获胜；金方连接上下获胜。Gale 永远不会平局。",
+  "Big 6": "大 6"
 }

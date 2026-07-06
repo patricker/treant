@@ -58,7 +58,7 @@ eng!(
     SimWasm, MuTorereWasm, DomineeringWasm, NoGoWasm, ColWasm, AmazonsWasm, FoxHoundsWasm,
     TreblecrossWasm, EuclidWasm, Connect6Wasm, SquavaWasm, NotaktoWasm, SquareUpWasm, OrderChaosWasm,
     PinchFiveWasm, NineMorrisWasm, QuadlineWasm, OwareWasm, YGameWasm, BaghchalWasm, ClimbWasm,
-    WorldThreesWasm,
+    WorldThreesWasm, GaleWasm,
 );
 
 // Ladders, weak -> strong. STD for most games; LIGHT caps playouts for the
@@ -140,6 +140,8 @@ fn games() -> Vec<Game> {
         // climb is a chance (push-your-luck dice) game — calibrated like pig.
         g("climb", STD, || Box::new(ClimbWasm::new(2, 3)) as Box<dyn Eng>),
         g("world-threes", STD, || Box::new(WorldThreesWasm::new(0)) as Box<dyn Eng>),
+        // gale: connection game, classic n=5 (pie off — the tile's Classic preset).
+        g("gale", STD, || Box::new(GaleWasm::new(5, 0)) as Box<dyn Eng>),
     ]
 }
 

@@ -463,5 +463,15 @@
   "You lost — {name} wins.": "あなたの負け — {name}の勝ち。",
   "You win! 🎉": "あなたの勝ち！ 🎉",
   "Your turn": "あなたの番",
-  "Tournament": "トーナメント"
+  "Tournament": "トーナメント",
+  "Gale": "ゲイル",
+  "A bridge-building duel — connect your two sides before your rival cuts you off.": "橋を架ける対決 — 相手に道を断たれる前に、自分の2辺をつなごう。",
+  "Bridge point {n}": "橋の点 {n}",
+  "Classic 5": "クラシック 5",
+  "Gale (the grid Shannon switching game). Two dot grids interlock: Red’s dots and Gold’s dots. On your turn, build one bridge between two of YOUR neighbouring dots. Bridges may never cross, so every bridge you build also blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides with an unbroken chain of red bridges; Gold wins by joining the top and bottom. Exactly one player always connects — Gale can never be a draw. With the pie rule on, the second player may answer the opening bridge with a single Swap, claiming the mirrored bridge as their own, which blunts the first-move advantage.": "ゲイル（シャノンのスイッチングゲームの格子版）。2つの点の格子がかみ合う——赤の点とゴールドの点だ。手番では、自分の色の隣り合う2点の間に橋を1本架ける。橋は決して交差できないので、架けた橋は同時に、それと交差するはずだった相手の橋をふさぐ。赤は左右の辺を途切れない赤い橋の鎖でつなげば勝ち、ゴールドは上下をつなげば勝ち。必ずどちらか一方だけがつながる——ゲイルに引き分けはない。パイルールを有効にすると、後手は開幕の橋に対して1回だけ「交換」で応じ、鏡写しの橋を自分のものにでき、先手の有利さを和らげられる。",
+  "Gold joins top ↕ bottom": "ゴールドは上 ↕ 下をつなぐ",
+  "Red joins left ↔ right": "赤は左 ↔ 右をつなぐ",
+  "Small 3": "小 3",
+  "Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.": "赤とゴールド、2つの点の格子がかみ合う。手番では自分の色の隣り合う2点の間に橋を架ける。橋は決して交差できないので、あなたの橋はそれと交差するはずだった相手の橋をふさぐ。赤は左右をつなげば勝ち、ゴールドは上下をつなげば勝ち。ゲイルに引き分けはない。",
+  "Big 6": "大 6"
 }

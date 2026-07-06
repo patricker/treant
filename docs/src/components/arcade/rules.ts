@@ -18,6 +18,7 @@ export const RULES: Record<string, string> = {
   reversi: 'Place a disc so it flanks a straight line of enemy discs between your new disc and another of yours — all flanked discs flip to your colour. Most discs when the board fills wins.',
   'anti-reversi': 'Play exactly like Reversi — flank enemy discs to flip them — but the goal is reversed: when the board fills or nobody can move, the player with the FEWEST discs wins. Try to give discs away.',
   hex: 'Place one stone on any empty hexagon each turn. Red wins by linking the top and bottom edges with a connected chain; Gold links left and right. Hex can never be a draw.',
+  gale: 'Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.',
   y: 'Take turns placing one stone on any empty cell of the triangular board. Win by joining all THREE sides of the triangle with a single connected group of your stones — the three corners each count for both of their sides. Like Hex, Y can never be a draw.',
   'order-chaos': 'Both players may place either an X or an O. "Order" wins by making five-in-a-row of a single symbol; "Chaos" wins if the board fills with no such line.',
   'no-tac-toe': 'Everyone plays the same mark (X). Completing any three-in-a-row LOSES — so force your opponent to make the line they’re trying to avoid.',
