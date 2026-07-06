@@ -17,6 +17,7 @@ import { gale } from './gale';
 import { clobber } from './clobber';
 import { reversi, antiReversi } from './reversi';
 import { trails, joust } from './trails';
+import { slimetrail } from './slimetrail';
 import { captureGo } from './capturego';
 import { chomp } from './chomp';
 import { wythoff } from './wythoff';
@@ -49,6 +50,7 @@ export const GAMES: GameDefinition[] = [
   clobber,
   trails,
   joust,
+  slimetrail,
   captureGo,
   konane,
   nineMorris,

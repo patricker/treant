@@ -58,7 +58,7 @@ eng!(
     SimWasm, MuTorereWasm, DomineeringWasm, NoGoWasm, ColWasm, AmazonsWasm, FoxHoundsWasm,
     TreblecrossWasm, EuclidWasm, Connect6Wasm, SquavaWasm, NotaktoWasm, SquareUpWasm, OrderChaosWasm,
     PinchFiveWasm, NineMorrisWasm, QuadlineWasm, OwareWasm, YGameWasm, BaghchalWasm, ClimbWasm,
-    WorldThreesWasm, GaleWasm,
+    WorldThreesWasm, GaleWasm, SlimetrailWasm,
 );
 
 // Ladders, weak -> strong. STD for most games; LIGHT caps playouts for the
@@ -142,6 +142,8 @@ fn games() -> Vec<Game> {
         g("world-threes", STD, || Box::new(WorldThreesWasm::new(0)) as Box<dyn Eng>),
         // gale: connection game, classic n=5 (pie off — the tile's Classic preset).
         g("gale", STD, || Box::new(GaleWasm::new(5, 0)) as Box<dyn Eng>),
+        // slimetrail: shared-token walk-and-burn, classic 7×7 (the Classic preset).
+        g("slimetrail", STD, || Box::new(SlimetrailWasm::new(7)) as Box<dyn Eng>),
     ]
 }
 

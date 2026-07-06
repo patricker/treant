@@ -473,5 +473,18 @@
   "Red joins left ↔ right": "Rot verbindet links ↔ rechts",
   "Small 3": "Klein 3",
   "Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.": "Zwei ineinandergreifende Punktgitter, eines rot, eines gold. Baue in deinem Zug eine Brücke zwischen zwei benachbarten Punkten DEINER Farbe. Brücken können sich nie kreuzen, also blockiert jede deiner Brücken die gegnerische Brücke, die sie gekreuzt hätte. Rot gewinnt durch Verbinden von links und rechts; Gold durch Verbinden von oben und unten. Gale kann nie unentschieden enden.",
-  "Big 6": "Groß 6"
+  "Big 6": "Groß 6",
+  "Big 9": "Groß 9",
+  "Classic 7": "Klassisch 7",
+  "Gold's goal": "Golds Ziel",
+  "Gold's goal (top-right)": "Golds Ziel (oben rechts)",
+  "Red's goal": "Rots Ziel",
+  "Red's goal (bottom-left)": "Rots Ziel (unten links)",
+  "slime": "Schleim",
+  "Slimetrail": "Slimetrail",
+  "snail": "Schnecke",
+  "walk 🐌 to YOUR corner": "führe 🐌 zu DEINER Ecke",
+  "Walk the shared snail to YOUR corner — the trail it leaves behind is slime nobody can cross.": "Führe die gemeinsame Schnecke in DEINE Ecke — die Schleimspur hinter ihr kann niemand überqueren.",
+  "One snail sits on the board and BOTH players take turns walking it one step — in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the moment the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — it counts no matter who moved it there, so never push the snail into your rival’s corner! If it’s your turn and the snail is boxed in with nowhere to go, you lose.": "Eine Schnecke steht auf dem Brett, und BEIDE Spieler ziehen sie abwechselnd ein Feld weit — in eine der 8 Richtungen (auch diagonal). Jedes Feld, das die Schnecke verlässt, wird zu Schleim und darf nie wieder betreten werden. Rot gewinnt, sobald die Schnecke Rots Ecke (unten links) erreicht; Gold gewinnt, wenn sie Golds Ecke (oben rechts) erreicht — es zählt egal, wer sie dorthin gezogen hat, also schiebe die Schnecke nie in die Ecke deines Gegners! Bist du am Zug und die Schnecke ist eingekesselt und kann nirgendwohin, verlierst du.",
+  "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "Eine Schnecke gehört beiden Spielern. Wenn du am Zug bist, ziehe sie ein Feld weit in eine der 8 Richtungen (auch diagonal). Jedes Feld, das die Schnecke verlässt, wird zu Schleim und darf nie wieder betreten werden. Rot gewinnt in dem Moment, in dem die Schnecke Rots Ecke (unten links) erreicht; Gold gewinnt, wenn sie Golds Ecke (oben rechts) erreicht — und es zählt egal, wer sie dorthin gezogen hat, also schiebe die Schnecke nie in die Ecke deines Gegners. Bist du am Zug und die Schnecke ist eingekesselt, verlierst du."
 }

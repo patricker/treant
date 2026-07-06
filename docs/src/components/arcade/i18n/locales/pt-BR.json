@@ -473,5 +473,18 @@
   "Red joins left ↔ right": "Vermelho liga esquerda ↔ direita",
   "Small 3": "Pequeno 3",
   "Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.": "Duas grades de pontos entrelaçadas, uma vermelha e uma ouro. No seu turno construa uma ponte entre dois pontos vizinhos da SUA cor. As pontes nunca podem se cruzar, então cada ponte sua bloqueia a ponte adversária que a teria cruzado. O Vermelho vence ligando esquerda e direita; o Ouro ligando cima e baixo. Gale nunca pode dar empate.",
-  "Big 6": "Grande 6"
+  "Big 6": "Grande 6",
+  "Big 9": "Grande 9",
+  "Classic 7": "Clássico 7",
+  "Gold's goal": "Meta do Ouro",
+  "Gold's goal (top-right)": "Meta do Ouro (canto superior direito)",
+  "Red's goal": "Meta do Vermelho",
+  "Red's goal (bottom-left)": "Meta do Vermelho (canto inferior esquerdo)",
+  "slime": "gosma",
+  "Slimetrail": "Slimetrail",
+  "snail": "caracol",
+  "walk 🐌 to YOUR corner": "leve 🐌 até o SEU canto",
+  "Walk the shared snail to YOUR corner — the trail it leaves behind is slime nobody can cross.": "Leve o caracol compartilhado até o SEU canto — a trilha de gosma que ele deixa ninguém consegue atravessar.",
+  "One snail sits on the board and BOTH players take turns walking it one step — in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the moment the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — it counts no matter who moved it there, so never push the snail into your rival’s corner! If it’s your turn and the snail is boxed in with nowhere to go, you lose.": "Há um caracol no tabuleiro e AMBOS os jogadores o movem, em turnos, um passo — em qualquer uma das 8 direções (inclusive na diagonal). Cada casa que o caracol deixa vira gosma e nunca mais pode ser pisada. Vermelho vence no instante em que o caracol chega ao canto do Vermelho (inferior esquerdo); Ouro vence quando ele chega ao canto do Ouro (superior direito) — vale não importa quem o levou até lá, então nunca empurre o caracol para o canto do seu rival! Se for a sua vez e o caracol estiver encurralado sem saída, você perde.",
+  "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "Um caracol é compartilhado pelos dois jogadores. No seu turno, mova-o um passo em qualquer uma das 8 direções (inclusive na diagonal). Cada casa que o caracol deixa vira gosma e nunca mais pode ser pisada. Vermelho vence no instante em que o caracol chega ao canto do Vermelho (inferior esquerdo); Ouro vence quando ele chega ao canto do Ouro (superior direito) — e vale não importa quem o levou até lá, então nunca empurre o caracol para o canto do seu rival. Se for a sua vez e o caracol estiver encurralado, você perde."
 }

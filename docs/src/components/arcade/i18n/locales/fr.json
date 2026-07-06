@@ -473,5 +473,18 @@
   "Red joins left ↔ right": "Le Rouge relie gauche ↔ droite",
   "Small 3": "Petit 3",
   "Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.": "Deux grilles de points imbriquées, une rouge, une or. À votre tour, construisez un pont entre deux points voisins de VOTRE couleur. Les ponts ne peuvent jamais se croiser : chacun de vos ponts bloque donc le pont adverse qui l'aurait croisé. Le Rouge gagne en reliant gauche et droite ; l'Or en reliant haut et bas. Gale ne peut jamais être nul.",
-  "Big 6": "Grand 6"
+  "Big 6": "Grand 6",
+  "Big 9": "Grand 9",
+  "Classic 7": "Classique 7",
+  "Gold's goal": "But de l’Or",
+  "Gold's goal (top-right)": "But de l’Or (en haut à droite)",
+  "Red's goal": "But de Rouge",
+  "Red's goal (bottom-left)": "But de Rouge (en bas à gauche)",
+  "slime": "bave",
+  "Slimetrail": "Slimetrail",
+  "snail": "escargot",
+  "walk 🐌 to YOUR corner": "mène 🐌 vers TON coin",
+  "Walk the shared snail to YOUR corner — the trail it leaves behind is slime nobody can cross.": "Mène l’escargot partagé vers TON coin — la traînée de bave qu’il laisse, personne ne peut la traverser.",
+  "One snail sits on the board and BOTH players take turns walking it one step — in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the moment the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — it counts no matter who moved it there, so never push the snail into your rival’s corner! If it’s your turn and the snail is boxed in with nowhere to go, you lose.": "Un escargot est posé sur le plateau et les DEUX joueurs le déplacent à tour de rôle d’une case — dans l’une des 8 directions (diagonales comprises). Chaque case que l’escargot quitte se transforme en bave et ne peut plus jamais être empruntée. Rouge gagne dès que l’escargot atteint le coin de Rouge (en bas à gauche) ; l’Or gagne quand il atteint le coin de l’Or (en haut à droite) — cela compte peu importe qui l’y a mené, alors ne pousse jamais l’escargot dans le coin de ton rival ! Si c’est ton tour et que l’escargot est bloqué sans issue, tu perds.",
+  "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "Un escargot est partagé par les deux joueurs. À ton tour, déplace-le d’une case dans l’une des 8 directions (diagonales comprises). Chaque case que l’escargot quitte se transforme en bave et ne peut plus jamais être empruntée. Rouge gagne à l’instant où l’escargot atteint le coin de Rouge (en bas à gauche) ; l’Or gagne quand il atteint le coin de l’Or (en haut à droite) — et cela compte peu importe qui l’y a mené, alors ne pousse jamais l’escargot dans le coin de ton rival. Si c’est ton tour et que l’escargot est bloqué, tu perds."
 }

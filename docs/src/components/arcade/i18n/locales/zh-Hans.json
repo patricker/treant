@@ -473,5 +473,18 @@
   "Red joins left ↔ right": "红方连接左 ↔ 右",
   "Small 3": "小 3",
   "Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.": "两张交错的点阵，一红一金。轮到你时，在你自己颜色的两个相邻点之间架一座桥。桥永远不能交叉，因此你的每座桥都会挡住本会与之交叉的对方之桥。红方连接左右获胜；金方连接上下获胜。Gale 永远不会平局。",
-  "Big 6": "大 6"
+  "Big 6": "大 6",
+  "Big 9": "大 9",
+  "Classic 7": "经典 7",
+  "Gold's goal": "金方的目标",
+  "Gold's goal (top-right)": "金方的目标（右上角）",
+  "Red's goal": "红方的目标",
+  "Red's goal (bottom-left)": "红方的目标（左下角）",
+  "slime": "黏液",
+  "Slimetrail": "Slimetrail",
+  "snail": "蜗牛",
+  "walk 🐌 to YOUR corner": "把 🐌 带到你的角落",
+  "Walk the shared snail to YOUR corner — the trail it leaves behind is slime nobody can cross.": "把共用的蜗牛带到你的角落——它身后留下的黏液谁也无法穿过。",
+  "One snail sits on the board and BOTH players take turns walking it one step — in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the moment the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — it counts no matter who moved it there, so never push the snail into your rival’s corner! If it’s your turn and the snail is boxed in with nowhere to go, you lose.": "棋盘上有一只蜗牛，双方轮流把它移动一步——可走 8 个方向中的任意一个（含斜向）。蜗牛离开的每一格都会变成黏液，再也不能进入。蜗牛一到达红方的角落（左下角）红方就获胜；到达金方的角落（右上角）则金方获胜——无论是谁把它带到那里都算数，所以千万别把蜗牛推进对手的角落！轮到你时如果蜗牛被困、无处可走，你就输了。",
+  "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "蜗牛由双方共用。轮到你时，把它沿 8 个方向中的任意一个移动一步（含斜向）。蜗牛离开的每一格都会变成黏液，再也不能进入。蜗牛一到达红方的角落（左下角）红方就获胜；到达金方的角落（右上角）则金方获胜——而且无论是谁把它带到那里都算数，所以千万别把蜗牛推进对手的角落。轮到你时如果蜗牛被困，你就输了。"
 }

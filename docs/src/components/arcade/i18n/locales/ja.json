@@ -473,5 +473,18 @@
   "Red joins left ↔ right": "赤は左 ↔ 右をつなぐ",
   "Small 3": "小 3",
   "Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.": "赤とゴールド、2つの点の格子がかみ合う。手番では自分の色の隣り合う2点の間に橋を架ける。橋は決して交差できないので、あなたの橋はそれと交差するはずだった相手の橋をふさぐ。赤は左右をつなげば勝ち、ゴールドは上下をつなげば勝ち。ゲイルに引き分けはない。",
-  "Big 6": "大 6"
+  "Big 6": "大 6",
+  "Big 9": "大 9",
+  "Classic 7": "クラシック 7",
+  "Gold's goal": "ゴールドのゴール",
+  "Gold's goal (top-right)": "ゴールドのゴール（右上）",
+  "Red's goal": "レッドのゴール",
+  "Red's goal (bottom-left)": "レッドのゴール（左下）",
+  "slime": "スライム",
+  "Slimetrail": "スライムトレイル",
+  "snail": "カタツムリ",
+  "walk 🐌 to YOUR corner": "🐌 を自分の角へ導こう",
+  "Walk the shared snail to YOUR corner — the trail it leaves behind is slime nobody can cross.": "共有のカタツムリを自分の角へ導こう — 通った跡はスライムになり、誰も渡れなくなる。",
+  "One snail sits on the board and BOTH players take turns walking it one step — in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the moment the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — it counts no matter who moved it there, so never push the snail into your rival’s corner! If it’s your turn and the snail is boxed in with nowhere to go, you lose.": "カタツムリが1匹盤上にいて、両プレイヤーが交互に1マスずつ動かします — 8方向（斜めも含む）のどこへでも。カタツムリが離れたマスはスライムになり、二度と入れません。カタツムリがレッドの角（左下）に着いた瞬間にレッドの勝ち、ゴールドの角（右上）に着けばゴールドの勝ち — 誰が動かしたかは関係ないので、相手の角へは絶対に押し込まないこと！ 自分の番でカタツムリが囲まれて行き場がなければ、負けです。",
+  "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "カタツムリは両プレイヤーの共有です。自分の番には8方向（斜めも含む）のどこかへ1マス動かします。カタツムリが離れたマスはスライムになり、二度と入れません。カタツムリがレッドの角（左下）に着いた瞬間にレッドの勝ち、ゴールドの角（右上）に着けばゴールドの勝ち — しかも誰が動かしたかは関係ないので、相手の角へは絶対に押し込まないこと。自分の番でカタツムリが囲まれたら、負けです。"
 }

@@ -12,6 +12,8 @@
   --arc-card: #ffffff;
   --arc-soft: #ffe7d6;
   --arc-accent: #ff3b5c;
+  /* Slimetrail: the trail the snail leaves behind — unmistakably green. */
+  --arc-slime: #6fcf5f;
   /* Winning-line glow — gold reads as "victory" on both light and dark skins,
      and stays distinct from the neon-green primary CTA. */
   --arc-win: #ffd147;
@@ -1385,6 +1387,59 @@
   background: rgba(255, 255, 255, 0.85);
 }
 
+/* ---------- Slimetrail ---------- */
+/* One shared snail walked toward a goal corner; vacated cells become slime.
+   Kid-legibility is the point: a big snail, unmistakable green slime, and goal
+   corners washed in their owner's colour with a star. */
+.slimeGrid {
+  display: grid;
+  gap: 4px;
+  background: var(--arc-soft);
+  padding: 6px;
+  border-radius: 12px;
+}
+.slimeCell {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+.slimeCell:disabled {
+  cursor: default;
+}
+/* A bright dashed ring (coloured inline by whose turn it is) around every square
+   the snail can step to this turn. */
+.slimeTarget {
+  outline: 3px dashed;
+  outline-offset: -3px;
+}
+.slimeSnail {
+  font-size: clamp(1.2rem, 8vw, 2.6rem);
+  line-height: 1;
+  /* A soft light halo so the snail reads on both slime-green and card cells. */
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.7));
+}
+.slimeGoalStar {
+  font-size: clamp(0.9rem, 5vw, 1.6rem);
+  line-height: 1;
+  opacity: 0.85;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.35);
+}
+.slimeTargetDot {
+  width: 34%;
+  height: 34%;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
 /* ---------- Reversi ---------- */
 .reversiScores {
   display: flex;
@@ -1741,6 +1796,8 @@
   --arc-bg: #0b1120;
   --arc-card: #182233;
   --arc-soft: #253449;
+  /* Slimetrail slime: a saturated green that stays legible on the near-black skin. */
+  --arc-slime: #35b84a;
   color: var(--neon-tx);
   font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   max-width: 600px;

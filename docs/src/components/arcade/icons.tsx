@@ -257,6 +257,16 @@ const GLYPHS: Record<string, JSX.Element> = {
       </g>
     </g>
   ),
+  slimetrail: (
+    // A snail: a spiral shell over a body, trailing a dotted slime trail behind.
+    <g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 18h4" strokeDasharray="0.5 2.4" opacity="0.6" />
+      <path d="M7 18h3c1.3 0 2-0.9 2-2" />
+      <circle cx="14" cy="12" r="4.4" />
+      <path d="M14 12.2a2.1 2.1 0 1 1 2-2.2" />
+      <path d="M17.6 8.4l1.8-2M19.6 8.7l2-1.3" stroke="currentColor" />
+    </g>
+  ),
   reversi: (
     <g>
       <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" strokeWidth="2" />

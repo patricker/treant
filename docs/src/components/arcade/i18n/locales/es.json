@@ -473,5 +473,18 @@
   "Red joins left ↔ right": "Rojo une izquierda ↔ derecha",
   "Small 3": "Pequeño 3",
   "Two interlocking dot grids, one Red, one Gold. On your turn build a bridge between two neighbouring dots of YOUR colour. Bridges can never cross, so each bridge you build blocks the opponent bridge that would have crossed it. Red wins by joining the left and right sides; Gold by joining top and bottom. Gale can never be a draw.": "Dos rejillas de puntos entrelazadas, una roja y otra oro. En tu turno construye un puente entre dos puntos vecinos de TU color. Los puentes nunca pueden cruzarse, así que cada puente tuyo bloquea el puente rival que lo habría cruzado. Rojo gana uniendo izquierda y derecha; Oro uniendo arriba y abajo. Gale nunca puede terminar en empate.",
-  "Big 6": "Grande 6"
+  "Big 6": "Grande 6",
+  "Big 9": "Grande 9",
+  "Classic 7": "Clásico 7",
+  "Gold's goal": "Meta de Oro",
+  "Gold's goal (top-right)": "Meta de Oro (arriba derecha)",
+  "Red's goal": "Meta de Rojo",
+  "Red's goal (bottom-left)": "Meta de Rojo (abajo izquierda)",
+  "slime": "baba",
+  "Slimetrail": "Slimetrail",
+  "snail": "caracol",
+  "walk 🐌 to YOUR corner": "lleva 🐌 a TU esquina",
+  "Walk the shared snail to YOUR corner — the trail it leaves behind is slime nobody can cross.": "Lleva el caracol compartido a TU esquina — el rastro de baba que deja atrás no lo puede cruzar nadie.",
+  "One snail sits on the board and BOTH players take turns walking it one step — in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the moment the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — it counts no matter who moved it there, so never push the snail into your rival’s corner! If it’s your turn and the snail is boxed in with nowhere to go, you lose.": "Hay un caracol en el tablero y AMBOS jugadores lo mueven por turnos un paso — en cualquiera de las 8 direcciones (también en diagonal). Cada casilla que el caracol abandona se convierte en baba y ya no se puede volver a pisar. Rojo gana en cuanto el caracol llega a la esquina de Rojo (abajo a la izquierda); Oro gana cuando llega a la esquina de Oro (arriba a la derecha) — cuenta sin importar quién lo llevó allí, ¡así que nunca empujes el caracol a la esquina de tu rival! Si es tu turno y el caracol está encerrado sin salida, pierdes.",
+  "One snail is shared by both players. On your turn walk it one step in any of the 8 directions (including diagonally). Every square the snail leaves turns to slime and can never be entered again. Red wins the instant the snail reaches Red’s corner (bottom-left); Gold wins when it reaches Gold’s corner (top-right) — and it counts no matter who moved it there, so never push the snail into your rival’s corner. If it is your turn and the snail is boxed in, you lose.": "Un caracol es compartido por ambos jugadores. En tu turno muévelo un paso en cualquiera de las 8 direcciones (también en diagonal). Cada casilla que el caracol abandona se convierte en baba y ya no se puede volver a pisar. Rojo gana en el instante en que el caracol llega a la esquina de Rojo (abajo a la izquierda); Oro gana cuando llega a la esquina de Oro (arriba a la derecha) — y cuenta sin importar quién lo llevó allí, así que nunca empujes el caracol a la esquina de tu rival. Si es tu turno y el caracol está encerrado, pierdes."
 }
