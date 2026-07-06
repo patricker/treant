@@ -11,6 +11,7 @@ import { pig, twoDicePig, bigPig } from './pig';
 import { climb } from './climb';
 import { pinchFive } from './pinchfive';
 import { frontline } from './frontline';
+import { pawnDuel } from './pawnduel';
 import { hex } from './hex';
 import { ygame } from './ygame';
 import { gale } from './gale';
@@ -48,6 +49,7 @@ export const GAMES: GameDefinition[] = [
   shift,
   quadline,
   frontline,
+  pawnDuel,
   clobber,
   trails,
   joust,

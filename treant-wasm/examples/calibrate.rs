@@ -58,7 +58,7 @@ eng!(
     SimWasm, MuTorereWasm, DomineeringWasm, NoGoWasm, ColWasm, AmazonsWasm, FoxHoundsWasm,
     TreblecrossWasm, EuclidWasm, Connect6Wasm, SquavaWasm, NotaktoWasm, SquareUpWasm, OrderChaosWasm,
     PinchFiveWasm, NineMorrisWasm, QuadlineWasm, OwareWasm, YGameWasm, BaghchalWasm, ClimbWasm,
-    WorldThreesWasm, GaleWasm, SlimetrailWasm, ToadsFrogsWasm,
+    WorldThreesWasm, GaleWasm, SlimetrailWasm, ToadsFrogsWasm, PawnDuelWasm,
 );
 
 // Ladders, weak -> strong. STD for most games; LIGHT caps playouts for the
@@ -146,6 +146,8 @@ fn games() -> Vec<Game> {
         g("slimetrail", STD, || Box::new(SlimetrailWasm::new(7)) as Box<dyn Eng>),
         // toads-frogs: Conway's 1-D hopping game, Classic TTT__FFF (new(toads,frogs,gaps)).
         g("toads-frogs", STD, || Box::new(ToadsFrogsWasm::new(3, 3, 2)) as Box<dyn Eng>),
+        // pawn-duel: chess-pawns duel, Classic 8×6 with double-step + en passant on.
+        g("pawn-duel", STD, || Box::new(PawnDuelWasm::new(8, 6, 1, 1)) as Box<dyn Eng>),
     ]
 }
 

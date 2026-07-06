@@ -327,6 +327,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       <path d="M6 19v-1M18 5v1" />
     </g>
   ),
+  'pawn-duel': (
+    // a single chess-pawn silhouette — pawns, and only pawns
+    <g fill="currentColor">
+      <circle cx="12" cy="6" r="3" />
+      <path d="M9.6 9.5h4.8l-1 3.2h-2.8z" />
+      <path d="M7.5 20c0-3.6 2.2-4.7 3.1-6.6h2.8c0.9 1.9 3.1 3 3.1 6.6z" />
+      <rect x="6" y="19" width="12" height="2.6" rx="1.3" />
+    </g>
+  ),
   pig: (
     <g>
       <rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" strokeWidth="2" />
