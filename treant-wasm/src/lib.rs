@@ -2,6 +2,7 @@ use wasm_bindgen::prelude::*;
 
 mod amazons;
 mod baghchal;
+mod bullscows;
 mod capturego;
 mod chomp;
 mod climb;
@@ -52,6 +53,7 @@ mod y;
 
 pub use amazons::AmazonsWasm;
 pub use baghchal::BaghchalWasm;
+pub use bullscows::BullsCowsWasm;
 pub use capturego::CaptureGoWasm;
 pub use chomp::ChompWasm;
 pub use climb::ClimbWasm;

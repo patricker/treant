@@ -2487,3 +2487,167 @@
   font-size: 0.82rem;
   text-align: center;
 }
+
+/* ── Hidden-info pass-and-play blackout handoff ──────────────────────────
+   A fully opaque, full-VIEWPORT scrim raised between turns so the next
+   player can take the phone without seeing the previous player's secret
+   view. Fixed + inset:0 + a z-index above the arcade nav (41) guarantees it
+   covers the board, counters, and history — no peeking. Dismissed only by
+   its button (Escape is intentionally inert). */
+.blackout {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #050408;
+  /* Opaque — not a translucent scrim; nothing behind may bleed through. */
+}
+.blackoutInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+}
+.blackoutEyes {
+  font-size: 3.4rem;
+  line-height: 1;
+}
+.blackoutTitle {
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+}
+.blackoutText {
+  color: #cfc9e6;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* ── Bulls & Cows board ──────────────────────────────────────────────── */
+.bcWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.bcSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bcLabel {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--arc-ink);
+  opacity: 0.75;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.bcCode {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+.bcDigit {
+  width: 2.4rem;
+  height: 2.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 900;
+  border-radius: 10px;
+  background: var(--arc-soft);
+  color: var(--arc-ink);
+  border: 2px solid transparent;
+}
+.bcDigitActive {
+  border-color: var(--arc-p1);
+}
+.bcDigitEmpty {
+  color: var(--arc-ink);
+  opacity: 0.35;
+}
+.bcHidden {
+  letter-spacing: 0.1em;
+}
+.bcKeypad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.bcKey {
+  aspect-ratio: 1 / 1;
+  min-height: 2.6rem;
+  border-radius: 10px;
+  border: none;
+  background: var(--arc-card);
+  color: var(--arc-ink);
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.bcKey:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.bcKeyWide {
+  grid-column: span 2;
+  font-size: 0.95rem;
+}
+.bcSubmitRow {
+  display: flex;
+  gap: 8px;
+}
+.bcToggle {
+  border: none;
+  background: transparent;
+  color: var(--arc-ink);
+  opacity: 0.7;
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.bcTable {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bcRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+.bcRowGuess {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--arc-ink);
+}
+.bcRowFeedback {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.bcEmptyHist {
+  font-size: 0.8rem;
+  opacity: 0.5;
+  text-align: center;
+  padding: 4px;
+}
+.bcHint {
+  font-size: 0.82rem;
+  opacity: 0.7;
+  text-align: center;
+}

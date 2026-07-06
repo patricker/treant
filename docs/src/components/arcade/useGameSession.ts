@@ -28,6 +28,10 @@ export function useGameSession(
 
   const [board, setBoard] = useState('');
   const [current, setCurrent] = useState(0);
+  // Hidden-info pass-and-play only: the seat we must hand the phone to before
+  // revealing the board (null = no pending handoff). Perfect-information games
+  // never set it, so all handoff logic below is inert for them.
+  const [handoff, setHandoff] = useState<number | null>(null);
   const [phase, setPhase] = useState<Phase>('playing');
   const [result, setResult] = useState('');
   const [statusText, setStatusText] = useState('');
@@ -45,13 +49,52 @@ export function useGameSession(
   // prefix ending just before the last human move (popping any AI replies too).
   const movesRef = useRef<{ move: string; seat: number }[]>([]);
 
-  const syncBoard = useCallback((h: GameHandle) => {
-    setBoard(h.getBoard());
-    setCurrent(h.currentPlayer());
-    setStatusText(h.statusText?.() ?? '');
-    setLegalMoves(h.isTerminal() ? [] : h.legalMoves());
-    setCanUndo(movesRef.current.some((e) => seatsRef.current[e.seat] === 'human'));
-  }, []);
+  // Which seat's view to render. Perfect-information games: null (use getBoard).
+  // Hidden-info pass-and-play: the current mover. Hidden-info vs an AI: the lone
+  // human's fixed seat, so the human never sees the AI's secret even on the AI's
+  // turn. Watch-AI (no humans): the current mover, for the demo.
+  const viewSeatOf = useCallback(
+    (h: GameHandle): number | null => {
+      if (!def.hiddenInfo) return null;
+      const humans = seatsRef.current.map((s, i) => (s === 'human' ? i : -1)).filter((i) => i >= 0);
+      if (humans.length === 0) return h.currentPlayer();
+      if (humans.length === seatsRef.current.length) return h.currentPlayer();
+      return humans[0];
+    },
+    [def],
+  );
+  const readBoard = useCallback(
+    (h: GameHandle): string => {
+      const vs = viewSeatOf(h);
+      return vs != null && h.getBoardFor ? h.getBoardFor(vs) : h.getBoard();
+    },
+    [viewSeatOf],
+  );
+
+  const syncBoard = useCallback(
+    (h: GameHandle) => {
+      setBoard(readBoard(h));
+      setCurrent(h.currentPlayer());
+      setStatusText(h.statusText?.() ?? '');
+      setLegalMoves(h.isTerminal() ? [] : h.legalMoves());
+      setCanUndo(movesRef.current.some((e) => seatsRef.current[e.seat] === 'human'));
+    },
+    [readBoard],
+  );
+
+  // Pass-and-play hidden-info handoff: after a move hands control to a DIFFERENT
+  // human seat, raise the blackout so the next player picks up the phone without
+  // seeing the prior view. `prevMover === null` covers the game's first turn.
+  const maybeHandoff = useCallback(
+    (prevMover: number | null, h: GameHandle) => {
+      if (!def.hiddenInfo || h.isTerminal()) return;
+      const allHuman = seatsRef.current.every((s) => s === 'human');
+      if (!allHuman) return;
+      const next = h.currentPlayer();
+      if (prevMover === null || next !== prevMover) setHandoff(next);
+    },
+    [def],
+  );
 
   const playMoveSound = useCallback(() => {
     if (def.moveSound === 'drop') sound.drop();
@@ -131,10 +174,12 @@ export function useGameSession(
     setEndText('');
     setWinCells([]);
     setLastCells([]);
+    setHandoff(null);
     setPhase('playing');
     syncBoard(h);
+    maybeHandoff(null, h);
     if (seatsRef.current[h.currentPlayer()] !== 'human') runAiTurn();
-  }, [wasm, def, params, runAiTurn, syncBoard]);
+  }, [wasm, def, params, runAiTurn, syncBoard, maybeHandoff]);
 
   // Rewind to just before the last human move (also popping AI replies after
   // it) by replaying the move log on a fresh engine. Disabled for solo/chance
@@ -202,9 +247,10 @@ export function useGameSession(
         return;
       }
       syncBoard(h);
+      maybeHandoff(seat, h);
       if (seatsRef.current[h.currentPlayer()] !== 'human') runAiTurn();
     },
-    [phase, runAiTurn, syncBoard, finish, playMoveSound],
+    [phase, runAiTurn, syncBoard, finish, playMoveSound, maybeHandoff],
   );
 
   const getHint = useCallback((): string | undefined => {
@@ -214,5 +260,7 @@ export function useGameSession(
     return h.bestMove();
   }, []);
 
-  return { board, current, phase, result, seats, statusText, endText, legalMoves, winCells, lastCells, onHumanMove, getHint, replay: start, undo, canUndo };
+  const dismissHandoff = useCallback(() => setHandoff(null), []);
+
+  return { board, current, phase, result, seats, statusText, endText, legalMoves, winCells, lastCells, onHumanMove, getHint, replay: start, undo, canUndo, handoff, dismissHandoff };
 }

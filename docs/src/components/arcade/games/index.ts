@@ -41,6 +41,7 @@ import { euclid } from './euclid';
 import { baghchal } from './baghchal';
 import { lenChoa } from './lenchoa';
 import { worldThrees } from './worldthrees';
+import { bullsCows } from './bullscows';
 import {
   draughts,
   internationalDraughts,
@@ -113,6 +114,7 @@ export const GAMES: GameDefinition[] = [
   twoDicePig,
   bigPig,
   climb,
+  bullsCows,
   game2048,
 ];
 

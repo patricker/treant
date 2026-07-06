@@ -59,7 +59,7 @@ eng!(
     TreblecrossWasm, EuclidWasm, Connect6Wasm, SquavaWasm, NotaktoWasm, SquareUpWasm, OrderChaosWasm,
     PinchFiveWasm, NineMorrisWasm, QuadlineWasm, OwareWasm, YGameWasm, BaghchalWasm, ClimbWasm,
     WorldThreesWasm, GaleWasm, SlimetrailWasm, ToadsFrogsWasm, PawnDuelWasm, StrandWasm,
-    LenChoaWasm, DraughtsWasm,
+    LenChoaWasm, DraughtsWasm, BullsCowsWasm,
 );
 
 // Ladders, weak -> strong. STD for most games; LIGHT caps playouts for the
@@ -164,6 +164,12 @@ fn games() -> Vec<Game> {
         g("pool-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 0, 0)) as Box<dyn Eng>),
         g("russian-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 1, 0)) as Box<dyn Eng>),
         g("giveaway-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 0, 0, 0, 0, 1)) as Box<dyn Eng>),
+        // Hidden-info: registered so the audit fuzzer (Pass 1) exercises the
+        // consistent-set deducer end-to-end. Its difficulty is HAND-SET, not
+        // win-rate-calibrated — strict alternation gives seat 0 a structural
+        // first-guesser edge that dominates the ladder round-robin, so the
+        // auto-picker's win-rate metric is meaningless here (nim precedent).
+        g("bulls-cows", STD, || Box::new(BullsCowsWasm::new(4, 10, 0)) as Box<dyn Eng>),
     ]
 }
 

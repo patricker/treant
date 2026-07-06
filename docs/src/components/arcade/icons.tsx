@@ -4,6 +4,14 @@ import { gameById } from './games';
 // Consistent flat icon set. All use `currentColor`, so they pick up the
 // surrounding text color (white on the hero, dark on tiles/headers).
 const GLYPHS: Record<string, JSX.Element> = {
+  'bulls-cows': (
+    // a bullseye target — concentric rings around a hit at the centre
+    <g stroke="currentColor" fill="none" strokeWidth="1.8">
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5.5" />
+      <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
+    </g>
+  ),
   climb: (
     // a stepped mountain with a flag planted on the summit
     <g stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinejoin="round" strokeLinecap="round">

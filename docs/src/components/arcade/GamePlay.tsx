@@ -58,7 +58,11 @@ export default function GamePlay({
     return () => window.removeEventListener('keydown', onKey);
   }, [s.phase, overlayDismissed]);
   const labels = def.playerLabels ?? PLAYER_LABEL;
-  const interactive = s.phase === 'playing' && s.seats[s.current] === 'human';
+  // While a hidden-info handoff blackout is up, the board underneath must be
+  // inert (the scrim blocks pointer events; this also blocks keyboard).
+  const interactive = s.phase === 'playing' && s.seats[s.current] === 'human' && s.handoff == null;
+  const handoffName =
+    s.handoff != null ? (labels[s.handoff] ? t(labels[s.handoff]) : t('Player {n}', { n: s.handoff + 1 })) : '';
   // The end-of-game line, shared by the overlay card and the dismissed pill so
   // both tell the same story. A game may override the default winner line via
   // resultFlavor (e.g. a box-in "Snail trapped!" message); it falls back to the
@@ -99,6 +103,31 @@ export default function GamePlay({
 
   return (
     <div className={styles.play}>
+      {s.handoff != null && (
+        // Full-viewport blackout between turns so the next player picks up the
+        // phone without seeing the last player's secret view. Covers the entire
+        // screen (board + counters + history). Only the button dismisses it —
+        // Escape does nothing, on purpose (no accidental peeking).
+        <div
+          className={styles.blackout}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('Hand the phone to {name}', { name: handoffName })}
+        >
+          <div className={styles.blackoutInner}>
+            <div className={styles.blackoutEyes} aria-hidden="true">
+              👀
+            </div>
+            <div className={styles.blackoutTitle}>{t('Pass the phone')}</div>
+            <div className={styles.blackoutText}>
+              {t('Hand the phone to {name} — nobody else look!', { name: handoffName })}
+            </div>
+            <button className={styles.playBtn} onClick={s.dismissHandoff} autoFocus>
+              {t("I'm {name} — show my board", { name: handoffName })}
+            </button>
+          </div>
+        </div>
+      )}
       <div className={styles.playTop}>
         <button className={styles.navBtn} onClick={onQuit} aria-label={t('Back to games')}>
           <span aria-hidden="true">←</span> <span className={styles.navLabel}>{t('Games')}</span>

@@ -29,6 +29,12 @@ export interface Knob {
 export interface GameHandle {
   applyMove(move: string): boolean;
   getBoard(): string;
+  /** Per-seat secret view for hidden-info games (`GameDefinition.hiddenInfo`).
+   *  Returns a board string containing ONLY what `seat` is permitted to know —
+   *  its own secret plus all public information, never another seat's secret.
+   *  Absent on perfect-information games; `useGameSession` falls back to
+   *  `getBoard()` then. See the hidden-info convention in ARCADE.md §7b. */
+  getBoardFor?(seat: number): string;
   currentPlayer(): number;
   isTerminal(): boolean;
   /** Canonical result contract, uniform across every engine:
@@ -114,6 +120,19 @@ export interface GameDefinition {
    * randomness and rewrite history.
    */
   noUndo?: boolean;
+  /**
+   * Hidden-information game (per-seat secrets). When set:
+   *  - In pass-and-play (every seat human), `GamePlay` interposes a
+   *    full-viewport blackout handoff screen before each seat's turn so the
+   *    next player can pick up the phone without seeing the last player's view.
+   *  - The board is fed `GameHandle.getBoardFor(viewingSeat)` — the current
+   *    mover in pass-and-play, or the lone human's fixed seat vs an AI — so a
+   *    player never sees an opponent's secret.
+   * vs-AI games skip the blackout (the AI doesn't peek). Should be paired with
+   * `noUndo: true` (replaying the move log would leak secret-setting moves).
+   * See ARCADE.md §7b.
+   */
+  hiddenInfo?: boolean;
   /** Solo games: prettify a hint move for display, e.g. "Up" -> "⬆️ Up". */
   formatHint?(move: string): string;
   /** Sound to play per move (default "move"; Connect Four uses "drop"). */

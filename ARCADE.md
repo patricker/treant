@@ -396,6 +396,42 @@ labels are `['Red','Gold']`, not `['Red','Black']`).
   Joust, Kōnane, and Amazons; new games with non-goal endings follow the same
   seam (see `gameTypes.ts` for the callback's context args).
 
+### Hidden-information games (the pass-screen primitive)
+
+Games with per-seat secrets (Bulls & Cows, and later Salvo/Ambush) set
+`GameDefinition.hiddenInfo: true`. That single flag drives a reusable
+pass-and-play blackout/per-seat-view primitive built into the shared session +
+`GamePlay` flow — no per-game plumbing. The contract:
+
+- **Per-seat views.** The `GameHandle` gains `getBoardFor?(seat)`. When
+  `hiddenInfo` is set, `useGameSession` feeds the board `getBoardFor(viewSeat)`
+  instead of `getBoard()`: the current mover in pass-and-play, or the lone
+  human's *fixed* seat vs an AI (so the human never sees the AI's secret, even on
+  the AI's turn). The engine's `get_board_for(seat)` string must contain ONLY
+  what `seat` may know — its own secret plus all public info, **never** another
+  seat's secret (reveal both only at game over). `getBoard()` (the fallback for
+  perfect-information games) still only ever exposes the current seat's view.
+- **Blackout handoff.** In pass-and-play (every seat human), `GamePlay` raises a
+  fully opaque, **full-viewport** blackout (`position:fixed; inset:0;` z-index
+  above the nav) before each seat's turn: "Hand the phone to {name} — nobody else
+  look!". It covers the board, counters, and history; only its button dismisses
+  it (Escape is intentionally inert — no accidental peeking). vs-AI skips the
+  blackout entirely (the AI doesn't peek). The board underneath a blackout is
+  already the *incoming* seat's view, so even a render glitch can't leak.
+- **Hard secrecy rules.** Secrets never appear in `get_board()`/`get_board_for()`
+  for the wrong seat, in the URL/share flow, in `legal_moves` for the wrong seat,
+  or in console logs. Set `noUndo: true` (undo replays the move log on a fresh
+  engine, which would replay secret-setting moves and leak via the log).
+- **AI must not cheat.** A hidden-info AI must decide from public + own-secret
+  info only, never the opponent's hidden state. Bulls & Cows does this with a
+  closed-form consistent-set deducer (it reads only its own feedback log) rather
+  than a tree search over the true state — see the `bullscows.rs` header and its
+  `ai_is_a_pure_function_of_feedback` test. (Proper determinized MCTS over
+  sampled hidden states is deferred to Salvo/Ambush.) Because self-play win-rate
+  is skewed by turn order under strict alternation, the difficulty ladder is
+  hand-set (nim precedent), while the game is still registered in `calibrate.rs`
+  so the audit fuzzer exercises it.
+
 ---
 
 ## 8. The add-a-game recipe + checklist
