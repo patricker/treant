@@ -630,6 +630,7 @@
   "Set your secret code": "秘密のコードを設定",
   "Their guesses": "相手の推測",
   "Your guess": "あなたの推測",
+  "Your guess {guess} → 🎯 {bulls} 🐄 {cows}": "あなたの推測 {guess} → 🎯 {bulls} 🐄 {cows}",
   "Your guesses": "あなたの推測履歴",
   "Your secret code": "あなたの秘密のコード"
 }

@@ -35,6 +35,14 @@ export interface GameHandle {
    *  Absent on perfect-information games; `useGameSession` falls back to
    *  `getBoard()` then. See the hidden-info convention in ARCADE.md §7b. */
   getBoardFor?(seat: number): string;
+  /** Hidden-info pass-and-play only: a secrecy-safe, one-line summary of `seat`'s
+   *  most recent move, shown to the OUTGOING player atop the handoff blackout so
+   *  they see their own result before passing the phone. Encoded as
+   *  `"guess:bulls:cows"` (the same public triple the board history uses), or
+   *  `undefined` when `seat` has no such move (e.g. a code-setting move — nothing
+   *  to show). Reads ONLY `seat`'s own public guess log — never any secret code,
+   *  of either player — so it cannot leak the incoming player's secret. */
+  lastMoveSummaryFor?(seat: number): string | undefined;
   currentPlayer(): number;
   isTerminal(): boolean;
   /** Canonical result contract, uniform across every engine:

@@ -629,6 +629,7 @@
   "You lost — {name} wins.",
   "You win! 🎉",
   "Your guess",
+  "Your guess {guess} → 🎯 {bulls} 🐄 {cows}",
   "Your guesses",
   "Your secret code",
   "Your turn"

@@ -630,6 +630,7 @@
   "Set your secret code": "设定你的秘密密码",
   "Their guesses": "对方的猜测",
   "Your guess": "你的猜测",
+  "Your guess {guess} → 🎯 {bulls} 🐄 {cows}": "你的猜测 {guess} → 🎯 {bulls} 🐄 {cows}",
   "Your guesses": "你的猜测记录",
   "Your secret code": "你的秘密密码"
 }

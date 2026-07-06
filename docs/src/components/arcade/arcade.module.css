@@ -2529,6 +2529,19 @@
   font-size: 1rem;
   line-height: 1.4;
 }
+/* The outgoing player's own move result, shown atop the blackout before they
+   pass the phone. Set apart from the "pass the phone" copy with a card so it
+   reads as "here's what you just did" rather than an instruction. */
+.blackoutSummary {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.4;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
 
 /* ── Bulls & Cows board ──────────────────────────────────────────────── */
 .bcWrap {

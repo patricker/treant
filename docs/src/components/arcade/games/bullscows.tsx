@@ -53,6 +53,17 @@ function makeHandle(wasm: any, p: GameParams): GameHandle {
     applyMove: (m) => g.apply_move(m),
     getBoard: () => g.get_board(),
     getBoardFor: (seat) => g.get_board_for(seat),
+    // Secrecy-safe outgoing-move summary for the handoff blackout: parse the
+    // seat's OWN view (get_board_for(seat) — guaranteed to omit the opponent's
+    // code mid-game) and return only the last entry of that seat's own guess
+    // log, `guess:bulls:cows`, all of which is public. Setup moves leave `my`
+    // empty → undefined (nothing to show beyond the normal blackout).
+    lastMoveSummaryFor: (seat) => {
+      const st = parseBoard(g.get_board_for(seat));
+      if (st.my.length === 0) return undefined;
+      const last = st.my[st.my.length - 1];
+      return `${last.guess}:${last.bulls}:${last.cows}`;
+    },
     currentPlayer: () => g.current_player(),
     isTerminal: () => g.is_terminal(),
     result: () => g.result(),

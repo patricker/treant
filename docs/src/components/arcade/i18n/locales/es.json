@@ -630,6 +630,7 @@
   "Set your secret code": "Fija tu código secreto",
   "Their guesses": "Sus intentos",
   "Your guess": "Tu intento",
+  "Your guess {guess} → 🎯 {bulls} 🐄 {cows}": "Tu intento {guess} → 🎯 {bulls} 🐄 {cows}",
   "Your guesses": "Tus intentos",
   "Your secret code": "Tu código secreto"
 }

@@ -32,6 +32,12 @@ export function useGameSession(
   // revealing the board (null = no pending handoff). Perfect-information games
   // never set it, so all handoff logic below is inert for them.
   const [handoff, setHandoff] = useState<number | null>(null);
+  // Alongside `handoff`: a secrecy-safe summary of the OUTGOING player's just-made
+  // move (`"guess:bulls:cows"`), shown atop the blackout so the guesser sees their
+  // own result before passing. Captured from the outgoing seat's own view BEFORE
+  // it matters — it contains only that player's public guess+feedback, never a
+  // code. null when there's nothing to show (first turn, a code-setting move).
+  const [handoffSummary, setHandoffSummary] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>('playing');
   const [result, setResult] = useState('');
   const [statusText, setStatusText] = useState('');
@@ -88,12 +94,15 @@ export function useGameSession(
   // human seat, raise the blackout so the next player picks up the phone without
   // seeing the prior view. `prevMover === null` covers the game's first turn.
   const maybeHandoff = useCallback(
-    (prevMover: number | null, h: GameHandle) => {
+    (prevMover: number | null, h: GameHandle, summary: string | null = null) => {
       if (!def.hiddenInfo || h.isTerminal()) return;
       const allHuman = seatsRef.current.every((s) => s === 'human');
       if (!allHuman) return;
       const next = h.currentPlayer();
-      if (prevMover === null || next !== prevMover) setHandoff(next);
+      if (prevMover === null || next !== prevMover) {
+        setHandoff(next);
+        setHandoffSummary(summary);
+      }
     },
     [def],
   );
@@ -196,6 +205,7 @@ export function useGameSession(
     setWinCells([]);
     setLastCells([]);
     setHandoff(null);
+    setHandoffSummary(null);
     setPhase('playing');
     syncBoard(h);
     maybeHandoff(null, h);
@@ -268,10 +278,14 @@ export function useGameSession(
         return;
       }
       syncBoard(h);
-      maybeHandoff(seat, h);
+      // Capture the outgoing player's own move summary (their guess + public
+      // feedback) using the EXPLICIT outgoing seat, so the reveal is drawn from
+      // that player's own view and never depends on whose turn it now is.
+      const summary = def.hiddenInfo ? (h.lastMoveSummaryFor?.(seat) ?? null) : null;
+      maybeHandoff(seat, h, summary);
       if (seatsRef.current[h.currentPlayer()] !== 'human') runAiTurn();
     },
-    [phase, runAiTurn, syncBoard, finish, playMoveSound, maybeHandoff],
+    [def, phase, runAiTurn, syncBoard, finish, playMoveSound, maybeHandoff],
   );
 
   const getHint = useCallback((): string | undefined => {
@@ -281,7 +295,10 @@ export function useGameSession(
     return h.bestMove();
   }, []);
 
-  const dismissHandoff = useCallback(() => setHandoff(null), []);
+  const dismissHandoff = useCallback(() => {
+    setHandoff(null);
+    setHandoffSummary(null);
+  }, []);
 
-  return { board, current, phase, result, seats, statusText, endText, legalMoves, winCells, lastCells, onHumanMove, getHint, replay: start, undo, canUndo, handoff, dismissHandoff };
+  return { board, current, phase, result, seats, statusText, endText, legalMoves, winCells, lastCells, onHumanMove, getHint, replay: start, undo, canUndo, handoff, handoffSummary, dismissHandoff };
 }
