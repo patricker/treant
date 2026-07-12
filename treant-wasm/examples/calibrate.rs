@@ -190,11 +190,13 @@ fn games() -> Vec<Game> {
         g("surakarta", STD, || Box::new(SurakartaWasm::new()) as Box<dyn Eng>),
         // Vanguard (hidden-rank capture-the-Standard, L'Attaque mechanics):
         // registered so the audit fuzzer (Pass 1) exercises the two-phase
-        // placement→play rules end-to-end. Its `weak_move` is still a random-legal
-        // PLACEHOLDER (Task 7-2 builds the determinized PIMC opponent), so the
-        // difficulty ladder is meaningless here and DEFERRED to 7-2 — this entry
-        // exists only for the fuzzer. Standard 8×8 preset, default 12-piece army,
-        // scout long-move on.
+        // placement→play rules AND the determinized-PIMC opponent end-to-end. Its
+        // difficulty is HAND-SET, not win-rate-calibrated: hidden info + a
+        // first-mover edge make the ladder round-robin meaningless (the Bulls &
+        // Cows / Salvo / nim precedent). The `weak_move` `playouts` knob maps to
+        // (K samples × search depth) — Easy 2×d1, Medium 6×d2, Hard 16×d2 (argmax);
+        // see vanguard.rs `ladder` + the task 7-2 report's timing table. Standard
+        // 8×8 preset, default 12-piece army, scout long-move on.
         g("vanguard", STD, || Box::new(VanguardWasm::new(1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 1)) as Box<dyn Eng>),
     ]
 }

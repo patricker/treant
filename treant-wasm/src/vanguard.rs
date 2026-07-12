@@ -86,6 +86,11 @@ const N_KINDS: usize = 9;
 /// two-squares rule, guarantees termination.
 const NO_COMBAT_CAP: u32 = 80;
 
+/// Terminal magnitude for the PIMC negamax: capturing the enemy Standard (or
+/// immobilising them) scores ±`WIN`, dwarfing any material term. Kept well below
+/// `i32::MAX` so `2 * WIN` alpha-beta bounds and negation never overflow.
+const WIN: i32 = 1_000_000;
+
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Kind {
     Marshal,
@@ -199,6 +204,11 @@ struct Vanguard {
     // pair. A move that would make the count reach 3 on the same pair is illegal.
     shuttle: [Option<(u32, usize, usize, u32)>; 2],
     no_combat_plies: u32,
+    // Per-owner tally of that owner's OWN pieces that have LEFT the board, by kind.
+    // Every removal happens through combat, which publicly reveals the piece's
+    // kind, so this is PUBLIC information — the determinized sampler reads it to
+    // enforce multiset conservation (a captured kind is drawn out of the pool).
+    removed: [[usize; N_KINDS]; 2],
 }
 
 impl Vanguard {
@@ -255,6 +265,7 @@ impl Vanguard {
             last_summary: String::new(),
             shuttle: [None, None],
             no_combat_plies: 0,
+            removed: [[0; N_KINDS]; 2],
         }
     }
 
@@ -549,6 +560,7 @@ impl Vanguard {
                 let dr = def.kind.rank_str();
                 if def.kind == Kind::Standard {
                     // Capture the enemy Standard ⇒ immediate win.
+                    self.removed[def.owner as usize][Kind::Standard as usize] += 1;
                     attacker.revealed = true;
                     self.board[to] = Some(attacker);
                     self.winner = Some(seat as u8);
@@ -558,11 +570,13 @@ impl Vanguard {
                 } else if def.kind == Kind::Bomb {
                     if attacker.kind == Kind::Sapper {
                         // Sapper defuses the Bomb (captures it) and takes the square.
+                        self.removed[def.owner as usize][Kind::Bomb as usize] += 1;
                         attacker.revealed = true;
                         self.board[to] = Some(attacker);
                         self.last_summary = format!("c:{from}:{to}:{ag}:{ar}:{dg}:{dr}:bd");
                     } else {
                         // Bomb destroys any non-Sapper attacker and PERSISTS (revealed).
+                        self.removed[attacker.owner as usize][attacker.kind as usize] += 1;
                         def.revealed = true;
                         self.board[to] = Some(def);
                         self.last_summary = format!("c:{from}:{to}:{ag}:{ar}:{dg}:{dr}:bh");
@@ -584,17 +598,21 @@ impl Vanguard {
                     };
                     match outcome {
                         1 => {
+                            self.removed[def.owner as usize][def.kind as usize] += 1;
                             attacker.revealed = true;
                             self.board[to] = Some(attacker); // defender removed
                             self.last_summary = format!("c:{from}:{to}:{ag}:{ar}:{dg}:{dr}:aw");
                         }
                         -1 => {
+                            self.removed[attacker.owner as usize][attacker.kind as usize] += 1;
                             def.revealed = true;
                             self.board[to] = Some(def); // attacker removed
                             self.last_summary = format!("c:{from}:{to}:{ag}:{ar}:{dg}:{dr}:dw");
                         }
                         _ => {
                             // both removed — square left empty
+                            self.removed[def.owner as usize][def.kind as usize] += 1;
+                            self.removed[attacker.owner as usize][attacker.kind as usize] += 1;
                             self.last_summary = format!("c:{from}:{to}:{ag}:{ar}:{dg}:{dr}:mm");
                         }
                     }
@@ -619,13 +637,498 @@ impl Vanguard {
         true
     }
 
-    // ---- placeholder move selection (7-2 replaces with determinized PIMC) ----
+    // ---- the determinized-PIMC opponent (never peeks) -----------------------
+    //
+    // The AI never reads a hidden enemy rank. In the play phase it draws K
+    // rank-assignments consistent with PUBLIC info only (revealed identities,
+    // movement evidence, multiset conservation via the `removed` tally + own
+    // pieces), turns each into a perfect-information world, runs a depth-limited
+    // alpha-beta negamax with a material + Standard-safety eval to score every
+    // ROOT move, AVERAGES the scores across the K worlds, and selects via
+    // top-k/temperature — the hand-set difficulty ladder (nim / Bulls & Cows
+    // precedent; hidden info makes win-rate calibration meaningless). This is
+    // ensemble determinization / PIMC (Cowling et al. 2012), which sits on the
+    // favourable side of the applicability line here because combat publicly
+    // reveals both pieces and steadily collapses the hidden state (Long et al.
+    // AAAI 2010). Placement is a stable deterministic plan (Standard on the back
+    // rank, Bombs hugging it, the rest shuffled) — the play-phase search is the
+    // strength story.
 
-    /// PLACEHOLDER: a uniform-random legal move (seeded). During placement it
-    /// deploys one random remaining piece into a random empty zone square; during
-    /// play it picks a random legal move. Ignores playout/temperature knobs — the
-    /// real strength ladder is Task 7-2.
-    fn weak_move(&self, seed: u32) -> Option<String> {
+    /// Value weights for the material eval (centi-units). The Spy is prized above
+    /// its rank (it alone kills a Marshal); the Bomb is a defensive asset; the
+    /// Standard is 0 here because its capture is handled as a terminal win, not a
+    /// material term.
+    fn piece_value(k: Kind) -> i32 {
+        match k {
+            Kind::Marshal => 100,
+            Kind::Captain => 70,
+            Kind::Sergeant => 50,
+            Kind::Trooper => 40,
+            Kind::Scout => 25,
+            Kind::Sapper => 35,
+            Kind::Spy => 55,
+            Kind::Bomb => 40,
+            Kind::Standard => 0,
+        }
+    }
+
+    fn orth_neighbors(&self, cell: usize) -> Vec<usize> {
+        let (w, h) = (self.w, self.h);
+        let (r, c) = (cell / w, cell % w);
+        let mut out = Vec::new();
+        for (dr, dc) in [(-1i32, 0i32), (1, 0), (0, -1), (0, 1)] {
+            let (nr, nc) = (r as i32 + dr, c as i32 + dc);
+            if nr >= 0 && nc >= 0 && nr < h as i32 && nc < w as i32 {
+                out.push(nr as usize * w + nc as usize);
+            }
+        }
+        out
+    }
+
+    // ---- sampler: a consistent hidden-rank assignment (reads ONLY public info) --
+
+    /// Backtracking assignment of remaining hidden ranks to `hidden` positions
+    /// (tightest-constrained first). Randomised kind order per level gives varied
+    /// samples across seeds; guaranteed to find the consistent assignment if one
+    /// exists (degenerates to the unique one when evidence pins everything).
+    fn assign_kinds(
+        &self,
+        hidden: &[(usize, bool, bool)],
+        pool: &mut [usize; N_KINDS],
+        idx: usize,
+        out: &mut [usize],
+        rng: &mut SmallRng,
+    ) -> bool {
+        if idx == hidden.len() {
+            return true;
+        }
+        let (_, has_moved, moved_long) = hidden[idx];
+        let mut order: [usize; N_KINDS] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        for i in (1..N_KINDS).rev() {
+            order.swap(i, rng.gen_range(0..=i));
+        }
+        for &k in &order {
+            if pool[k] == 0 {
+                continue;
+            }
+            let kind = Kind::from_index(k).unwrap();
+            // Public inference: a 2+-straight mover MUST be a Scout; any moved
+            // piece cannot be an immovable Bomb/Standard.
+            if moved_long && kind != Kind::Scout {
+                continue;
+            }
+            if has_moved && !kind.movable() {
+                continue;
+            }
+            pool[k] -= 1;
+            out[idx] = k;
+            if self.assign_kinds(hidden, pool, idx + 1, out, rng) {
+                return true;
+            }
+            pool[k] += 1;
+        }
+        false
+    }
+
+    /// Draw ONE perfect-information world for `seat`: clone the board, then
+    /// OVERWRITE every hidden enemy piece with a sampled rank consistent with the
+    /// public record. Never reads a hidden enemy piece's true kind — the pool is
+    /// `army − removed[opp] − revealed-on-board`, and the per-position constraints
+    /// are the public movement flags. Returns `None` if the public state admits no
+    /// consistent assignment (never expected in a real game).
+    fn determinize(&self, seat: usize, rng: &mut SmallRng) -> Option<Vec<Option<Piece>>> {
+        let opp = 1 - seat;
+        let mut board = self.board.clone();
+        let mut known = [0usize; N_KINDS];
+        let mut hidden: Vec<(usize, bool, bool)> = Vec::new();
+        for (cell, sq) in board.iter().enumerate() {
+            if let Some(p) = sq {
+                if p.owner as usize == opp {
+                    if p.revealed {
+                        known[p.kind as usize] += 1; // revealed ⇒ its kind is PUBLIC
+                    } else {
+                        hidden.push((cell, p.has_moved, p.moved_long));
+                    }
+                }
+            }
+        }
+        let mut pool = [0usize; N_KINDS];
+        let mut pool_total = 0usize;
+        for k in 0..N_KINDS {
+            let avail = self.army[k] as i64 - self.removed[opp][k] as i64 - known[k] as i64;
+            if avail < 0 {
+                return None;
+            }
+            pool[k] = avail as usize;
+            pool_total += avail as usize;
+        }
+        if pool_total != hidden.len() {
+            return None;
+        }
+        // Tightest constraint first: moved_long (Scout-pinned) < has_moved < free.
+        hidden.sort_by_key(|&(_, hm, ml)| if ml { 0 } else if hm { 1 } else { 2 });
+        let mut assign = vec![0usize; hidden.len()];
+        if !self.assign_kinds(&hidden, &mut pool, 0, &mut assign, rng) {
+            return None;
+        }
+        for (i, &(cell, _, _)) in hidden.iter().enumerate() {
+            if let Some(p) = &mut board[cell] {
+                p.kind = Kind::from_index(assign[i]).unwrap();
+            }
+        }
+        Some(board)
+    }
+
+    // ---- per-sample perfect-information search -------------------------------
+
+    /// Legal `(from, to)` moves on an arbitrary board (the search's move-gen).
+    /// Mirrors `play_moves` minus the anti-shuffle rule (irrelevant inside a
+    /// bounded search). Attack legality never depends on the enemy's rank, so the
+    /// root move list is identical across samples.
+    fn moves_on(&self, board: &[Option<Piece>], seat: usize) -> Vec<(usize, usize)> {
+        let mut out = Vec::new();
+        let (w, h) = (self.w, self.h);
+        for from in 0..w * h {
+            let p = match &board[from] {
+                Some(p) if p.owner as usize == seat && p.kind.movable() => *p,
+                _ => continue,
+            };
+            let (r, c) = (from / w, from % w);
+            let long = p.kind == Kind::Scout && self.scout_long;
+            let maxstep = if long { w.max(h) as i32 } else { 1 };
+            for (dr, dc) in [(-1i32, 0i32), (1, 0), (0, -1), (0, 1)] {
+                for step in 1..=maxstep {
+                    let (nr, nc) = (r as i32 + dr * step, c as i32 + dc * step);
+                    if nr < 0 || nc < 0 || nr >= h as i32 || nc >= w as i32 {
+                        break;
+                    }
+                    let ncell = nr as usize * w + nc as usize;
+                    if self.lakes[ncell] {
+                        break;
+                    }
+                    match &board[ncell] {
+                        None => out.push((from, ncell)),
+                        Some(occ) => {
+                            if occ.owner as usize != seat {
+                                out.push((from, ncell));
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    /// Resolve one perfect-information move on `board` (both kinds known). Returns
+    /// [`WIN`] iff the moved piece captured the enemy Standard (a terminal win for
+    /// the mover), else 0. Mirrors `apply_play`'s combat, minus bookkeeping.
+    fn pi_apply(&self, board: &mut [Option<Piece>], from: usize, to: usize) -> i32 {
+        let att = board[from].take().unwrap();
+        match board[to].take() {
+            None => {
+                board[to] = Some(att);
+                0
+            }
+            Some(def) => {
+                if def.kind == Kind::Standard {
+                    board[to] = Some(att);
+                    return WIN;
+                }
+                if def.kind == Kind::Bomb {
+                    if att.kind == Kind::Sapper {
+                        board[to] = Some(att); // defuse
+                    } else {
+                        board[to] = Some(def); // Bomb persists, attacker gone
+                    }
+                    return 0;
+                }
+                let (ar, dr) = (att.kind.rank().unwrap(), def.kind.rank().unwrap());
+                let att_wins = (att.kind == Kind::Spy && def.kind == Kind::Marshal) || ar > dr;
+                if att_wins {
+                    board[to] = Some(att);
+                } else if ar < dr {
+                    board[to] = Some(def);
+                }
+                // equal ⇒ both removed (square already emptied by the takes)
+                0
+            }
+        }
+    }
+
+    /// Is `target` capturable next move by a movable `by`-seat piece? The first
+    /// piece met walking outward in each orthogonal ray is the only candidate:
+    /// adjacent ⇒ any movable reaches it; further ⇒ only a long-move Scout. Used
+    /// by the leaf eval for Standard-safety.
+    fn attackable_by(&self, board: &[Option<Piece>], target: usize, by: usize) -> bool {
+        let (w, h) = (self.w, self.h);
+        let (r, c) = (target / w, target % w);
+        for (dr, dc) in [(-1i32, 0i32), (1, 0), (0, -1), (0, 1)] {
+            let mut step = 1i32;
+            loop {
+                let (nr, nc) = (r as i32 + dr * step, c as i32 + dc * step);
+                if nr < 0 || nc < 0 || nr >= h as i32 || nc >= w as i32 {
+                    break;
+                }
+                let ncell = nr as usize * w + nc as usize;
+                if self.lakes[ncell] {
+                    break;
+                }
+                match &board[ncell] {
+                    None => {
+                        step += 1;
+                        continue;
+                    }
+                    Some(p) => {
+                        if p.owner as usize == by && p.kind.movable() {
+                            if step == 1 {
+                                return true;
+                            }
+                            if p.kind == Kind::Scout && self.scout_long {
+                                return true;
+                            }
+                        }
+                        break; // first piece blocks the ray
+                    }
+                }
+            }
+        }
+        false
+    }
+
+    /// Static leaf eval from the side-to-move's view: material difference plus a
+    /// Standard-safety term (a Standard a piece can step onto next move is nearly
+    /// lost — any attacker beats it).
+    fn eval_stm(&self, board: &[Option<Piece>], stm: usize) -> i32 {
+        let mut mat = [0i32; 2];
+        let mut std_cell = [None, None];
+        for (cell, sq) in board.iter().enumerate() {
+            if let Some(p) = sq {
+                let o = p.owner as usize;
+                mat[o] += Self::piece_value(p.kind);
+                if p.kind == Kind::Standard {
+                    std_cell[o] = Some(cell);
+                }
+                // Advancement gradient: reward movable pieces for pushing toward the
+                // enemy back rank. Small vs material (so it never invites a losing
+                // trade), but enough to break the passivity that otherwise stalls
+                // every game at the no-combat cap — it drives both armies into
+                // contact, where skill (deeper search / more samples) tells.
+                if p.kind.movable() {
+                    let r = (cell / self.w) as i32;
+                    let adv = if o == 0 { (self.h as i32 - 1) - r } else { r };
+                    mat[o] += adv * 3;
+                }
+            }
+        }
+        let opp = 1 - stm;
+        let mut score = mat[stm] - mat[opp];
+        if let Some(sc) = std_cell[stm] {
+            if self.attackable_by(board, sc, opp) {
+                score -= 400;
+            }
+        }
+        if let Some(sc) = std_cell[opp] {
+            if self.attackable_by(board, sc, stm) {
+                score += 400;
+            }
+        }
+        score
+    }
+
+    /// Depth-limited alpha-beta negamax over a perfect-information world. Returns
+    /// the value from `stm`'s perspective. Capturing the enemy Standard is a
+    /// terminal [`WIN`]; being unable to move is a terminal loss.
+    fn negamax(&self, board: &[Option<Piece>], stm: usize, depth: u32, mut alpha: i32, beta: i32) -> i32 {
+        let moves = self.moves_on(board, stm);
+        if moves.is_empty() {
+            return -WIN; // immobilised ⇒ the side to move loses
+        }
+        if depth == 0 {
+            return self.eval_stm(board, stm);
+        }
+        let mut best = i32::MIN;
+        for (f, t) in moves {
+            let mut nb = board.to_vec();
+            let term = self.pi_apply(&mut nb, f, t);
+            let v = if term >= WIN {
+                WIN
+            } else {
+                -self.negamax(&nb, 1 - stm, depth - 1, -beta, -alpha)
+            };
+            if v > best {
+                best = v;
+            }
+            if best > alpha {
+                alpha = best;
+            }
+            if alpha >= beta {
+                break; // fail-high cutoff
+            }
+        }
+        best
+    }
+
+    /// The play-phase move: score every root move by AVERAGING its negamax value
+    /// across `k_samples` determinized worlds, then pick via top-k/temperature.
+    /// `seat` = the current player. Non-cheating by construction (samples read only
+    /// public info + own pieces).
+    fn play_ai(&self, k_samples: usize, depth: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
+        let seat = self.current as usize;
+        let root_moves = self.play_moves(seat);
+        if root_moves.is_empty() {
+            return None;
+        }
+        let mut score = vec![0f64; root_moves.len()];
+        let mut n_samples = 0usize;
+        for s in 0..k_samples {
+            let mut rng = SmallRng::seed_from_u64(
+                (seed as u64) ^ 0x007A_11ED ^ ((seat as u64) << 40) ^ ((s as u64) << 8),
+            );
+            let world = match self.determinize(seat, &mut rng) {
+                Some(w) => w,
+                None => continue,
+            };
+            n_samples += 1;
+            for (i, &(f, t)) in root_moves.iter().enumerate() {
+                let mut nb = world.clone();
+                let term = self.pi_apply(&mut nb, f, t);
+                let v = if term >= WIN {
+                    WIN
+                } else {
+                    -self.negamax(&nb, 1 - seat, depth.saturating_sub(1), -2 * WIN, 2 * WIN)
+                };
+                score[i] += v as f64;
+            }
+        }
+        if n_samples == 0 {
+            // Sampler found no consistent world (not expected in a real game) —
+            // fall back to a legal move rather than stalling.
+            let (f, t) = root_moves[0];
+            return Some(Self::format_move(f, t));
+        }
+        for sc in &mut score {
+            *sc /= n_samples as f64;
+        }
+        let pick = Self::select_topk_temp(&score, top_k, temp, seed);
+        let (f, t) = root_moves[pick];
+        Some(Self::format_move(f, t))
+    }
+
+    /// Index into `scores` (higher = better) chosen by top-k softmax at temperature
+    /// `temp`. `temp ≤ 0` (or a singleton top-k) is argmax; ties break to the lower
+    /// index for determinism. Scores are in ~centi-material units, so the softmax
+    /// divides by `temp * 100` to make `temp ≈ 1` a sensible spread.
+    fn select_topk_temp(scores: &[f64], top_k: usize, temp: f64, seed: u32) -> usize {
+        let mut idx: Vec<usize> = (0..scores.len()).collect();
+        idx.sort_by(|&a, &b| scores[b].partial_cmp(&scores[a]).unwrap().then(a.cmp(&b)));
+        let k = top_k.clamp(1, idx.len());
+        let top = &idx[..k];
+        if temp <= 1e-4 || k == 1 {
+            return top[0];
+        }
+        let maxs = scores[top[0]];
+        let weights: Vec<f64> = top.iter().map(|&i| ((scores[i] - maxs) / (temp * 100.0)).exp()).collect();
+        let sum: f64 = weights.iter().sum();
+        if sum <= 0.0 {
+            return top[0];
+        }
+        let mut rng = SmallRng::seed_from_u64((seed as u64) ^ 0x007A_115E);
+        let mut r = rng.gen::<f64>() * sum;
+        for (n, &i) in top.iter().enumerate() {
+            r -= weights[n];
+            if r <= 0.0 {
+                return i;
+            }
+        }
+        top[0]
+    }
+
+    /// Difficulty ladder: map the arcade `playouts` knob to (K samples, search
+    /// depth). Hand-set (nim / Bulls & Cows precedent); the spike-validated Hard
+    /// config is K=16 × depth 2 (see the task report's timing table). Easy is a
+    /// noisy 2-sample depth-1 peek; the top-k/temp knobs (from the same ladder)
+    /// supply the softmax spread.
+    fn ladder(playouts: u32) -> (usize, u32) {
+        match playouts {
+            0..=19 => (2, 1),
+            20..=199 => (6, 2),
+            200..=799 => (10, 2),
+            _ => (16, 2),
+        }
+    }
+
+    /// A stable deterministic deployment plan for `seat` (fixed per game config,
+    /// like Salvo's placement plan): Standard on the back rank, Bombs hugging it,
+    /// every other kind shuffled across the remaining zone squares. Returned in
+    /// placement order so successive `weak_move` calls deploy `plan[placed]`.
+    fn placement_plan(&self, seat: usize) -> Vec<(usize, usize)> {
+        let army_sig = self.army.iter().enumerate().fold(0u64, |a, (i, &c)| a ^ ((c as u64) << (i * 3)));
+        let seedbase =
+            0x07A1_1B0D ^ (self.w as u64) ^ ((self.h as u64) << 8) ^ ((seat as u64) << 16) ^ army_sig;
+        let mut rng = SmallRng::seed_from_u64(seedbase);
+        let zone: Vec<usize> = (0..self.w * self.h).filter(|&c| self.zone[seat][c]).collect();
+        let back_row = if seat == 0 { self.h - 1 } else { 0 };
+        let mut used = vec![false; self.w * self.h];
+        let mut plan: Vec<(usize, usize)> = Vec::new();
+        // 1. Standard on a back-rank cell (interior if possible).
+        let back: Vec<usize> = zone.iter().copied().filter(|&c| c / self.w == back_row).collect();
+        let std_cell = if back.is_empty() { zone[0] } else { back[rng.gen_range(0..back.len())] };
+        plan.push((Kind::Standard as usize, std_cell));
+        used[std_cell] = true;
+        // 2. Bombs on squares next to the Standard (fall back to any free square).
+        let adj: Vec<usize> = self
+            .orth_neighbors(std_cell)
+            .into_iter()
+            .filter(|&c| self.zone[seat][c])
+            .collect();
+        for _ in 0..self.army[Kind::Bomb as usize] {
+            let cell = adj
+                .iter()
+                .copied()
+                .find(|&c| !used[c])
+                .or_else(|| zone.iter().copied().find(|&c| !used[c]));
+            match cell {
+                Some(c) => {
+                    plan.push((Kind::Bomb as usize, c));
+                    used[c] = true;
+                }
+                None => break,
+            }
+        }
+        // 3. Everything else, shuffled across the remaining zone squares.
+        let mut rest: Vec<usize> = zone.iter().copied().filter(|&c| !used[c]).collect();
+        for i in (1..rest.len()).rev() {
+            rest.swap(i, rng.gen_range(0..=i));
+        }
+        let mut ci = 0usize;
+        for k in 0..N_KINDS {
+            if k == Kind::Standard as usize || k == Kind::Bomb as usize {
+                continue;
+            }
+            for _ in 0..self.army[k] {
+                if ci >= rest.len() {
+                    break;
+                }
+                plan.push((k, rest[ci]));
+                ci += 1;
+            }
+        }
+        plan
+    }
+
+    fn placement_move(&self) -> Option<String> {
+        let seat = self.current as usize;
+        let plan = self.placement_plan(seat);
+        plan.get(self.placed_total(seat)).map(|&(k, c)| Self::format_place(k, c))
+    }
+
+    /// A uniform-random legal move (seeded) — the pure-random baseline used by the
+    /// termination fuzzer and the never-peeks smoke test. Reads only public/own
+    /// state + the seed, so it never peeks at hidden enemy ranks.
+    #[cfg(test)]
+    fn random_move(&self, seed: u32) -> Option<String> {
         if self.over() {
             return None;
         }
@@ -653,31 +1156,28 @@ impl Vanguard {
         }
     }
 
-    /// PLACEHOLDER "best" move: the first legal move deterministically (7-2 gives
-    /// this real strength). Never reads hidden enemy ranks.
+    /// The arcade opponent: a stable deployment during placement, else the
+    /// determinized-PIMC play move at the ladder rung `playouts` selects.
+    fn weak_move(&self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
+        if self.over() {
+            return None;
+        }
+        if !self.both_placed() {
+            return self.placement_move();
+        }
+        let (k, depth) = Self::ladder(playouts);
+        self.play_ai(k, depth, top_k, temp, seed)
+    }
+
+    /// The strongest move (the "watch-AI" / hint selector): the Hard rung, argmax.
     fn best_move(&self) -> Option<String> {
         if self.over() {
             return None;
         }
-        let seat = self.current as usize;
         if !self.both_placed() {
-            let cell = (0..self.w * self.h)
-                .find(|&c| self.zone[seat][c] && self.board[c].is_none())?;
-            for k in 0..N_KINDS {
-                if self.placed[seat][k] < self.army[k] {
-                    return Some(Self::format_place(k, cell));
-                }
-            }
-            None
-        } else {
-            let mut moves = self.play_moves(seat);
-            if moves.is_empty() {
-                return None;
-            }
-            moves.sort_unstable();
-            let (f, t) = moves[0];
-            Some(Self::format_move(f, t))
+            return self.placement_move();
         }
+        self.play_ai(16, 2, 1, 0.0, 0)
     }
 
     /// A sample of legal moves as strings (placement options or play moves) — for
@@ -828,8 +1328,8 @@ impl VanguardWasm {
         Self { g, preset: size_preset, counts, scout_long: scout_long != 0 }
     }
 
-    /// No-op by design: `weak_move` is an on-demand selector, not a persistent
-    /// tree search (and 7-2 will replace it with determinized PIMC).
+    /// No-op by design: the determinized-PIMC `weak_move` samples and searches on
+    /// demand, so there is no persistent tree to grow between calls.
     pub fn playout_n(&mut self, _n: u32) {}
 
     /// Board for the CURRENT seat's eyes. Prefer `get_board_for`.
@@ -874,11 +1374,12 @@ impl VanguardWasm {
         self.g.best_move()
     }
 
-    /// PLACEHOLDER random-legal opponent (Task 7-2 gives it real strength). The
-    /// playout/top-k/temperature knobs are accepted for interface parity but
-    /// ignored; only `seed` matters.
-    pub fn weak_move(&self, _playouts: u32, _top_k: usize, _temp: f64, seed: u32) -> Option<String> {
-        self.g.weak_move(seed)
+    /// The determinized-PIMC opponent. `playouts` selects the difficulty rung
+    /// (mapped to K samples × search depth), `top_k`/`temp` shape the softmax over
+    /// root-move scores, `seed` makes the choice reproducible. Never peeks at a
+    /// hidden enemy rank.
+    pub fn weak_move(&self, playouts: u32, top_k: usize, temp: f64, seed: u32) -> Option<String> {
+        self.g.weak_move(playouts, top_k, temp, seed)
     }
 
     /// Comma-joined full-army deployment for the current seat (the UI's "deploy
@@ -1352,9 +1853,9 @@ mod tests {
                 let mut plies = 0;
                 while !g.is_terminal() {
                     assert!(plies < 4000, "did not terminate (preset {preset}, seed {seed_base})");
-                    let mv = match g.weak_move(rng.gen()) {
+                    let mv = match g.random_move(rng.gen()) {
                         Some(m) => m,
-                        None => panic!("weak_move None on a live position (preset {preset})"),
+                        None => panic!("random_move None on a live position (preset {preset})"),
                     };
                     assert!(g.apply(&mv), "engine offered an illegal move: {mv}");
                     plies += 1;
@@ -1366,11 +1867,13 @@ mod tests {
     }
 
     #[test]
-    fn weak_move_never_reads_hidden_state_shape() {
-        // A light non-cheating smoke check: weak_move is a pure function of the
-        // public/own state + seed, so the SAME seed yields the SAME move regardless
-        // of the (hidden) enemy piece kinds. Build two play-stage games identical
-        // for seat 0 but with different hidden seat-1 ranks; seat 0's move must match.
+    fn random_move_never_reads_hidden_state_shape() {
+        // A light non-cheating smoke check on the random baseline: `random_move` is
+        // a pure function of the public/own state + seed, so the SAME seed yields
+        // the SAME move regardless of the (hidden) enemy piece kinds. Build two
+        // play-stage games identical for seat 0 but with different hidden seat-1
+        // ranks; seat 0's move must match. (The PIMC opponent gets its own, deeper
+        // `vanguard_ai_never_peeks` test below.)
         let mut a = play_stage(1, true);
         let mut b = play_stage(1, true);
         put(&mut a, 40, Kind::Trooper, 0);
@@ -1378,7 +1881,315 @@ mod tests {
         put(&mut a, 8, Kind::Marshal, 1); // different hidden ranks, same square
         put(&mut b, 8, Kind::Spy, 1);
         for seed in [1u32, 7, 99, 4242] {
-            assert_eq!(a.weak_move(seed), b.weak_move(seed), "weak_move peeked at hidden ranks (seed {seed})");
+            assert_eq!(a.random_move(seed), b.random_move(seed), "random_move peeked at hidden ranks (seed {seed})");
         }
+    }
+
+    // ---------- determinized-PIMC AI ----------
+
+    /// Deploy both default 12-piece armies (via the AI's own placement plan) then
+    /// play random moves until the board is down to `<= target` pieces with some
+    /// combat behind us — a representative mid-game (some reveals, some hidden).
+    fn midgame_position(seed_base: u64, target: usize) -> Vanguard {
+        for attempt in 0..64u64 {
+            let mut g = Vanguard::new(1, DEFAULT, true);
+            for (k, c) in g.placement_plan(0) {
+                assert!(g.apply(&Vanguard::format_place(k, c)));
+            }
+            for (k, c) in g.placement_plan(1) {
+                assert!(g.apply(&Vanguard::format_place(k, c)));
+            }
+            let mut rng = SmallRng::seed_from_u64(seed_base ^ (attempt << 32));
+            for _ in 0..400 {
+                if g.is_terminal() {
+                    break;
+                }
+                let count = g.board.iter().filter(|c| c.is_some()).count();
+                if count <= target {
+                    return g;
+                }
+                match g.random_move(rng.gen()) {
+                    Some(m) => {
+                        g.apply(&m);
+                    }
+                    None => break,
+                }
+            }
+            if !g.is_terminal() && g.board.iter().filter(|c| c.is_some()).count() <= target {
+                return g;
+            }
+        }
+        panic!("could not build a mid-game position");
+    }
+
+    /// The go/no-go perf spike. IGNORED in normal runs; execute explicitly with:
+    ///   cargo test -p treant-wasm --release vanguard_timing_spike -- --ignored --nocapture
+    /// Prints native ms/move at a grid of (K samples × depth) on representative
+    /// mid-game positions. Wasm runs ~3-5× slower; the Hard config must keep the
+    /// wasm estimate < 1s/move.
+    #[test]
+    #[ignore]
+    fn vanguard_timing_spike() {
+        use std::time::Instant;
+        let positions: Vec<Vanguard> = (0..6u64).map(|s| midgame_position(0xABCD ^ s, 16)).collect();
+        for (i, g) in positions.iter().enumerate() {
+            let pc = g.board.iter().filter(|c| c.is_some()).count();
+            let rev = g.board.iter().flatten().filter(|p| p.revealed).count();
+            let moves = g.play_moves(g.current as usize).len();
+            eprintln!("  position {i}: {pc} pieces on board, {rev} revealed, {moves} root moves");
+        }
+        eprintln!("\n  native ms/move (avg over {} mid-game positions):", positions.len());
+        eprintln!("  {:>6} | {:>8} {:>8} {:>8}", "K\\depth", "d=1", "d=2", "d=3");
+        for &k in &[2usize, 6, 10, 16, 24] {
+            let mut row = format!("  {k:>6} |");
+            for &depth in &[1u32, 2, 3] {
+                let t0 = Instant::now();
+                let reps = 3u32;
+                for _ in 0..reps {
+                    for g in &positions {
+                        let _ = g.play_ai(k, depth, 1, 0.0, 0x1234);
+                    }
+                }
+                let per = t0.elapsed().as_secs_f64() * 1000.0 / (reps as f64 * positions.len() as f64);
+                row.push_str(&format!(" {per:>7.2}ms"));
+            }
+            eprintln!("{row}");
+        }
+    }
+
+    /// THE non-cheating property for the PIMC opponent. Two games with DIFFERENT
+    /// hidden enemy armies but IDENTICAL public history (no combat, nothing
+    /// revealed) and IDENTICAL own pieces must yield the SAME sample set and the
+    /// SAME move at a fixed seed — the AI cannot have read the hidden ranks.
+    #[test]
+    fn vanguard_ai_never_peeks() {
+        // Build two play-stage games. Seat 0 (the AI to move) is identical in both.
+        // Seat 1's hidden pieces sit on the SAME squares with the SAME public flags
+        // (all un-moved, un-revealed) but WILDLY DIFFERENT true ranks. Because the
+        // sampler reads only public info (the symmetric `army` vector, `removed`,
+        // revealed-on-board, positions + flags) and OVERWRITES every hidden enemy
+        // piece before searching, the true ranks must not influence anything.
+        let mut a = play_stage(1, true);
+        let mut b = play_stage(1, true);
+        // A 4-piece symmetric army (public), so the seat-1 hidden pool totals 4.
+        let army4: [usize; N_KINDS] = [0, 0, 0, 1, 0, 0, 1, 1, 1]; // Trooper,Spy,Bomb,Standard
+        for g in [&mut a, &mut b] {
+            g.army = army4;
+            g.placed = [army4, army4]; // keep both_placed() true after the swap
+        }
+        // Seat 0: a small identical force (real kinds; legitimately known to the AI).
+        for (cell, kind) in [(48, Kind::Marshal), (49, Kind::Captain), (50, Kind::Sapper), (56, Kind::Standard)] {
+            put(&mut a, cell, kind, 0);
+            put(&mut b, cell, kind, 0);
+        }
+        // Seat 1: four hidden pieces on identical squares, but different true ranks
+        // (game b's are not even drawn from `army4` — proving the AI never reads them).
+        let a1 = [Kind::Spy, Kind::Trooper, Kind::Bomb, Kind::Standard];
+        let b1 = [Kind::Marshal, Kind::Scout, Kind::Sergeant, Kind::Standard];
+        for (i, &cell) in [8usize, 9, 10, 16].iter().enumerate() {
+            put(&mut a, cell, a1[i], 1);
+            put(&mut b, cell, b1[i], 1);
+        }
+        for seed in [1u32, 7, 42, 1000, 55555] {
+            // Same sampled candidate set (as multisets of assigned kinds).
+            let mut ra = SmallRng::seed_from_u64(seed as u64);
+            let mut rb = SmallRng::seed_from_u64(seed as u64);
+            let wa = a.determinize(0, &mut ra);
+            let wb = b.determinize(0, &mut rb);
+            // Both consistent worlds exist and the assigned enemy-kind multiset is
+            // identical (the sampler drew from the same public pool).
+            assert!(wa.is_some() && wb.is_some(), "sampler failed (seed {seed})");
+            let kinds = |w: &Vec<Option<Piece>>| {
+                let mut ks: Vec<Kind> =
+                    w.iter().flatten().filter(|p| p.owner == 1).map(|p| p.kind).collect();
+                ks.sort_by_key(|k| *k as usize);
+                ks
+            };
+            assert_eq!(
+                kinds(&wa.unwrap()),
+                kinds(&wb.unwrap()),
+                "sampled enemy multiset diverged ⇒ AI peeked (seed {seed})"
+            );
+            // And the chosen move is identical.
+            assert_eq!(
+                a.weak_move(2000, 1, 0.0, seed),
+                b.weak_move(2000, 1, 0.0, seed),
+                "PIMC move diverged ⇒ AI peeked (seed {seed})"
+            );
+        }
+    }
+
+    /// Every sampled world must (a) reproduce all revealed enemy identities on the
+    /// same squares, (b) respect movement evidence (moved ⇒ movable; moved_long ⇒
+    /// Scout), and (c) conserve the multiset (army − removed − revealed).
+    #[test]
+    fn sampler_respects_all_public_constraints() {
+        let mut g = play_stage(1, true);
+        // A 5-piece symmetric army matching the seat-1 force below (public).
+        let army5: [usize; N_KINDS] = [0, 1, 1, 0, 1, 0, 1, 0, 1]; // Captain,Sergeant,Scout,Spy,Standard
+        g.army = army5;
+        g.placed = [army5, army5];
+        // Seat 0 mover.
+        put(&mut g, 48, Kind::Trooper, 0);
+        put(&mut g, 56, Kind::Standard, 0);
+        // Seat 1 enemy pieces with a mix of evidence.
+        let rev = put(&mut g, 8, Kind::Captain, 1); // will mark revealed
+        put(&mut g, 9, Kind::Scout, 1); // will mark moved_long
+        put(&mut g, 10, Kind::Sergeant, 1); // will mark has_moved
+        put(&mut g, 16, Kind::Spy, 1); // fully hidden
+        put(&mut g, 17, Kind::Standard, 1); // fully hidden (the Standard)
+        let _ = rev;
+        // Apply public flags directly.
+        g.board[8].as_mut().unwrap().revealed = true;
+        g.board[9].as_mut().unwrap().moved_long = true;
+        g.board[9].as_mut().unwrap().has_moved = true;
+        g.board[10].as_mut().unwrap().has_moved = true;
+        for seed in 0..200u64 {
+            let mut rng = SmallRng::seed_from_u64(seed);
+            let world = g.determinize(0, &mut rng).expect("consistent sample");
+            // (a) revealed identity preserved.
+            assert_eq!(world[8].unwrap().kind, Kind::Captain, "revealed identity changed (seed {seed})");
+            // (b) movement evidence.
+            assert_eq!(world[9].unwrap().kind, Kind::Scout, "moved_long piece must be a Scout (seed {seed})");
+            assert!(world[10].unwrap().kind.movable(), "moved piece must be movable (seed {seed})");
+            // (c) multiset conservation: enemy kinds on board == army (nothing
+            // removed here), for owner 1.
+            let mut got = [0usize; N_KINDS];
+            for p in world.iter().flatten().filter(|p| p.owner == 1) {
+                got[p.kind as usize] += 1;
+            }
+            assert_eq!(got, g.army, "enemy multiset not conserved (seed {seed})");
+        }
+    }
+
+    /// The sampler honours the `removed` tally: a captured (and thus publicly
+    /// revealed) enemy kind is drawn OUT of the hidden pool, so it can never be
+    /// re-sampled onto the board.
+    #[test]
+    fn sampler_conserves_multiset_after_captures() {
+        let mut g = play_stage(1, true);
+        put(&mut g, 48, Kind::Marshal, 0);
+        put(&mut g, 56, Kind::Standard, 0);
+        // Two hidden enemy pieces remain on board; the rest of the army has been
+        // captured. Mark those captures in `removed` (as combat would).
+        put(&mut g, 8, Kind::Spy, 1);
+        put(&mut g, 16, Kind::Standard, 1);
+        // Army = DEFAULT (12). On board: 2 hidden. So removed must account for 10.
+        // Removed set: Marshal1,Captain1,Sergeant2,Trooper2,Scout1,Sapper2,Bomb1 = 10.
+        g.removed[1] = [1, 1, 2, 2, 1, 2, 0, 1, 0];
+        for seed in 0..100u64 {
+            let mut rng = SmallRng::seed_from_u64(seed);
+            let world = g.determinize(0, &mut rng).expect("consistent sample");
+            let mut got = [0usize; N_KINDS];
+            for p in world.iter().flatten().filter(|p| p.owner == 1) {
+                got[p.kind as usize] += 1;
+            }
+            // Only the two survivors may appear, and only from the un-removed pool:
+            // Spy (1 left) and Standard (1 left).
+            assert_eq!(got[Kind::Spy as usize], 1, "seed {seed}: Spy count");
+            assert_eq!(got[Kind::Standard as usize], 1, "seed {seed}: Standard count");
+            assert_eq!(got.iter().sum::<usize>(), 2, "seed {seed}: only survivors on board");
+        }
+    }
+
+    /// Determinism: the same public position + knobs + seed always yields the same
+    /// move.
+    #[test]
+    fn pimc_move_is_deterministic() {
+        let g = midgame_position(0x1111, 18);
+        for &(p, k, t) in &[(8u32, 6usize, 3.0f64), (100, 4, 1.0), (2000, 1, 0.0)] {
+            let seat = g.current as usize;
+            let m1 = g.play_ai(Vanguard::ladder(p).0, Vanguard::ladder(p).1, k, t, 777);
+            let m2 = g.play_ai(Vanguard::ladder(p).0, Vanguard::ladder(p).1, k, t, 777);
+            assert_eq!(m1, m2, "non-deterministic at (p{p},k{k},t{t}) seat {seat}");
+            assert!(m1.is_some());
+        }
+    }
+
+    /// Behavioural sanity: with the enemy Marshal PUBLICLY revealed adjacent to my
+    /// weaker Captain, and a safe retreat available, Hard must NOT throw the Captain
+    /// onto the Marshal — it should choose a non-suicidal move.
+    #[test]
+    fn hard_ai_does_not_attack_a_stronger_revealed_piece() {
+        let mut g = play_stage(1, true);
+        // Enemy army (public): a Marshal (revealed) + a hidden Standard.
+        let army2: [usize; N_KINDS] = [1, 0, 0, 0, 0, 0, 0, 0, 1]; // Marshal,Standard
+        g.army = army2;
+        g.placed = [army2, army2];
+        // My Captain (rank 5) at 33, with empty squares around to retreat to.
+        put(&mut g, 33, Kind::Captain, 0);
+        put(&mut g, 63, Kind::Standard, 0); // my Standard, tucked in a corner
+        put(&mut g, 40, Kind::Trooper, 0); // a spare so I'm not down to one piece
+        // Enemy Marshal (rank 6) revealed, directly above my Captain (25 = row3col1,
+        // 33 = row4col1). Attacking up (33->25) would lose the Captain.
+        put(&mut g, 25, Kind::Marshal, 1);
+        g.board[25].as_mut().unwrap().revealed = true;
+        // Enemy also has a (hidden) Standard so it isn't immobilised / trivially lost.
+        put(&mut g, 0, Kind::Standard, 1);
+        let mv = g.play_ai(16, 2, 1, 0.0, 4242).expect("a move");
+        assert_ne!(mv, "m:33:25", "Hard threw the Captain onto the revealed Marshal");
+    }
+
+    /// Behavioural sanity: with a winning Standard capture available, Hard takes it.
+    #[test]
+    fn hard_ai_captures_a_reachable_standard() {
+        let mut g = play_stage(1, true);
+        // Enemy army (public): a Trooper (revealed spare) + a hidden Standard.
+        let army2: [usize; N_KINDS] = [0, 0, 0, 1, 0, 0, 0, 0, 1]; // Trooper,Standard
+        g.army = army2;
+        g.placed = [army2, army2];
+        put(&mut g, 40, Kind::Trooper, 0); // row5col0
+        put(&mut g, 63, Kind::Standard, 0);
+        put(&mut g, 32, Kind::Standard, 1); // enemy Standard directly above (row4col0), hidden
+        put(&mut g, 0, Kind::Trooper, 1); // enemy spare, revealed ⇒ pool pins cell 32 = Standard
+        g.board[0].as_mut().unwrap().revealed = true;
+        let mv = g.play_ai(16, 2, 1, 0.0, 9).expect("a move");
+        assert_eq!(mv, "m:40:32", "Hard failed to capture the reachable enemy Standard");
+    }
+
+    /// Ladder monotonicity smoke: Hard should beat Easy over a small match. Kept
+    /// tiny (few games, mini board) so it stays CI-cheap.
+    #[test]
+    fn hard_beats_easy_over_a_small_match() {
+        // Easy vs Hard, alternating who moves first to net out any seat edge.
+        let easy = (2usize, 1u32, 6usize, 3.0f64); // (K, depth, top_k, temp)
+        let hard = (16usize, 2u32, 1usize, 0.0f64);
+        let mut hard_wins = 0i32;
+        let mut games = 0i32;
+        for seed in 0..6u64 {
+            for hard_seat in 0..2u8 {
+                let mut g = Vanguard::new(0, DEFAULT, true); // mini board = faster
+                let mut rng = SmallRng::seed_from_u64(0xF00D ^ seed ^ ((hard_seat as u64) << 20));
+                let mut plies = 0;
+                while !g.is_terminal() && plies < 600 {
+                    let seat = g.current;
+                    let mv = if !g.both_placed() {
+                        g.weak_move(0, 1, 0.0, rng.gen())
+                    } else if seat == hard_seat {
+                        g.play_ai(hard.0, hard.1, hard.2, hard.3, rng.gen())
+                    } else {
+                        g.play_ai(easy.0, easy.1, easy.2, easy.3, rng.gen())
+                    };
+                    match mv {
+                        Some(m) => {
+                            assert!(g.apply(&m), "illegal AI move {m}");
+                        }
+                        None => break,
+                    }
+                    plies += 1;
+                }
+                games += 1;
+                let r = g.result();
+                let hard_win_str = format!("{}", hard_seat + 1);
+                if r == hard_win_str {
+                    hard_wins += 1;
+                }
+            }
+        }
+        // 16 games; Hard should win a clear majority. Require > half.
+        assert!(
+            hard_wins * 2 > games,
+            "Hard only won {hard_wins}/{games} vs Easy — ladder not monotone"
+        );
     }
 }
