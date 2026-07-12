@@ -69,18 +69,40 @@ function DraughtsBoard({ board, params, interactive, legalMoves, lastCells, play
   // Forced-capture affordance. Captures are compulsory, so when a jump exists the
   // engine offers ONLY jumping pieces — every other piece the mover owns is
   // silently disabled. Detect that state so the tappable pieces can be ringed and
-  // the caption can say "you must capture". A move is a capture if its path has an
-  // extra hop (>1 landing) OR its single step jumps more than one diagonal row
-  // (a man-jump lands 2 away, a flying king further); a plain slide moves 1 row.
-  const isCapture = (mv: number[]) =>
-    mv.length >= 3 || (mv.length === 2 && Math.abs(Math.floor(mv[0] / n) - Math.floor(mv[1] / n)) >= 2);
-  const anyCapture = moves.some(isCapture);
-  // Count the mover's pieces (seat read off any movable piece) to know whether the
-  // legal-to-move set is a strict subset — i.e. force-capture is hiding pieces.
-  let ownedCount = 0;
+  // the caption can say "you must capture".
+  //
+  // The mover's seat is read off any movable piece and single-sourced here, so
+  // both the capture test and the owned-piece count agree on whose pieces are
+  // whose ('x'/'X' = seat-0, 'o'/'O' = seat-1; UPPERCASE = king).
+  let moverSeat0 = true;
   if (starts.size) {
     const firstCh = cells[moves[0][0]];
-    const moverSeat0 = firstCh === 'x' || firstCh === 'X';
+    moverSeat0 = firstCh === 'x' || firstCh === 'X';
+  }
+  const isEnemy = (ch: string) =>
+    moverSeat0 ? ch === 'o' || ch === 'O' : ch === 'x' || ch === 'X';
+  // A move is a capture iff one of its diagonal steps slides over an enemy piece.
+  // Determined by BOARD CONTENT, not distance: a man jump has the enemy at the
+  // step's midpoint; a flying-king capture has the enemy somewhere along the slid
+  // diagonal — while a flying king's QUIET slide (same ≥2-row span) crosses only
+  // empty squares. A distance heuristic can't tell those apart; walking the
+  // in-between cells can. Any capturing segment in a chain flags the whole move.
+  const isCapture = (mv: number[]) => {
+    for (let k = 0; k + 1 < mv.length; k++) {
+      const ra = Math.floor(mv[k] / n), ca = mv[k] % n;
+      const rb = Math.floor(mv[k + 1] / n), cb = mv[k + 1] % n;
+      const dr = Math.sign(rb - ra), dc = Math.sign(cb - ca);
+      for (let r = ra + dr, c = ca + dc; r !== rb || c !== cb; r += dr, c += dc) {
+        if (isEnemy(cells[r * n + c])) return true;
+      }
+    }
+    return false;
+  };
+  const anyCapture = moves.some(isCapture);
+  // Count the mover's pieces to know whether the legal-to-move set is a strict
+  // subset — i.e. force-capture is hiding pieces.
+  let ownedCount = 0;
+  if (starts.size) {
     for (const ch of cells) {
       const s0 = ch === 'x' || ch === 'X';
       const s1 = ch === 'o' || ch === 'O';
