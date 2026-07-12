@@ -21,6 +21,14 @@ const GLYPHS: Record<string, JSX.Element> = {
       <path d="M2.5 20.6c1.6 0 1.6-1 3.2-1s1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1 1.6-1 3.2-1" opacity="0.55" />
     </g>
   ),
+  vanguard: (
+    // a standard (banner) on a pole planted in the ground — the flag you defend
+    <g stroke="currentColor" fill="none" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round">
+      <path d="M7 3v18" />
+      <path d="M7 4h11l-2.4 3.3L18 10.6H7z" fill="currentColor" stroke="none" />
+      <path d="M4 21h6" />
+    </g>
+  ),
   climb: (
     // a stepped mountain with a flag planted on the summit
     <g stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinejoin="round" strokeLinecap="round">

@@ -44,6 +44,7 @@ import { surakarta } from './surakarta';
 import { worldThrees } from './worldthrees';
 import { bullsCows } from './bullscows';
 import { salvo } from './salvo';
+import { vanguard } from './vanguard';
 import {
   draughts,
   internationalDraughts,
@@ -123,6 +124,7 @@ export const GAMES: GameDefinition[] = [
   climb,
   bullsCows,
   salvo,
+  vanguard,
   game2048,
 ];
 

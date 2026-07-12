@@ -2919,3 +2919,228 @@
   animation: salvoShakeKf 0.28s ease;
   background: color-mix(in srgb, var(--arc-p1) 40%, var(--arc-soft));
 }
+
+/* ─────────────────────────── Vanguard ──────────────────────────────────────
+   Hidden-rank capture-the-Standard duel. Own pieces = teal (--arc-p5); revealed
+   enemy pieces = red (--arc-p1); still-hidden enemy backs = a neutral dark tile.
+   Dark board palette throughout (--arc-soft / --arc-card). */
+.vgWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.vgInstruction {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--arc-ink);
+  opacity: 0.85;
+  line-height: 1.35;
+}
+.vgClamp {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--arc-p2);
+}
+/* Rank palette tray. */
+.vgTray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.vgChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: var(--arc-card);
+  color: var(--arc-ink);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.vgChipActive {
+  border-color: var(--arc-p5);
+}
+.vgChipDone {
+  opacity: 0.45;
+}
+.vgChipFace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 3px;
+  border-radius: 5px;
+  background: var(--arc-p5);
+  color: #0d1410;
+  font-weight: 900;
+  font-size: 0.78rem;
+}
+.vgChipName {
+  font-size: 0.78rem;
+}
+.vgBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  opacity: 0.8;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--arc-soft);
+}
+.vgControls {
+  display: flex;
+  gap: 8px;
+}
+.vgControls .secondaryBtn {
+  flex: 1;
+}
+/* The board grid — fills width; columns set inline. */
+.vgGrid {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+}
+.vgCell {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  border: none;
+  border-radius: 4px;
+  background: var(--arc-soft);
+  color: var(--arc-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+}
+.vgCell:disabled {
+  cursor: default;
+}
+/* Outside your zone during deployment — dimmed, not a drop target. */
+.vgDim {
+  opacity: 0.5;
+}
+/* A lake: impassable water. */
+.vgLake {
+  background: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--arc-p4) 40%, var(--arc-card)),
+    color-mix(in srgb, var(--arc-p4) 40%, var(--arc-card)) 4px,
+    color-mix(in srgb, var(--arc-p4) 22%, var(--arc-card)) 4px,
+    color-mix(in srgb, var(--arc-p4) 22%, var(--arc-card)) 8px
+  );
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3);
+}
+/* Own piece. */
+.vgOwn {
+  background: var(--arc-p5);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.28);
+}
+/* Revealed enemy piece (rank public, persistent). */
+.vgEnemy {
+  background: var(--arc-p1);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.28);
+}
+.vgRevealed {
+  box-shadow: inset 0 0 0 2px var(--arc-win);
+}
+/* Still-hidden enemy back. */
+.vgHidden {
+  background: #241d33;
+  color: #b6a7d6;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+.vgFaceRank {
+  font-size: min(4.4vw, 1.15rem);
+  font-weight: 900;
+  color: #0d1410;
+  line-height: 1;
+}
+.vgEnemy .vgFaceRank {
+  color: #fff;
+}
+.vgFaceEmoji {
+  font-size: min(3.6vw, 0.95rem);
+  line-height: 1;
+}
+.vgBack {
+  font-size: min(3.4vw, 0.9rem);
+  opacity: 0.85;
+}
+/* Scout ⇢ tag + moved dot (public movement inference). */
+.vgScoutTag {
+  position: absolute;
+  bottom: 1px;
+  right: 3px;
+  font-size: min(2.6vw, 0.62rem);
+  font-weight: 900;
+  opacity: 0.9;
+}
+.vgMovedDot {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+}
+.vgHidden .vgMovedDot {
+  background: rgba(255, 255, 255, 0.5);
+}
+/* Selected own piece + its legal targets. */
+.vgSel {
+  box-shadow: inset 0 0 0 3px var(--arc-win);
+}
+.vgTarget {
+  cursor: pointer;
+}
+.vgTarget::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 2px var(--arc-p2);
+  background: color-mix(in srgb, var(--arc-p2) 18%, transparent);
+}
+/* Last-move ring (from the public move summary). */
+.vgLast:not(.vgSel):not(.vgTarget) {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--arc-p3) 80%, transparent);
+}
+@keyframes vgShakeKf {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+.vgShake {
+  animation: vgShakeKf 0.26s ease;
+  background: color-mix(in srgb, var(--arc-p1) 40%, var(--arc-soft));
+}
+/* Combat reveal beat. */
+.vgBeat {
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--arc-p2);
+  line-height: 1.35;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: var(--arc-card);
+}
+.vgLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
