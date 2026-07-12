@@ -30,6 +30,17 @@ const GLYPHS: Record<string, JSX.Element> = {
       <path d="M3 20l4-4 4-4 4-4" opacity="0.4" />
     </g>
   ),
+  surakarta: (
+    // the loop board: a square grid with a three-quarter loop at each corner
+    <g stroke="currentColor" fill="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="7" y="7" width="10" height="10" rx="0.4" />
+      <path d="M7 10.5a3.5 3.5 0 1 1 3.5-3.5" />
+      <path d="M13.5 7a3.5 3.5 0 1 1 3.5 3.5" />
+      <path d="M17 13.5a3.5 3.5 0 1 1-3.5 3.5" />
+      <path d="M10.5 17a3.5 3.5 0 1 1-3.5-3.5" />
+      <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    </g>
+  ),
   'bagh-chal': (
     // three tiger claw-slashes raked across the board
     <g stroke="currentColor" fill="none" strokeWidth="2.4" strokeLinecap="round">

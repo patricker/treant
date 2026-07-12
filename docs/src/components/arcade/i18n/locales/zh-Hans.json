@@ -692,5 +692,13 @@
   "8×8 with step-at-a-time (non-flying) kings where a plain man may never jump a king — and a strict order for which longest capture you must take.": "8×8，配每次只走一格（不飞）的王，普通棋子永远不能吃王——并对该选哪种最长吃法有严格的先后顺序。",
   "8×8 draughts where men move and jump forward only, but a crowned king \"flies\" — sliding any distance along a diagonal and landing beyond the piece it takes. Jumps are compulsory and you must take as many pieces as you can; when two captures take the same number, you must take the one that grabs the most kings. Capture everything, or block your opponent, to win.": "8×8跳棋，普通棋子只能向前走和向前跳吃，但加冕的王会\"飞\"——沿斜线滑行任意距离，并落在被吃棋子之后。跳吃是强制的，你必须尽量多吃；当两种吃法数目相同时，你必须选吃王最多的那种。吃光全部，或封死对手，即可获胜。",
   "8×8 draughts with men that jump forward only and kings that move just one square at a time (no flying). A plain man may NEVER jump a king — only another king can. Jumps are compulsory and must take the most pieces; ties are broken in strict order — capture with a king, then take the most kings, then take the king that comes first. Capture everything, or block your opponent, to win.": "8×8跳棋，普通棋子只能向前跳，王每次只走一格（不飞）。普通棋子永远不能吃王——只有另一个王才能吃。跳吃是强制的，必须吃最多的棋子；平局时按严格顺序决出——用王吃、然后吃最多的王、然后吃最靠前的王。吃光全部，或封死对手，即可获胜。",
-  "You must capture — tap a highlighted piece": "必须吃子——点击高亮的棋子"
+  "You must capture — tap a highlighted piece": "必须吃子——点击高亮的棋子",
+  "🏵️ {winner} swept the board — you lose.": "🏵️ {winner} 横扫棋盘——你输了。",
+  "🏵️ {winner} swept the board!": "🏵️ {winner} 横扫了棋盘！",
+  "🏵️ You swept the board — you win! 🎉": "🏵️ 你横扫了棋盘——你赢了！🎉",
+  "🤝 Forty moves with no capture — it’s a draw.": "🤝 四十步没有吃子——平局。",
+  "Slide a piece around the corner loops to snatch an enemy from across the board. Capture all twelve to win.": "让棋子沿着四角的环道滑行，从棋盘另一端擒走敌方棋子。吃掉全部十二枚即可获胜。",
+  "Each turn, step one piece to any empty neighbouring point (including diagonally), OR capture: slide a piece along its row or column, around at least one of the eight corner loops, and land on the first enemy piece it reaches — every point along the way must be empty. You win by capturing all twelve of the opponent’s pieces. If forty moves pass with no capture, the game is a draw.": "每个回合，将一枚棋子走到任意相邻的空点（可斜走），或进行吃子：让棋子沿其所在的行或列滑行，绕过八个角环中至少一个，落在遇到的第一枚敌方棋子上——沿途每个点都必须为空。吃光对方十二枚棋子即获胜。若连续四十步无人吃子，则为平局。",
+  "Pieces rest on the points of a 6×6 grid. On your turn either step one piece to any empty neighbouring point (diagonals allowed), or capture: slide a piece along its row or column, around at least one of the eight corner loops, and land on the first enemy piece you reach — every point along the way must be empty. Capture all twelve enemy pieces to win. Forty moves with no capture is a draw.": "棋子停在 6×6 网格的交点上。轮到你时，可将一枚棋子走到相邻的空点（允许斜走），或进行吃子：让棋子沿其所在的行或列滑行，绕过八个角环中至少一个，落在遇到的第一枚敌方棋子上——沿途每个点都必须为空。吃光对方十二枚棋子即可获胜。四十步无人吃子即为平局。",
+  "Surakarta": "Surakarta"
 }

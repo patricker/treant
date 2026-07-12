@@ -40,6 +40,7 @@ import { subtractSquare } from './subtractsquare';
 import { euclid } from './euclid';
 import { baghchal } from './baghchal';
 import { lenChoa } from './lenchoa';
+import { surakarta } from './surakarta';
 import { worldThrees } from './worldthrees';
 import { bullsCows } from './bullscows';
 import { salvo } from './salvo';
@@ -77,6 +78,7 @@ export const GAMES: GameDefinition[] = [
   foxHounds,
   baghchal,
   lenChoa,
+  surakarta,
   reversi,
   antiReversi,
   hex,

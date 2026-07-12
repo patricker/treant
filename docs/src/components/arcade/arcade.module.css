@@ -1237,6 +1237,68 @@
   cursor: default;
 }
 
+/* ---------- Surakarta ---------- */
+/* The board has room for the corner loops (a padded viewBox), so it can run a
+   touch wider than the triangular point boards. */
+.surWrap {
+  max-width: 360px;
+}
+/* Points sit ~9.4% apart in the container; keep the discs comfortably smaller
+   so neighbours never touch, and the loops read clearly. */
+.surCell {
+  width: 7.4%;
+  height: 7.4%;
+  border-width: 1.5px;
+}
+/* The eight corner circuits: same ink as the grid lines, no fill. */
+.surCircuit {
+  fill: none;
+  opacity: 0.85;
+}
+/* A capturable enemy (arc-reachable) gets a bright "grab this" ring, distinct
+   from the dashed dot on empty step targets. */
+.surCapTarget {
+  outline: 3px solid var(--arc-win);
+  outline-offset: 2px;
+  box-shadow: 0 0 8px 2px rgba(255, 209, 71, 0.6);
+}
+/* Capture animation overlay: same viewBox as the board, floats above the points. */
+.surOverlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+@keyframes surFlyMove {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+/* The captured-piece's flight along the canonical arc. offset-path is set inline
+   (the path is per-capture); this class drives the traversal. Starts on insert,
+   so it never teleports. */
+.surFly {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+  offset-rotate: 0deg;
+  animation: surFlyMove 600ms linear forwards;
+}
+/* Reduced-motion fallback: flash the road the piece would have driven. */
+.surReducedPath {
+  fill: none;
+  stroke: var(--arc-win);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 3px var(--arc-win));
+}
+
 /* ---------- 2048 ---------- */
 .g2048Wrap {
   display: flex;
