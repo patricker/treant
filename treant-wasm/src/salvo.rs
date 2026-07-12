@@ -47,6 +47,7 @@
 //! `weak_move`, it has no persistent tree to grow. This is the master-plan-
 //! sanctioned determinization the pass-screen primitive was built to serve.
 
+use core::cell::Cell;
 use rand::rngs::SmallRng;
 use rand::seq::SliceRandom;
 use rand::{Rng, SeedableRng};
@@ -287,7 +288,14 @@ struct Salvo {
     current: u8,
     volley_left: u32, // shots remaining in the current seat's volley
     winner: Option<u8>,
-    place_seed: u64, // fixed per game ⇒ deterministic AI/"place-for-me" placement (audit's fixed-seed mode)
+    place_seed: u64, // config-only base for the "place-for-me" helper + the audit's fixed-seed fallback
+    // Runtime seed captured from the FIRST placement-phase `pick_move`/`weak_move`
+    // call, mixed into the placement plan so the AI's hidden fleet varies per game
+    // (defeats memorization) while staying COHERENT within one game's placement
+    // phase (every later placement call reuses this same captured seed). `None`
+    // until the first placement move; carries no opponent secret — it is the
+    // caller's own RNG draw.
+    plan_seed: Cell<Option<u32>>,
 }
 
 impl Salvo {
@@ -319,6 +327,7 @@ impl Salvo {
             volley_left: 0,
             winner: None,
             place_seed: 0x5A1000 ^ (size as u64) ^ ((nships as u64) << 12),
+            plan_seed: Cell::new(None),
         }
     }
 
@@ -678,13 +687,19 @@ impl Salvo {
         top[0].1
     }
 
-    /// A full, deterministic placement plan for `seat` (fixed per game — this is
-    /// the audit's fixed-seed placement mode). Returns ships in fleet order so the
-    /// AI can place them idx 0,1,2… across successive `weak_move` calls.
-    fn placement_plan(&self, seat: usize) -> Option<Vec<Ship>> {
+    /// A full placement plan for `seat`. Returns ships in fleet order so the AI
+    /// can place them idx 0,1,2… across successive `weak_move` calls. `plan_seed`
+    /// is the per-game runtime seed captured from the first placement `weak_move`
+    /// (see the struct field); folding it in makes the hidden fleet vary between
+    /// games while staying coherent within one game's placement phase. With
+    /// `plan_seed == 0` this degrades to the config-only plan (the deterministic
+    /// form the "place-for-me" helper and the direct-call tests rely on).
+    fn placement_plan(&self, seat: usize, plan_seed: u32) -> Option<Vec<Ship>> {
         let n2 = self.size * self.size;
         let no = vec![false; n2];
-        let mut rng = SmallRng::seed_from_u64(self.place_seed ^ ((seat as u64) << 32));
+        // splitmix-style spread so adjacent seeds give well-separated layouts.
+        let seed_mix = (plan_seed as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+        let mut rng = SmallRng::seed_from_u64(self.place_seed ^ ((seat as u64) << 32) ^ seed_mix);
         let mut budget = PLAN_BUDGET;
         place_backtrack(&self.fleet, self.size, self.touch, &no, &no, &mut rng, &mut budget)
     }
@@ -697,7 +712,13 @@ impl Salvo {
         }
         let seat = self.current as usize;
         if !self.both_placed() {
-            let plan = self.placement_plan(seat)?;
+            // Capture the FIRST placement-phase seed as the whole game's plan seed
+            // so the fleet varies per game yet stays coherent across the many
+            // placement calls that follow (each may pass a different seed).
+            if self.plan_seed.get().is_none() {
+                self.plan_seed.set(Some(seed));
+            }
+            let plan = self.placement_plan(seat, self.plan_seed.get().unwrap_or(0))?;
             let idx = self.placed(seat); // ships placed in order 0,1,2,…
             let sh = plan.get(idx)?;
             let cell = *sh.cells.iter().min().unwrap();
@@ -837,7 +858,7 @@ impl Salvo {
     /// for me" helper). Deterministic per game (fixed placement seed).
     fn random_placement(&self) -> Vec<String> {
         let seat = self.current as usize;
-        match self.placement_plan(seat) {
+        match self.placement_plan(seat, self.plan_seed.get().unwrap_or(0)) {
             Some(plan) => plan
                 .iter()
                 .enumerate()
@@ -1081,14 +1102,14 @@ mod tests {
         assert!(cells <= 36 * 55 / 100, "fleet not clamped to budget: {} cells", cells);
         assert!(!g.fleet.is_empty(), "clamp removed every ship");
         // And a concrete placement exists (never accept an unplaceable fleet).
-        assert!(g.placement_plan(0).is_some(), "clamped fleet is still unplaceable");
+        assert!(g.placement_plan(0, 0).is_some(), "clamped fleet is still unplaceable");
     }
 
     #[test]
     fn empty_fleet_is_clamped_to_a_single_ship() {
         let g = Salvo::new(8, [0, 0, 0, 0, 0], true, false);
         assert_eq!(g.fleet.len(), 1, "an all-zero fleet must become one ship");
-        assert!(g.placement_plan(0).is_some());
+        assert!(g.placement_plan(0, 0).is_some());
     }
 
     #[test]
@@ -1096,7 +1117,7 @@ mod tests {
         // The silly flagship preset: 12×12, six length-1 ships. Trivially feasible.
         let g = Salvo::new(12, [6, 0, 0, 0, 0], true, false);
         assert_eq!(g.fleet.len(), 6);
-        assert!(g.placement_plan(0).is_some());
+        assert!(g.placement_plan(0, 0).is_some());
     }
 
     #[test]
@@ -1110,6 +1131,79 @@ mod tests {
             assert!(h.apply(m), "random placement move rejected: {m}");
         }
         assert!(h.all_placed(0));
+    }
+
+    /// The fleet plan is a pure function of `(config, seat, plan_seed)`:
+    /// reproducible at a fixed seed, distinct across seeds (so the hidden fleet
+    /// varies between games), and always a complete in-bounds non-overlapping
+    /// fleet matching the configured lengths.
+    #[test]
+    fn placement_plan_varies_with_seed_and_stays_valid() {
+        let g = Salvo::new(10, CLASSIC, true, false);
+        let fp = |plan: &[Ship]| -> Vec<(usize, usize, Orient)> {
+            plan.iter().map(|s| (s.len, *s.cells.iter().min().unwrap(), s.orient)).collect()
+        };
+        // Reproducible: same seed ⇒ identical fleet.
+        let p_a = g.placement_plan(0, 0xC0FFEE).unwrap();
+        let p_b = g.placement_plan(0, 0xC0FFEE).unwrap();
+        assert_eq!(fp(&p_a), fp(&p_b));
+        // Varies: distinct seeds ⇒ distinct fleet (defeats memorization).
+        let p1 = g.placement_plan(0, 1).unwrap();
+        let p2 = g.placement_plan(0, 2).unwrap();
+        assert_ne!(fp(&p1), fp(&p2), "two seeds produced an identical fleet");
+        // Complete + legal at several seeds (incl. the seed==0 config-only form).
+        for seed in [0u32, 1, 2, 7, 0xDEAD_BEEF] {
+            let plan = g.placement_plan(0, seed).expect("a placeable fleet");
+            assert_eq!(plan.len(), g.fleet.len(), "plan must place the whole fleet");
+            let mut lens: Vec<usize> = plan.iter().map(|s| s.len).collect();
+            lens.sort_unstable();
+            let mut want = g.fleet.clone();
+            want.sort_unstable();
+            assert_eq!(lens, want, "plan fleet lengths diverged (seed {seed})");
+            let mut seen = std::collections::HashSet::new();
+            for s in &plan {
+                assert_eq!(s.cells.len(), s.len, "ship cell count != length (seed {seed})");
+                for &c in &s.cells {
+                    assert!(c < g.size * g.size, "cell off-board (seed {seed})");
+                    assert!(seen.insert(c), "two ships overlap (seed {seed})");
+                }
+            }
+        }
+    }
+
+    /// End-to-end: `pick_move` captures the FIRST placement seed and holds it for
+    /// the whole placement phase, so different first seeds ⇒ different hidden
+    /// fleets across games, the same first seed ⇒ an identical one, and later
+    /// per-call seed churn never shatters the plan (the run stays a complete
+    /// fleet). That last property is the coherence guarantee.
+    #[test]
+    fn placement_captures_first_seed_and_deploys_a_coherent_fleet() {
+        let deploy = |first_seed: u32| -> Vec<(usize, usize, Orient)> {
+            let mut g = Salvo::new(10, CLASSIC, true, false);
+            let mut calls = 0u32;
+            while !g.both_placed() {
+                let seed = if calls == 0 { first_seed } else { 0xA5A5_0000 ^ calls };
+                let m = g.pick_move(0, 1, 0.0, seed).expect("a placement move");
+                assert!(g.apply(&m), "placement move {m} rejected");
+                calls += 1;
+            }
+            // seat 0's deployed fleet (ships indexed in fleet order ⇒ canonical).
+            g.ships[0]
+                .iter()
+                .map(|s| {
+                    let s = s.as_ref().unwrap();
+                    (s.len, *s.cells.iter().min().unwrap(), s.orient)
+                })
+                .collect()
+        };
+        let a = deploy(11);
+        let b = deploy(22);
+        // Coherent + complete: seat 0 ended with its whole fleet.
+        assert_eq!(a.len(), Salvo::new(10, CLASSIC, true, false).fleet.len());
+        // Different first seed ⇒ different hidden fleet (the exploit is closed).
+        assert_ne!(a, b, "the AI deployed a byte-identical fleet across two games");
+        // Same first seed ⇒ reproducible.
+        assert_eq!(deploy(11), a);
     }
 
     #[test]

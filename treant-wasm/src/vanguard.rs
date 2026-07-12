@@ -71,6 +71,7 @@
 //! registrable now (the calibration ladder is likewise deferred to 7-2 — the
 //! entry in `calibrate.rs` exists only so the audit fuzzer exercises the rules).
 
+use core::cell::Cell;
 use rand::rngs::SmallRng;
 use rand::{Rng, SeedableRng};
 use wasm_bindgen::prelude::*;
@@ -209,6 +210,13 @@ struct Vanguard {
     // kind, so this is PUBLIC information — the determinized sampler reads it to
     // enforce multiset conservation (a captured kind is drawn out of the pool).
     removed: [[usize; N_KINDS]; 2],
+    // The runtime seed captured from the FIRST placement-phase `weak_move` call,
+    // mixed into the deployment plan so the AI's hidden layout varies per game
+    // (defeats memorization) while staying COHERENT within one placement phase
+    // (every later placement call reuses this same captured seed). `None` until
+    // the first placement `weak_move`; reset to `None` on a fresh game. It carries
+    // no opponent information — it is the caller's own RNG draw, not any secret.
+    plan_seed: Cell<Option<u32>>,
 }
 
 impl Vanguard {
@@ -266,6 +274,7 @@ impl Vanguard {
             shuttle: [None, None],
             no_combat_plies: 0,
             removed: [[0; N_KINDS]; 2],
+            plan_seed: Cell::new(None),
         }
     }
 
@@ -1059,14 +1068,24 @@ impl Vanguard {
         }
     }
 
-    /// A stable deterministic deployment plan for `seat` (fixed per game config,
-    /// like Salvo's placement plan): Standard on the back rank, Bombs hugging it,
-    /// every other kind shuffled across the remaining zone squares. Returned in
-    /// placement order so successive `weak_move` calls deploy `plan[placed]`.
-    fn placement_plan(&self, seat: usize) -> Vec<(usize, usize)> {
+    /// A deterministic deployment plan for `seat`: Standard on the back rank,
+    /// Bombs hugging it, every other kind shuffled across the remaining zone
+    /// squares. Returned in placement order so successive `weak_move` calls deploy
+    /// `plan[placed]`. `plan_seed` is the per-game runtime seed captured from the
+    /// first placement `weak_move` (see the struct field): folding it in makes the
+    /// hidden layout vary between games while staying coherent within one game's
+    /// placement phase. With `plan_seed == 0` this degrades to the config-only plan
+    /// (the deterministic form the direct-call tests pin).
+    fn placement_plan(&self, seat: usize, plan_seed: u32) -> Vec<(usize, usize)> {
         let army_sig = self.army.iter().enumerate().fold(0u64, |a, (i, &c)| a ^ ((c as u64) << (i * 3)));
-        let seedbase =
-            0x07A1_1B0D ^ (self.w as u64) ^ ((self.h as u64) << 8) ^ ((seat as u64) << 16) ^ army_sig;
+        // splitmix-style spread so adjacent seeds give well-separated plans.
+        let seed_mix = (plan_seed as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15);
+        let seedbase = 0x07A1_1B0D
+            ^ (self.w as u64)
+            ^ ((self.h as u64) << 8)
+            ^ ((seat as u64) << 16)
+            ^ army_sig
+            ^ seed_mix;
         let mut rng = SmallRng::seed_from_u64(seedbase);
         let zone: Vec<usize> = (0..self.w * self.h).filter(|&c| self.zone[seat][c]).collect();
         let back_row = if seat == 0 { self.h - 1 } else { 0 };
@@ -1120,7 +1139,7 @@ impl Vanguard {
 
     fn placement_move(&self) -> Option<String> {
         let seat = self.current as usize;
-        let plan = self.placement_plan(seat);
+        let plan = self.placement_plan(seat, self.plan_seed.get().unwrap_or(0));
         plan.get(self.placed_total(seat)).map(|&(k, c)| Self::format_place(k, c))
     }
 
@@ -1163,6 +1182,12 @@ impl Vanguard {
             return None;
         }
         if !self.both_placed() {
+            // Capture the FIRST placement-phase seed as the whole game's plan seed
+            // so the deployment varies per game yet stays coherent across the many
+            // placement calls that follow (each of which may pass a different seed).
+            if self.plan_seed.get().is_none() {
+                self.plan_seed.set(Some(seed));
+            }
             return self.placement_move();
         }
         let (k, depth) = Self::ladder(playouts);
@@ -1531,6 +1556,73 @@ mod tests {
         assert!(!g.apply("p:0:40:x")); // trailing token
     }
 
+    /// The deployment plan is a pure function of `(config, seat, plan_seed)`:
+    /// reproducible at a fixed seed, distinct across seeds (so the hidden layout
+    /// varies between games), and always a complete legal in-zone deployment.
+    #[test]
+    fn placement_plan_varies_with_seed_and_stays_valid() {
+        let g = Vanguard::new(1, DEFAULT, true);
+        // Reproducible: same seed ⇒ byte-identical plan.
+        assert_eq!(g.placement_plan(0, 0xC0FFEE), g.placement_plan(0, 0xC0FFEE));
+        // Varies: distinct seeds ⇒ distinct deployment (defeats memorization).
+        assert_ne!(
+            g.placement_plan(0, 1),
+            g.placement_plan(0, 2),
+            "two seeds produced an identical deployment"
+        );
+        // Every plan (including the seed==0 config-only form) is complete + legal.
+        for seed in [0u32, 1, 2, 7, 0xDEAD_BEEF] {
+            let plan = g.placement_plan(0, seed);
+            assert_eq!(plan.len(), g.army_total(), "plan must place the whole army");
+            let mut seen = std::collections::HashSet::new();
+            let mut per_kind = [0usize; N_KINDS];
+            for &(k, c) in &plan {
+                assert!(k < N_KINDS, "bad kind in plan");
+                assert!(g.zone[0][c], "piece placed outside seat 0's zone (seed {seed})");
+                assert!(seen.insert(c), "two pieces on the same cell (seed {seed})");
+                per_kind[k] += 1;
+            }
+            assert_eq!(per_kind, g.army, "plan's per-kind counts must match the army");
+        }
+    }
+
+    /// End-to-end: `weak_move` captures the FIRST placement seed and holds it for
+    /// the whole placement phase, so (a) different first seeds ⇒ different hidden
+    /// deployments across games, (b) the same first seed ⇒ an identical one, and
+    /// (c) later per-call seed churn never shatters the plan mid-deployment (the
+    /// run stays a complete, legal army). Property (c) is the coherence guarantee.
+    #[test]
+    fn weak_move_captures_first_seed_and_deploys_a_coherent_army() {
+        // Run a full placement phase; the FIRST placement call uses `first_seed`,
+        // every later call passes a DIFFERENT seed (coherence must ignore them).
+        // Return seat 0's deployed pieces as (cell, kind) — the hidden layout.
+        let deploy = |first_seed: u32| -> Vec<(usize, u8)> {
+            let mut g = Vanguard::new(1, DEFAULT, true);
+            let mut calls = 0u32;
+            while !g.both_placed() {
+                let seed = if calls == 0 { first_seed } else { 0xA5A5_0000 ^ calls };
+                let m = g.weak_move(0, 1, 0.0, seed).expect("a placement move");
+                assert!(g.apply(&m), "placement move {m} rejected");
+                calls += 1;
+            }
+            let mut out: Vec<(usize, u8)> = (0..g.w * g.h)
+                .filter_map(|c| g.board[c].map(|p| (c, p.owner, p.kind)))
+                .filter(|&(_, o, _)| o == 0)
+                .map(|(c, _, k)| (c, k as u8))
+                .collect();
+            out.sort();
+            out
+        };
+        let a = deploy(11);
+        let b = deploy(22);
+        // Coherent + complete: seat 0 ended with its whole army on distinct cells.
+        assert_eq!(a.len(), Vanguard::new(1, DEFAULT, true).army_total());
+        // Different first seed ⇒ different hidden layout (the exploit is closed).
+        assert_ne!(a, b, "the AI deployed a byte-identical army across two games");
+        // Same first seed ⇒ reproducible (deterministic under test control).
+        assert_eq!(deploy(11), a);
+    }
+
     #[test]
     fn move_encoding_round_trips_and_rejects() {
         let g = Vanguard::new(1, DEFAULT, true);
@@ -1893,10 +1985,10 @@ mod tests {
     fn midgame_position(seed_base: u64, target: usize) -> Vanguard {
         for attempt in 0..64u64 {
             let mut g = Vanguard::new(1, DEFAULT, true);
-            for (k, c) in g.placement_plan(0) {
+            for (k, c) in g.placement_plan(0, 0) {
                 assert!(g.apply(&Vanguard::format_place(k, c)));
             }
-            for (k, c) in g.placement_plan(1) {
+            for (k, c) in g.placement_plan(1, 0) {
                 assert!(g.apply(&Vanguard::format_place(k, c)));
             }
             let mut rng = SmallRng::seed_from_u64(seed_base ^ (attempt << 32));
@@ -2145,6 +2237,33 @@ mod tests {
         g.board[0].as_mut().unwrap().revealed = true;
         let mv = g.play_ai(16, 2, 1, 0.0, 9).expect("a move");
         assert_eq!(mv, "m:40:32", "Hard failed to capture the reachable enemy Standard");
+    }
+
+    /// Behavioral: with an enemy one step from its OWN Standard and a winning
+    /// defensive capture available, Hard plays the defense even when a larger
+    /// material capture beckons elsewhere — grabbing the bait would let the
+    /// Standard fall on the enemy's reply. Isolates the Standard-safety term from
+    /// mere material greed (the review's minor gap).
+    #[test]
+    fn hard_ai_defends_its_own_threatened_standard() {
+        let mut g = play_stage(1, true);
+        // Enemy force, fully revealed ⇒ the search is deterministic (no sampling
+        // ambiguity): a Sergeant menacing our Standard + a far Marshal as bait.
+        let army2: [usize; N_KINDS] = [1, 0, 1, 0, 0, 0, 0, 0, 0]; // Marshal, Sergeant
+        g.army = army2;
+        g.placed = [army2, army2];
+        put(&mut g, 56, Kind::Standard, 0); // our Standard (row7col0) — immovable
+        put(&mut g, 49, Kind::Captain, 0); // the only defender (row6col1), adjacent to the threat
+        put(&mut g, 10, Kind::Spy, 0); // the greedy grabber (row1col2), adjacent to the bait
+        put(&mut g, 48, Kind::Sergeant, 1); // one step above our Standard (row6col0)
+        put(&mut g, 2, Kind::Marshal, 1); // bait, far away (row0col2)
+        g.board[48].as_mut().unwrap().revealed = true;
+        g.board[2].as_mut().unwrap().revealed = true;
+        // Setup sanity: the Standard really is one capture away, and the bait is a
+        // richer (Spy-beats-Marshal, +100) grab than the defense (+50 Sergeant).
+        assert!(g.attackable_by(&g.board, 56, 1), "test setup: Standard not threatened");
+        let mv = g.play_ai(16, 2, 1, 0.0, 7).expect("a move");
+        assert_eq!(mv, "m:49:48", "Hard abandoned its Standard for the material bait");
     }
 
     /// Ladder monotonicity smoke: Hard should beat Easy over a small match. Kept

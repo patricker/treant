@@ -182,8 +182,9 @@ fn games() -> Vec<Game> {
         // exercises the placement→fire flow and the determinized gunner end-to-end.
         // Difficulty is HAND-SET, not win-rate-calibrated: hidden info + a
         // first-mover firing edge make the ladder round-robin meaningless (the
-        // Bulls & Cows / nim precedent). Placement uses a fixed per-game seed, so
-        // the fuzzer's self-play is deterministic. Classic 10×10 fleet, no salvo.
+        // Bulls & Cows / nim precedent). Placement mixes in the first weak_move
+        // seed per game, so layouts vary between games but stay reproducible under
+        // the fuzzer's seeded RNG. Classic 10×10 fleet, no salvo.
         g("salvo", STD, || Box::new(SalvoWasm::new(10, 0, 1, 2, 1, 1, 1, 0)) as Box<dyn Eng>),
         // Surakarta: 6×6 arc-capture game, perfect-info & deterministic, so the
         // self-play ladder measures cleanly. Material eval + UCT (no solver).
