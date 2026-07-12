@@ -275,7 +275,7 @@ export const draughts: GameDefinition = {
     { key: 'promote_mid', label: 'Crown mid-jump', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'] },
     { key: 'misere', label: 'Giveaway (misère)', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'] },
     { key: 'men_no_king', label: 'Men can\'t jump kings', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'], help: 'Italian rule: a plain man may never capture a king.' },
-    { key: 'capture_priority', label: 'Capture priority', min: 0, max: 2, step: 1, valueLabels: ['None', 'Most kings', 'Italian rules'], help: 'Tie-break between longest captures. Anything but None forces maximum-capture on.' },
+    { key: 'capture_priority', label: 'Capture priority', min: 0, max: 2, step: 1, valueLabels: ['None', 'Most kings', 'Italian rules'], help: 'Tie-break between equally-long captures. Most kings: take the jump grabbing the most kings. Italian: the full 4-level order — a king captures before a man, then most kings, then the king taken earliest. Either forces max-capture on.' },
   ],
   create: (wasm, p) =>
     moveHandle(new wasm.DraughtsWasm(p.size, p.men_rows, p.flying, p.men_back, p.max_capture, p.promote_mid, p.misere, p.men_no_king ?? 0, p.capture_priority ?? 0)),

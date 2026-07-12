@@ -590,16 +590,25 @@ function formatHandoffSummary(raw: string, t: I18n['t']): string {
   const shots = raw.split(';').filter(Boolean);
   const glyphs = shots.map((r) => (r === 'm' ? '·' : r[0] === 'k' ? '☠' : '💥')).join(' ');
   const sunk = shots.filter((r) => r[0] === 'k').map((r) => Number(r.slice(1)));
-  // Neutral "Last volley" label (not "Your fire"): this line sits atop the
+  // Neutral, shooter-agnostic label (not "Your fire"): this line sits atop the
   // handoff blackout, which the INCOMING player also reads — so it must not
   // address them as the shooter. The outgoing seat's name isn't available at
   // this seam (formatHandoffSummary receives only the raw summary + t), and
   // plumbing it through the shared GamePlay blackout for a cosmetic label isn't
   // worth it, so a shooter-agnostic label is the right call.
+  //
+  // Count-aware wording: a non-salvo turn is ONE shot, for which "volley" reads
+  // oddly, so a single shot says "Last shot:" and a multi-shot volley says
+  // "Last volley:". `t` (not `tn`) is all this seam receives, so the two forms
+  // are separate full-sentence keys picked by count.
+  const single = shots.length === 1;
   if (sunk.length > 0) {
-    return t('Last volley: {glyphs} — sank a {name}!', { glyphs, name: t(shipName(sunk[sunk.length - 1])) });
+    const name = t(shipName(sunk[sunk.length - 1]));
+    return single
+      ? t('Last shot: {glyphs} — sank a {name}!', { glyphs, name })
+      : t('Last volley: {glyphs} — sank a {name}!', { glyphs, name });
   }
-  return t('Last volley: {glyphs}', { glyphs });
+  return single ? t('Last shot: {glyphs}', { glyphs }) : t('Last volley: {glyphs}', { glyphs });
 }
 
 // Classic fleet counts s1..s5 = 0,1,2,1,1 → lengths {5,4,3,3,2}, 17 cells — the

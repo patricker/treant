@@ -687,7 +687,6 @@
   "No": "否",
   "Yes": "是",
   "Italian rule: a plain man may never capture a king.": "意大利规则：普通棋子永远不能吃王。",
-  "Tie-break between longest captures. Anything but None forces maximum-capture on.": "在最长吃法之间的决胜规则。除「无」以外的任何选项都会开启强制最多吃子。",
   "8×8 with flying kings but forward-only men — and when captures tie for length you must take the one that grabs the most kings.": "8×8，配飞王但普通棋子只能向前——当多种吃法长度相同时，你必须选吃王最多的那种。",
   "8×8 with step-at-a-time (non-flying) kings where a plain man may never jump a king — and a strict order for which longest capture you must take.": "8×8，配每次只走一格（不飞）的王，普通棋子永远不能吃王——并对该选哪种最长吃法有严格的先后顺序。",
   "8×8 draughts where men move and jump forward only, but a crowned king \"flies\" — sliding any distance along a diagonal and landing beyond the piece it takes. Jumps are compulsory and you must take as many pieces as you can; when two captures take the same number, you must take the one that grabs the most kings. Capture everything, or block your opponent, to win.": "8×8跳棋，普通棋子只能向前走和向前跳吃，但加冕的王会\"飞\"——沿斜线滑行任意距离，并落在被吃棋子之后。跳吃是强制的，你必须尽量多吃；当两种吃法数目相同时，你必须选吃王最多的那种。吃光全部，或封死对手，即可获胜。",
@@ -700,5 +699,11 @@
   "Slide a piece around the corner loops to snatch an enemy from across the board. Capture all twelve to win.": "让棋子沿着四角的环道滑行，从棋盘另一端擒走敌方棋子。吃掉全部十二枚即可获胜。",
   "Each turn, step one piece to any empty neighbouring point (including diagonally), OR capture: slide a piece along its row or column, around at least one of the eight corner loops, and land on the first enemy piece it reaches — every point along the way must be empty. You win by capturing all twelve of the opponent’s pieces. If forty moves pass with no capture, the game is a draw.": "每个回合，将一枚棋子走到任意相邻的空点（可斜走），或进行吃子：让棋子沿其所在的行或列滑行，绕过八个角环中至少一个，落在遇到的第一枚敌方棋子上——沿途每个点都必须为空。吃光对方十二枚棋子即获胜。若连续四十步无人吃子，则为平局。",
   "Pieces rest on the points of a 6×6 grid. On your turn either step one piece to any empty neighbouring point (diagonals allowed), or capture: slide a piece along its row or column, around at least one of the eight corner loops, and land on the first enemy piece you reach — every point along the way must be empty. Capture all twelve enemy pieces to win. Forty moves with no capture is a draw.": "棋子停在 6×6 网格的交点上。轮到你时，可将一枚棋子走到相邻的空点（允许斜走），或进行吃子：让棋子沿其所在的行或列滑行，绕过八个角环中至少一个，落在遇到的第一枚敌方棋子上——沿途每个点都必须为空。吃光对方十二枚棋子即可获胜。四十步无人吃子即为平局。",
-  "Surakarta": "Surakarta"
+  "Surakarta": "Surakarta",
+  "Last shot: {glyphs}": "上一发: {glyphs}",
+  "Last shot: {glyphs} — sank a {name}!": "上一发: {glyphs} — 击沉了{name}!",
+  "🔒 The enemy is boxed in with no move — you win! 🎉": "🔒 敌方被困住且无棋可走——你赢了！🎉",
+  "🔒 You’re boxed in with no move — {winner} wins.": "🔒 你被困住且无棋可走——{winner} 获胜。",
+  "🔒 {loser} is boxed in with no move — {winner} wins!": "🔒 {loser} 被困住且无棋可走——{winner} 获胜！",
+  "Tie-break between equally-long captures. Most kings: take the jump grabbing the most kings. Italian: the full 4-level order — a king captures before a man, then most kings, then the king taken earliest. Either forces max-capture on.": "在等长吃法之间的决胜规则。「最多王」：选择吃掉最多王的跳吃。「意大利」：完整的四级顺序——王先于普通子吃、其次吃最多王、再次最早吃到王。两者都会开启强制最多吃子。"
 }

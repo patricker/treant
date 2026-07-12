@@ -348,9 +348,14 @@ export const surakarta: GameDefinition = {
   create: (wasm) => makeHandle(wasm),
   Board: SurakartaBoard,
   playerLabels: ['Red', 'Gold'],
-  // No winning line lights up (a capture-all or a quiet draw), so narrate the
-  // ending: the board was swept, or forty quiet moves ran out the clock.
-  resultFlavor: ({ result, labels, seats, t }) => {
+  // No winning line lights up (a capture-all, an immobilisation, or a quiet
+  // draw), so narrate the ending. A win arrives two ways (see surakarta.rs
+  // terminal_value): the loser was wiped off the board (capture-all → "swept"),
+  // OR the loser still has pieces but no legal move (stalemate → "boxed in").
+  // "Swept the board" over-claims on the immobilisation path, so distinguish
+  // them by counting the loser's pieces on the final board (36 chars: 'X' =
+  // seat 0, 'O' = seat 1). Slimetrail's box-in precedent.
+  resultFlavor: ({ result, board, labels, seats, t }) => {
     const name = (seat: number) => (labels[seat] ? t(labels[seat]) : t('Player {n}', { n: seat + 1 }));
     const humans = seats.map((k, i) => (k === 'human' ? i : -1)).filter((i) => i >= 0);
     const lone = humans.length === 1 ? humans[0] : null;
@@ -360,8 +365,17 @@ export const surakarta: GameDefinition = {
     const winner = Number(result) - 1;
     if (!Number.isFinite(winner) || winner < 0) return undefined;
     const loser = winner === 0 ? 1 : 0;
-    if (lone === winner) return t('🏵️ You swept the board — you win! 🎉');
-    if (lone === loser) return t('🏵️ {winner} swept the board — you lose.', { winner: name(winner) });
-    return t('🏵️ {winner} swept the board!', { winner: name(winner) });
+    const loserGlyph = loser === 0 ? 'X' : 'O';
+    const loserPieces = board.split('').filter((ch) => ch === loserGlyph).length;
+    if (loserPieces === 0) {
+      // Capture-all sweep: every enemy piece taken off the board.
+      if (lone === winner) return t('🏵️ You swept the board — you win! 🎉');
+      if (lone === loser) return t('🏵️ {winner} swept the board — you lose.', { winner: name(winner) });
+      return t('🏵️ {winner} swept the board!', { winner: name(winner) });
+    }
+    // Immobilisation: the loser still has pieces but no legal move.
+    if (lone === winner) return t('🔒 The enemy is boxed in with no move — you win! 🎉');
+    if (lone === loser) return t('🔒 You’re boxed in with no move — {winner} wins.', { winner: name(winner) });
+    return t('🔒 {loser} is boxed in with no move — {winner} wins!', { loser: name(loser), winner: name(winner) });
   },
 };

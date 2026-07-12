@@ -30,7 +30,9 @@ function DotsBoxesBoard({ board, params, interactive, legalMoves, onMove }: Boar
         className={styles.dbEdge}
         disabled={!isLegal}
         onClick={() => onMove(String(e))}
-        aria-label={claimed ? t('Edge {e} claimed', { e }) : t('Edge {e}', { e })}
+        // 1-based edge number for screen readers (the arcade convention — every
+        // other board announces `i + 1`, never a raw 0-based index).
+        aria-label={claimed ? t('Edge {e} claimed', { e: e + 1 }) : t('Edge {e}', { e: e + 1 })}
         style={{
           width: horizontal ? '70%' : '5px',
           height: horizontal ? '5px' : '70%',
