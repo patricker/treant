@@ -1045,14 +1045,31 @@ mod tests {
 
     #[test]
     fn move_encoding_round_trips() {
-        let g = Salvo::new(10, CLASSIC, true, false);
-        for (idx, cell, o) in [(0usize, 34usize, Orient::H), (3, 77, Orient::V)] {
+        let g = Salvo::new(10, CLASSIC, true, false); // 5 ships (idx 0..4), 100 cells (0..99)
+        // Placement round-trips, including BOTH corner cells (0 and size*size-1)
+        // and both orientations. (parse_place validates only idx/cell bounds, not
+        // ship fit, so a corner origin round-trips regardless of length.)
+        for (idx, cell, o) in [
+            (0usize, 0usize, Orient::H),  // first cell
+            (4, 99, Orient::V),           // last cell (size*size - 1)
+            (0, 34, Orient::H),
+            (3, 77, Orient::V),
+        ] {
             let s = Salvo::format_place(idx, cell, o);
             assert_eq!(g.parse_place(&s), Some((idx, cell, o)));
         }
-        let s = Salvo::format_shot(42);
-        assert_eq!(g.parse_shot(&s), Some(42));
-        assert_eq!(g.parse_shot("s:999"), None); // out of a 10×10 board
+        // Shot round-trips at both edge cells and an interior cell.
+        for cell in [0usize, 42, 99] {
+            let s = Salvo::format_shot(cell);
+            assert_eq!(g.parse_shot(&s), Some(cell));
+        }
+        // Parse rejections (both move forms).
+        assert_eq!(g.parse_shot("s:100"), None); // one past the last cell
+        assert_eq!(g.parse_shot("s:999"), None); // far out of a 10×10 board
+        assert_eq!(g.parse_place("p:0:5:x"), None); // bad orientation char
+        assert_eq!(g.parse_place("p:9:5:h"), None); // ship index 9 ≥ fleet len (5)
+        assert_eq!(g.parse_place("p:0:100:h"), None); // cell one past the last
+        assert_eq!(g.parse_place("p:0:5:h:extra"), None); // trailing token
     }
 
     #[test]
@@ -1188,10 +1205,12 @@ mod tests {
     fn hard_gunner_sinks_a_classic_10x10_fleet_within_bound() {
         // Hard = argmax over a sharp heat map + parity search. Honest bound: the
         // gunner must sink the 17-cell classic fleet in FAR fewer than firing the
-        // whole 100-cell board — 17 hits + a bounded search. We pin ≤ 65 shots
-        // (measured max across the seeds/layouts below sits well under this; the
-        // derivation: worst case ≈ 17 hits + ≤48 misses, i.e. parity-limited
-        // search of the ~50 same-parity water cells). See the task report.
+        // whole 100-cell board — 17 hits + a bounded search. This test drives ONE
+        // layout at ONE fixed seed and pins the assert at ≤ 72 shots (measured 57
+        // on this all-vertical layout — a hard case). Derivation of the bound:
+        // 17 unavoidable ship-cell hits + a parity-limited search of the ≤50
+        // same-parity water cells (l_min = 2 ⇒ checkerboard) + a small margin for
+        // hunt overshoot ≈ 70. See the task report.
         let layouts: &[&[(usize, usize, char)]] = &[
             &[(0, 5, 'v'), (1, 7, 'v'), (2, 9, 'v'), (3, 50, 'h'), (4, 72, 'h')],
         ];
