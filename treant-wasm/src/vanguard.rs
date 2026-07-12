@@ -17,9 +17,12 @@
 //!   per the family rule the article attests, only when the Spy is the attacker;
 //!   the top piece is otherwise "vulnerable only to a *Mine* or attacking *Spy*".
 //! - **Mine (our Bomb):** "Immobile; any piece (except a *Sapper*) attacking a
-//!   *Mine* is removed from the game." The Mine itself PERSISTS — only a Sapper
-//!   captures it without being destroyed. We follow this exactly: a non-Sapper
-//!   attacker is removed and the Bomb stays on its square (now revealed).
+//!   *Mine* is removed from the game." The quoted rule fixes only the ATTACKER's
+//!   fate (removed); it is SILENT on the Mine's — the text neither confirms nor
+//!   denies that the Mine survives the attack. Bomb PERSISTENCE is therefore a
+//!   convention we ADOPT (the standard family reading), not something the source
+//!   states: a non-Sapper attacker is removed and the Bomb stays on its square
+//!   (now revealed); only a Sapper captures the Bomb without being destroyed.
 //! - **Scout:** "Can move any distance in a non-diagonal straight line without
 //!   leaping over pieces or lakes." (The article's further Scout embellishments —
 //!   "cannot capture another *Scout*; an attacking *Scout* returns to their space
