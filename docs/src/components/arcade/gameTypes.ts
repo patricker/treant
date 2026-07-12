@@ -141,6 +141,14 @@ export interface GameDefinition {
    * See ARCADE.md §7b.
    */
   hiddenInfo?: boolean;
+  /** Hidden-info games only: render the secrecy-safe `lastMoveSummaryFor` string
+   *  for display atop the pass-and-play handoff blackout (the outgoing player's
+   *  own result, before they pass the phone). Receives the raw summary the handle
+   *  produced and the arcade translate fn; returns a fully-translated line. Absent
+   *  ⇒ no summary is shown. Keeps GamePlay game-agnostic — each hidden-info game
+   *  owns its own summary shape (Bulls & Cows: a guess+feedback triple; Salvo: a
+   *  volley's per-shot results). */
+  formatHandoffSummary?(summary: string, t: I18n['t']): string;
   /** Solo games: prettify a hint move for display, e.g. "Up" -> "⬆️ Up". */
   formatHint?(move: string): string;
   /** Sound to play per move (default "move"; Connect Four uses "drop"). */

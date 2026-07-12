@@ -12,6 +12,15 @@ const GLYPHS: Record<string, JSX.Element> = {
       <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
     </g>
   ),
+  salvo: (
+    // a battleship hull riding a wave, funnel + mast above the deck
+    <g stroke="currentColor" fill="none" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round">
+      <path d="M3 14h16l-2.2 4.2a1.4 1.4 0 0 1-1.3.8H6.5a1.4 1.4 0 0 1-1.3-.8L3 14z" />
+      <path d="M7 14v-3h7l2 3" />
+      <path d="M11 11V7h1.6" />
+      <path d="M2.5 20.6c1.6 0 1.6-1 3.2-1s1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1 1.6-1 3.2-1" opacity="0.55" />
+    </g>
+  ),
   climb: (
     // a stepped mountain with a flag planted on the summit
     <g stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinejoin="round" strokeLinecap="round">

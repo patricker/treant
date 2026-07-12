@@ -2664,3 +2664,146 @@
   opacity: 0.7;
   text-align: center;
 }
+
+/* ── Salvo (naval guessing) board ────────────────────────────────────── */
+.salvoWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+.salvoInstruction {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--arc-ink);
+  opacity: 0.85;
+  line-height: 1.35;
+}
+.salvoCounter {
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--arc-p2);
+}
+/* Ship tray: chips grouped by length, each with a placed/total badge. */
+.salvoTray {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.salvoChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: var(--arc-card);
+  color: var(--arc-ink);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.salvoChipActive {
+  border-color: var(--arc-p2);
+}
+.salvoChipDone {
+  opacity: 0.5;
+}
+.salvoChipName {
+  font-size: 0.78rem;
+}
+.salvoBadge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  opacity: 0.8;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--arc-soft);
+}
+.salvoGlyph {
+  display: inline-flex;
+  gap: 2px;
+}
+.salvoGlyphV {
+  flex-direction: column;
+}
+.salvoGlyphCell {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--arc-p5);
+}
+/* The playing grid — fills width; cols set inline (grid-template-columns). */
+.salvoGrid {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+}
+.salvoCell {
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+  border: none;
+  border-radius: 3px;
+  background: var(--arc-soft);
+  color: var(--arc-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: min(3.4vw, 0.85rem);
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+.salvoCell:disabled {
+  cursor: default;
+}
+/* Own ship cells (placement grid + your-fleet grid). */
+.salvoShip,
+.salvoOwn {
+  background: var(--arc-p5);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+.salvoShipOrigin {
+  box-shadow: inset 0 0 0 2px var(--arc-win);
+}
+.salvoHit {
+  background: color-mix(in srgb, var(--arc-p1) 55%, var(--arc-soft));
+}
+.salvoMiss {
+  color: var(--arc-ink);
+  opacity: 0.6;
+}
+.salvoSunk {
+  background: #1a1420;
+  color: #ff6b6b;
+}
+.salvoReveal {
+  box-shadow: inset 0 0 0 2px var(--arc-p2);
+}
+.salvoControls {
+  display: flex;
+  gap: 8px;
+}
+.salvoControls .secondaryBtn {
+  flex: 1;
+}
+.salvoLegend {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+@keyframes salvoShakeKf {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+.salvoShake {
+  animation: salvoShakeKf 0.28s ease;
+  background: color-mix(in srgb, var(--arc-p1) 40%, var(--arc-soft));
+}

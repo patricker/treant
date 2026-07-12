@@ -285,5 +285,11 @@ export const bullsCows: GameDefinition = {
   ],
   create: makeHandle,
   Board: BullsCowsBoard,
+  // Render the handoff blackout summary (the outgoing guesser's own result)
+  // from the `guess:bulls:cows` triple lastMoveSummaryFor produced — all public.
+  formatHandoffSummary: (raw, t) => {
+    const [guess, bulls, cows] = raw.split(':');
+    return t('Your guess {guess} → 🎯 {bulls} 🐄 {cows}', { guess, bulls, cows });
+  },
   playerLabels: ['Player 1', 'Player 2'],
 };

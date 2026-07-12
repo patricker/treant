@@ -42,6 +42,7 @@ import { baghchal } from './baghchal';
 import { lenChoa } from './lenchoa';
 import { worldThrees } from './worldthrees';
 import { bullsCows } from './bullscows';
+import { salvo } from './salvo';
 import {
   draughts,
   internationalDraughts,
@@ -115,6 +116,7 @@ export const GAMES: GameDefinition[] = [
   bigPig,
   climb,
   bullsCows,
+  salvo,
   game2048,
 ];
 

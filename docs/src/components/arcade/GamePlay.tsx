@@ -115,19 +115,15 @@ export default function GamePlay({
           aria-label={t('Hand the phone to {name}', { name: handoffName })}
         >
           <div className={styles.blackoutInner}>
-            {/* The outgoing player's OWN result (their guess + public feedback),
-                shown before they pass so they aren't blacked out on their own
-                move. Only present for a guess handoff; code-setting shows nothing.
-                Contains no secret code — see useGameSession.handoffSummary. */}
-            {s.handoffSummary &&
-              (() => {
-                const [guess, bulls, cows] = s.handoffSummary.split(':');
-                return (
-                  <div className={styles.blackoutSummary}>
-                    {t('Your guess {guess} → 🎯 {bulls} 🐄 {cows}', { guess, bulls, cows })}
-                  </div>
-                );
-              })()}
+            {/* The outgoing player's OWN result (their guess + public feedback,
+                or a fired volley's results), shown before they pass so they
+                aren't blacked out on their own move. Each hidden-info game formats
+                its own secrecy-safe summary via def.formatHandoffSummary; setup /
+                code-setting moves produce no summary and show nothing. Contains no
+                secret — see useGameSession.handoffSummary. */}
+            {s.handoffSummary && def.formatHandoffSummary && (
+              <div className={styles.blackoutSummary}>{def.formatHandoffSummary(s.handoffSummary, t)}</div>
+            )}
             <div className={styles.blackoutEyes} aria-hidden="true">
               👀
             </div>
