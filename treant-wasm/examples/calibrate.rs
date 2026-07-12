@@ -59,7 +59,7 @@ eng!(
     TreblecrossWasm, EuclidWasm, Connect6Wasm, SquavaWasm, NotaktoWasm, SquareUpWasm, OrderChaosWasm,
     PinchFiveWasm, NineMorrisWasm, QuadlineWasm, OwareWasm, YGameWasm, BaghchalWasm, ClimbWasm,
     WorldThreesWasm, GaleWasm, SlimetrailWasm, ToadsFrogsWasm, PawnDuelWasm, StrandWasm,
-    LenChoaWasm, DraughtsWasm, BullsCowsWasm, SalvoWasm, SurakartaWasm,
+    LenChoaWasm, DraughtsWasm, BullsCowsWasm, SalvoWasm, SurakartaWasm, VanguardWasm,
 );
 
 // Ladders, weak -> strong. STD for most games; LIGHT caps playouts for the
@@ -188,6 +188,14 @@ fn games() -> Vec<Game> {
         // Surakarta: 6×6 arc-capture game, perfect-info & deterministic, so the
         // self-play ladder measures cleanly. Material eval + UCT (no solver).
         g("surakarta", STD, || Box::new(SurakartaWasm::new()) as Box<dyn Eng>),
+        // Vanguard (hidden-rank capture-the-Standard, L'Attaque mechanics):
+        // registered so the audit fuzzer (Pass 1) exercises the two-phase
+        // placement→play rules end-to-end. Its `weak_move` is still a random-legal
+        // PLACEHOLDER (Task 7-2 builds the determinized PIMC opponent), so the
+        // difficulty ladder is meaningless here and DEFERRED to 7-2 — this entry
+        // exists only for the fuzzer. Standard 8×8 preset, default 12-piece army,
+        // scout long-move on.
+        g("vanguard", STD, || Box::new(VanguardWasm::new(1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 1)) as Box<dyn Eng>),
     ]
 }
 
