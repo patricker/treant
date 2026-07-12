@@ -59,7 +59,7 @@ eng!(
     TreblecrossWasm, EuclidWasm, Connect6Wasm, SquavaWasm, NotaktoWasm, SquareUpWasm, OrderChaosWasm,
     PinchFiveWasm, NineMorrisWasm, QuadlineWasm, OwareWasm, YGameWasm, BaghchalWasm, ClimbWasm,
     WorldThreesWasm, GaleWasm, SlimetrailWasm, ToadsFrogsWasm, PawnDuelWasm, StrandWasm,
-    LenChoaWasm, DraughtsWasm, BullsCowsWasm,
+    LenChoaWasm, DraughtsWasm, BullsCowsWasm, SalvoWasm,
 );
 
 // Ladders, weak -> strong. STD for most games; LIGHT caps playouts for the
@@ -170,6 +170,13 @@ fn games() -> Vec<Game> {
         // first-guesser edge that dominates the ladder round-robin, so the
         // auto-picker's win-rate metric is meaningless here (nim precedent).
         g("bulls-cows", STD, || Box::new(BullsCowsWasm::new(4, 10, 0)) as Box<dyn Eng>),
+        // Salvo (hidden-info naval game): registered so the audit fuzzer (Pass 1)
+        // exercises the placement→fire flow and the determinized gunner end-to-end.
+        // Difficulty is HAND-SET, not win-rate-calibrated: hidden info + a
+        // first-mover firing edge make the ladder round-robin meaningless (the
+        // Bulls & Cows / nim precedent). Placement uses a fixed per-game seed, so
+        // the fuzzer's self-play is deterministic. Classic 10×10 fleet, no salvo.
+        g("salvo", STD, || Box::new(SalvoWasm::new(10, 0, 1, 2, 1, 1, 1, 0)) as Box<dyn Eng>),
     ]
 }
 
