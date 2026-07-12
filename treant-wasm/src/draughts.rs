@@ -1,20 +1,36 @@
 //! Draughts (checkers) — ONE flag-driven engine backing six national variants.
 //!
 //! Six wave-A variants ship as config-only tiles over this single engine (the
-//! per-variant flag table is asserted in the tests below):
+//! per-variant flag table is asserted in the tests below). Wave-B adds Spanish
+//! and Italian via two more flags (`menNoK` = men-cannot-capture-kings, `prio` =
+//! capture-priority mode 0/1/2), both of which default OFF so the six wave-A
+//! variants stay bit-identical:
 //!
-//! | Variant       | size | rows | flying | menBack | maxCap | midChain | misère |
-//! |---------------|------|------|--------|---------|--------|----------|--------|
-//! | American ⭐    |  8   |  3   |  no    |  no     |  no    |  n/a     |  no    |
-//! | International |  10  |  4   |  yes   |  yes    |  yes   |  no      |  no    |
-//! | Brazilian     |  8   |  3   |  yes   |  yes    |  yes   |  no      |  no    |
-//! | Pool          |  8   |  3   |  yes   |  yes    |  no    |  no      |  no    |
-//! | Russian       |  8   |  3   |  yes   |  yes    |  no    |  YES     |  no    |
-//! | Giveaway 🙃    |  8   |  3   |  no    |  no     |  no    |  n/a     |  YES   |
+//! | Variant       | size | rows | flying | menBack | maxCap | midChain | misère | menNoK | prio |
+//! |---------------|------|------|--------|---------|--------|----------|--------|--------|------|
+//! | American ⭐    |  8   |  3   |  no    |  no     |  no    |  n/a     |  no    |  no    |  0   |
+//! | International |  10  |  4   |  yes   |  yes    |  yes   |  no      |  no    |  no    |  0   |
+//! | Brazilian     |  8   |  3   |  yes   |  yes    |  yes   |  no      |  no    |  no    |  0   |
+//! | Pool          |  8   |  3   |  yes   |  yes    |  no    |  no      |  no    |  no    |  0   |
+//! | Russian       |  8   |  3   |  yes   |  yes    |  no    |  YES     |  no    |  no    |  0   |
+//! | Giveaway 🙃    |  8   |  3   |  no    |  no     |  no    |  n/a     |  YES   |  no    |  0   |
+//! | Spanish       |  8   |  3   |  yes   |  no     | (yes)  |  no      |  no    |  no    |  1   |
+//! | Italian       |  8   |  3   |  no    |  no     | (yes)  |  no      |  no    |  YES   |  2   |
 //!
-//! Table verified 2026-07-06 against the per-variant Wikipedia pages (English/
-//! International/Brazilian/Russian draughts, Pool checkers, Poddavki). Load-
-//! bearing quotes live at each decision point below.
+//! Wave-A table verified 2026-07-06 against the per-variant Wikipedia pages
+//! (English/International/Brazilian/Russian draughts, Pool checkers, Poddavki).
+//! Spanish/Italian sourced 2026-07-11 (ludoteka + Italian_draughts + FID; quotes
+//! at the `capture_priority` and `men_no_king` decision points). `maxCap` is
+//! `(yes)` for Spanish/Italian because `prio > 0` normalizes it on — the quality
+//! tiebreak is a refinement of maximum-capture, never a replacement.
+//!
+//! Italian king movement (non-flying, step-1) is pinned by the Federazione
+//! Italiana Dama: "Un pezzo muove procedendo in diagonale di una casella e
+//! occupandola" and "La pedina può muovere solo avanzando, la dama può anche
+//! indietreggiare" (fid.it/corsi/italiana/regole.htm); corroborated by "La dama
+//! si muove anch'essa di una casella alla volta, sempre in diagonale, in tutte le
+//! direzioni possibili" (federdama.org, Dama Italiana) — i.e. `flying_kings = 0`.
+//! Load-bearing quotes live at each decision point below.
 //!
 //! NOTE on Giveaway: the plan models it as *American rules with an inverted win
 //! condition* (Western "Suicide checkers"). The canonical FMJD/Poddavki article
@@ -128,12 +144,28 @@ struct Draughts {
     max_capture: bool,
     promote_mid: bool,
     misere: bool,
+    /// Italian: a man may not jump a king (guard inside `chain()`).
+    men_no_king: bool,
+    /// Capture-priority mode: 0 = none (wave-A), 1 = Spanish (`(count, kings)`),
+    /// 2 = Italian (`(count, capturer_is_king, kings, king_captured_earliest)`).
+    capture_priority: u8,
     /// Plies since the last capture or man-move (for the 40-ply draw cap).
     no_progress: u32,
 }
 
 impl Draughts {
-    fn new(n: usize, men_rows: usize, flying: bool, men_back: bool, max_capture: bool, promote_mid: bool, misere: bool) -> Self {
+    #[allow(clippy::too_many_arguments)]
+    fn new(n: usize, men_rows: usize, flying: bool, men_back: bool, max_capture: bool, promote_mid: bool, misere: bool, men_no_king: bool, capture_priority: u8) -> Self {
+        // A capture-priority mode is a REFINEMENT of maximum-capture: both Spanish
+        // and Italian rules first demand "capture the greatest quantity of pieces"
+        // (Italian_draughts) / the "Quantity Rule: as many pieces as possible must
+        // be captured" (ludoteka, Spanish), then break the count-tie on quality.
+        // We therefore make `capture_priority > 0` IMPLY `max_capture` (normalize,
+        // not reject): the count filter runs first, the quality retain second. This
+        // keeps the two flags orthogonal for wave-A (both off ⇒ unchanged) while
+        // guaranteeing the quality tiebreak always sits on top of a max-count base.
+        let max_capture = max_capture || capture_priority > 0;
+        let capture_priority = capture_priority.min(2);
         let mut grid = vec![Cell::Empty; n * n];
         // Playing squares are the dark squares (r + c) odd. Seat 1 fills the top
         // `men_rows`; seat 0 fills the bottom `men_rows`; the middle is empty.
@@ -151,7 +183,7 @@ impl Draughts {
                 }
             }
         }
-        Self { n, grid, current: 0, flying, men_back, max_capture, promote_mid, misere, no_progress: 0 }
+        Self { n, grid, current: 0, flying, men_back, max_capture, promote_mid, misere, men_no_king, capture_priority, no_progress: 0 }
     }
 
     #[inline]
@@ -263,6 +295,15 @@ impl Draughts {
                     continue;
                 }
                 let (osq, lsq) = (self.idx(or, oc), self.idx(lr, lc));
+                // Italian: "Men cannot jump kings." (Draughts). A man (`!is_king`)
+                // may not capture a king — skip that continuation entirely. The
+                // subtle consequence (tested): if a man's ONLY jump is over a king
+                // it has NO capture, so the capture obligation dissolves for that
+                // man (it may fall to another piece, or quiet moves become legal if
+                // no piece anywhere can capture). Kings jumping kings are unaffected.
+                if !is_king && self.men_no_king && matches!(bd[osq], Cell::King(_)) {
+                    continue;
+                }
                 if Self::is_enemy(bd, osq, owner) && !captured.contains(&(osq as u16)) && bd[lsq] == Cell::Empty {
                     try_capture(self, osq, lsq, is_king, path, captured, out);
                 }
@@ -295,6 +336,47 @@ impl Draughts {
             if self.max_capture {
                 let best = caps.iter().map(|m| m.captured.len()).max().unwrap_or(0);
                 caps.retain(|m| m.captured.len() == best);
+            }
+            // Capture-priority quality tiebreak (Spanish / Italian). A pure
+            // post-generation lexicographic `retain`; the `chain()` walker is
+            // untouched. Keys are computed against the PRE-capture board (`self.grid`
+            // still holds every jumped piece — captures are only removed in
+            // `make_move`), so each captured square's man/king identity is exact.
+            //
+            //  - Mode 1 Spanish: "Quality Rule: ... as much kings as possible must
+            //    be captured." (ludoteka) ⇒ key `(count, kings_captured)`.
+            //  - Mode 2 Italian: the verbatim 4-level hierarchy — "capture the
+            //    greatest quantity of pieces" → "he must do so with the king" →
+            //    "capture the greatest number of kings possible" → "capture wherever
+            //    the king occurs first." (Italian_draughts) ⇒ key `(count,
+            //    capturer_is_king, kings_captured, king_captured_earliest)`.
+            //
+            // Every component is oriented "higher = better", so we keep the moves
+            // whose key equals the maximum. `king_captured_earliest` prefers the
+            // chain whose first-jumped king comes EARLIEST in the jump order, so we
+            // encode it as the negated index of the first king (0 for a king jumped
+            // first, i64::MIN when no king is captured — the worst).
+            if self.capture_priority > 0 {
+                let key = |m: &DMove| -> (usize, u8, i64, i64) {
+                    let count = m.captured.len();
+                    let capturer_is_king = matches!(self.grid[m.path[0] as usize], Cell::King(_));
+                    let kings = m.captured.iter().filter(|&&sq| matches!(self.grid[sq as usize], Cell::King(_))).count() as i64;
+                    let earliest = m
+                        .captured
+                        .iter()
+                        .position(|&sq| matches!(self.grid[sq as usize], Cell::King(_)))
+                        .map(|i| -(i as i64))
+                        .unwrap_or(i64::MIN);
+                    match self.capture_priority {
+                        // Spanish: only the king-COUNT tiebreak applies; the
+                        // capturer-is-king and king-first levels are neutralised.
+                        1 => (count, 0, kings, 0),
+                        // Italian: the full 4-level hierarchy.
+                        _ => (count, capturer_is_king as u8, kings, earliest),
+                    }
+                };
+                let best = caps.iter().map(&key).max().unwrap();
+                caps.retain(|m| key(m) == best);
             }
             return caps;
         }
@@ -483,22 +565,33 @@ pub struct DraughtsWasm {
     max_capture: bool,
     promote_mid: bool,
     misere: bool,
+    men_no_king: bool,
+    capture_priority: u8,
 }
 
 #[wasm_bindgen]
 impl DraughtsWasm {
-    /// `size` 8|10|12, `men_rows` 2–4 typically; the remaining args are the seven
-    /// rule flags (0/1). See the variant table in the module docs.
+    /// `size` 8|10|12, `men_rows` 2–4 typically; the remaining args are the nine
+    /// rule flags. Seven are 0/1 booleans; the last, `capture_priority`, is an enum
+    /// (0 = none, 1 = Spanish, 2 = Italian). See the variant table in the module
+    /// docs. `capture_priority > 0` normalizes `max_capture` on (the quality
+    /// tiebreak sits atop a max-count base); `men_cannot_capture_kings` is the
+    /// Italian "men may not jump kings" rule. Both new flags default off, leaving
+    /// the six wave-A variants bit-identical.
     #[allow(clippy::too_many_arguments)]
     #[wasm_bindgen(constructor)]
-    pub fn new(size: u32, men_rows: u32, flying_kings: u32, men_capture_back: u32, max_capture: u32, promote_mid_chain: u32, misere: u32) -> Self {
+    pub fn new(size: u32, men_rows: u32, flying_kings: u32, men_capture_back: u32, max_capture: u32, promote_mid_chain: u32, misere: u32, men_cannot_capture_kings: u32, capture_priority: u32) -> Self {
         let (n, men_rows) = clamp_cfg(size, men_rows);
         let flying = flying_kings != 0;
         let men_back = men_capture_back != 0;
-        let max_capture = max_capture != 0;
         let promote_mid = promote_mid_chain != 0;
         let misere = misere != 0;
-        let state = Draughts::new(n, men_rows, flying, men_back, max_capture, promote_mid, misere);
+        let men_no_king = men_cannot_capture_kings != 0;
+        let capture_priority = capture_priority.min(2) as u8;
+        // Draughts::new normalizes `max_capture` on when priority > 0; mirror that
+        // here so the cached DraughtsWasm flag matches the state's actual behavior.
+        let max_capture = (max_capture != 0) || capture_priority > 0;
+        let state = Draughts::new(n, men_rows, flying, men_back, max_capture, promote_mid, misere, men_no_king, capture_priority);
         Self {
             manager: MCTSManager::new(state, DrCfg, DrEval, UCTPolicy::new(1.4), ()),
             n,
@@ -508,11 +601,13 @@ impl DraughtsWasm {
             max_capture,
             promote_mid,
             misere,
+            men_no_king,
+            capture_priority,
         }
     }
 
     fn fresh_state(&self) -> Draughts {
-        Draughts::new(self.n, self.men_rows, self.flying, self.men_back, self.max_capture, self.promote_mid, self.misere)
+        Draughts::new(self.n, self.men_rows, self.flying, self.men_back, self.max_capture, self.promote_mid, self.misere, self.men_no_king, self.capture_priority)
     }
 
     pub fn cols(&self) -> u32 {
@@ -609,21 +704,34 @@ impl DraughtsWasm {
 mod tests {
     use super::*;
 
-    // Flag presets for the six wave-A variants (size, men_rows, flying, men_back,
-    // max_capture, promote_mid, misere) — mirrors the module-doc table.
-    const AMERICAN: (usize, usize, bool, bool, bool, bool, bool) = (8, 3, false, false, false, false, false);
-    const INTERNATIONAL: (usize, usize, bool, bool, bool, bool, bool) = (10, 4, true, true, true, false, false);
-    const BRAZILIAN: (usize, usize, bool, bool, bool, bool, bool) = (8, 3, true, true, true, false, false);
-    const POOL: (usize, usize, bool, bool, bool, bool, bool) = (8, 3, true, true, false, false, false);
-    const RUSSIAN: (usize, usize, bool, bool, bool, bool, bool) = (8, 3, true, true, false, true, false);
-    const GIVEAWAY: (usize, usize, bool, bool, bool, bool, bool) = (8, 3, false, false, false, false, true);
+    // Flag presets: (size, men_rows, flying, men_back, max_capture, promote_mid,
+    // misere, men_no_king, capture_priority) — mirrors the module-doc table. The
+    // six wave-A variants carry the two new flags as `false, 0` (bit-identity bar).
+    type Preset = (usize, usize, bool, bool, bool, bool, bool, bool, u8);
+    const AMERICAN: Preset = (8, 3, false, false, false, false, false, false, 0);
+    const INTERNATIONAL: Preset = (10, 4, true, true, true, false, false, false, 0);
+    const BRAZILIAN: Preset = (8, 3, true, true, true, false, false, false, 0);
+    const POOL: Preset = (8, 3, true, true, false, false, false, false, 0);
+    const RUSSIAN: Preset = (8, 3, true, true, false, true, false, false, 0);
+    const GIVEAWAY: Preset = (8, 3, false, false, false, false, true, false, 0);
+    // Wave-B: Spanish (flying, forward-only men, priority=1); Italian (non-flying
+    // step-1 kings, men-cannot-capture-kings, priority=2). max_capture is passed 0
+    // here to prove the ctor normalizes it on for priority > 0.
+    const SPANISH: Preset = (8, 3, true, false, false, false, false, false, 1);
+    const ITALIAN: Preset = (8, 3, false, false, false, false, false, true, 2);
 
-    fn mk(p: (usize, usize, bool, bool, bool, bool, bool)) -> Draughts {
-        Draughts::new(p.0, p.1, p.2, p.3, p.4, p.5, p.6)
+    fn mk(p: Preset) -> Draughts {
+        Draughts::new(p.0, p.1, p.2, p.3, p.4, p.5, p.6, p.7, p.8)
     }
-    /// An empty board with the given flags (for hand-built positions).
+    /// An empty wave-A board with the given flags (new flags off; hand-built
+    /// positions). Spanish/Italian positions use `empty_ex`.
     fn empty(n: usize, flying: bool, men_back: bool, max_capture: bool, promote_mid: bool, misere: bool) -> Draughts {
-        let mut g = Draughts::new(n, 1, flying, men_back, max_capture, promote_mid, misere);
+        empty_ex(n, flying, men_back, max_capture, promote_mid, misere, false, 0)
+    }
+    /// An empty board with ALL nine flags (for Spanish/Italian hand-built tests).
+    #[allow(clippy::too_many_arguments)]
+    fn empty_ex(n: usize, flying: bool, men_back: bool, max_capture: bool, promote_mid: bool, misere: bool, men_no_king: bool, capture_priority: u8) -> Draughts {
+        let mut g = Draughts::new(n, 1, flying, men_back, max_capture, promote_mid, misere, men_no_king, capture_priority);
         g.grid = vec![Cell::Empty; n * n];
         g
     }
@@ -652,12 +760,17 @@ mod tests {
     #[test]
     fn variant_flags_match_the_table() {
         // Guard the exact flag tuple per variant so the table can't silently drift.
-        assert_eq!(AMERICAN, (8, 3, false, false, false, false, false));
-        assert_eq!(INTERNATIONAL, (10, 4, true, true, true, false, false));
-        assert_eq!(BRAZILIAN, (8, 3, true, true, true, false, false));
-        assert_eq!(POOL, (8, 3, true, true, false, false, false));
-        assert_eq!(RUSSIAN, (8, 3, true, true, false, true, false));
-        assert_eq!(GIVEAWAY, (8, 3, false, false, false, false, true));
+        // The six wave-A variants MUST carry the two new flags as `false, 0` — this
+        // is the bit-identity contract (see also `wave_a_flags_leave_new_paths_off`).
+        assert_eq!(AMERICAN, (8, 3, false, false, false, false, false, false, 0));
+        assert_eq!(INTERNATIONAL, (10, 4, true, true, true, false, false, false, 0));
+        assert_eq!(BRAZILIAN, (8, 3, true, true, true, false, false, false, 0));
+        assert_eq!(POOL, (8, 3, true, true, false, false, false, false, 0));
+        assert_eq!(RUSSIAN, (8, 3, true, true, false, true, false, false, 0));
+        assert_eq!(GIVEAWAY, (8, 3, false, false, false, false, true, false, 0));
+        // Wave-B variants (Spanish ⭐ / Italian).
+        assert_eq!(SPANISH, (8, 3, true, false, false, false, false, false, 1));
+        assert_eq!(ITALIAN, (8, 3, false, false, false, false, false, true, 2));
     }
 
     #[test]
@@ -860,7 +973,7 @@ mod tests {
 
         // Wrap the hand-built state in a DraughtsWasm (flags mirror `g`) and drive
         // apply_move with ONLY the string — captured squares are reconstructed.
-        let mut w = DraughtsWasm::new(8, 3, 1, 1, 0, 1, 0);
+        let mut w = DraughtsWasm::new(8, 3, 1, 1, 0, 1, 0, 0, 0);
         w.manager = MCTSManager::new(g.clone(), DrCfg, DrEval, UCTPolicy::new(1.4), ());
         assert!(w.apply_move(&mv_str), "the chain string applies");
         let after = w.get_board();
@@ -922,7 +1035,7 @@ mod tests {
 
     #[test]
     fn apply_move_by_string_validates_and_applies() {
-        let mut g = DraughtsWasm::new(8, 3, 0, 0, 0, 0, 0); // American
+        let mut g = DraughtsWasm::new(8, 3, 0, 0, 0, 0, 0, 0, 0); // American
         let first = g.legal_moves().split(',').next().unwrap().to_string();
         assert!(g.apply_move(&first));
         assert!(!g.apply_move("999-998"), "illegal path rejected");
@@ -931,10 +1044,275 @@ mod tests {
     #[test]
     fn ai_plays_american_and_international() {
         for (n, mr, fly, back, max, mid) in [(8u32, 3u32, 0u32, 0u32, 0u32, 0u32), (10, 4, 1, 1, 1, 0)] {
-            let mut g = DraughtsWasm::new(n, mr, fly, back, max, mid, 0);
+            let mut g = DraughtsWasm::new(n, mr, fly, back, max, mid, 0, 0, 0);
             g.playout_n(200);
             let m = g.best_move().expect("AI returns a move");
             assert!(g.apply_move(&m));
         }
+    }
+
+    // ==================================================================== wave-B
+
+    /// Deterministic engine-only self-play: at each ply pick a legal move by a
+    /// seeded RNG index into `gen()`, apply it, record its string. Uses ONLY the
+    /// move generator / apply / terminal (no MCTS), so it is fully reproducible and
+    /// exercises exactly the code paths the new flags touch.
+    fn selfplay(mut g: Draughts, seed: u64, max_plies: usize) -> Vec<String> {
+        use rand::rngs::SmallRng;
+        use rand::{Rng, SeedableRng};
+        let mut rng = SmallRng::seed_from_u64(seed);
+        let mut out = Vec::new();
+        for _ in 0..max_plies {
+            if g.term().is_some() {
+                break;
+            }
+            let moves = g.gen();
+            if moves.is_empty() {
+                break;
+            }
+            let i = rng.gen_range(0..moves.len());
+            out.push(format!("{}", moves[i]));
+            let m = moves[i].clone();
+            g.apply(&m);
+        }
+        out
+    }
+
+    // GOLDEN transcripts recorded from the ORIGINAL 7-arg engine (pre-flag), driven
+    // by `selfplay` at the fixed seeds below. The permanent tests re-run the SAME
+    // deterministic driver on the NEW 9-arg engine with the two new flags 0 and
+    // assert byte-for-byte equality — i.e. the new code changed NOTHING for wave-A.
+    const AMERICAN_GOLDEN: &str = "42-33,17-26,44-35,26-44,51-37,21-28,58-51,8-17,37-30,23-37,53-44,17-26,44-30,14-23,62-53,23-37,51-44,37-51,60-42,10-17,46-37,28-46-60,42-35,26-44,55-46,19-26,33-19,12-26,46-39,5-14,40-33,26-40-58,39-30,14-21,30-12,3-21,56-49,58-40";
+    const INTL_GOLDEN: &str = "67-58,36-45,78-67,45-56,65-47,38-56-78,89-67,34-43,74-65,29-38,67-56,43-54,65-43,32-54,63-45,38-47,58-36,25-47-65,76-54,23-32,72-63,32-43,54-32,21-43,85-74,14-23,61-52,43-61,70-52,16-25,87-76,23-32,94-85,3-14,69-58,30-41,52-30,5-16,98-87,27-36,45-27-5-23-41,12-21,30-12,1-23,81-70,10-21,63-54,23-32,41-23,18-27,87-78,9-18,78-69,27-38,74-63,7-16,83-72,16-27,70-61,38-49,76-67,21-30,54-43,27-38,23-12,30-41,90-81,25-34,43-25,41-52,63-41,18-29,41-32,38-47,58-36,49-58,69-47,29-38,47-29";
+
+    #[test]
+    fn wave_a_bit_identity_american_self_play_transcript() {
+        // American with the two new flags 0 must reproduce the golden transcript
+        // recorded from the original engine — proof the engine is bit-identical.
+        let g = mk(AMERICAN);
+        assert_eq!(selfplay(g, 0xA5A5A5, 80).join(","), AMERICAN_GOLDEN);
+    }
+
+    #[test]
+    fn wave_a_bit_identity_international_self_play_transcript() {
+        // International (flying kings, backward capture, max-capture, mid-chain
+        // pass-through) with the two new flags 0 reproduces its golden transcript.
+        let g = mk(INTERNATIONAL);
+        assert_eq!(selfplay(g, 0x123456, 80).join(","), INTL_GOLDEN);
+    }
+
+    #[test]
+    fn wave_a_bit_identity_all_six_variants_reproduce_across_reruns() {
+        // Broader identity net: every wave-A variant's deterministic transcript is
+        // self-consistent run-to-run (the driver is engine-only, no thread_rng),
+        // and — the load-bearing part — none of the six ever enters the new code
+        // paths: `capture_priority == 0` and `men_no_king == false` for all of them.
+        for p in [AMERICAN, INTERNATIONAL, BRAZILIAN, POOL, RUSSIAN, GIVEAWAY] {
+            assert!(!p.7, "wave-A men_no_king must stay off");
+            assert_eq!(p.8, 0, "wave-A capture_priority must stay 0");
+            let a = selfplay(mk(p), 0xBEEF, 60);
+            let b = selfplay(mk(p), 0xBEEF, 60);
+            assert_eq!(a, b, "engine-only self-play is deterministic");
+        }
+    }
+
+    #[test]
+    fn priority_normalizes_max_capture_on_in_ctor() {
+        // Decision (documented in the ctor): `capture_priority > 0` IMPLIES
+        // `max_capture` — the quality tiebreak is a refinement of maximum-capture,
+        // never a replacement. We pass max_capture = false for both Spanish and
+        // Italian and assert the constructed state has it forced on.
+        let sp = mk(SPANISH); // priority 1, max_capture arg = false
+        assert!(sp.max_capture, "Spanish: priority>0 forces max_capture on");
+        let it = mk(ITALIAN); // priority 2, max_capture arg = false
+        assert!(it.max_capture, "Italian: priority>0 forces max_capture on");
+        // And the DraughtsWasm wrapper mirrors the same normalization.
+        let w = DraughtsWasm::new(8, 3, 1, 0, 0, 0, 0, 0, 1);
+        assert!(w.max_capture);
+    }
+
+    // ---- man_cannot_capture_kings (Italian) ---------------------------------
+    //
+    // Board diagram (8×8, seat 0 = 'x' moving UP toward row 0, seat 1 kings 'O'):
+    //   row 3:  . . . . . . . .     landing squares (3,0) and (3,4) are empty
+    //   row 4:  . O x O . . . .     (4,1)=enemy KING, (4,3)? no — see below
+    //   row 5:  . . x . . . . .     (5,2)=our MAN
+    // Concretely: our man at (5,2); enemy KING at (4,1) with empty landing (3,0).
+    // Under men_no_king the man may NOT jump the king; with a second enemy MAN at
+    // (4,3) landing (3,4) it MAY jump the man. Squares are re-derivable: (5,2),
+    // (4,1), (4,3), (3,0), (3,4) all have (r+c) odd (dark playing squares).
+
+    #[test]
+    fn man_cannot_jump_a_king_but_may_jump_a_man() {
+        // Italian flags: men_no_king on, priority 2 (max_capture normalized on).
+        let mut g = empty_ex(8, false, false, false, false, false, true, 2);
+        set(&mut g, 5, 2, Cell::Man(0)); // our man
+        set(&mut g, 4, 1, Cell::King(1)); // enemy KING — forbidden target
+        set(&mut g, 4, 3, Cell::Man(1)); // enemy MAN — legal target
+        g.current = 0;
+        let moves = g.gen();
+        assert_eq!(moves.len(), 1, "exactly one legal capture (over the man)");
+        assert_eq!(moves[0].captured, vec![rc(&g, 4, 3) as u16], "captured the MAN, not the king");
+        // Contrast: with men_no_king OFF (wave-A American, priority 0) the same man
+        // may jump the king — proof the guard is the only thing suppressing it.
+        let mut us = empty(8, false, false, false, false, false);
+        set(&mut us, 5, 2, Cell::Man(0));
+        set(&mut us, 4, 1, Cell::King(1));
+        us.current = 0;
+        let um = us.gen();
+        assert!(um.iter().any(|m| m.captured == vec![rc(&us, 4, 1) as u16]), "wave-A: man CAN jump a king");
+    }
+
+    #[test]
+    fn man_whose_only_jump_is_a_king_falls_back_to_a_quiet_move() {
+        // The subtle consequence: our man's ONLY geometric jump is over a king, so
+        // under men_no_king it has no capture. No other piece can capture either, so
+        // the capture obligation dissolves and quiet moves become legal.
+        //   row 3:  x . . . . . . .   (3,0) empty landing behind the king
+        //   row 4:  . O . . . . . .   (4,1)=enemy KING
+        //   row 5:  . . x . . . . .   (5,2)=our MAN, quiet step to (4,3) available
+        let mut g = empty_ex(8, false, false, false, false, false, true, 2);
+        set(&mut g, 5, 2, Cell::Man(0));
+        set(&mut g, 4, 1, Cell::King(1));
+        g.current = 0;
+        let moves = g.gen();
+        assert!(moves.iter().all(|m| m.captured.is_empty()), "no capture: the only jump is over a king");
+        assert!(!moves.is_empty(), "quiet moves become legal");
+        // The available quiet move is the man's forward step to (4,3).
+        assert!(moves.iter().any(|m| m.path == vec![rc(&g, 5, 2) as u16, rc(&g, 4, 3) as u16]));
+    }
+
+    #[test]
+    fn king_may_still_jump_a_king_under_men_no_king() {
+        // The guard is scoped to MEN: a KING (mover) jumping a king is unaffected.
+        //   row 3:  x . . . . . . .   (3,0) empty landing
+        //   row 4:  . O . . . . . .   (4,1)=enemy KING
+        //   row 5:  . . X . . . . .   (5,2)=our KING (non-flying, Italian)
+        let mut g = empty_ex(8, false, false, false, false, false, true, 2);
+        set(&mut g, 5, 2, Cell::King(0));
+        set(&mut g, 4, 1, Cell::King(1));
+        g.current = 0;
+        let moves = g.gen();
+        assert_eq!(moves.len(), 1);
+        assert_eq!(moves[0].captured, vec![rc(&g, 4, 1) as u16], "king takes king");
+    }
+
+    // ---- capture_priority tiers, each isolated by a crafted tie ---------------
+
+    #[test]
+    fn spanish_prefers_the_chain_capturing_more_kings() {
+        // Flying king at (4,3) with two count-1 captures on opposite diagonals:
+        // up-left over an enemy KING at (2,1) (land (1,0)); down-right over an enemy
+        // MAN at (5,4) (land (6,5) or (7,6)). All three moves capture exactly one
+        // piece, so Spanish's count tie breaks on kings-captured → keep only the
+        // king-capturing chain.
+        //   row 1:  o . . . . . . .    (1,0) landing
+        //   row 2:  . O . . . . . .    (2,1)=enemy KING
+        //   row 4:  . . . X . . . .    (4,3)=our flying KING
+        //   row 5:  . . . . o . . .    (5,4)=enemy MAN
+        let mut g = empty_ex(8, true, false, false, false, false, false, 1); // Spanish
+        set(&mut g, 4, 3, Cell::King(0));
+        set(&mut g, 2, 1, Cell::King(1));
+        set(&mut g, 5, 4, Cell::Man(1));
+        g.current = 0;
+        let moves = g.gen();
+        assert!(!moves.is_empty());
+        assert!(moves.iter().all(|m| m.captured == vec![rc(&g, 2, 1) as u16]), "Spanish keeps only the king-capture");
+        // Priority 0 (wave-A) keeps BOTH the man- and king-capturing chains.
+        let mut wa = empty_ex(8, true, false, false, false, false, false, 0);
+        set(&mut wa, 4, 3, Cell::King(0));
+        set(&mut wa, 2, 1, Cell::King(1));
+        set(&mut wa, 5, 4, Cell::Man(1));
+        wa.current = 0;
+        let wam = wa.gen();
+        assert!(wam.iter().any(|m| m.captured == vec![rc(&wa, 5, 4) as u16]), "wave-A keeps the man-capture too");
+        assert!(wam.iter().any(|m| m.captured == vec![rc(&wa, 2, 1) as u16]));
+    }
+
+    #[test]
+    fn italian_level2_prefers_capturing_with_a_king() {
+        // Count tie where one capturer is a KING and one is a MAN, both taking a MAN
+        // (kings-captured tie = 0). Italian level 2 ("he must do so with the king")
+        // keeps the king-capturer; Spanish (no such level) keeps BOTH.
+        //   row 3:  x . . . o . . .    (3,0),(3,4) landings
+        //   row 4:  . o . . . o . .    (4,1)=enemy MAN, (4,5)=enemy MAN
+        //   row 5:  . . X . . . x .    (5,2)=our KING, (5,6)=our MAN
+        fn board(priority: u8) -> Draughts {
+            let mut g = empty_ex(8, false, false, false, false, false, false, priority);
+            set(&mut g, 5, 2, Cell::King(0));
+            set(&mut g, 4, 1, Cell::Man(1));
+            set(&mut g, 5, 6, Cell::Man(0));
+            set(&mut g, 4, 5, Cell::Man(1));
+            g.current = 0;
+            g
+        }
+        let it = board(2).gen();
+        assert_eq!(it.len(), 1, "Italian keeps only the king-capturer");
+        assert_eq!(it[0].path[0], rc(&board(2), 5, 2) as u16, "the KING is the capturer");
+        let sp = board(1).gen();
+        assert_eq!(sp.len(), 2, "Spanish has no capturer-is-king level → keeps both");
+    }
+
+    #[test]
+    fn italian_level3_prefers_capturing_more_kings() {
+        // Both capturers are KINGS (level-2 tie); they differ on kings-captured: one
+        // takes an enemy KING, the other an enemy MAN. Italian level 3 keeps the
+        // king-taker.
+        //   row 4:  . O . . . o . .    (4,1)=enemy KING, (4,5)=enemy MAN
+        //   row 5:  . . X . . . X .    (5,2),(5,6)=our KINGS
+        let mut g = empty_ex(8, false, false, false, false, false, false, 2);
+        set(&mut g, 5, 2, Cell::King(0));
+        set(&mut g, 4, 1, Cell::King(1)); // king target
+        set(&mut g, 5, 6, Cell::King(0));
+        set(&mut g, 4, 5, Cell::Man(1)); // man target
+        g.current = 0;
+        let moves = g.gen();
+        assert_eq!(moves.len(), 1);
+        assert_eq!(moves[0].captured, vec![rc(&g, 4, 1) as u16], "kept the king-capturing chain");
+    }
+
+    #[test]
+    fn italian_level4_prefers_capturing_a_king_earliest() {
+        // Everything above ties: two count-2 chains, each by a KING, each taking
+        // exactly {1 king + 1 man}. They differ only in ORDER — chain X jumps the
+        // king FIRST, chain Y jumps the man first then the king. Italian level 4
+        // ("capture wherever the king occurs first") keeps chain X.
+        //   Chain X: (5,2) → over KING(4,1) → (3,0) → over MAN(2,1) → (1,2)
+        //   Chain Y: (5,6) → over MAN(4,5)  → (3,4) → over KING(2,5) → (1,6)
+        let mut g = empty_ex(8, false, false, false, false, false, false, 2);
+        set(&mut g, 5, 2, Cell::King(0));
+        set(&mut g, 4, 1, Cell::King(1));
+        set(&mut g, 2, 1, Cell::Man(1));
+        set(&mut g, 5, 6, Cell::King(0));
+        set(&mut g, 4, 5, Cell::Man(1));
+        set(&mut g, 2, 5, Cell::King(1));
+        g.current = 0;
+        let moves = g.gen();
+        assert_eq!(moves.len(), 1, "level-4 tiebreak leaves exactly one chain");
+        let m = &moves[0];
+        assert_eq!(m.captured.len(), 2, "a genuine 2-capture chain");
+        assert_eq!(m.path[0], rc(&g, 5, 2) as u16, "chain X is the king-first chain");
+        assert!(matches!(g.grid[m.captured[0] as usize], Cell::King(_)), "its FIRST capture is the king");
+        assert_eq!(m.captured[0], rc(&g, 4, 1) as u16);
+    }
+
+    #[test]
+    fn priority_still_forces_the_longest_chain_first() {
+        // max_capture-interaction: the quality tiebreak sits ON TOP of the count
+        // filter, never overriding it. A 2-chain capturing 0 kings must beat a
+        // 1-chain capturing a king (count dominates), even under Italian.
+        //   (5,2) → over MAN(4,1) → (3,0) → over MAN(2,1) → (1,2)   [count 2, 0 kings]
+        //   separate KING capturer (5,6) → over KING(4,5) → (3,4)  [count 1, 1 king]
+        let mut g = empty_ex(8, false, false, false, false, false, false, 2);
+        set(&mut g, 5, 2, Cell::King(0));
+        set(&mut g, 4, 1, Cell::Man(1));
+        set(&mut g, 2, 1, Cell::Man(1));
+        set(&mut g, 5, 6, Cell::King(0));
+        set(&mut g, 4, 5, Cell::King(1));
+        g.current = 0;
+        let moves = g.gen();
+        assert_eq!(moves.len(), 1, "count filter runs first");
+        assert_eq!(moves[0].captured.len(), 2, "the 2-chain wins on count before quality");
+        assert_eq!(moves[0].path[0], rc(&g, 5, 2) as u16);
     }
 }

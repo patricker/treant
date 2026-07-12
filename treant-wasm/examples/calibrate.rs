@@ -157,13 +157,15 @@ fn games() -> Vec<Game> {
         // tiles. All six are registered so the audit fuzzer exercises every code
         // path (flying kings, backward capture, max-capture filtering, mid-chain
         // promotion, misère terminal) and each tile gets its own difficulty ladder.
-        // Ctor: (size, men_rows, flying, men_back, max_capture, promote_mid, misere).
-        g("draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 0, 0, 0, 0, 0)) as Box<dyn Eng>),
-        g("international-draughts", LIGHT, || Box::new(DraughtsWasm::new(10, 4, 1, 1, 1, 0, 0)) as Box<dyn Eng>),
-        g("brazilian-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 1, 0, 0)) as Box<dyn Eng>),
-        g("pool-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 0, 0)) as Box<dyn Eng>),
-        g("russian-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 1, 0)) as Box<dyn Eng>),
-        g("giveaway-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 0, 0, 0, 0, 1)) as Box<dyn Eng>),
+        // Ctor: (size, men_rows, flying, men_back, max_capture, promote_mid, misere,
+        // men_cannot_capture_kings, capture_priority). The last two are the wave-B
+        // flags (Spanish/Italian); all six wave-A tiles carry them as 0, 0.
+        g("draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 0, 0, 0, 0, 0, 0, 0)) as Box<dyn Eng>),
+        g("international-draughts", LIGHT, || Box::new(DraughtsWasm::new(10, 4, 1, 1, 1, 0, 0, 0, 0)) as Box<dyn Eng>),
+        g("brazilian-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 1, 0, 0, 0, 0)) as Box<dyn Eng>),
+        g("pool-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 0, 0, 0, 0)) as Box<dyn Eng>),
+        g("russian-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 1, 0, 0, 0)) as Box<dyn Eng>),
+        g("giveaway-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 0, 0, 0, 0, 1, 0, 0)) as Box<dyn Eng>),
         // Hidden-info: registered so the audit fuzzer (Pass 1) exercises the
         // consistent-set deducer end-to-end. Its difficulty is HAND-SET, not
         // win-rate-calibrated — strict alternation gives seat 0 a structural
