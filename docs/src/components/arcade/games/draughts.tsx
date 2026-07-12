@@ -66,6 +66,29 @@ function DraughtsBoard({ board, params, interactive, legalMoves, lastCells, play
   const nextCells = new Set<number>();
   for (const mv of matching) if (mv.length > path.length) nextCells.add(mv[path.length]);
 
+  // Forced-capture affordance. Captures are compulsory, so when a jump exists the
+  // engine offers ONLY jumping pieces — every other piece the mover owns is
+  // silently disabled. Detect that state so the tappable pieces can be ringed and
+  // the caption can say "you must capture". A move is a capture if its path has an
+  // extra hop (>1 landing) OR its single step jumps more than one diagonal row
+  // (a man-jump lands 2 away, a flying king further); a plain slide moves 1 row.
+  const isCapture = (mv: number[]) =>
+    mv.length >= 3 || (mv.length === 2 && Math.abs(Math.floor(mv[0] / n) - Math.floor(mv[1] / n)) >= 2);
+  const anyCapture = moves.some(isCapture);
+  // Count the mover's pieces (seat read off any movable piece) to know whether the
+  // legal-to-move set is a strict subset — i.e. force-capture is hiding pieces.
+  let ownedCount = 0;
+  if (starts.size) {
+    const firstCh = cells[moves[0][0]];
+    const moverSeat0 = firstCh === 'x' || firstCh === 'X';
+    for (const ch of cells) {
+      const s0 = ch === 'x' || ch === 'X';
+      const s1 = ch === 'o' || ch === 'O';
+      if ((moverSeat0 && s0) || (!moverSeat0 && s1)) ownedCount++;
+    }
+  }
+  const forced = interactive && anyCapture && starts.size > 0 && starts.size < ownedCount;
+
   const tap = (i: number) => {
     if (!interactive) return;
     if (path.length === 0) {
@@ -91,7 +114,9 @@ function DraughtsBoard({ board, params, interactive, legalMoves, lastCells, play
 
   const caption =
     path.length === 0
-      ? t('Tap a piece')
+      ? forced
+        ? t('You must capture — tap a highlighted piece')
+        : t('Tap a piece')
       : path.length === 1
         ? t('Tap where to move')
         : t('Keep jumping — tap the next square');
@@ -121,11 +146,15 @@ function DraughtsBoard({ board, params, interactive, legalMoves, lastCells, play
           const isNext = interactive && nextCells.has(i);
           const isTrail = inChain.includes(i);
           const tappable = interactive && (path.length === 0 ? starts.has(i) : isNext || i === path[0]);
+          // Ring the pieces that can still move only while nothing is selected yet
+          // (path empty), so this affordance never overlaps the selected/target rings.
+          const isForced = forced && path.length === 0 && starts.has(i);
           const cls = [
             styles.draughtsCell,
             dark ? styles.draughtsDark : styles.draughtsLight,
             isSel ? styles.draughtsSel : '',
             isNext ? styles.draughtsTarget : '',
+            isForced ? styles.draughtsForced : '',
             last.has(i) ? styles.lastCell : '',
           ]
             .filter(Boolean)
@@ -218,11 +247,11 @@ export const draughts: GameDefinition = {
   knobs: [
     { key: 'size', label: 'Board size', min: 8, max: 12, step: 2 },
     { key: 'men_rows', label: 'Rows of men', min: 2, max: 4, step: 1 },
-    { key: 'flying', label: 'Flying kings', min: 0, max: 1, step: 1 },
-    { key: 'men_back', label: 'Men jump back', min: 0, max: 1, step: 1 },
-    { key: 'max_capture', label: 'Force max capture', min: 0, max: 1, step: 1 },
-    { key: 'promote_mid', label: 'Crown mid-jump', min: 0, max: 1, step: 1 },
-    { key: 'misere', label: 'Giveaway (misère)', min: 0, max: 1, step: 1 },
+    { key: 'flying', label: 'Flying kings', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'] },
+    { key: 'men_back', label: 'Men jump back', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'] },
+    { key: 'max_capture', label: 'Force max capture', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'] },
+    { key: 'promote_mid', label: 'Crown mid-jump', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'] },
+    { key: 'misere', label: 'Giveaway (misère)', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'] },
     { key: 'men_no_king', label: 'Men can\'t jump kings', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'], help: 'Italian rule: a plain man may never capture a king.' },
     { key: 'capture_priority', label: 'Capture priority', min: 0, max: 2, step: 1, valueLabels: ['None', 'Most kings', 'Italian rules'], help: 'Tie-break between longest captures. Anything but None forces maximum-capture on.' },
   ],

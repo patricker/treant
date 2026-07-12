@@ -154,7 +154,7 @@ export const nim: GameDefinition = {
     { key: 'stones', label: 'Stones', min: 3, max: 60, step: 1 },
     { key: 'heaps', label: 'Heaps', min: 1, max: 8, step: 1 },
     { key: 'maxTake', label: 'Max take (0 = any)', min: 0, max: 10, step: 1 },
-    { key: 'misere', label: 'Misère', min: 0, max: 1, step: 1 },
+    { key: 'misere', label: 'Misère', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'] },
   ],
   create: makeHandle,
   Board: NimBoard,
