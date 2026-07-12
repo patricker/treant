@@ -37,14 +37,15 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 - This is a practical read, **not legal advice** — do a quick trademark search
   before committing to a public name.
 
-## 3. Already shipped — 57 games (47 visible tiles + 10 family children)
+## 3. Already shipped — 67 games (50 visible tiles + 17 family children)
 
-The launcher shows **46 tiles**; 10 named variants ride shared engines as
+The launcher shows **50 tiles**; 17 named variants ride shared engines as
 **family children** (`variantOf`), expanding inline under a parent tile's
 "+N ▾" chip rather than getting their own shelf slot: Pop Out & Cylinder Four
 (← Connect Four) · Two-Dice Pig & Big Pig (← Pig) · Anti-Reversi (← Reversi) ·
 Lasker Morris (← Nine Men's Morris) · Joust & Strand (← Trails) · Cram
-(← Domineering) · Snort (← Col). 46 visible + 10 children = **56 games**.
+(← Domineering) · Snort (← Col) · International, Brazilian, Russian, Pool,
+Giveaway, Spanish & Italian (← Draughts). 50 visible + 17 children = **67 games**.
 
 **Wave of 2026-07-02:** Pinch-Five (Ninuki-renju: five-in-a-row or capture five
 pairs, 2-4p) · Y (three-sided connection) · Bagh-Chal (tigers vs goats) · Climb (push-your-luck dice mountain) · Nine Men's Morris (place/slide/mill, men + flying knobs) ·

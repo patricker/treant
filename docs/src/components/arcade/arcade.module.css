@@ -1260,7 +1260,7 @@
 .surCapTarget {
   outline: 3px solid var(--arc-win);
   outline-offset: 2px;
-  box-shadow: 0 0 8px 2px rgba(255, 209, 71, 0.6);
+  box-shadow: 0 0 8px 2px color-mix(in srgb, var(--arc-win) 60%, transparent);
 }
 /* Capture animation overlay: same viewBox as the board, floats above the points. */
 .surOverlay {

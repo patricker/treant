@@ -185,14 +185,23 @@ function SurakartaBoard({ board, interactive, legalMoves, lastCells, playerNames
   const [sel, setSel] = useState<number | null>(null);
   const [anim, setAnim] = useState<CaptureAnim | null>(null);
   const seenSeq = useRef(0);
+  const prevCount = useRef(Number.POSITIVE_INFINITY);
   const timer = useRef<number | undefined>(undefined);
 
   useEffect(() => setSel(null), [board]); // drop stale selection after any move
 
   // Pick up a capture stashed by the handle when the board string changes.
+  // Only a real capture strictly REDUCES the piece count; an undo replays the
+  // kept move prefix (re-arming module-scope `pendingCapture` with a fresh seq)
+  // and lands on an earlier, fuller board — piece count jumps back UP. Gating on
+  // "count went down" suppresses that phantom fly without touching the session.
   useEffect(() => {
+    let count = 0;
+    for (let i = 0; i < board.length; i++) if (board[i] !== ' ') count++;
+    const captured = count < prevCount.current; // a piece just vanished
+    prevCount.current = count;
     const pc = pendingCapture;
-    if (pc && pc.seq > seenSeq.current && board[pc.to] === pc.mover) {
+    if (captured && pc && pc.seq > seenSeq.current && board[pc.to] === pc.mover) {
       seenSeq.current = pc.seq;
       setAnim(pc);
       window.clearTimeout(timer.current);
@@ -323,7 +332,11 @@ export const surakarta: GameDefinition = {
   // Calibrated by the self-play harness (treant-wasm/examples/calibrate.rs):
   // monotone ladder, still climbing at the top, so Hard is the max rung.
   difficulty: {
-    easy: { playouts: 8, topK: 6, temp: 3 },
+    // Easy promoted p8→p30 (the next measured rung: STD ladder {30, top_k 5,
+    // temp 2}, 18% field on the 6-3 matrix). p8/t3 empirically never captured in
+    // self-play — a guaranteed 40-ply pacifist draw that hid the signature arc
+    // capture. p30 still sits clearly below Medium (p100) on the monotone ladder.
+    easy: { playouts: 30, topK: 5, temp: 2 },
     medium: { playouts: 100, topK: 4, temp: 1 },
     hard: { playouts: 2000, topK: 1, temp: 0 },
   },
