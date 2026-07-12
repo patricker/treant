@@ -647,7 +647,6 @@
   "Dinghies (1)": "Botinhos (1)",
   "Dinghy Swarm": "Enxame de botes",
   "Enemy waters — tap to fire": "Águas inimigas — toque para atirar",
-  "Fire here": "Atirar aqui",
   "Fleet ready — lock it in!": "Frota pronta — confirme!",
   "Hide your fleet, then hunt the enemy’s. Call your shots on the open sea — a hit, a miss, or a ship going down — and sink every last one before they sink you.": "Esconda sua frota e cace a do inimigo. Anuncie seus tiros em mar aberto — um acerto, um erro ou um navio afundando — e afunde todos antes que afundem você.",
   "hit": "acerto",
@@ -667,9 +666,13 @@
   "True Salvo": "Salvo de verdade",
   "Volley — {n} shot(s) left": "Salva — {n} tiro(s) restante(s)",
   "Warships (4)": "Navios de guerra (4)",
-  "Your fire: {glyphs}": "Seu tiro: {glyphs}",
-  "Your fire: {glyphs} — you sank a {name}!": "Seu tiro: {glyphs} — você afundou um {name}!",
   "Your fleet": "Sua frota",
   "Your ship": "Seu navio",
-  "Your waters — place your fleet": "Suas águas — posicione sua frota"
+  "Your waters — place your fleet": "Suas águas — posicione sua frota",
+  "🎯 Aiming {coord} — tap again to fire": "🎯 Mirando {coord} — toque de novo para atirar",
+  "💡 Salvo volleys = fewer phone passes": "💡 Salvas = menos passadas do celular",
+  "Aim {coord}": "Mirar {coord}",
+  "Aiming {coord} — tap again to fire": "Mirando {coord} — toque de novo para atirar",
+  "Last volley: {glyphs}": "Última salva: {glyphs}",
+  "Last volley: {glyphs} — sank a {name}!": "Última salva: {glyphs} — {name} afundado!"
 }

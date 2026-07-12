@@ -338,6 +338,14 @@ function PlacementView({ st, interactive, onMove }: { st: Parsed; interactive: b
           : t('Placing fleet…')}
       </div>
 
+      {/* Pass-and-play cadence tip. Shown only when salvo mode is selected and
+          the view is non-interactive — i.e. in the setup-screen board preview
+          (a human placing their own fleet is `interactive` and won't see it),
+          so this is guidance at choose-your-board time, not mid-game clutter. */}
+      {st.salvo && !interactive && (
+        <div className={styles.salvoHint}>{t('💡 Salvo volleys = fewer phone passes')}</div>
+      )}
+
       <div className={styles.salvoTray}>
         {lengths.map((L) => {
           const slots = fleet.map((l, i) => (l === L ? i : -1)).filter((i) => i >= 0);
@@ -404,12 +412,22 @@ function PlacementView({ st, interactive, onMove }: { st: Parsed; interactive: b
   );
 }
 
+// Human-readable cell label ("C4"): column letter + 1-indexed row. Used by the
+// tap-to-aim confirm affordance so the highlighted target has a spoken name.
+function coordLabel(cell: number, size: number): string {
+  const r = Math.floor(cell / size);
+  const c = cell % size;
+  return `${String.fromCharCode(65 + c)}${r + 1}`;
+}
+
 // ─────────────────────────── Fire / over view ─────────────────────────────
 function FireView({
+  board,
   st,
   interactive,
   onMove,
 }: {
+  board: string;
   st: Parsed;
   interactive: boolean;
   onMove: (m: string) => void;
@@ -418,6 +436,16 @@ function FireView({
   const { size } = st;
   const over = st.phase === 'over';
   const [view, setView] = useState<'their' | 'yours'>('their');
+  // Tap-to-aim / tap-again-to-fire. On a noUndo game with sub-40px cells an
+  // immediate-fire tap is an irreversible misfire — so the FIRST tap only aims
+  // (highlights the cell + names its coordinate); a SECOND tap on the SAME cell
+  // fires; tapping a different cell moves the aim. Applied at EVERY board size:
+  // one extra tap is cheap and it removes the whole class of fat-finger misfires.
+  // The aim MUST reset whenever the board string changes — that covers firing a
+  // shot, the turn passing, and (critically) the pass-and-play handoff, so no
+  // stale crosshair leaks into the next player's view.
+  const [aim, setAim] = useState<number | null>(null);
+  useEffect(() => setAim(null), [board]);
 
   // Their waters: my shot map + any opponent ships I've sunk (revealed), plus
   // the full opponent fleet at game over.
@@ -445,6 +473,8 @@ function FireView({
         const shot = myShotAt.get(cell);
         const wreck = sunkCells.has(cell);
         const revealed = oppShipCells.has(cell) && !shot;
+        const canFire = interactive && !shot;
+        const aimed = canFire && aim === cell;
         let cls = styles.salvoCell;
         let glyph = '';
         if (wreck) {
@@ -456,17 +486,28 @@ function FireView({
         } else if (shot?.res === 'm') {
           cls += ` ${styles.salvoMiss}`;
           glyph = '·';
+        } else if (aimed) {
+          cls += ` ${styles.salvoAim}`;
+          glyph = '⌖';
         } else if (revealed) {
           cls += ` ${styles.salvoReveal}`;
         }
-        const canFire = interactive && !shot;
         return (
           <button
             key={cell}
             className={cls}
             disabled={!canFire}
-            onClick={() => canFire && onMove(`s:${cell}`)}
-            aria-label={shot ? (shot.res === 'm' ? t('Miss') : t('Hit')) : t('Fire here')}
+            // First tap aims; a second tap on the same cell fires.
+            onClick={() => canFire && (aim === cell ? onMove(`s:${cell}`) : setAim(cell))}
+            aria-label={
+              shot
+                ? shot.res === 'm'
+                  ? t('Miss')
+                  : t('Hit')
+                : aimed
+                  ? t('Aiming {coord} — tap again to fire', { coord: coordLabel(cell, size) })
+                  : t('Aim {coord}', { coord: coordLabel(cell, size) })
+            }
           >
             <span aria-hidden="true">{glyph}</span>
           </button>
@@ -522,6 +563,11 @@ function FireView({
       {interactive && !st.salvo && !over && (
         <div className={styles.salvoCounter}>{t('Take your shot')}</div>
       )}
+      {interactive && !over && view === 'their' && aim != null && (
+        <div className={styles.salvoAimLine}>
+          {t('🎯 Aiming {coord} — tap again to fire', { coord: coordLabel(aim, size) })}
+        </div>
+      )}
 
       {view === 'their' ? theirGrid : yourGrid}
 
@@ -537,17 +583,23 @@ function FireView({
 function SalvoBoard({ board, interactive, onMove }: BoardProps) {
   const st = parseBoard(board);
   if (st.phase === 'place') return <PlacementView st={st} interactive={interactive} onMove={onMove} />;
-  return <FireView st={st} interactive={interactive} onMove={onMove} />;
+  return <FireView board={board} st={st} interactive={interactive} onMove={onMove} />;
 }
 
 function formatHandoffSummary(raw: string, t: I18n['t']): string {
   const shots = raw.split(';').filter(Boolean);
   const glyphs = shots.map((r) => (r === 'm' ? '·' : r[0] === 'k' ? '☠' : '💥')).join(' ');
   const sunk = shots.filter((r) => r[0] === 'k').map((r) => Number(r.slice(1)));
+  // Neutral "Last volley" label (not "Your fire"): this line sits atop the
+  // handoff blackout, which the INCOMING player also reads — so it must not
+  // address them as the shooter. The outgoing seat's name isn't available at
+  // this seam (formatHandoffSummary receives only the raw summary + t), and
+  // plumbing it through the shared GamePlay blackout for a cosmetic label isn't
+  // worth it, so a shooter-agnostic label is the right call.
   if (sunk.length > 0) {
-    return t('Your fire: {glyphs} — you sank a {name}!', { glyphs, name: t(shipName(sunk[sunk.length - 1])) });
+    return t('Last volley: {glyphs} — sank a {name}!', { glyphs, name: t(shipName(sunk[sunk.length - 1])) });
   }
-  return t('Your fire: {glyphs}', { glyphs });
+  return t('Last volley: {glyphs}', { glyphs });
 }
 
 // Classic fleet counts s1..s5 = 0,1,2,1,1 → lengths {5,4,3,3,2}, 17 cells — the
@@ -577,7 +629,10 @@ export const salvo: GameDefinition = {
   presets: [
     { label: 'Classic', emoji: '⭐', params: CLASSIC },
     { label: 'Quick', emoji: '⚡', params: { numPlayers: 2, size: 6, s1: 0, s2: 2, s3: 1, s4: 0, s5: 0, touch: 1, salvo: 0 } },
-    { label: 'Dinghy Swarm', emoji: '🤯', params: { numPlayers: 2, size: 12, s1: 6, s2: 0, s3: 0, s4: 0, s5: 0, touch: 1, salvo: 0 } },
+    // Salvo ON: 6 one-cell dinghies on 12×12 is ~72 blind shots one-at-a-time —
+    // a slog. Volleys (6 shots/turn, shrinking as dinghies sink) turn the blind
+    // hunt fast and silly; that swingy volley IS the gag.
+    { label: 'Dinghy Swarm', emoji: '🤯', params: { numPlayers: 2, size: 12, s1: 6, s2: 0, s3: 0, s4: 0, s5: 0, touch: 1, salvo: 1 } },
     { label: 'True Salvo', emoji: '🎩', params: { numPlayers: 2, size: 10, s1: 0, s2: 1, s3: 2, s4: 1, s5: 1, touch: 1, salvo: 1 } },
   ],
   // Five fleet count-knobs, one per ship length, labelled by a friendly

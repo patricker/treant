@@ -2784,6 +2784,32 @@
 .salvoReveal {
   box-shadow: inset 0 0 0 2px var(--arc-p2);
 }
+/* Tap-to-aim crosshair: a pulsing gold ring on the pending target cell (the
+   house accent used across the salvo tile), consistent with the dark board. */
+.salvoAim {
+  background: color-mix(in srgb, var(--arc-p2) 24%, var(--arc-soft));
+  box-shadow: inset 0 0 0 2px var(--arc-p2);
+  color: var(--arc-p2);
+  animation: salvoAimKf 1s ease-in-out infinite;
+}
+@keyframes salvoAimKf {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.salvoAimLine {
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--arc-p2);
+}
+/* Setup-screen cadence tip (salvo mode). */
+.salvoHint {
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--arc-ink);
+  opacity: 0.75;
+  line-height: 1.35;
+}
 .salvoControls {
   display: flex;
   gap: 8px;

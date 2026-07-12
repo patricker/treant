@@ -647,7 +647,6 @@
   "Dinghies (1)": "Lanchas (1)",
   "Dinghy Swarm": "Enjambre de lanchas",
   "Enemy waters — tap to fire": "Aguas enemigas: toca para disparar",
-  "Fire here": "Disparar aquí",
   "Fleet ready — lock it in!": "¡Flota lista, confírmala!",
   "Hide your fleet, then hunt the enemy’s. Call your shots on the open sea — a hit, a miss, or a ship going down — and sink every last one before they sink you.": "Esconde tu flota y caza la del enemigo. Canta tus disparos en alta mar —un impacto, un fallo o un barco hundiéndose— y húndelos todos antes de que te hundan a ti.",
   "hit": "impacto",
@@ -667,9 +666,13 @@
   "True Salvo": "Salvo auténtico",
   "Volley — {n} shot(s) left": "Andanada: quedan {n} disparo(s)",
   "Warships (4)": "Buques de guerra (4)",
-  "Your fire: {glyphs}": "Tu fuego: {glyphs}",
-  "Your fire: {glyphs} — you sank a {name}!": "Tu fuego: {glyphs} — ¡hundiste un {name}!",
   "Your fleet": "Tu flota",
   "Your ship": "Tu barco",
-  "Your waters — place your fleet": "Tus aguas: coloca tu flota"
+  "Your waters — place your fleet": "Tus aguas: coloca tu flota",
+  "🎯 Aiming {coord} — tap again to fire": "🎯 Apuntando a {coord} — toca otra vez para disparar",
+  "💡 Salvo volleys = fewer phone passes": "💡 Andanadas = menos pases del móvil",
+  "Aim {coord}": "Apuntar a {coord}",
+  "Aiming {coord} — tap again to fire": "Apuntando a {coord} — toca otra vez para disparar",
+  "Last volley: {glyphs}": "Última andanada: {glyphs}",
+  "Last volley: {glyphs} — sank a {name}!": "Última andanada: {glyphs} — ¡{name} hundido!"
 }

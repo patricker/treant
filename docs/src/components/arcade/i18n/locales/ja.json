@@ -647,7 +647,6 @@
   "Dinghies (1)": "ディンギー (1)",
   "Dinghy Swarm": "ディンギーの群れ",
   "Enemy waters — tap to fire": "敵の海域 — タップして砲撃",
-  "Fire here": "ここに砲撃",
   "Fleet ready — lock it in!": "艦隊の準備完了 — 確定！",
   "Hide your fleet, then hunt the enemy’s. Call your shots on the open sea — a hit, a miss, or a ship going down — and sink every last one before they sink you.": "自分の艦隊を隠し、敵の艦隊を狩れ。大海原で砲撃を宣言し — 命中、外れ、または撃沈 — 沈められる前に一隻残らず沈めよう。",
   "hit": "命中",
@@ -667,9 +666,13 @@
   "True Salvo": "本格Salvo",
   "Volley — {n} shot(s) left": "一斉射撃 — 残り{n}発",
   "Warships (4)": "軍艦 (4)",
-  "Your fire: {glyphs}": "あなたの砲撃：{glyphs}",
-  "Your fire: {glyphs} — you sank a {name}!": "あなたの砲撃：{glyphs} — {name}を撃沈！",
   "Your fleet": "あなたの艦隊",
   "Your ship": "あなたの艦",
-  "Your waters — place your fleet": "あなたの海域 — 艦隊を配置"
+  "Your waters — place your fleet": "あなたの海域 — 艦隊を配置",
+  "🎯 Aiming {coord} — tap again to fire": "🎯 {coord} を狙い中 — もう一度タップで発射",
+  "💡 Salvo volleys = fewer phone passes": "💡 一斉射撃ならスマホの受け渡しが減る",
+  "Aim {coord}": "{coord} を狙う",
+  "Aiming {coord} — tap again to fire": "{coord} を狙い中 — もう一度タップで発射",
+  "Last volley: {glyphs}": "直前の斉射: {glyphs}",
+  "Last volley: {glyphs} — sank a {name}!": "直前の斉射: {glyphs} — {name}を撃沈!"
 }

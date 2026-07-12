@@ -647,7 +647,6 @@
   "Dinghies (1)": "舢板 (1)",
   "Dinghy Swarm": "舢板群",
   "Enemy waters — tap to fire": "敌方海域 — 点击开火",
-  "Fire here": "在此开火",
   "Fleet ready — lock it in!": "舰队就绪 — 锁定！",
   "Hide your fleet, then hunt the enemy’s. Call your shots on the open sea — a hit, a miss, or a ship going down — and sink every last one before they sink you.": "藏好你的舰队，再去猎杀敌人的。在大海上报出你的射击——命中、未中，或击沉一艘船——赶在被击沉前把敌舰一网打尽。",
   "hit": "命中",
@@ -667,9 +666,13 @@
   "True Salvo": "真正齐射",
   "Volley — {n} shot(s) left": "齐射 — 剩余 {n} 发",
   "Warships (4)": "战舰 (4)",
-  "Your fire: {glyphs}": "你的射击：{glyphs}",
-  "Your fire: {glyphs} — you sank a {name}!": "你的射击：{glyphs} — 你击沉了一艘{name}！",
   "Your fleet": "你的舰队",
   "Your ship": "你的船",
-  "Your waters — place your fleet": "你的海域 — 布置你的舰队"
+  "Your waters — place your fleet": "你的海域 — 布置你的舰队",
+  "🎯 Aiming {coord} — tap again to fire": "🎯 瞄准 {coord} — 再次点击开火",
+  "💡 Salvo volleys = fewer phone passes": "💡 齐射 = 更少的手机传递",
+  "Aim {coord}": "瞄准 {coord}",
+  "Aiming {coord} — tap again to fire": "瞄准 {coord} — 再次点击开火",
+  "Last volley: {glyphs}": "上一轮齐射: {glyphs}",
+  "Last volley: {glyphs} — sank a {name}!": "上一轮齐射: {glyphs} — 击沉了{name}!"
 }
