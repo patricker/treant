@@ -37,7 +37,7 @@ plus **solo** for single-player games. Every game is a `GameDefinition`
 - This is a practical read, **not legal advice** — do a quick trademark search
   before committing to a public name.
 
-## 3. Already shipped — 56 games (46 visible tiles + 10 family children)
+## 3. Already shipped — 57 games (47 visible tiles + 10 family children)
 
 The launcher shows **46 tiles**; 10 named variants ride shared engines as
 **family children** (`variantOf`), expanding inline under a parent tile's
@@ -290,7 +290,7 @@ Amazons · Hedge (Quoridor) · Tablut · Fanorona · Havannah · Lasca · Halma 
 > From a targeted web pass (traditional games encyclopedias, CGT literature,
 > pen-and-paper classics). Two-player, perfect-info, PD-safe unless noted.
 
-- **Surakarta** · 2p · ★★★ · 🟡 · 💪 · *new* — 6×6, 12 pieces each; step any
+- **Surakarta** · 2p · ★★★ · 🟡 · 💪 · *new* — ✅ **SHIPPED** — 6×6, 12 pieces each; step any
   direction, but CAPTURE by travelling around one of the eight corner **loops**
   and landing on an enemy. A capture mechanic "not known in any other recorded
   game" — the arced board is a visual showpiece. Traditional Indonesian (PD).
