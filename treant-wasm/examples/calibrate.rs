@@ -59,7 +59,7 @@ eng!(
     TreblecrossWasm, EuclidWasm, Connect6Wasm, SquavaWasm, NotaktoWasm, SquareUpWasm, OrderChaosWasm,
     PinchFiveWasm, NineMorrisWasm, QuadlineWasm, OwareWasm, YGameWasm, BaghchalWasm, ClimbWasm,
     WorldThreesWasm, GaleWasm, SlimetrailWasm, ToadsFrogsWasm, PawnDuelWasm, StrandWasm,
-    LenChoaWasm, DraughtsWasm, BullsCowsWasm, SalvoWasm,
+    LenChoaWasm, DraughtsWasm, BullsCowsWasm, SalvoWasm, SurakartaWasm,
 );
 
 // Ladders, weak -> strong. STD for most games; LIGHT caps playouts for the
@@ -185,6 +185,9 @@ fn games() -> Vec<Game> {
         // Bulls & Cows / nim precedent). Placement uses a fixed per-game seed, so
         // the fuzzer's self-play is deterministic. Classic 10×10 fleet, no salvo.
         g("salvo", STD, || Box::new(SalvoWasm::new(10, 0, 1, 2, 1, 1, 1, 0)) as Box<dyn Eng>),
+        // Surakarta: 6×6 arc-capture game, perfect-info & deterministic, so the
+        // self-play ladder measures cleanly. Material eval + UCT (no solver).
+        g("surakarta", STD, || Box::new(SurakartaWasm::new()) as Box<dyn Eng>),
     ]
 }
 
