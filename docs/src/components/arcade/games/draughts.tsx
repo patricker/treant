@@ -189,8 +189,10 @@ function draughtsFlavor(misere: boolean): GameDefinition['resultFlavor'] {
 // non-flying kings. This is the "go crazy" surface — it exposes EVERY rule flag
 // so a curious player can build any draughts they like (flip on flying kings,
 // backward jumps, max-capture, mid-chain crowning, the giveaway win condition,
-// or grow the board to 10×10 / 12×12). Ctor: (size, men_rows, flying, men_back,
-// max_capture, promote_mid, misere).
+// grow the board to 10×10 / 12×12, or — the wave-B additions — forbid men from
+// jumping kings and pick a Spanish/Italian capture priority). Ctor: (size,
+// men_rows, flying, men_back, max_capture, promote_mid, misere,
+// men_cannot_capture_kings, capture_priority).
 export const draughts: GameDefinition = {
   id: 'draughts',
   name: 'Draughts',
@@ -206,7 +208,7 @@ export const draughts: GameDefinition = {
     medium: { playouts: 100, topK: 4, temp: 1 },
     hard: { playouts: 2000, topK: 1, temp: 0 },
   },
-  defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 0, promote_mid: 0, misere: 0 },
+  defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 0, promote_mid: 0, misere: 0, men_no_king: 0, capture_priority: 0 },
   presets: [
     { label: 'American ⭐ 8×8', emoji: '⭐', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 0, promote_mid: 0, misere: 0 } },
     { label: 'Flying Kings', emoji: '👑', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 0, promote_mid: 0, misere: 0 } },
@@ -221,9 +223,11 @@ export const draughts: GameDefinition = {
     { key: 'max_capture', label: 'Force max capture', min: 0, max: 1, step: 1 },
     { key: 'promote_mid', label: 'Crown mid-jump', min: 0, max: 1, step: 1 },
     { key: 'misere', label: 'Giveaway (misère)', min: 0, max: 1, step: 1 },
+    { key: 'men_no_king', label: 'Men can\'t jump kings', min: 0, max: 1, step: 1, valueLabels: ['No', 'Yes'], help: 'Italian rule: a plain man may never capture a king.' },
+    { key: 'capture_priority', label: 'Capture priority', min: 0, max: 2, step: 1, valueLabels: ['None', 'Most kings', 'Italian rules'], help: 'Tie-break between longest captures. Anything but None forces maximum-capture on.' },
   ],
   create: (wasm, p) =>
-    moveHandle(new wasm.DraughtsWasm(p.size, p.men_rows, p.flying, p.men_back, p.max_capture, p.promote_mid, p.misere)),
+    moveHandle(new wasm.DraughtsWasm(p.size, p.men_rows, p.flying, p.men_back, p.max_capture, p.promote_mid, p.misere, p.men_no_king ?? 0, p.capture_priority ?? 0)),
   Board: DraughtsBoard,
   playerLabels: ['Red', 'Gold'],
   resultFlavor: draughtsFlavor(false),
@@ -251,7 +255,7 @@ export const internationalDraughts: GameDefinition = {
   defaultParams: { numPlayers: 2, size: 10, men_rows: 4, flying: 1, men_back: 1, max_capture: 1, promote_mid: 0, misere: 0 },
   presets: [{ label: 'International 10×10', emoji: '⭐', params: { numPlayers: 2, size: 10, men_rows: 4, flying: 1, men_back: 1, max_capture: 1, promote_mid: 0, misere: 0 } }],
   knobs: [],
-  create: (wasm) => moveHandle(new wasm.DraughtsWasm(10, 4, 1, 1, 1, 0, 0)),
+  create: (wasm) => moveHandle(new wasm.DraughtsWasm(10, 4, 1, 1, 1, 0, 0, 0, 0)),
   Board: DraughtsBoard,
   playerLabels: ['Red', 'Gold'],
   resultFlavor: draughtsFlavor(false),
@@ -275,7 +279,7 @@ export const brazilianDraughts: GameDefinition = {
   defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 1, promote_mid: 0, misere: 0 },
   presets: [{ label: 'Brazilian 8×8', emoji: '⭐', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 1, promote_mid: 0, misere: 0 } }],
   knobs: [],
-  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 1, 1, 1, 0, 0)),
+  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 1, 1, 1, 0, 0, 0, 0)),
   Board: DraughtsBoard,
   playerLabels: ['Red', 'Gold'],
   resultFlavor: draughtsFlavor(false),
@@ -299,7 +303,7 @@ export const poolCheckers: GameDefinition = {
   defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 0, promote_mid: 0, misere: 0 },
   presets: [{ label: 'Pool 8×8', emoji: '⭐', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 0, promote_mid: 0, misere: 0 } }],
   knobs: [],
-  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 1, 1, 0, 0, 0)),
+  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 1, 1, 0, 0, 0, 0, 0)),
   Board: DraughtsBoard,
   playerLabels: ['Red', 'Gold'],
   resultFlavor: draughtsFlavor(false),
@@ -323,7 +327,7 @@ export const russianDraughts: GameDefinition = {
   defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 0, promote_mid: 1, misere: 0 },
   presets: [{ label: 'Russian 8×8', emoji: '⭐', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 1, max_capture: 0, promote_mid: 1, misere: 0 } }],
   knobs: [],
-  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 1, 1, 0, 1, 0)),
+  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 1, 1, 0, 1, 0, 0, 0)),
   Board: DraughtsBoard,
   playerLabels: ['Red', 'Gold'],
   resultFlavor: draughtsFlavor(false),
@@ -352,8 +356,57 @@ export const giveawayCheckers: GameDefinition = {
   defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 0, promote_mid: 0, misere: 1 },
   presets: [{ label: 'Giveaway 8×8', emoji: '🙃', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 0, promote_mid: 0, misere: 1 } }],
   knobs: [],
-  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 0, 0, 0, 0, 1)),
+  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 0, 0, 0, 0, 1, 0, 0)),
   Board: DraughtsBoard,
   playerLabels: ['Red', 'Gold'],
   resultFlavor: draughtsFlavor(true),
+};
+
+export const spanishDraughts: GameDefinition = {
+  id: 'spanish-draughts',
+  variantOf: 'draughts',
+  name: 'Spanish Draughts',
+  icon: '⛀',
+  blurb: '8×8 with flying kings but forward-only men — and when captures tie for length you must take the one that grabs the most kings.',
+  // Hard = max rung per CALIBRATION.md policy (the self-play plateau measures
+  // relative self-play strength, not absolute strength vs humans; harness capped
+  // at p300, we ship the max rung). Easy/Medium measured via calibrate example
+  // spanish-draughts 20 on 2026-07-11 (field 7→14→47→76→77→79; seat-0 49%).
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 100, topK: 4, temp: 1 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
+  defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 0, max_capture: 1, promote_mid: 0, misere: 0, men_no_king: 0, capture_priority: 1 },
+  presets: [{ label: 'Spanish 8×8', emoji: '⭐', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 1, men_back: 0, max_capture: 1, promote_mid: 0, misere: 0, men_no_king: 0, capture_priority: 1 } }],
+  knobs: [],
+  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 1, 0, 1, 0, 0, 0, 1)),
+  Board: DraughtsBoard,
+  playerLabels: ['Red', 'Gold'],
+  resultFlavor: draughtsFlavor(false),
+};
+
+export const italianDraughts: GameDefinition = {
+  id: 'italian-draughts',
+  variantOf: 'draughts',
+  name: 'Italian Draughts',
+  icon: '⛀',
+  blurb: '8×8 with step-at-a-time (non-flying) kings where a plain man may never jump a king — and a strict order for which longest capture you must take.',
+  // Hard = max rung per CALIBRATION.md policy (the self-play plateau measures
+  // relative self-play strength, not absolute strength vs humans; harness capped
+  // at p100 on a flat top, we ship the max rung). Easy/Medium measured via
+  // calibrate example italian-draughts 20 on 2026-07-11 (field 8→14→68→70→68→72;
+  // seat-0 47%; auto-picked Medium {30,5,2}).
+  difficulty: {
+    easy: { playouts: 8, topK: 6, temp: 3 },
+    medium: { playouts: 30, topK: 5, temp: 2 },
+    hard: { playouts: 2000, topK: 1, temp: 0 },
+  },
+  defaultParams: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 1, promote_mid: 0, misere: 0, men_no_king: 1, capture_priority: 2 },
+  presets: [{ label: 'Italian 8×8', emoji: '⭐', params: { numPlayers: 2, size: 8, men_rows: 3, flying: 0, men_back: 0, max_capture: 1, promote_mid: 0, misere: 0, men_no_king: 1, capture_priority: 2 } }],
+  knobs: [],
+  create: (wasm) => moveHandle(new wasm.DraughtsWasm(8, 3, 0, 0, 1, 0, 0, 1, 2)),
+  Board: DraughtsBoard,
+  playerLabels: ['Red', 'Gold'],
+  resultFlavor: draughtsFlavor(false),
 };

@@ -166,6 +166,12 @@ fn games() -> Vec<Game> {
         g("pool-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 0, 0, 0, 0)) as Box<dyn Eng>),
         g("russian-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 1, 0, 1, 0, 0, 0)) as Box<dyn Eng>),
         g("giveaway-checkers", STD, || Box::new(DraughtsWasm::new(8, 3, 0, 0, 0, 0, 1, 0, 0)) as Box<dyn Eng>),
+        // Wave-B draughts tiles (same flag-driven engine, two new flags on):
+        // Spanish = flying kings, forward-only men, most-kings capture priority
+        // (priority=1 normalizes max_capture on). Italian = non-flying kings,
+        // men-cannot-capture-kings, full 4-level Italian priority (priority=2).
+        g("spanish-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 1, 0, 1, 0, 0, 0, 1)) as Box<dyn Eng>),
+        g("italian-draughts", STD, || Box::new(DraughtsWasm::new(8, 3, 0, 0, 1, 0, 0, 1, 2)) as Box<dyn Eng>),
         // Hidden-info: registered so the audit fuzzer (Pass 1) exercises the
         // consistent-set deducer end-to-end. Its difficulty is HAND-SET, not
         // win-rate-calibrated — strict alternation gives seat 0 a structural

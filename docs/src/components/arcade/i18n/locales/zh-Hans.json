@@ -674,5 +674,22 @@
   "Aim {coord}": "瞄准 {coord}",
   "Aiming {coord} — tap again to fire": "瞄准 {coord} — 再次点击开火",
   "Last volley: {glyphs}": "上一轮齐射: {glyphs}",
-  "Last volley: {glyphs} — sank a {name}!": "上一轮齐射: {glyphs} — 击沉了{name}!"
+  "Last volley: {glyphs} — sank a {name}!": "上一轮齐射: {glyphs} — 击沉了{name}!",
+  "Spanish Draughts": "西班牙跳棋",
+  "Italian Draughts": "意大利跳棋",
+  "Spanish 8×8": "西班牙式 8×8",
+  "Italian 8×8": "意大利式 8×8",
+  "Capture priority": "吃子优先级",
+  "Men can't jump kings": "普通棋子不能吃王",
+  "None": "无",
+  "Most kings": "最多王",
+  "Italian rules": "意大利规则",
+  "No": "否",
+  "Yes": "是",
+  "Italian rule: a plain man may never capture a king.": "意大利规则：普通棋子永远不能吃王。",
+  "Tie-break between longest captures. Anything but None forces maximum-capture on.": "在最长吃法之间的决胜规则。除「无」以外的任何选项都会开启强制最多吃子。",
+  "8×8 with flying kings but forward-only men — and when captures tie for length you must take the one that grabs the most kings.": "8×8，配飞王但普通棋子只能向前——当多种吃法长度相同时，你必须选吃王最多的那种。",
+  "8×8 with step-at-a-time (non-flying) kings where a plain man may never jump a king — and a strict order for which longest capture you must take.": "8×8，配每次只走一格（不飞）的王，普通棋子永远不能吃王——并对该选哪种最长吃法有严格的先后顺序。",
+  "8×8 draughts where men move and jump forward only, but a crowned king \"flies\" — sliding any distance along a diagonal and landing beyond the piece it takes. Jumps are compulsory and you must take as many pieces as you can; when two captures take the same number, you must take the one that grabs the most kings. Capture everything, or block your opponent, to win.": "8×8跳棋，普通棋子只能向前走和向前跳吃，但加冕的王会\"飞\"——沿斜线滑行任意距离，并落在被吃棋子之后。跳吃是强制的，你必须尽量多吃；当两种吃法数目相同时，你必须选吃王最多的那种。吃光全部，或封死对手，即可获胜。",
+  "8×8 draughts with men that jump forward only and kings that move just one square at a time (no flying). A plain man may NEVER jump a king — only another king can. Jumps are compulsory and must take the most pieces; ties are broken in strict order — capture with a king, then take the most kings, then take the king that comes first. Capture everything, or block your opponent, to win.": "8×8跳棋，普通棋子只能向前跳，王每次只走一格（不飞）。普通棋子永远不能吃王——只有另一个王才能吃。跳吃是强制的，必须吃最多的棋子；平局时按严格顺序决出——用王吃、然后吃最多的王、然后吃最靠前的王。吃光全部，或封死对手，即可获胜。"
 }

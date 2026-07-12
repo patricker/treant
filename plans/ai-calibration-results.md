@@ -671,3 +671,49 @@ uses the LIGHT ladder (the 10×10 board is branchy) and tops out at its p500 run
 | pool-checkers | 8·12·44·73·79·83 | {8,6,3} | {100,4,1} | {2000,1,0} | measured (seat-0 47%) |
 | russian-draughts | 0·20·45·76·78·81 | {8,6,3} | {100,4,1} | {2000,1,0} | measured (seat-0 49%) |
 | giveaway-checkers 🙃 | 3·17·48·73·78·81 | {8,6,3} | {100,4,1} | {2000,1,0} | measured (seat-0 52%; non-degenerate misère) |
+
+## 2026-07-11 pass — draughts wave B (Spanish + Italian)
+
+Two more config-only tiles over the same flag-driven `DraughtsWasm` engine, now
+carrying the two wave-B flags (`men_cannot_capture_kings`, `capture_priority`).
+Measured directly with the calibrate example — `cargo run --release --example
+calibrate -p treant-wasm -- <id> 20` (n=20/pair, STD ladder, solver-off, the 4A
+material+mobility evaluator). Both ladders are monotone weak→strong and seat-0
+rates 47–49% (balanced). Per [`CALIBRATION.md`](../CALIBRATION.md) **Policy**,
+**Hard ships as the max-strength rung `{2000,1,0}`** — the harness "capped at pN"
+note measures where *relative self-play* strength plateaus, **not** absolute
+strength vs a human (the documented Draughts-4B lesson), so the measured ladder's
+job is only to set beatable Easy/Medium. Hard-rung latency sanity check on the
+production wasm bundle (in-browser): a `weak_move(2000,1,0)` opening move takes
+~54 ms (Spanish) / ~57 ms (Italian) — comfortably ≤1 s/move.
+
+| Variant | Field scores (weak→strong) | Easy | Medium | Hard | Source |
+|---|---|---|---|---|---|
+| spanish-draughts ⭐ | 7·14·47·76·77·79 | {8,6,3} | {100,4,1} | {2000,1,0} | measured (seat-0 49%; harness capped Hard at p300 — shipped max rung per policy) |
+| italian-draughts | 8·14·68·70·68·72 | {8,6,3} | {30,5,2} | {2000,1,0} | measured (seat-0 47%; auto-picked Medium {30,5,2}; harness capped Hard at p100 on a flat top — shipped max rung per policy) |
+
+### Raw matrices
+
+```
+================  spanish-draughts  (n=20/pair)  ================
+     rung\vs       p8      p30     p100     p300     p800    p2000    field
+       p8 t3        ·      35%       0%       0%       0%       0%       7%
+      p30 t2      65%        ·       5%       0%       0%       0%      14%
+     p100 t1     100%      95%        ·      12%       8%      20%      47%
+   p300 t0.6     100%     100%      88%        ·      42%      50%      76%
+  p800 t0.35     100%     100%      92%      58%        ·      35%      77%
+    p2000 t0     100%     100%      80%      50%      65%        ·      79%
+  seat-0 win rate (decided games): 49%  [~50% = balanced]
+  (Hard capped at p300: self-play plateau, not an absolute ceiling → ship p2000.)
+
+================  italian-draughts  (n=20/pair)  ================
+     rung\vs       p8      p30     p100     p300     p800    p2000    field
+       p8 t3        ·      38%       0%       0%       2%       0%       8%
+      p30 t2      62%        ·       2%       2%       2%       0%      14%
+     p100 t1     100%      98%        ·      48%      52%      40%      68%
+   p300 t0.6     100%      98%      52%        ·      50%      50%      70%
+  p800 t0.35      98%      98%      48%      50%        ·      48%      68%
+    p2000 t0     100%     100%      60%      50%      52%        ·      72%
+  seat-0 win rate (decided games): 47%  [~50% = balanced]
+  (Hard capped at p100 on a flat top: self-play plateau, not a ceiling → ship p2000.)
+```

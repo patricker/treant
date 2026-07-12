@@ -365,6 +365,21 @@ const GLYPHS: Record<string, JSX.Element> = {
       <path d="M9 11.4l3 3 3-3" />
     </g>
   ),
+  'spanish-draughts': (
+    // Quality tie-break "most kings": a disc marked with a small crown up top.
+    <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round">
+      <circle cx="12" cy="13.5" r="7" />
+      <path d="M8 6.4l1.4 2.2L12 6l2.6 2.6L16 6.4l-.7 3.4H8.7z" fill="currentColor" stroke="currentColor" strokeWidth="0.7" />
+    </g>
+  ),
+  'italian-draughts': (
+    // Men may not jump kings: a disc barred off from a crown by a slash.
+    <g fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round">
+      <circle cx="9" cy="15" r="5" />
+      <path d="M13.5 5.5l1 2 2-1.6-.6 4h-4.8l-.6-4 2 1.6z" fill="currentColor" stroke="currentColor" strokeWidth="0.7" />
+      <path d="M5.5 18.5L18.5 5.5" stroke="currentColor" strokeWidth="1.9" />
+    </g>
+  ),
   clobber: (
     <g fill="currentColor">
       <circle cx="8" cy="12" r="4" opacity="0.4" />

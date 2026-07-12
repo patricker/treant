@@ -674,5 +674,22 @@
   "Aim {coord}": "Auf {coord} zielen",
   "Aiming {coord} — tap again to fire": "Ziel {coord} — nochmal tippen zum Feuern",
   "Last volley: {glyphs}": "Letzte Salve: {glyphs}",
-  "Last volley: {glyphs} — sank a {name}!": "Letzte Salve: {glyphs} — {name} versenkt!"
+  "Last volley: {glyphs} — sank a {name}!": "Letzte Salve: {glyphs} — {name} versenkt!",
+  "Spanish Draughts": "Spanische Dame",
+  "Italian Draughts": "Italienische Dame",
+  "Spanish 8×8": "Spanisch 8×8",
+  "Italian 8×8": "Italienisch 8×8",
+  "Capture priority": "Schlagpriorität",
+  "Men can't jump kings": "Steine schlagen keine Damen",
+  "None": "Keine",
+  "Most kings": "Meiste Damen",
+  "Italian rules": "Italienische Regeln",
+  "No": "Nein",
+  "Yes": "Ja",
+  "Italian rule: a plain man may never capture a king.": "Italienische Regel: Ein einfacher Stein darf niemals eine Dame schlagen.",
+  "Tie-break between longest captures. Anything but None forces maximum-capture on.": "Stichentscheid zwischen den längsten Schlägen. Alles außer „Keine“ erzwingt den Maximalschlag.",
+  "8×8 with flying kings but forward-only men — and when captures tie for length you must take the one that grabs the most kings.": "8×8 mit fliegenden Damen, aber nur vorwärts ziehenden Steinen – und bei gleich langen Schlägen musst du den nehmen, der die meisten Damen fängt.",
+  "8×8 with step-at-a-time (non-flying) kings where a plain man may never jump a king — and a strict order for which longest capture you must take.": "8×8 mit schrittweise ziehenden (nicht fliegenden) Damen, bei denen ein einfacher Stein niemals eine Dame schlagen darf – und mit einer strengen Reihenfolge, welchen längsten Schlag du nehmen musst.",
+  "8×8 draughts where men move and jump forward only, but a crowned king \"flies\" — sliding any distance along a diagonal and landing beyond the piece it takes. Jumps are compulsory and you must take as many pieces as you can; when two captures take the same number, you must take the one that grabs the most kings. Capture everything, or block your opponent, to win.": "8×8-Dame, bei der Steine nur vorwärts ziehen und schlagen, eine gekrönte Dame aber „fliegt“ – sie zieht beliebig weit auf einer Diagonale und landet hinter dem geschlagenen Stein. Schlagen ist Pflicht, und du musst so viele Steine wie möglich schlagen; nehmen zwei Schläge gleich viele, musst du den nehmen, der die meisten Damen fängt. Schlage alles oder blockiere den Gegner, um zu gewinnen.",
+  "8×8 draughts with men that jump forward only and kings that move just one square at a time (no flying). A plain man may NEVER jump a king — only another king can. Jumps are compulsory and must take the most pieces; ties are broken in strict order — capture with a king, then take the most kings, then take the king that comes first. Capture everything, or block your opponent, to win.": "8×8-Dame mit Steinen, die nur vorwärts schlagen, und Damen, die immer nur ein Feld weit ziehen (kein Fliegen). Ein einfacher Stein darf NIEMALS eine Dame schlagen – nur eine andere Dame kann das. Schlagen ist Pflicht und muss die meisten Steine nehmen; bei Gleichstand entscheidet eine strenge Reihenfolge – mit einer Dame schlagen, dann die meisten Damen nehmen, dann die zuerst kommende Dame nehmen. Schlage alles oder blockiere den Gegner, um zu gewinnen."
 }

@@ -50,6 +50,8 @@ import {
   poolCheckers,
   russianDraughts,
   giveawayCheckers,
+  spanishDraughts,
+  italianDraughts,
 } from './draughts';
 import type { GameDefinition } from '../gameTypes';
 
@@ -109,6 +111,8 @@ export const GAMES: GameDefinition[] = [
   poolCheckers,
   russianDraughts,
   giveawayCheckers,
+  spanishDraughts,
+  italianDraughts,
   domineering,
   cram,
   pig,

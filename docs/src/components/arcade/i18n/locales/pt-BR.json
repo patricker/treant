@@ -674,5 +674,22 @@
   "Aim {coord}": "Mirar {coord}",
   "Aiming {coord} — tap again to fire": "Mirando {coord} — toque de novo para atirar",
   "Last volley: {glyphs}": "Última salva: {glyphs}",
-  "Last volley: {glyphs} — sank a {name}!": "Última salva: {glyphs} — {name} afundado!"
+  "Last volley: {glyphs} — sank a {name}!": "Última salva: {glyphs} — {name} afundado!",
+  "Spanish Draughts": "Damas espanholas",
+  "Italian Draughts": "Damas italianas",
+  "Spanish 8×8": "Espanholas 8×8",
+  "Italian 8×8": "Italianas 8×8",
+  "Capture priority": "Prioridade de captura",
+  "Men can't jump kings": "Pedras não capturam damas",
+  "None": "Nenhuma",
+  "Most kings": "Mais damas",
+  "Italian rules": "Regras italianas",
+  "No": "Não",
+  "Yes": "Sim",
+  "Italian rule: a plain man may never capture a king.": "Regra italiana: uma pedra comum nunca pode capturar uma dama.",
+  "Tie-break between longest captures. Anything but None forces maximum-capture on.": "Critério de desempate entre as capturas mais longas. Qualquer opção exceto «Nenhuma» força a captura máxima.",
+  "8×8 with flying kings but forward-only men — and when captures tie for length you must take the one that grabs the most kings.": "8×8 com damas voadoras mas pedras que só avançam — e quando as capturas empatam em comprimento você deve fazer a que captura mais damas.",
+  "8×8 with step-at-a-time (non-flying) kings where a plain man may never jump a king — and a strict order for which longest capture you must take.": "8×8 com damas que andam uma casa por vez (não voadoras), onde uma pedra comum nunca pode saltar uma dama — e com uma ordem rígida de qual captura mais longa você deve fazer.",
+  "8×8 draughts where men move and jump forward only, but a crowned king \"flies\" — sliding any distance along a diagonal and landing beyond the piece it takes. Jumps are compulsory and you must take as many pieces as you can; when two captures take the same number, you must take the one that grabs the most kings. Capture everything, or block your opponent, to win.": "Damas 8×8 em que as pedras movem e saltam apenas para frente, mas uma dama coroada \"voa\" — desliza qualquer distância na diagonal e pousa além da peça que toma. Saltar é obrigatório e você deve capturar o máximo de peças que puder; quando duas capturas tomam o mesmo número, você deve fazer a que captura mais damas. Capture tudo, ou bloqueie o adversário, para vencer.",
+  "8×8 draughts with men that jump forward only and kings that move just one square at a time (no flying). A plain man may NEVER jump a king — only another king can. Jumps are compulsory and must take the most pieces; ties are broken in strict order — capture with a king, then take the most kings, then take the king that comes first. Capture everything, or block your opponent, to win.": "Damas 8×8 com pedras que só saltam para frente e damas que se movem apenas uma casa por vez (sem voar). Uma pedra comum NUNCA pode saltar uma dama — só outra dama pode. Saltar é obrigatório e deve capturar o máximo de peças; os empates são resolvidos em ordem rígida — capturar com uma dama, depois tomar o maior número de damas, depois tomar a dama que vem primeiro. Capture tudo, ou bloqueie o adversário, para vencer."
 }

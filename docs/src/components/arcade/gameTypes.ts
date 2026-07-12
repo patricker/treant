@@ -24,6 +24,12 @@ export interface Knob {
   min: number;
   max: number;
   step: number;
+  /** Optional per-value text labels (index = value − min), shown instead of the
+   *  raw number — e.g. an on/off toggle or a 3-way enum. Each entry is a
+   *  translation key (wrapped in t() at the render site). */
+  valueLabels?: string[];
+  /** Optional one-line help caption shown under the stepper (translation key). */
+  help?: string;
 }
 
 export interface GameHandle {

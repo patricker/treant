@@ -61,7 +61,10 @@ for (const file of walk(ARCADE)) {
   addMatches(src, /\bname:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")/g, [1, 2]);
   addMatches(src, /\bblurb:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")/g, [1, 2]);
   addMatches(src, /\blabel:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")/g, [1, 2]);
-  for (const m of src.matchAll(/\bplayerLabels:\s*\[([^\]]*)\]/g)) {
+  // Knob help captions (translated at the CustomKnobs render site).
+  addMatches(src, /\bhelp:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")/g, [1, 2]);
+  // Array-valued label fields (playerLabels, knob valueLabels): each entry is a key.
+  for (const m of src.matchAll(/\b(?:playerLabels|valueLabels):\s*\[([^\]]*)\]/g)) {
     for (const s of m[1].matchAll(new RegExp(STR.source, 'g'))) {
       keys.add(unescape(s[1] ?? s[2]));
     }

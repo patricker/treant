@@ -543,6 +543,12 @@
   font-weight: 900;
   font-size: 1.1rem;
 }
+.knobHelp {
+  font-size: 0.66rem;
+  line-height: 1.25;
+  opacity: 0.55;
+  margin-top: 2px;
+}
 
 /* primary / secondary / ghost buttons */
 .playBtn {
